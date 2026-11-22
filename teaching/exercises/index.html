@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eight numerical methods exercises · OneSimulation</title>
+<meta name="description" content="Models, tasks and deliverables for eight Python lab exercises.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/exercises/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Eight numerical methods exercises · OneSimulation">
+<meta property="og:description" content="Models, tasks and deliverables for eight Python lab exercises.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/exercises/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition"><a href="/teaching/">Teaching</a></p>
+  <h1>Eight numerical methods exercises</h1>
+  <p class="lead">Each exercise gives a model, a quantitative check and a notebook deliverable. The first two can be run with standard Python.</p>
+  <div class="download-row"><a class="button button-primary" href="/downloads/teaching-baselines.py" download>Download the script for exercises 1 and 2</a><a class="link-text" href="/teaching/course/">View course plan</a></div>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="Exercises"><strong>Exercises</strong><a href="#exercise-1">1. Cooling</a><a href="#exercise-2">2. Oscillator</a><a href="#exercise-3">3. Stencil order</a><a href="#exercise-4">4. Slope limiters</a><a href="#exercise-5">5. Poisson benchmark</a><a href="#exercise-6">6. Linear solvers</a><a href="#exercise-7">7. Cantilever</a><a href="#exercise-8">8. Reaction–diffusion</a></nav></aside>
+  <article class="prose">
+    <section id="exercise-1">
+      <h2>1. Radiative cooling</h2>
+      <p>Integrate <var>dT/dt = −βT⁴</var> for 30 s with <var>T₀ = 400 K</var> and <var>β = 5 × 10<sup>−10</sup> K<sup>−3</sup> s<sup>−1</sup></var>. For surroundings at 0 K, the reference is <var>T(t) = (T₀<sup>−3</sup> + 3βt)<sup>−1/3</sup></var>.</p>
+      <pre><code>python teaching-baselines.py cooling --step 0.4 &gt; cooling.csv</code></pre>
+      <ol>
+        <li>Plot the numerical and exact temperatures against time. Record the maximum absolute temperature error.</li>
+        <li>Repeat with maximum steps of 0.2, 0.1 and 0.05 s. Use the actual step from the CSV and compute the observed order from successive error ratios.</li>
+        <li>Set the surroundings to 293 K using <var>−β(T⁴ − 293⁴)</var>. Check that the temperature decreases towards 293 K from above, and estimate the remaining error with a finer time step.</li>
+      </ol>
+      <p><strong>Submit</strong> The temperature curve, the convergence table and the check for the 293 K case.</p>
+    </section>
+    <section id="exercise-2">
+      <h2>2. Damped oscillator</h2>
+      <p>Set <var>x″ + 2γx′ + ω₀²x = 0</var>, with <var>γ = 0.1 s<sup>−1</sup></var>, <var>ω₀ = 2π s<sup>−1</sup></var>, <var>x(0) = 1 m</var> and <var>x′(0) = 0</var>. The script supplies the exact displacement and specific energy over ten damped periods.</p>
+      <pre><code>python teaching-baselines.py oscillator --step 0.1 &gt; oscillator.csv</code></pre>
+      <ol>
+        <li>Plot displacement and specific energy from the numerical and exact columns.</li>
+        <li>Halve the step at fixed damping. Then double the damping at fixed step and compare the change in the physical decay.</li>
+        <li>Report the largest tested step for which the displacement error at ten periods is below 1% of the exact displacement magnitude there. Repeat with the next finer step.</li>
+      </ol>
+      <p><strong>Submit</strong> Both plots, the error table and the tested step limit.</p>
+    </section>
+    <section id="exercise-3">
+      <h2>3. Order of a finite difference stencil</h2>
+      <p>Solve periodic advection <var>uₜ + uₓ = 0</var> on <var>[0, 1)</var> to <var>t = 1</var>. The solution returns to the initial profile after one circuit.</p>
+      <ol>
+        <li>Use <var>sin(2πx)</var> initially. Compare second- and fourth-order centred spatial differences with RK4 and <var>Δt = 0.2Δx</var>.</li>
+        <li>Run 32, 64, 128 and 256 points, record the RMS error and fit a slope on a log–log plot.</li>
+        <li>Repeat with the periodic triangular profile <var>1 − |2x − 1|</var>. Compare slopes and plot the error near the kink.</li>
+      </ol>
+      <p><strong>Submit</strong> Error plots and observed orders for both profiles.</p>
+    </section>
+    <section id="exercise-4">
+      <h2>4. Slope limiters in finite volumes</h2>
+      <p>Use the periodic advection model from exercise 3 with 100 cells and Courant number 0.4. Start with <var>u = 1</var> on <var>[0.25, 0.5)</var> and <var>u = 0</var> elsewhere.</p>
+      <ol>
+        <li>Use piecewise linear reconstruction with an upwind numerical flux. Compare unlimited centred slopes, minmod and monotonized central. Use the same second-order SSP Runge–Kutta time integration in all three runs.</li>
+        <li>After one circuit, measure the minimum and maximum, the sum of absolute jumps including the periodic seam, and the change in <var>Σᵢ uᵢ Δx</var>. The initial mass is 0.25.</li>
+        <li>Repeat with <var>sin(2πx)</var>. Compare the trade-off between pulse smearing and smooth-wave error.</li>
+      </ol>
+      <p><strong>Submit</strong> A table of bounds, total variation and mass errors, with both profiles plotted.</p>
+    </section>
+    <section id="exercise-5">
+      <h2>5. One Poisson model, five discretizations</h2>
+      <ol>
+        <li>Run the <a href="/tutorials/method-comparison/#run">benchmark script</a> on 16 cells per direction and compare the five cell-centre RMS errors with the article.</li>
+        <li>Repeat on 8 and 32 cells per direction. Estimate the order separately over 8→16 and 16→32. Record resources if the largest direct solve exceeds your machine’s memory or time budget.</li>
+        <li>Plot error against wall time and identify which tested runs meet <var>RMS ≤ 10<sup>−5</sup></var>. List what you would need to hold fixed in a second benchmark on curved geometry.</li>
+      </ol>
+      <p><strong>Submit</strong> Errors, observed orders and the error–time plot.</p>
+    </section>
+    <section id="exercise-6">
+      <h2>6. Linear solver accuracy</h2>
+      <p>Use linear FEM on the 16³ Poisson grid from exercise 5. Keep the assembled system and initial guess fixed when comparing iterative methods.</p>
+      <ol>
+        <li>Solve directly, with conjugate gradients and with GMRES using an ILU preconditioner. Apply CG to the symmetric positive definite system after eliminating the fixed boundary values.</li>
+        <li>For relative tolerances from 10<sup>−3</sup> to 10<sup>−9</sup>, record iterations, relative residual <var>‖b − Ax‖₂ / ‖b‖₂</var>, wall time and cell-centre RMS difference from the direct solution.</li>
+        <li>Choose the loosest tested tolerance where the difference from the direct solution is at most a tenth of the direct solution's discretization error.</li>
+      </ol>
+      <p><strong>Submit</strong> A solver comparison and the two errors that justify your chosen tolerance.</p>
+    </section>
+    <section id="exercise-7">
+      <h2>7. A cantilever in 3D</h2>
+      <p>Use a 200 mm cantilever with a 20 × 10 mm rectangular section, <var>E = 70 GPa</var> and <var>ν = 0.33</var>. Fix one end and apply a total transverse force of 1 N to the other face, in the 10 mm direction. The beam reference is <var>u = FL³/(3EI)</var> and <var>I = bh³/12</var>, giving about 22.86 µm.</p>
+      <ol>
+        <li>Report mean transverse displacement on the loaded face for two meshes. Compare axial stress at midspan at the same physical location on both grids.</li>
+        <li>Compare the displacement with the Euler–Bernoulli formula. Discuss local stress near the clamp separately from displacement.</li>
+        <li>Double the length while keeping the section and force fixed. Compare the displacement ratio with the predicted factor of eight.</li>
+      </ol>
+      <p><strong>Submit</strong> Mesh sizes, displacements, a stress check and the length-scaling comparison.</p>
+    </section>
+    <section id="exercise-8">
+      <h2>8. Verify a reaction–diffusion equation</h2>
+      <p>On the unit square with zero Dirichlet data, solve <var>−∇·(D∇u) + ku = f</var> with <var>D = 0.1</var>, <var>k = 2</var> and prescribed exact field <var>u = sin(πx) sin(πy)</var>.</p>
+      <ol>
+        <li>Apply the operator to the exact field to derive <var>f = (2Dπ² + k)u</var>. Check the boundary values.</li>
+        <li>Solve on 16², 32² and 64² cells. Compare cell-centre RMS errors and inspect the signed error field.</li>
+        <li>Compute both pairwise convergence orders and relate them to the discretization and linear solver tolerance.</li>
+      </ol>
+      <p><strong>Submit</strong> Source derivation, refinement table and one error-field plot.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

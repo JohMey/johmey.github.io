@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Force between two coaxial coils: a verification series · OneSimulation</title>
+<meta name="description" content="Two coaxial coils of 100 turns each attract each other; the force is computed for three distances and compared with Maxwell&#x27;s mutual inductance.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/blog/coil_force_verification/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Force between two coaxial coils: a verification series · OneSimulation">
+<meta property="og:description" content="Two coaxial coils of 100 turns each attract each other; the force is computed for three distances and compared with Maxwell&#x27;s mutual inductance.">
+<meta property="og:url" content="https://onesimulation.onrender.com/blog/coil_force_verification/">
+<meta property="og:image" content="https://onesimulation.onrender.com/showcase/figures/library/coil_force_verification.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/" aria-current="location">Blog</a><a href="/teaching/">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/blog/">Notebook blog</a> / <a href="/blog/#electromagnetics">Electromagnetics</a></p><h1>Force between two coaxial coils: a verification series</h1><p class="lead">Two coaxial coils of 100 turns each attract each other; the force is computed for three distances and compared with Maxwell&#x27;s mutual inductance.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#what">What it computes</a><a href="#checks">What it checks</a><a href="#geometry">Geometry</a><a href="#notebook">The notebook</a></nav></aside><article class="prose reference"><p class="study-note">To reproduce the case, put its notebook and accompanying inputs in the same folder. Use the Python environment set up in the <a href="/tutorials/install/">installation tutorial</a>. Start with the original parameters and compare the result with the check reported below.</p><div class="chips"><span>STEP import</span><span>Symmetry model</span><span>Nedelec elements</span><span>Iterative edge-element solver</span><span>Closed-form comparison</span></div><div class="button-row"><a class="button" href="/downloads/notebooks/coil_force_verification.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/coil_force_verification.py" download>Download the script (.py)</a><a class="button light" href="/downloads/notebooks/coil_force_verification.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/coil_force_verification_geometry.py" download>Download the geometry script (.py)</a></div><figure><img loading="lazy" src="/showcase/figures/library/coil_force_verification.png" alt="Force between two coaxial coils: a verification series"><figcaption>Force between two coaxial coils: a verification series. Run the notebook to produce its own figures.</figcaption></figure><h2 id="what">What it computes</h2><p>OneSimulation solves the 3D vector potential of the two windings with second-order Nedelec edge elements and a Coulomb gauge on one quarter of the air read from STEP; each winding is declared whole and clipped to the quarter by the mesher. The linear systems are solved with GMRES and the auxiliary-space preconditioner for edge elements, and the force is the Lorentz force integrated over each winding. The script that builds the STEP files comes with the notebook.</p><h2 id="checks">What it checks</h2><p>The force on the upper coil matches the exact force from Maxwell&#x27;s mutual inductance integrated over both winding cross-sections within 0.01 % at 25 mm, 0.09 % (0.03 % on the finer mesh) at 50 mm and 0.34 % at 100 mm, and the forces on the two coils cancel to 2e-4 to 4.5e-3 of the force (Newton&#x27;s third law).</p><h2 id="geometry">Geometry</h2><p>The notebook starts at the import of the CAD files <a href="/downloads/notebooks/coil_force_verification.step" download><code>coil_force_verification.step</code></a>, <a href="/downloads/notebooks/coil_force_verification_lower.step" download><code>coil_force_verification_lower.step</code></a>, <a href="/downloads/notebooks/coil_force_verification_upper_100mm.step" download><code>coil_force_verification_upper_100mm.step</code></a>, <a href="/downloads/notebooks/coil_force_verification_upper_25mm.step" download><code>coil_force_verification_upper_25mm.step</code></a>, <a href="/downloads/notebooks/coil_force_verification_upper_50mm.step" download><code>coil_force_verification_upper_50mm.step</code></a>: STEP (AP242), readable by any CAD program, with the names of the faces that the boundary conditions use. Put them next to the notebook.</p><figure><img loading="lazy" src="/showcase/figures/library/coil_force_verification_geometry.png" alt="Geometry of the example: Force between two coaxial coils: a verification series"><figcaption>The geometry as the notebook reads it from the STEP file and draws it.</figcaption></figure><div class="button-row"><a class="button light" href="/downloads/notebooks/coil_force_verification.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/coil_force_verification_lower.step" download>Download the part lower (.step)</a><a class="button light" href="/downloads/notebooks/coil_force_verification_upper_100mm.step" download>Download the part upper 100mm (.step)</a><a class="button light" href="/downloads/notebooks/coil_force_verification_upper_25mm.step" download>Download the part upper 25mm (.step)</a><a class="button light" href="/downloads/notebooks/coil_force_verification_upper_50mm.step" download>Download the part upper 50mm (.step)</a><a class="button light" href="/downloads/notebooks/coil_force_verification_geometry.py" download>Download the geometry script (.py)</a></div><h3 id="geometry-script">The geometry script</h3><p>The script <a href="/downloads/notebooks/coil_force_verification_geometry.py" download><code>coil_force_verification_geometry.py</code></a> builds the geometry with the CAD objects of OneSimulation and writes the files. Change a dimension there, run it, and run the notebook again.</p><div class="notebook"><div class="nb-code"><pre class="code" data-lang="python"><code><span class="sd">&quot;&quot;&quot;Geometry of the OneSimulation example &quot;Force between two coaxial coils: a verification series&quot;.</span>
+
+<span class="sd">Builds one quarter of the air around two coaxial coils with the CAD objects of OneSimulation: a</span>
+<span class="sd">quarter of a ball of 0.4 m radius, cut by the planes x = 0 and y = 0 (face group planes; the ball</span>
+<span class="sd">surface is outer), and writes coil_force_verification.step. The quarters of the windings (mean</span>
+<span class="sd">radius 50 mm, 10 x 10 mm cross-section) are written to coil_force_verification_lower.step (centred</span>
+<span class="sd">at z = 0) and coil_force_verification_upper_25mm.step, ..._50mm.step, ..._100mm.step for the three</span>
+<span class="sd">coil distances.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d3</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnularCylinder</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Sphere</span>
+
+<span class="n">air</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="n">quarter</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">air</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">air</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">air</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">air</span><span class="p">))</span><span class="o">.</span><span class="n">named</span><span class="p">(</span>
+    <span class="s2">&quot;cut&quot;</span>
+<span class="p">)</span>
+<span class="n">region</span> <span class="o">=</span> <span class="n">Sphere</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">air</span><span class="p">)</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="s2">&quot;ball&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">quarter</span>
+<span class="n">faces</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">boundaries</span>
+<span class="n">region</span><span class="o">.</span><span class="n">grouped</span><span class="p">(</span>
+    <span class="n">planes</span><span class="o">=</span><span class="n">faces</span><span class="p">[</span><span class="s2">&quot;cut.x_min&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n">faces</span><span class="p">[</span><span class="s2">&quot;cut.y_min&quot;</span><span class="p">],</span>
+    <span class="n">outer</span><span class="o">=</span><span class="n">region</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">faces</span><span class="o">=</span><span class="k">lambda</span> <span class="n">face</span><span class="p">:</span> <span class="n">face</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ball&quot;</span><span class="p">)),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;coil_force_verification.step&quot;</span><span class="p">)</span>
+<span class="n">winding</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">AnnularCylinder</span><span class="p">(</span>
+        <span class="n">inner_radius</span><span class="o">=</span><span class="mf">0.045</span><span class="p">,</span>
+        <span class="n">outer_radius</span><span class="o">=</span><span class="mf">0.055</span><span class="p">,</span>
+        <span class="n">length</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">z</span> <span class="o">-</span> <span class="mf">0.005</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="o">&amp;</span> <span class="n">quarter</span>
+<span class="p">)</span>
+<span class="n">winding</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;coil_force_verification_lower.step&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">distance</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
+    <span class="n">winding</span><span class="p">(</span><span class="n">distance</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;coil_force_verification_upper_</span><span class="si">{</span><span class="n">distance</span><span class="si">}</span><span class="s2">mm.step&quot;</span><span class="p">)</span></code></pre></div></div><h2 id="notebook">The notebook</h2><p class="muted">The complete notebook, cell by cell. Run it to produce the figures and the comparison printout.</p><div class="notebook"><div class="nb-md"><p>Two coaxial coils of mean radius <span class="math">\(R=50\)</span> mm with a square winding cross-section of 10 x 10 mm and 100 turns each carry 1 A in the same direction and attract each other. The force on a winding is the Lorentz force</p>
+<div class="math display">\[\mathbf F=\int_V\mathbf J\times\mathbf B\,dV,\qquad F_z=-J\int_V B_r\,dV\]</div>
+<p>for the uniform azimuthal current density <span class="math">\(J=NI/A\)</span>. The field solves <span class="math">\(\nabla\times(\mu_0^{-1}\nabla\times\mathbf A)=\mathbf J\)</span> with second-order Nédélec elements and a Coulomb gauge; one quarter is computed, and the windings are cut by its two symmetry planes. The coil distance is varied from <span class="math">\(R/2\)</span> to <span class="math">\(2R\)</span>, and the middle distance is also solved on a finer mesh.</p>
+<p>The air, a quarter of a ball of 0.4 m radius, comes from the CAD file <code>coil_force_verification.step</code> (face groups <code>planes</code> and <code>outer</code>), the quarter of the lower winding from <code>coil_force_verification_lower.step</code> and the upper winding for the three distances from <code>..._upper_25mm.step</code>, <code>..._upper_50mm.step</code> and <code>..._upper_100mm.step</code>. The script <code>coil_force_verification_geometry.py</code> builds them with the CAD objects of OneSimulation.</p>
+<p>| face | condition | |---|---| | <code>planes</code> (through the axis), <code>outer</code> | <span class="math">\(\mathbf n\times\mathbf A=0\)</span> |</p>
+<p><strong>Reference.</strong> Two coaxial loops of radii <span class="math">\(a\)</span>, <span class="math">\(b\)</span> at the axial distance <span class="math">\(z\)</span> attract with <span class="math">\(F_z=I_1I_2\,\partial M/\partial z\)</span>, with Maxwell's mutual inductance <span class="math">\(M=\mu_0\sqrt{ab}\,[(2/k-k)K(k)-(2/k)E(k)]\)</span>, <span class="math">\(k^2=4ab/((a+b)^2+z^2)\)</span> (Smythe, <em>Static and Dynamic Electricity</em>, 3rd ed., Sec. 7.13). Integrating it over both rectangular cross-sections with Gauss-Legendre points gives the exact force between the windings.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plane</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d3</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnularCylinder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.exchange</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">VacuumPermeability</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalRefinement</span><span class="p">,</span> <span class="n">TetrahedralMesher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.fem</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiniteElement</span><span class="p">,</span> <span class="n">Nedelec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.linear</span><span class="w"> </span><span class="kn">import</span> <span class="n">GMRES</span><span class="p">,</span> <span class="n">AuxiliarySpaceMaxwell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.magnetostatics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CoulombGauge</span><span class="p">,</span>
+    <span class="n">MagneticInsulation</span><span class="p">,</span>
+    <span class="n">MagneticVectorPotential</span><span class="p">,</span>
+    <span class="n">Magnetostatics</span><span class="p">,</span>
+    <span class="n">SolenoidCurrent</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span><span class="p">,</span> <span class="n">theme</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">ellipe</span><span class="p">,</span> <span class="n">ellipk</span>
+
+<span class="n">theme</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Geometry and mesh</h4>
+<p>Each winding is declared whole, as <code>SolenoidCurrent</code> with its own annular support; with <code>clip_regions=True</code> the mesher keeps the quarter of it that lies inside the air region as an embedded region. The cells are 4 mm (2.8 mm on the finer mesh) in and around the windings and grow towards the outer boundary.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">air</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;coil_force_verification.step&quot;</span><span class="p">)</span>
+<span class="n">faces</span> <span class="o">=</span> <span class="n">air</span><span class="o">.</span><span class="n">boundaries</span>
+<span class="n">radius</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">turns</span><span class="p">,</span> <span class="n">current</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">1.0</span>
+<span class="n">cases</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0028</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">)]</span>
+<span class="n">lower</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;coil_force_verification_lower.step&quot;</span><span class="p">)</span>
+<span class="n">windings</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;coil_force_verification_upper_</span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="mf">1e3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2">mm.step&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">cases</span>
+<span class="p">]</span>
+<span class="n">coils</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nb">tuple</span><span class="p">(</span>
+        <span class="n">SolenoidCurrent</span><span class="p">(</span>
+            <span class="n">inner_radius</span><span class="o">=</span><span class="n">radius</span> <span class="o">-</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">outer_radius</span><span class="o">=</span><span class="n">radius</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">length</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">turns</span><span class="o">=</span><span class="n">turns</span><span class="p">,</span>
+            <span class="n">current</span><span class="o">=</span><span class="n">current</span><span class="p">,</span>
+            <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span>
+            <span class="n">support_factory</span><span class="o">=</span><span class="n">AnnularCylinder</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">cases</span>
+<span class="p">]</span>
+<span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">TetrahedralMesher</span><span class="p">(</span>
+        <span class="n">target_size</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span>
+        <span class="n">embedded_regions</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">coil</span><span class="o">.</span><span class="n">support</span> <span class="k">for</span> <span class="n">coil</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">),</span>
+        <span class="n">clip_regions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">refinements</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">LocalRefinement</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">coil</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">target_size</span><span class="o">=</span><span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">coil</span> <span class="ow">in</span> <span class="n">pair</span>
+        <span class="p">),</span>
+        <span class="n">size_field</span><span class="o">=</span><span class="k">lambda</span> <span class="n">points</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+            <span class="n">h</span>
+            <span class="o">+</span> <span class="mf">0.6</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">radius</span><span class="p">,</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="p">)</span>
+                <span class="o">-</span> <span class="n">d</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="o">-</span> <span class="n">width</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">h</span><span class="p">,</span>
+            <span class="mf">0.06</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">air</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">),</span> <span class="n">pair</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cases</span><span class="p">,</span> <span class="n">coils</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">view</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">Camera</span><span class="p">(</span><span class="n">elevation</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=-</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">coil</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">coil</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">windings</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="s2">&quot;lower coil&quot;</span><span class="p">,</span> <span class="s2">&quot;upper coil&quot;</span><span class="p">))],</span>
+    <span class="n">camera</span><span class="o">=</span><span class="n">view</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;The two windings, 50 mm apart&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span>
+    <span class="n">meshes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">groups</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,),</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">camera</span><span class="o">=</span><span class="n">view</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">meshes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cell_count</span><span class="si">}</span><span class="s2"> tetrahedra&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Model</h4>
+<p>Each winding carries <span class="math">\(NI=100\)</span> ampere-turns spread uniformly over its cross-section (<code>SolenoidCurrent</code>, with the same dimensions as the STEP windings). The linear systems are solved with GMRES and the auxiliary-space preconditioner for edge elements (<code>AuxiliarySpaceMaxwell</code>: a discrete gradient and a nodal interpolation with algebraic multigrid on the nodal spaces).</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">numerics</span> <span class="o">=</span> <span class="n">Numerics</span><span class="p">(</span>
+    <span class="n">spatial</span><span class="o">=</span><span class="n">FiniteElement</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">Nedelec</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span>
+    <span class="n">linear_solver</span><span class="o">=</span><span class="n">GMRES</span><span class="p">(</span><span class="n">preconditioner</span><span class="o">=</span><span class="n">AuxiliarySpaceMaxwell</span><span class="p">()),</span>
+<span class="p">)</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Magnetostatics</span><span class="p">(</span>
+        <span class="n">domain</span><span class="o">=</span><span class="n">air</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
+        <span class="n">permeability</span><span class="o">=</span><span class="n">VacuumPermeability</span><span class="p">(),</span>
+        <span class="n">formulation</span><span class="o">=</span><span class="n">MagneticVectorPotential</span><span class="p">(</span><span class="n">gauge</span><span class="o">=</span><span class="n">CoulombGauge</span><span class="p">()),</span>
+        <span class="n">current_sources</span><span class="o">=</span><span class="n">pair</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">coils</span>
+<span class="p">]</span>
+<span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Simulation</span><span class="p">(</span>
+        <span class="n">problem</span><span class="o">=</span><span class="n">Problem</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Two coils&quot;</span><span class="p">,</span>
+            <span class="n">geometry</span><span class="o">=</span><span class="n">air</span><span class="p">,</span>
+            <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="p">,),</span>
+            <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">MagneticInsulation</span><span class="p">(</span><span class="n">boundary</span><span class="o">=</span><span class="n">faces</span><span class="o">.</span><span class="n">planes</span> <span class="o">|</span> <span class="n">faces</span><span class="o">.</span><span class="n">outer</span><span class="p">,</span> <span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span>
+        <span class="n">numerics</span><span class="o">=</span><span class="n">numerics</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">solve_stationary</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">magnetic_flux_density</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">meshes</span><span class="p">)</span>
+<span class="p">]</span></code></pre></div><div class="nb-md"><h4>Results</h4>
+<p>The force on each winding, <span class="math">\(F_z=-J\int B_r\,dV\)</span>, integrated over the cells of the winding (its embedded region, <code>region=coil.support</code>), four times the quarter, against the exact force.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">mu0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">VacuumPermeability</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">())</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">turns</span> <span class="o">*</span> <span class="n">current</span> <span class="o">/</span> <span class="n">width</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">radial</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">B</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="p">(</span><span class="n">B</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span>
+    <span class="n">p</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">forces</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span>
+        <span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">density</span> <span class="o">*</span> <span class="n">field</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">coil</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">radial</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">for</span> <span class="n">coil</span> <span class="ow">in</span> <span class="n">pair</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">pair</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">coils</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">nodes</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">legendre</span><span class="o">.</span><span class="n">leggauss</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">r</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">radius</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">density</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">mutual</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">mu0</span>
+    <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
+    <span class="o">*</span> <span class="p">((</span><span class="mi">2</span> <span class="o">/</span> <span class="n">k</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">ellipk</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">k</span> <span class="o">*</span> <span class="n">ellipe</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span>
+<span class="p">)(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">/</span> <span class="p">((</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">s</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+<span class="n">exact</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+    <span class="n">w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="o">*</span> <span class="n">w</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="o">*</span> <span class="p">(</span>
+        <span class="n">mutual</span><span class="p">(</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">d</span> <span class="o">+</span> <span class="n">z</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">z</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">-</span> <span class="n">mutual</span><span class="p">(</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">d</span> <span class="o">+</span> <span class="n">z</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">z</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1e-9</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="o">/</span> <span class="mf">2e-9</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;distance   cell size   tetrahedra   force on the upper coil [mN]   exact [mN]   deviation   (F_lower + F_upper) / F_upper&quot;</span>
+<span class="p">)</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">),</span> <span class="n">mesh</span><span class="p">,</span> <span class="p">(</span><span class="n">f_lower</span><span class="p">,</span> <span class="n">f_upper</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cases</span><span class="p">,</span> <span class="n">meshes</span><span class="p">,</span> <span class="n">forces</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mf">1e3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">d</span><span class="si">:</span><span class="s2">6.0f</span><span class="si">}</span><span class="s2"> mm </span><span class="si">{</span><span class="mf">1e3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">h</span><span class="si">:</span><span class="s2">8.1f</span><span class="si">}</span><span class="s2"> mm </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">cell_count</span><span class="si">:</span><span class="s2">12d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="mf">1e3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">f_upper</span><span class="si">:</span><span class="s2">22.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="mf">1e3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">exact</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">:</span><span class="s2">17.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">f_upper</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">exact</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">:</span><span class="s2">+10.3f</span><span class="si">}</span><span class="s2"> %&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="p">(</span><span class="n">f_lower</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">f_upper</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">f_upper</span><span class="si">:</span><span class="s2">+16.1e</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+<span class="n">thin</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">current</span><span class="o">**</span><span class="mi">2</span>
+    <span class="o">*</span> <span class="n">turns</span><span class="o">**</span><span class="mi">2</span>
+    <span class="o">*</span> <span class="p">(</span><span class="n">mutual</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">d</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="o">-</span> <span class="n">mutual</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">d</span> <span class="o">-</span> <span class="mf">1e-9</span><span class="p">))</span>
+    <span class="o">/</span> <span class="mf">2e-9</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;thin-loop formula for comparison: &quot;</span>
+    <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mf">1e3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">thin</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> mN at </span><span class="si">{</span><span class="mf">1e3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">d</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> mm&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span></code></pre></div><div class="nb-md"><h4>Figure</h4>
+<p>The field strength through the axis for the middle distance and the force against the distance.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">wide</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.012</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">section</span><span class="p">(</span>
+    <span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">plane</span><span class="o">=</span><span class="n">Plane</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">normal</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+    <span class="n">component</span><span class="o">=</span><span class="k">lambda</span> <span class="n">B</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="mf">1e3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">contours</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span>
+    <span class="n">subdivisions</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">symmetry</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;planes&quot;</span><span class="p">:</span> <span class="p">[((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))]},</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;|B| [mT]&quot;</span><span class="p">,</span>
+    <span class="n">xlimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">),</span>
+    <span class="n">ylimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">),</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;x [m]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;z [m]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Field of the two coils, 50 mm apart&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="mf">1e3</span> <span class="o">*</span> <span class="n">wide</span><span class="p">,</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;exact, windings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">exact</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">wide</span><span class="p">],</span>
+        <span class="s2">&quot;thin loops&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">thin</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">wide</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;simulation, upper coil&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">[</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">d</span> <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">forces</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;simulation, lower coil (sign reversed)&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">[</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">d</span> <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">forces</span><span class="p">],</span>
+        <span class="p">),</span>
+    <span class="p">},</span>
+    <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;logy&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;coil distance [mm]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;attractive force [mN]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Force between the coils&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Going further</h4>
+<p>Reverse one current to make the force repulsive, tilt the upper winding in <code>coil_force_verification_geometry.py</code> (half model) and compute the torque, or put an iron plate between the coils and watch the force change.</p></div></div><div class="button-row"><a class="button" href="/downloads/notebooks/coil_force_verification.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/coil_force_verification.py" download>Download the script (.py)</a><a class="button light" href="/downloads/notebooks/coil_force_verification.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/coil_force_verification_geometry.py" download>Download the geometry script (.py)</a></div><p class="source-note"><a href="https://johmey.github.io/OneSimulation-Showcase/examples/notebooks/coil_force_verification.html">Original OneSimulation Showcase entry</a></p></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

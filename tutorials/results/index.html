@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Read, visualize and export results · OneSimulation</title>
+<meta name="description" content="">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/results/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Read, visualize and export results · OneSimulation">
+<meta property="og:description" content="">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/results/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/tutorials/">Tutorial</a></p><h1>Read, visualize and export results</h1></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#choose-a-physical-view">4.1 Choose a physical view</a><a href="#use-a-built-in-viewer-or-customize-the-panel">4.2 Use a built-in viewer or customize the panel</a><a href="#keep-verification-and-presentation-together">4.3 Keep verification and presentation together</a></nav></aside><article class="prose reference"><h2 id="choose-a-physical-view"><span class="num">4.1</span> Choose a physical view</h2>
+<p><code>result.field(ref)</code> accepts the reference belonging to the model instance used in the solve. A <code>SolvedField</code> exposes its native <code>space</code>, <code>values</code>, <code>coefficients</code> and <code>unit</code>. The values of an FV scalar are usually cell-supported and the coefficients of a Nedelec field are edge moments. Use <code>evaluate(points)</code> for physical values at explicit world points. Use <code>at(time)</code> or <code>evaluate(points, time=...)</code> when selecting a retained state. Inspect <code>result.times</code> or the recorded output times before choosing frames. For line profiles, <code>field.sample(along=..., points=..., time=...)</code> and <code>result.sample(field=..., along=..., points=..., time=...)</code> use the sampling carrier rather than a reshaped coefficient vector.</p>
+<p><code>field.integrate(over=..., time=...)</code> is appropriate when the field and its support supply native integration. Use <code>region=</code> or <code>boundary=</code> for a named subset, and specify <code>component=</code> or <code>normal_component=True</code> when the physical integral is a scalar component or outward flux. Verify support, sign, and geometric measure. For example, a temperature integrated over a volume has units K m<span class="math">\(^3\)</span>. Dividing by the volume gives an average in K. A boundary flux integral can be a power, provided the flux is defined on that support with the correct outward normal. For discrete FV conservation, use the executed conservative face fluxes as in the thermal study.</p>
+<h2 id="use-a-built-in-viewer-or-customize-the-panel"><span class="num">4.2</span> Use a built-in viewer or customize the panel</h2>
+<p><code>field.plot(...)</code> offers an application-facing plot entry point. The visualization package also takes the <code>result.result_set</code> and <code>ref.field_id</code>. For example, <code>onesim.visualization.line_plot</code> accepts explicit <code>start=</code> and <code>end=</code> points. <code>slice_plot</code> accepts a <code>plane=</code> and can render the cut using the native carrier, with controls for time, component, and complex representation. <code>result_widget</code> gives a notebook viewer when the relevant optional dependencies are installed. Import the geometry and animation functions from their owning subpackages because the parent attributes with the same names refer to the packages.</p>
+<p>For a custom panel, first build arrays with well-defined shape and support. A regular cut can use <code>meshgrid</code>, one batched <code>evaluate</code> call, and a reshape that matches the grid order. For an unstructured surface, use its actual connectivity or native cut topology. Keep discontinuous cell values piecewise constant unless you explicitly describe the reconstruction used for display. Use an aligned coordinate and color scale for comparisons. For phasors choose real part, magnitude or phase and state the convention. For a transient animation, use a fixed color normalization and label the time of every frame.</p>
+<h2 id="keep-verification-and-presentation-together"><span class="num">4.3</span> Keep verification and presentation together</h2>
+<p>Save vector SVG or PDF for clean line art and text. Use PNG when the figure is dense or the target viewer requires a raster image. Save raw arrays with coordinates and units in CSV or NPZ, and include the runtime version, mesh and time parameters, metrics and export filenames in a small JSON record. Check those metrics before recording a successful run. <code>HDF5OutputSink</code> supplies a storage option for supported larger outputs. The memory sink holds selected snapshots in process memory. For long runs choose an explicit <code>ExecutionOptions</code> retention policy and verify that the requested fields and times remain available. Use the checkpoint API when continuation requires numerical history, for example after a multistep time method. A CSV of sampled fields represents observables and usually lacks the state and history needed for restart.</p>
+<pre class="code" data-lang="python"><code><span class="c1"># Run after the cantilever example.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;runtime&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">(</span><span class="s2">&quot;onesimulation&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;fine_cells&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="s2">&quot;element&quot;</span><span class="p">:</span> <span class="s2">&quot;Q2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tip_m&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+    <span class="s2">&quot;relative_mesh_change&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">coarse_tip</span> <span class="o">/</span> <span class="n">u</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span>
+    <span class="s2">&quot;figure&quot;</span><span class="p">:</span> <span class="s2">&quot;cantilever.svg&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="s2">&quot;cantilever-verification.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+<span class="p">)</span></code></pre></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

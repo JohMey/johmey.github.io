@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chemical kinetics and transport · OneSimulation</title>
+<meta name="description" content="Reaction balances, equilibrium, timescales and transport.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/chemistry/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chemical kinetics and transport · OneSimulation">
+<meta property="og:description" content="Reaction balances, equilibrium, timescales and transport.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/chemistry/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Chemical kinetics and transport</h1><p class="lead">Reaction balances, equilibrium, timescales and transport.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Species balances and reaction rates</a><a href="#boundary">Temperature, transport and stiffness</a><a href="#worked">Worked example and lab</a><a href="#onesimulation">Model the physics in OneSimulation</a><a href="#case-studies">Notebook case studies</a><a href="#recipes">Additional worked models</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Species balances and reaction rates</h2>
+<p>For a closed, well-mixed batch reactor of constant volume, the concentration of species \(i\) satisfies \(\dot c_i=\sum_j\nu_{ij}r_j(\mathbf c,T)\). Each stoichiometric coefficient \(\nu_{ij}\) is negative for a reactant and positive for a product. A linear combination \(\ell^T\mathbf c\) remains constant whenever \(\ell^T\nu=0\). These invariants provide checks independent of the kinetic model.</p>
+<p>For \(A\rightarrow B\) with first-order rate \(kc_A\), integrating \(\dot c_A=-kc_A\) gives \(c_A(t)=c_{A0}e^{-kt}\). In the reversible case \(A\rightleftharpoons B\), the relaxation rate is \(k_f+k_r\) and at equilibrium \(c_B/c_A=k_f/k_r\).</p>
+</section>
+<section>
+<h2 id="boundary">Temperature, transport and stiffness</h2>
+<p>The Arrhenius law \(k=A\exp[-E_a/(RT)]\) uses absolute temperature and activation energy per mole. A small temperature change can significantly change \(k\). Exothermic reaction and heat removal can introduce a second timescale. If important processes evolve at very different rates, compare a stable implicit integrator against explicit steps sufficiently small to resolve the fastest decay.</p>
+<p>A tubular reactor also transports species. Its cross-section-averaged equation adds axial advection and, where needed, axial dispersion. Choose boundary conditions from the flux balance at the inlet and outlet rather than applying the batch initial conditions in space.</p>
+</section>
+<section>
+<h2 id="worked">Worked example and lab</h2>
+<p>With \(c_{A0}=2\) mol/L and \(k=0.2\) s⁻¹, the half-life is \(3.466\) s and \(c_A(10~\mathrm{s})=0.271\) mol/L. With \(c_{B0}=0\), \(c_B(10~\mathrm{s})=1.729\) mol/L.</p>
+<ol><li>Run the first-order decay notebook and compare substrate and product against the exact curves.</li><li>Change (k) by a factor of ten and compare trajectories at the same dimensionless time (kt).</li><li>Use the reversible case to verify conservation of (A+B) and find the new relaxation timescale. Record the smallest concentration as a check on positivity.</li></ol>
+</section>
+<section><h2 id="onesimulation">Model the physics in OneSimulation</h2><p><code>onesim.physics.chemistry</code></p>
+<p>Choose <code>SpeciesTransport</code> for line advection, diffusion and decay. Use a <code>TransportSpecies</code> entry per stable species ID and obtain each field with <code>model.concentration(species_id)</code>. Initialize all transported concentrations on the same spatial support. Set diffusivity in m<span class="math">\(^2\)</span>/s and first-order decay in s<span class="math">\(^{-1}\)</span>. A periodic Fourier mode translates at the prescribed velocity and attenuates at a rate given by diffusion plus decay. For an open domain include boundary transport in the budget. For FD, FV, H1 and DG variants see <code>test_species_transport_flexibility.py</code>.</p>
+<pre class="code" data-lang="python"><code><span class="c1"># Use run_periodic_line from this chapter.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.fvm</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiniteVolume</span><span class="p">,</span> <span class="n">MUSCL</span><span class="p">,</span> <span class="n">Rusanov</span><span class="p">,</span> <span class="n">TwoPointDiffusion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeciesTransport</span><span class="p">,</span> <span class="n">TransportSpecies</span>
+
+<span class="n">line</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">v</span><span class="p">,</span> <span class="n">diffusion</span><span class="p">,</span> <span class="n">decay</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.2</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">SpeciesTransport</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">line</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">v</span><span class="p">,</span>
+    <span class="n">species</span><span class="o">=</span><span class="p">(</span><span class="n">TransportSpecies</span><span class="p">(</span><span class="s2">&quot;tracer&quot;</span><span class="p">,</span> <span class="n">diffusivity</span><span class="o">=</span><span class="n">diffusion</span><span class="p">,</span> <span class="n">decay_rate</span><span class="o">=</span><span class="n">decay</span><span class="p">),),</span>
+<span class="p">)</span>
+<span class="n">tracer</span> <span class="o">=</span> <span class="n">transport</span><span class="o">.</span><span class="n">concentration</span><span class="p">(</span><span class="s2">&quot;tracer&quot;</span><span class="p">)</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">48</span><span class="p">,</span> <span class="mf">0.1</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_periodic_line</span><span class="p">(</span>
+    <span class="n">line</span><span class="p">,</span> <span class="n">transport</span><span class="p">,</span> <span class="p">((</span><span class="n">tracer</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)),),</span>
+    <span class="n">Numerics</span><span class="p">(</span>
+        <span class="n">spatial</span><span class="o">=</span><span class="n">FiniteVolume</span><span class="p">(</span><span class="n">convection</span><span class="o">=</span><span class="n">Rusanov</span><span class="p">(),</span> <span class="n">reconstruction</span><span class="o">=</span><span class="n">MUSCL</span><span class="p">(),</span>
+                             <span class="n">diffusion</span><span class="o">=</span><span class="n">TwoPointDiffusion</span><span class="p">()),</span>
+        <span class="n">time_integrator</span><span class="o">=</span><span class="n">ClassicalRungeKutta4</span><span class="p">(),</span>
+    <span class="p">),</span>
+    <span class="n">cells</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">field</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">tracer</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">dof_coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">exact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">decay</span><span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">diffusion</span><span class="o">*</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">v</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">exact</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.002</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">onesimulation_plot_theme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">theme</span>
+
+<span class="n">theme</span><span class="o">.</span><span class="n">use_theme</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.8</span><span class="p">,</span><span class="mf">3.4</span><span class="p">),</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exact</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cell-average reference&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Species transport&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;World x [m]&quot;</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Tracer [</span><span class="si">{</span><span class="n">tracer</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-species-transport.png"><img loading="lazy" src="/showcase/figures/recipe-species-transport.png" alt="Figure computed with OneSimulation: recipe species transport"></a></figure>
+<p>For homogeneous kinetics, build <code>ReactionNetworkIR</code> from species and reaction declarations, use <code>ReactionKinetics</code>, and initialize each transported number density. <code>Chemistry</code> and <code>ChemistryKinetics</code> describe the evaluation contract for the network. Check stoichiometric invariants and the rate-law units before choosing a time integrator. Strongly separated reaction times suggest comparing against a small-step reference and using an implicit stage with a compatible rate derivative. <code>LumpedElectrode</code> composes Butler–Volmer reactions and a double layer. <code>LumpedBattery</code> uses <code>BatteryChemistry</code> for open-circuit and resistance closures. Plot voltage, state of charge and temperature against time using a clearly stated current sign. See <code>test_kinetics_input_flexibility.py</code> for a network-driven global model.</p></section><section><h2 id="case-studies">Notebook case studies</h2><ul><li><a href="/blog/first_order_reaction_decay/">First-order reaction decay</a></li><li><a href="/blog/reversible_reaction_equilibrium/">Reversible reaction equilibrium</a></li></ul></section><section><h2 id="recipes">Additional worked models</h2><h3 id="driven-redox-electrode"><span class="num">6.6.1</span> Driven redox electrode</h3>
+<p>Use explicit stoichiometry, an equilibrium-potential closure, and a current density. Track the overpotential through the electrode potential and the transfer of material between species.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LumpedElectrode</span><span class="p">,</span> <span class="n">ElectrochemicalReaction</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LumpedElectrode</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">ElectrochemicalReaction</span><span class="p">(</span><span class="s2">&quot;redox&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="mf">0.1</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">c</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="n">area</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">volume</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+    <span class="n">double_layer_capacitance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">applied_current_density</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">potential</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">concentration_A</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">concentration_B</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;potential&quot;</span><span class="p">,</span> <span class="s2">&quot;faradaic_current_density&quot;</span><span class="p">,</span> <span class="s2">&quot;concentration_B&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;concentration_B&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;concentration_B&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Driven redox electrode&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-lumped-electrode.png"><img loading="lazy" src="/showcase/figures/recipe-lumped-electrode.png" alt="Figure computed with OneSimulation: recipe lumped electrode"></a></figure>
+<h3 id="constant-current-battery-discharge"><span class="num">6.6.2</span> Constant-current battery discharge</h3>
+<p>Use a state-dependent open-circuit voltage and constant internal resistance. A positive current removes charge and generates ohmic heat.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LumpedBattery</span><span class="p">,</span> <span class="n">BatteryChemistry</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LumpedBattery</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">chemistry</span><span class="o">=</span><span class="n">BatteryChemistry</span><span class="p">(</span><span class="s2">&quot;cell&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="mi">3</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">s</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">),</span>
+    <span class="n">charge_capacity</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">current</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">thermal_capacity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">heat_transfer</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">ambient_temperature</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">state_of_charge</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">300.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;state_of_charge&quot;</span><span class="p">,</span> <span class="s2">&quot;terminal_voltage&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;state_of_charge&quot;</span><span class="p">],</span> <span class="mf">0.7</span> <span class="o">-</span> <span class="mf">0.03</span> <span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Constant-current battery discharge&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-lumped-battery.png"><img loading="lazy" src="/showcase/figures/recipe-lumped-battery.png" alt="Figure computed with OneSimulation: recipe lumped battery"></a></figure>
+<h3 id="closed-isomerization-reaction"><span class="num">6.6.3</span> Closed isomerization reaction</h3>
+<p>Declare atom-balanced species and one reaction. The constant rate coefficient multiplies the reactant number density. Number density moves between the two species while their sum stays fixed.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReactionIR</span><span class="p">,</span>
+    <span class="n">ReactionKinetics</span><span class="p">,</span>
+    <span class="n">ReactionNetworkIR</span><span class="p">,</span>
+    <span class="n">SpeciesIR</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">species</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+    <span class="n">SpeciesIR</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.66054e-27</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="p">((</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">reaction</span> <span class="o">=</span> <span class="n">ReactionIR</span><span class="p">(</span>
+    <span class="s2">&quot;conversion&quot;</span><span class="p">,</span> <span class="p">((</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="p">((</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),),</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">network</span> <span class="o">=</span> <span class="n">ReactionNetworkIR</span><span class="p">(</span><span class="s2">&quot;isomers&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="p">(</span><span class="n">reaction</span><span class="p">,),</span> <span class="n">strict_balance</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ReactionKinetics</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="n">network</span><span class="p">)</span>
+<span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">concentration</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">concentration</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.3</span> <span class="o">*</span> <span class="n">t</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Closed isomerization&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-reaction-kinetics.png"><img loading="lazy" src="/showcase/figures/recipe-reaction-kinetics.png" alt="Figure computed with OneSimulation: recipe reaction kinetics"></a></figure></section></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

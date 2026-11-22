@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geotechnics · OneSimulation</title>
+<meta name="description" content="Effective stress, groundwater flow and consolidation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/geotechnics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Geotechnics · OneSimulation">
+<meta property="og:description" content="Effective stress, groundwater flow and consolidation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/geotechnics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Geotechnics</h1><p class="lead">Effective stress, groundwater flow and consolidation.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Effective stress and pore pressure</a><a href="#boundary">Drained and undrained experiments</a><a href="#worked">Worked example and lab</a><a href="#onesimulation">Model the physics in OneSimulation</a><a href="#case-studies">Notebook case studies</a><a href="#recipes">Additional worked models</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Effective stress and pore pressure</h2>
+<p>In a saturated porous solid, total stress is carried by the solid skeleton and pore fluid. In this chapter compressive normal stresses are positive. Terzaghi effective stress then reads \(\boldsymbol\sigma'=\boldsymbol\sigma-u\mathbf I\), where \(u\) is pore pressure. For Biot poroelasticity the pressure term includes a coefficient \(\alpha\). Stating the sign convention is essential when importing stresses from a structural mechanics solver.</p>
+<p>Darcy’s law relates volumetric flow per unit area to the hydraulic head gradient. In one-dimensional consolidation with constant properties, linear compressibility and drainage at the boundary, excess pressure satisfies \(\partial_t u=c_v\,\partial_{zz}u\). The drainage distance sets the timescale.</p>
+</section>
+<section>
+<h2 id="boundary">Drained and undrained experiments</h2>
+<p>Short-time loading of a low-permeability saturated layer can produce a high excess pressure, while long-time drainage transfers load to the skeleton. For an oedometer, constrain lateral strain and prescribe either a permeable boundary \(u=0\) for excess pressure or an impermeable boundary \(\partial_n u=0\). Single and double drainage differ even when material properties are identical.</p>
+<p>With yield and plastic volume change, calibrate the stress–strain response separately from permeability. Small-strain linear consolidation gives a reference test before adding plasticity or stress-dependent parameters.</p>
+</section>
+<section>
+<h2 id="worked">Worked example and lab</h2>
+<p>For a 2 m layer with double drainage, the drainage distance is 1 m. With \(c_v=10^{-7}\) m²/s, the standard one-dimensional solution gives \(T_v\approx0.197\) at 50% average consolidation, so \(t_{50}=T_vH_d^2/c_v\approx22.8\) days. Single drainage doubles \(H_d\) and quadruples this time.</p>
+<ol><li>Specify initial excess pressure and boundary drainage for both cases. Compare average pressure decay on two grids at the same dimensionless time.</li><li>With the Cam Clay example, plot mean effective stress and deviatoric stress over the loading path. Mark the first departure from elastic response.</li><li>Report both the stress convention and the drainage conditions with the result.</li></ol>
+</section>
+<section><h2 id="onesimulation">Model the physics in OneSimulation</h2><p><code>onesim.physics.geotechnics</code></p>
+<p><code>GroundwaterFlow</code> advances hydraulic head with conductivity, specific storage and recharge. A spatially periodic mode with constant coefficients and zero recharge has mean head conserved and amplitude decaying with diffusivity <span class="math">\(K/S_s\)</span>. The shifted line in <code>test_public_groundwater.py</code> checks that the actual coordinate enters the source and initial field. Use FD central difference and central Laplacian on the uniform periodic example. Plot head and Darcy flux against physical distance.</p>
+<p><code>TerzaghiConsolidation</code> describes one-dimensional consolidation with prescribed total stress. <code>BiotConsolidation</code> adds elastic displacement and fluid-content coupling. Distinguish drained pressure conditions, prescribed outward discharge and impermeability. Read pore pressure and displacement together and check a storage or consolidation balance. <code>test_consolidation_method_flexibility.py</code> and <code>test_consolidation_physical_ports.py</code> show concrete declarations. For a saturation front use <code>BuckleyLeverettFlow</code> with a fractional-flow law such as <code>QuadraticCoreyFractionalFlow</code>, a saturation inlet and an outflow. Compare front position and water balance across meshes and inspect the bounds <span class="math">\(0\leq S\leq1\)</span>.</p></section><section><h2 id="case-studies">Notebook case studies</h2><ul><li><a href="/blog/mandel_cryer_consolidation/">Mandel-Cryer effect in a poroelastic sphere</a></li><li><a href="/blog/triaxial_oedometer_cam_clay/">Triaxial and oedometer tests with Modified Cam-Clay</a></li></ul></section><section><h2 id="recipes">Additional worked models</h2><p>This section includes the field-based declarations and the independently callable geotechnics service configurations. The configuration keys in the service recipes belong to the indicated provider.</p>
+<h3 id="one-dimensional-drainage-and-consolidation"><span class="num">6.9.1</span> One-dimensional drainage and consolidation</h3>
+<p>Drain one end and make the opposite end impermeable. The half-sine pressure mode satisfies both conditions. Keep pore pressure, strain and void ratio as separate initial fields.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.geotechnics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DrainedBoundary</span><span class="p">,</span>
+    <span class="n">ImpermeableBoundary</span><span class="p">,</span>
+    <span class="n">TerzaghiConsolidation</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">line</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">TerzaghiConsolidation</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+    <span class="n">permeability</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">fluid_viscosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">constrained_storage</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">constrained_compressibility</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+    <span class="n">total_stress</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">conditions</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">DrainedBoundary</span><span class="p">(</span><span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">start</span><span class="p">),</span>
+    <span class="n">ImpermeableBoundary</span><span class="p">(</span><span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">end</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">wave</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">end</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">line_experiment</span><span class="p">(</span>
+    <span class="n">line</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">pore_pressure</span><span class="o">=</span><span class="n">wave</span><span class="p">,</span> <span class="n">vertical_strain</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">void_ratio</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">FiniteDifference</span><span class="p">(</span><span class="n">gradient</span><span class="o">=</span><span class="n">CentralDifference</span><span class="p">(),</span> <span class="n">diffusion</span><span class="o">=</span><span class="n">CentralLaplacian</span><span class="p">()),</span>
+    <span class="n">cells</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span>
+    <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+    <span class="n">conditions</span><span class="o">=</span><span class="n">conditions</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">exact</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">wave</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">end</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">pore_pressure</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">exact</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">dof_coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">4e-4</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">profile_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Drained consolidation&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;pore_pressure&quot;</span><span class="p">,</span> <span class="s2">&quot;vertical_strain&quot;</span><span class="p">,</span> <span class="s2">&quot;void_ratio&quot;</span><span class="p">),</span>
+    <span class="n">reference</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;pore_pressure&quot;</span><span class="p">:</span> <span class="n">exact</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-terzaghi-consolidation.png"><img loading="lazy" src="/showcase/figures/recipe-terzaghi-consolidation.png" alt="Figure computed with OneSimulation: recipe terzaghi consolidation"></a></figure>
+<h3 id="waterflood-with-quadratic-corey-fractional-flow"><span class="num">6.9.2</span> Waterflood with quadratic Corey fractional flow</h3>
+<p>Feed water into a domain with low initial saturation. Water and oil fluxes partition the prescribed Darcy velocity. The saturation history advances with porosity in the storage term.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.geotechnics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BuckleyLeverettFlow</span><span class="p">,</span>
+    <span class="n">QuadraticCoreyFractionalFlow</span><span class="p">,</span>
+    <span class="n">SaturationInlet</span><span class="p">,</span>
+    <span class="n">SaturationOutflow</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">line</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">BuckleyLeverettFlow</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+    <span class="n">porosity</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">darcy_velocity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">fractional_flow</span><span class="o">=</span><span class="n">QuadraticCoreyFractionalFlow</span><span class="p">(</span><span class="n">viscosity_ratio</span><span class="o">=</span><span class="mf">0.7</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">conditions</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">SaturationInlet</span><span class="p">(</span><span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
+    <span class="n">SaturationOutflow</span><span class="p">(</span><span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">end</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">line_experiment</span><span class="p">(</span>
+    <span class="n">line</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">water_saturation</span><span class="o">=</span><span class="mf">0.15</span><span class="p">),</span>
+    <span class="n">FiniteVolume</span><span class="p">(</span><span class="n">convection</span><span class="o">=</span><span class="n">Rusanov</span><span class="p">()),</span>
+    <span class="n">cells</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+    <span class="n">end</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+    <span class="n">conditions</span><span class="o">=</span><span class="n">conditions</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">water_saturation</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<span class="k">assert</span> <span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">water_flux</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">oil_flux</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="mf">0.2</span>
+<span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">profile_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Waterflood saturation and phase fluxes&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;water_saturation&quot;</span><span class="p">,</span> <span class="s2">&quot;water_flux&quot;</span><span class="p">,</span> <span class="s2">&quot;oil_flux&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-buckley-leverett-flow.png"><img loading="lazy" src="/showcase/figures/recipe-buckley-leverett-flow.png" alt="Figure computed with OneSimulation: recipe buckley leverett flow"></a></figure>
+<h3 id="manufactured-three-dimensional-biot-patch"><span class="num">6.9.3</span> Manufactured three-dimensional Biot patch</h3>
+<p>The pressure trace is in pascals, while the initial state is fluid content. Apply a time-varying displacement and compare the recovered pore pressure and displacement to a manufactured field. The body force and supply make this a check of the full balance.</p>
+<pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">onesimulation_plot_theme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">theme</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d3</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructuredTetrahedralMesher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.fem</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiniteElement</span><span class="p">,</span> <span class="n">Lagrange</span><span class="p">,</span> <span class="n">Nitsche</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.linear</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseDirect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.nonlinear</span><span class="w"> </span><span class="kn">import</span> <span class="n">Newton</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">BackwardEuler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.geotechnics</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiotConsolidation</span><span class="p">,</span> <span class="n">PrescribedPorePressure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.solid_mechanics</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedDisplacement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.initial_conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InitialValue</span>
+
+<span class="n">box</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">BiotConsolidation</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
+    <span class="n">youngs_modulus</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">poisson_ratio</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">biot_coefficient</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">specific_storage</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">permeability</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">fluid_viscosity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">fluid_supply</span><span class="o">=</span><span class="mf">0.304</span><span class="p">,</span>
+    <span class="n">body_force</span><span class="o">=</span><span class="p">(</span><span class="mf">0.16</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">displacement</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">t</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pressure</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">time</span><span class="p">]</span>
+
+
+<span class="n">conditions</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">FixedDisplacement</span><span class="p">(</span><span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">displacement</span><span class="p">),</span>
+    <span class="n">PrescribedPorePressure</span><span class="p">(</span>
+        <span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">pressure</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">StructuredTetrahedralMesher</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+<span class="n">sim</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span>
+    <span class="n">problem</span><span class="o">=</span><span class="n">Problem</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Biot patch&quot;</span><span class="p">,</span>
+        <span class="n">geometry</span><span class="o">=</span><span class="n">box</span><span class="p">,</span>
+        <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="p">,),</span>
+        <span class="n">boundary_conditions</span><span class="o">=</span><span class="n">conditions</span><span class="p">,</span>
+        <span class="n">initial_conditions</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">InitialValue</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">fluid_content</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">x</span><span class="p">)),</span>
+        <span class="p">),</span>
+    <span class="p">),</span>
+    <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span>
+    <span class="n">numerics</span><span class="o">=</span><span class="n">Numerics</span><span class="p">(</span>
+        <span class="n">spatial</span><span class="o">=</span><span class="n">FiniteElement</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">Lagrange</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">boundary_enforcement</span><span class="o">=</span><span class="n">Nitsche</span><span class="p">()),</span>
+        <span class="n">linear_solver</span><span class="o">=</span><span class="n">SparseDirect</span><span class="p">(),</span>
+        <span class="n">time_integrator</span><span class="o">=</span><span class="n">BackwardEuler</span><span class="p">(),</span>
+        <span class="n">nonlinear_solver</span><span class="o">=</span><span class="n">Newton</span><span class="p">(</span>
+            <span class="n">linear_solver</span><span class="o">=</span><span class="n">SparseDirect</span><span class="p">(),</span>
+            <span class="n">jacobian</span><span class="o">=</span><span class="s2">&quot;analytic&quot;</span><span class="p">,</span>
+            <span class="n">absolute_tolerance</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span>
+            <span class="n">relative_tolerance</span><span class="o">=</span><span class="mf">1e-11</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span><span class="o">.</span><span class="n">require_valid</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">)))</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">pore_pressure</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">displacement</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">points</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mf">0.008</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-10</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="mf">0.0002</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">2e-11</span><span class="p">)</span>
+<span class="n">theme</span><span class="o">.</span><span class="n">use_theme</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.2</span><span class="p">,</span> <span class="mf">4.1</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span>
+<span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Pore pressure [Pa]&quot;</span><span class="p">)</span>
+<span class="n">b</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">1e6</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+<span class="n">b</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;World x [m]&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Displacement x [µm]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-biot-consolidation.png"><img loading="lazy" src="/showcase/figures/recipe-biot-consolidation.png" alt="Figure computed with OneSimulation: recipe biot consolidation"></a></figure>
+<h3 id="groundwater-provider-on-its-own-line-carrier"><span class="num">6.9.4</span> Groundwater provider on its own line carrier</h3>
+<p>Pass the initial hydraulic head array through the configuration and read the final head and Darcy flux on the returned coordinate array.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.geotechnics</span><span class="w"> </span><span class="kn">import</span> <span class="n">GroundwaterConfiguration</span><span class="p">,</span> <span class="n">GroundwaterPublicApi</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
+<span class="n">configuration</span> <span class="o">=</span> <span class="n">GroundwaterConfiguration</span><span class="p">(</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+        <span class="n">conductivity</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+        <span class="n">storage</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">initial_head</span><span class="o">=</span><span class="mi">2</span> <span class="o">+</span> <span class="n">wave</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">GroundwaterPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Groundwater provider on its own line carrier&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
+    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Head [m]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">head</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Darcy flux [m/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">darcy_flux</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-groundwater-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-groundwater-public-api.png" alt="Figure computed with OneSimulation: recipe groundwater public api"></a></figure>
+<h3 id="reduced-poromechanical-storage-and-displacement"><span class="num">6.9.5</span> Reduced poromechanical storage and displacement</h3>
+<p>Configure the pressure field and permeability of the line provider. The result also returns the elastic and storage energy diagnostics.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.geotechnics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PoromechanicsConfiguration</span><span class="p">,</span>
+    <span class="n">PoromechanicsPublicApi</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
+<span class="n">configuration</span> <span class="o">=</span> <span class="n">PoromechanicsConfiguration</span><span class="p">(</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+        <span class="n">initial_pore_pressure</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">wave</span><span class="p">,</span>
+        <span class="n">permeability</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">solid_mobility</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">PoromechanicsPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Reduced poromechanical storage and displacement&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
+    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Pore pressure [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">pore_pressure</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Displacement [m]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">displacement</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-poromechanics-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-poromechanics-public-api.png" alt="Figure computed with OneSimulation: recipe poromechanics public api"></a></figure>
+<h3 id="two-phase-reservoir-pressure-and-saturation"><span class="num">6.9.6</span> Two-phase reservoir pressure and saturation</h3>
+<p>Supply pressure and physical water saturation separately. The result preserves physical saturation and also reports effective saturation and phase fluxes.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.geotechnics</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReservoirConfiguration</span><span class="p">,</span> <span class="n">ReservoirPublicApi</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
+<span class="n">configuration</span> <span class="o">=</span> <span class="n">ReservoirConfiguration</span><span class="p">(</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+        <span class="n">initial_pressure</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">wave</span><span class="p">,</span>
+        <span class="n">initial_water_saturation</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">wave</span><span class="p">,</span>
+        <span class="n">permeability</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">ReservoirPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Two-phase reservoir pressure and saturation&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
+    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Pressure [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">pressure</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Water saturation [1]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">water_saturation</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Water flux [m/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">water_flux</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-reservoir-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-reservoir-public-api.png" alt="Figure computed with OneSimulation: recipe reservoir public api"></a></figure>
+<h3 id="reduced-rock-stress-and-yield-indicator"><span class="num">6.9.7</span> Reduced rock stress and yield indicator</h3>
+<p>A prescribed displacement field and confinement determine the axial stress and yield indicator. Use the plastic-strain field to track material evolution under loading.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.geotechnics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RockMechanicsConfiguration</span><span class="p">,</span>
+    <span class="n">RockMechanicsPublicApi</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
+<span class="n">configuration</span> <span class="o">=</span> <span class="n">RockMechanicsConfiguration</span><span class="p">(</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+        <span class="n">initial_displacement</span><span class="o">=</span><span class="mf">0.02</span> <span class="o">*</span> <span class="n">wave</span><span class="p">,</span>
+        <span class="n">confining_pressure</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">mobility</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">RockMechanicsPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Reduced rock stress and yield indicator&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
+    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Axial stress [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">axial_stress</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Yield indicator [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">yield_function</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Plastic strain [1]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">equivalent_plastic_strain</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-rock-mechanics-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-rock-mechanics-public-api.png" alt="Figure computed with OneSimulation: recipe rock mechanics public api"></a></figure>
+<h3 id="reduced-soil-consolidation-and-effective-stress"><span class="num">6.9.8</span> Reduced soil consolidation and effective stress</h3>
+<p>Initialize pore pressure and specify the total stress. The output separates pore pressure, effective stress and settlement.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.geotechnics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SoilMechanicsConfiguration</span><span class="p">,</span>
+    <span class="n">SoilMechanicsPublicApi</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
+<span class="n">configuration</span> <span class="o">=</span> <span class="n">SoilMechanicsConfiguration</span><span class="p">(</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+        <span class="n">initial_pore_pressure</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">wave</span><span class="p">,</span>
+        <span class="n">total_stress</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">permeability</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">SoilMechanicsPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Reduced soil consolidation and effective stress&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
+    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Pore pressure [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">pore_pressure</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Settlement [m]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">settlement</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Effective stress [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">effective_stress</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-soil-mechanics-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-soil-mechanics-public-api.png" alt="Figure computed with OneSimulation: recipe soil mechanics public api"></a></figure></section></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

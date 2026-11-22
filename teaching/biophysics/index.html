@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biophysics · OneSimulation</title>
+<meta name="description" content="Transport, cellular and physiological models, and compartment balances.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/biophysics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Biophysics · OneSimulation">
+<meta property="og:description" content="Transport, cellular and physiological models, and compartment balances.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/biophysics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Biophysics</h1><p class="lead">Transport, cellular and physiological models, and compartment balances.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Transport, reaction and measurable state</a><a href="#boundary">A lumped uptake model</a><a href="#worked">Worked example and lab</a><a href="#onesimulation">Model the physics in OneSimulation</a><a href="#case-studies">Notebook case studies</a><a href="#recipes">Additional worked models</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Transport, reaction and measurable state</h2>
+<p>At the continuum scale, a solute concentration \(c\) can diffuse, move with a carrier fluid \(\mathbf u\), and be created or consumed by reactions. Conservation over a control volume gives</p>
+<div class="math display">\[\partial_t c+\nabla\cdot(c\mathbf u-D\nabla c)=R(c).\]</div>
+<p>A prescribed concentration represents equilibration with a reservoir. A no-flux wall instead constrains the normal total flux. With no flux anywhere, the domain integral changes only through \(R\). When modelling uptake, state which compartment loses the solute and which observable represents uptake.</p>
+</section>
+<section>
+<h2 id="boundary">A lumped uptake model</h2>
+<p>If mixing is rapid relative to uptake, concentration is approximately uniform. With Michaelis–Menten uptake \(R=-V_\mathrm{max}c/(K_m+c)\), the rate is first order for \(c\ll K_m\) and tends to a constant for \(c\gg K_m\). Integration gives \(t=[c_0-c+K_m\ln(c_0/c)]/V_\mathrm{max}\), a reference that covers both limits.</p>
+<p>The model requires positive concentration and consistent concentration units for \(c\) and \(K_m\). This is a model of saturation, with the coefficients and mixing assumption specified separately for each system.</p>
+</section>
+<section>
+<h2 id="worked">Worked example and lab</h2>
+<p>For \(c_0=2\) mmol/L, \(K_m=1\) mmol/L and \(V_\mathrm{max}=0.2\) mmol/(L·s), reaching \(c=1\) mmol/L takes \((1+\ln2)/0.2=8.47\) s.</p>
+<ol><li>Integrate the lumped uptake equation at three time step sizes. Estimate the crossing time from interpolated output and compare with 8.47 s.</li><li>Compare the initial uptake rate at (0.01K_m), (K_m) and (100K_m) with the two limiting laws.</li><li>For a spatial transport problem, evaluate the diffusion time (L^2/D) and uptake time (K_m/V_mathrm{max}). Use their ratio to decide whether the lumped assumption is appropriate.</li></ol>
+</section>
+<section><h2 id="onesimulation">Model the physics in OneSimulation</h2><p><code>onesim.physics.biophysics</code></p>
+<p><code>PassiveMembrane</code> models an electrical compartment, <code>OrganClearance</code> a well-mixed amount and elimination balance, <code>CompliantVessels</code> two pressure compartments linked by a <code>VesselSegment</code>, and <code>AxialTissue</code> a mechanical mass connected through a <code>TissueElement</code>. These use global degrees of freedom. Set the initial voltage, amount, pressures or mechanical state before a transient solve. Choose a small explicit step for a first linear comparison and use a supported implicit method for stiff relaxation. The Bioheat provider is a separate thermal result and provider route. For a coupled example, <code>test_biophysics_input_flexibility.py</code> exchanges global typed outputs and inputs and compares with a matrix exponential.</p>
+<pre class="code" data-lang="python"><code><span class="c1"># Use run_lumped and scalar_series from the cooling chapter.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrganClearance</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">organ</span> <span class="o">=</span> <span class="n">OrganClearance</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">clearance</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="n">run_lumped</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span> <span class="n">organ</span><span class="p">,</span> <span class="p">((</span><span class="n">organ</span><span class="o">.</span><span class="n">amount</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),),</span>
+    <span class="p">(</span><span class="n">organ</span><span class="o">.</span><span class="n">amount</span><span class="p">,</span> <span class="n">organ</span><span class="o">.</span><span class="n">concentration</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+    <span class="n">scalar_series</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">organ</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">time</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span>
+<span class="p">)</span></code></pre></section><section><h2 id="case-studies">Notebook case studies</h2><ul><li><a href="/blog/cable_equation_steady/">Steady cable equation</a></li><li><a href="/blog/arterial_pulse_wave_speed/">Arterial pulse wave speed</a></li><li><a href="/blog/human_body_lumped_vibration/">Lumped model of a seated human body</a></li></ul></section><section><h2 id="recipes">Additional worked models</h2><p>This section includes the field-based declarations and the independently callable biophysics service configurations. The configuration keys in the service recipes belong to the indicated provider.</p>
+<h3 id="clearance-of-a-well-mixed-dose"><span class="num">6.5.1</span> Clearance of a well-mixed dose</h3>
+<p>The initial amount is divided by the compartment volume to obtain concentration. With zero infusion, the amount decays at clearance divided by volume.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrganClearance</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">OrganClearance</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">volume</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">clearance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">amount</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">,</span> <span class="s2">&quot;concentration&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination_rate&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">t</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Clearance of a well-mixed dose&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-organ-clearance.png"><img loading="lazy" src="/showcase/figures/recipe-organ-clearance.png" alt="Figure computed with OneSimulation: recipe organ clearance"></a></figure>
+<h3 id="passive-membrane-relaxation"><span class="num">6.5.2</span> Passive membrane relaxation</h3>
+<p>A charged membrane relaxes toward its reversal potential. The voltage and signed leak current expose the capacitive and conductive parts of the balance.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">PassiveMembrane</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PassiveMembrane</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">capacitance</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">conductance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">reversal_potential</span><span class="o">=-</span><span class="mf">0.065</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">voltage</span><span class="o">=-</span><span class="mf">0.02</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;voltage&quot;</span><span class="p">,</span> <span class="s2">&quot;leak_current&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;voltage&quot;</span><span class="p">],</span> <span class="o">-</span><span class="mf">0.065</span> <span class="o">+</span> <span class="mf">0.045</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">t</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span>
+<span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Passive membrane relaxation&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-passive-membrane.png"><img loading="lazy" src="/showcase/figures/recipe-passive-membrane.png" alt="Figure computed with OneSimulation: recipe passive membrane"></a></figure>
+<h3 id="pressure-exchange-across-a-vessel-segment"><span class="num">6.5.3</span> Pressure exchange across a vessel segment</h3>
+<p>Two compliances exchange fluid through a resistive segment. Their compliance-weighted pressure sum is constant without external flow.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompliantVessels</span><span class="p">,</span> <span class="n">VesselSegment</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">CompliantVessels</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">upstream_compliance</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">downstream_compliance</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">vessel</span><span class="o">=</span><span class="n">VesselSegment</span><span class="p">(</span><span class="s2">&quot;bridge&quot;</span><span class="p">,</span> <span class="s2">&quot;up&quot;</span><span class="p">,</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">upstream_pressure</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">downstream_pressure</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;upstream_pressure&quot;</span><span class="p">,</span> <span class="s2">&quot;downstream_pressure&quot;</span><span class="p">,</span> <span class="s2">&quot;flow&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;upstream_pressure&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;downstream_pressure&quot;</span><span class="p">],</span> <span class="mf">6.0</span>
+<span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Pressure exchange across a vessel segment&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-compliant-vessels.png"><img loading="lazy" src="/showcase/figures/recipe-compliant-vessels.png" alt="Figure computed with OneSimulation: recipe compliant vessels"></a></figure>
+<h3 id="damped-axial-tissue-motion"><span class="num">6.5.4</span> Damped axial tissue motion</h3>
+<p>An axial element stores and dissipates mechanical work. The mass displacement is the input to the tissue element strain and force calculation.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxialTissue</span><span class="p">,</span> <span class="n">TissueElement</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AxialTissue</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">mass</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">element</span><span class="o">=</span><span class="n">TissueElement</span><span class="p">(</span><span class="s2">&quot;fiber&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stiffness</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">rest_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="mf">0.4</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">displacement</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;displacement&quot;</span><span class="p">,</span> <span class="s2">&quot;strain&quot;</span><span class="p">,</span> <span class="s2">&quot;element_force&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;strain&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;displacement&quot;</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Damped axial tissue motion&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-axial-tissue.png"><img loading="lazy" src="/showcase/figures/recipe-axial-tissue.png" alt="Figure computed with OneSimulation: recipe axial tissue"></a></figure>
+<h3 id="bioelectrical-provider-with-an-explicit-membrane-state"><span class="num">6.5.5</span> Bioelectrical provider with an explicit membrane state</h3>
+<p>The facade consumes a method-neutral initial-value problem and a separate numerical configuration. The state and ion list belong to the biophysical provider contract.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BioelectricalConfiguration</span><span class="p">,</span>
+    <span class="n">BioelectricalPublicApi</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics.bioelectrical.models.bioelectrical_systems.state</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BioelectricalState</span><span class="p">,</span>
+    <span class="n">IonSpecies</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.problem_definition.declarations.physics.models.problem</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InitialValueProblem</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">InitialValueProblem</span><span class="p">(</span>
+    <span class="s2">&quot;Membrane with a leak&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bioelectrical&quot;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">BioelectricalState</span><span class="p">(</span><span class="n">voltage</span><span class="o">=-</span><span class="mf">0.04</span> <span class="o">+</span> <span class="mf">0.005</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)),</span>
+    <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;periodic&quot;</span><span class="p">,),</span>
+<span class="p">)</span>
+<span class="n">configuration</span> <span class="o">=</span> <span class="n">BioelectricalConfiguration</span><span class="p">(</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">cell_count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+        <span class="n">species</span><span class="o">=</span><span class="p">(</span><span class="n">IonSpecies</span><span class="p">(</span><span class="s2">&quot;leak&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.065</span><span class="p">),),</span>
+        <span class="n">diffusion</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">BioelectricalPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">,</span> <span class="n">problem</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Membrane and leak current&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="s2">&quot;Coordinate [m]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Voltage [V]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">voltage</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Ionic current [A/m2]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">ionic_currents</span><span class="p">[</span><span class="s2">&quot;leak&quot;</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-bioelectrical-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-bioelectrical-public-api.png" alt="Figure computed with OneSimulation: recipe bioelectrical public api"></a></figure>
+<h3 id="circulatory-service-with-compartment-pressures"><span class="num">6.5.6</span> Circulatory service with compartment pressures</h3>
+<p>Declare the network geometry as named compartment IDs and segment endpoints. The problem supplies the initial pressures and the configuration supplies compliances and resistance.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CirculatoryConfiguration</span><span class="p">,</span>
+    <span class="n">CirculatoryPublicApi</span><span class="p">,</span>
+    <span class="n">VesselSegment</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics.circulation.models.circulatory_systems.state</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CirculatoryState</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.problem_definition.declarations.physics.models.problem</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InitialValueProblem</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">InitialValueProblem</span><span class="p">(</span>
+    <span class="s2">&quot;Closed circulation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;circulation&quot;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">CirculatoryState</span><span class="p">({</span><span class="s2">&quot;up&quot;</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span> <span class="s2">&quot;down&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}),</span>
+    <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;closed&quot;</span><span class="p">,),</span>
+<span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">run_service</span><span class="p">(</span>
+        <span class="n">CirculatoryPublicApi</span><span class="p">(),</span>
+        <span class="n">CirculatoryConfiguration</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">compliances</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;up&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;down&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">},</span>
+                <span class="n">segments</span><span class="o">=</span><span class="p">(</span><span class="n">VesselSegment</span><span class="p">(</span><span class="s2">&quot;bridge&quot;</span><span class="p">,</span> <span class="s2">&quot;up&quot;</span><span class="p">,</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),),</span>
+                <span class="n">final_time</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">end</span><span class="p">),</span>
+                <span class="n">time_step</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">problem</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">t</span>
+<span class="p">]</span>
+<span class="n">up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">pressures</span><span class="p">[</span><span class="s2">&quot;up&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span>
+<span class="n">down</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">pressures</span><span class="p">[</span><span class="s2">&quot;down&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">up</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">down</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Closed circulation&quot;</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="s2">&quot;Independent run end time [s]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Upstream pressure [Pa]&quot;</span><span class="p">,</span> <span class="n">up</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Downstream pressure [Pa]&quot;</span><span class="p">,</span> <span class="n">down</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-circulatory-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-circulatory-public-api.png" alt="Figure computed with OneSimulation: recipe circulatory public api"></a></figure>
+<h3 id="organ-service-with-a-species-specific-clearance"><span class="num">6.5.7</span> Organ service with a species-specific clearance</h3>
+<p>The state indexes amounts by organ and species. Clearances are keyed by the same identifiers, and the result keeps both local concentrations and global amounts.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrganConfiguration</span><span class="p">,</span> <span class="n">OrganPublicApi</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics.organs.models.organ_models.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrganState</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.problem_definition.declarations.physics.models.problem</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InitialValueProblem</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">InitialValueProblem</span><span class="p">(</span>
+    <span class="s2">&quot;Clear a dose&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;organ&quot;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">OrganState</span><span class="p">((</span><span class="s2">&quot;body&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="s2">&quot;tracer&quot;</span><span class="p">,),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">]])),</span>
+    <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;closed&quot;</span><span class="p">,),</span>
+<span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">run_service</span><span class="p">(</span>
+        <span class="n">OrganPublicApi</span><span class="p">(),</span>
+        <span class="n">OrganConfiguration</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">volumes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">},</span>
+                <span class="n">clearances</span><span class="o">=</span><span class="p">{(</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;tracer&quot;</span><span class="p">):</span> <span class="mf">1.0</span><span class="p">},</span>
+                <span class="n">final_time</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">end</span><span class="p">),</span>
+                <span class="n">time_step</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">problem</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">t</span>
+<span class="p">]</span>
+<span class="n">amount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">total_amounts</span><span class="p">[</span><span class="s2">&quot;tracer&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">amount</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">t</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Organ clearance&quot;</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="s2">&quot;Independent run end time [s]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Tracer amount [mol]&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-organ-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-organ-public-api.png" alt="Figure computed with OneSimulation: recipe organ public api"></a></figure>
+<h3 id="tissue-service-with-a-fixed-node-and-an-axial-element"><span class="num">6.5.8</span> Tissue service with a fixed node and an axial element</h3>
+<p>Keep one node fixed and release a stretched element. Positions and velocities are node state. Force is an element diagnostic.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TissueConfiguration</span><span class="p">,</span>
+    <span class="n">TissuePublicApi</span><span class="p">,</span>
+    <span class="n">TissueElement</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics.tissue.models.tissue_mechanics.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">TissueState</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.problem_definition.declarations.physics.models.problem</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InitialValueProblem</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">InitialValueProblem</span><span class="p">(</span>
+    <span class="s2">&quot;Axial tissue&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;tissue&quot;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span>
+    <span class="n">TissueState</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span>
+    <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;fixed&quot;</span><span class="p">,),</span>
+<span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">run_service</span><span class="p">(</span>
+        <span class="n">TissuePublicApi</span><span class="p">(),</span>
+        <span class="n">TissueConfiguration</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">masses</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+                <span class="n">elements</span><span class="o">=</span><span class="p">(</span>
+                    <span class="n">TissueElement</span><span class="p">(</span>
+                        <span class="s2">&quot;fiber&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stiffness</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">rest_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="mf">0.4</span>
+                    <span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">fixed_nodes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span>
+                <span class="n">final_time</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">end</span><span class="p">),</span>
+                <span class="n">time_step</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">problem</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">t</span>
+<span class="p">]</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Axial tissue element&quot;</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="s2">&quot;Independent run end time [s]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Moving node [m]&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]),</span>
+    <span class="p">(</span><span class="s2">&quot;Element force [N]&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">element_forces</span><span class="p">[</span><span class="s2">&quot;fiber&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-tissue-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-tissue-public-api.png" alt="Figure computed with OneSimulation: recipe tissue public api"></a></figure>
+<h3 id="bioheat-provider-with-perfusion-and-an-external-source"><span class="num">6.5.9</span> Bioheat provider with perfusion and an external source</h3>
+<p>Set the conductive and perfusion coefficients explicitly. The returned thermal profile is evaluated on the provider's line carrier.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.biophysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioheatProvider</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">BioheatProvider</span><span class="p">(</span>
+    <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+    <span class="n">perfusion_capacity_rate</span><span class="o">=</span><span class="mf">3e4</span><span class="p">,</span>
+    <span class="n">blood_temperature</span><span class="o">=</span><span class="mf">310.0</span><span class="p">,</span>
+    <span class="n">external_heat</span><span class="o">=</span><span class="mf">2e4</span><span class="p">,</span>
+    <span class="n">initial_temperature</span><span class="o">=</span><span class="mf">305.0</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+    <span class="n">final_time</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+    <span class="n">time_step</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Bioheat with perfusion&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
+    <span class="s2">&quot;Coordinate [m]&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;Temperature [K]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">temperature</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-bioheat-provider.png"><img loading="lazy" src="/showcase/figures/recipe-bioheat-provider.png" alt="Figure computed with OneSimulation: recipe bioheat provider"></a></figure></section></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

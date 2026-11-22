@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consecutive reactions A to B to C · OneSimulation</title>
+<meta name="description" content="A reaction chain A to B to C; the intermediate peak is graded against the series solution.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/blog/consecutive_reactions/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Consecutive reactions A to B to C · OneSimulation">
+<meta property="og:description" content="A reaction chain A to B to C; the intermediate peak is graded against the series solution.">
+<meta property="og:url" content="https://onesimulation.onrender.com/blog/consecutive_reactions/">
+<meta property="og:image" content="https://onesimulation.onrender.com/showcase/figures/library/consecutive_reactions.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/" aria-current="location">Blog</a><a href="/teaching/">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/blog/">Notebook blog</a> / <a href="/blog/#chemistry">Chemistry</a></p><h1>Consecutive reactions A to B to C</h1><p class="lead">A reaction chain A to B to C; the intermediate peak is graded against the series solution.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#what">What it computes</a><a href="#checks">What it checks</a><a href="#notebook">The notebook</a></nav></aside><article class="prose reference"><p class="study-note">To reproduce the case, put its notebook and accompanying inputs in the same folder. Use the Python environment set up in the <a href="/tutorials/install/">installation tutorial</a>. Start with the original parameters and compare the result with the check reported below.</p><div class="chips"><span>0D kinetics</span><span>Runge-Kutta 4</span><span>Closed-form check</span></div><div class="button-row"><a class="button" href="/downloads/notebooks/consecutive_reactions.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/consecutive_reactions.py" download>Download the script (.py)</a></div><figure><img loading="lazy" src="/showcase/figures/library/consecutive_reactions.png" alt="Consecutive reactions A to B to C"><figcaption>Consecutive reactions A to B to C. Run the notebook to produce its own figures.</figcaption></figure><h2 id="what">What it computes</h2><p>OneSimulation integrates the two sequential mass-action reactions in time on a homogeneous (0D) network.</p><h2 id="checks">What it checks</h2><p>The intermediate peak height and time match the closed-form series solution, with mass conserved.</p><h2 id="notebook">The notebook</h2><p class="muted">The complete notebook, cell by cell. Run it to produce the figures and the comparison printout.</p><div class="notebook"><div class="nb-md"><p>A species <span class="math">\(A\)</span> reacts to an intermediate <span class="math">\(B\)</span>, which in turn reacts to a final product <span class="math">\(C\)</span>, in a homogeneous, well-mixed (0D) batch reactor:</p>
+<div class="math display">\[A \xrightarrow{\;k_1\;} B \xrightarrow{\;k_2\;} C .\]</div>
+<p>With first-order (mass-action) rate laws the homogeneous balances are</p>
+<div class="math display">\[\frac{dC_A}{dt}=-k_1 C_A,\quad
+  \frac{dC_B}{dt}=k_1 C_A-k_2 C_B,\quad
+  \frac{dC_C}{dt}=k_2 C_B,\]</div>
+<p>with <span class="math">\(C_A(0)=C_{A0}\)</span>, <span class="math">\(C_B(0)=C_C(0)=0\)</span>. OneSimulation integrates the network on a lumped (0D) domain with an explicit classical Runge-Kutta scheme.</p>
+<p><strong>Reference.</strong> For <span class="math">\(k_1\neq k_2\)</span> the classical closed-form solution is</p>
+<div class="math display">\[C_A=C_{A0}e^{-k_1 t},\quad
+  C_B=C_{A0}\frac{k_1}{k_2-k_1}\bigl(e^{-k_1 t}-e^{-k_2 t}\bigr),\quad
+  C_C=C_{A0}-C_A-C_B .\]</div>
+<p>The intermediate <span class="math">\(C_B\)</span> reaches a maximum at <span class="math">\(t_{\max}=\dfrac{\ln(k_2/k_1)}{k_2-k_1}\)</span>. We compare the transient and the peak.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LumpedDomain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LumpedMesh</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.discretization</span><span class="w"> </span><span class="kn">import</span> <span class="n">LumpedParameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassicalRungeKutta4</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReactionIR</span><span class="p">,</span>
+    <span class="n">ReactionKinetics</span><span class="p">,</span>
+    <span class="n">ReactionNetworkIR</span><span class="p">,</span>
+    <span class="n">SpeciesIR</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.initial_conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InitialValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span><span class="p">,</span> <span class="n">theme</span>
+
+<span class="n">theme</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Parameters</h4>
+<p>The values are freely adjustable. With <span class="math">\(k_1\)</span> and <span class="math">\(k_2\)</span> of different size the intermediate <span class="math">\(B\)</span> builds up and then decays, giving a clear interior peak.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">k1</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">k2</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">C_A0</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="n">t_peak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">k2</span> <span class="o">/</span> <span class="n">k1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">k2</span> <span class="o">-</span> <span class="n">k1</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="mf">6.0</span> <span class="o">/</span> <span class="nb">min</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">)</span>
+<span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.02</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;k1 = </span><span class="si">{</span><span class="n">k1</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> 1/s,  k2 = </span><span class="si">{</span><span class="n">k2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> 1/s,  intermediate peak at t = </span><span class="si">{</span><span class="n">t_peak</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span>
+<span class="p">)</span></code></pre></div><div class="nb-md"><h4>Model</h4>
+<p>Three species (<span class="math">\(A\)</span>, <span class="math">\(B\)</span>, <span class="math">\(C\)</span>) and two irreversible reactions with constant rate coefficients, in a single lumped control volume.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">network</span> <span class="o">=</span> <span class="n">ReactionNetworkIR</span><span class="p">(</span>
+    <span class="s2">&quot;consecutive_chain&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="n">species</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">SpeciesIR</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-27</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+        <span class="n">SpeciesIR</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-27</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+        <span class="n">SpeciesIR</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-27</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+    <span class="p">),</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">ReactionIR</span><span class="p">(</span><span class="s2">&quot;step1&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">k1</span><span class="p">}),</span>
+        <span class="n">ReactionIR</span><span class="p">(</span><span class="s2">&quot;step2&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">k2</span><span class="p">}),</span>
+    <span class="p">),</span>
+    <span class="n">strict_balance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ReactionKinetics</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">300.0</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="n">network</span><span class="p">)</span>
+<span class="n">C_A</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">concentration</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+<span class="n">C_B</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">concentration</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="n">C_C</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">concentration</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Consecutive reactions&quot;</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
+    <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="p">,),</span>
+    <span class="n">initial_conditions</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">InitialValue</span><span class="p">(</span><span class="n">C_A</span><span class="p">,</span> <span class="n">C_A0</span><span class="p">),</span>
+        <span class="n">InitialValue</span><span class="p">(</span><span class="n">C_B</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">InitialValue</span><span class="p">(</span><span class="n">C_C</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span>
+    <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+    <span class="n">mesh</span><span class="o">=</span><span class="n">LumpedMesh</span><span class="p">(</span><span class="n">domain</span><span class="p">),</span>
+    <span class="n">numerics</span><span class="o">=</span><span class="n">Numerics</span><span class="p">(</span>
+        <span class="n">spatial</span><span class="o">=</span><span class="n">LumpedParameters</span><span class="p">(),</span>
+        <span class="n">time_integrator</span><span class="o">=</span><span class="n">ClassicalRungeKutta4</span><span class="p">(),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span><span class="o">.</span><span class="n">require_valid</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">end_time</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="n">time_step</span><span class="p">)</span></code></pre></div><div class="nb-md"><h4>Comparison with the series solution</h4>
+<p>The stored concentration histories are compared, time by time, with the closed-form solution, and the intermediate peak is compared with its analytic height and position.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">times</span><span class="p">,</span> <span class="n">num_A</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">C_A</span><span class="p">)</span><span class="o">.</span><span class="n">time_series</span><span class="p">()</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">num_B</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">C_B</span><span class="p">)</span><span class="o">.</span><span class="n">time_series</span><span class="p">()</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">num_C</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">C_C</span><span class="p">)</span><span class="o">.</span><span class="n">time_series</span><span class="p">()</span>
+
+<span class="n">exact_A</span> <span class="o">=</span> <span class="n">C_A0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k1</span> <span class="o">*</span> <span class="n">times</span><span class="p">)</span>
+<span class="n">exact_B</span> <span class="o">=</span> <span class="n">C_A0</span> <span class="o">*</span> <span class="n">k1</span> <span class="o">/</span> <span class="p">(</span><span class="n">k2</span> <span class="o">-</span> <span class="n">k1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k1</span> <span class="o">*</span> <span class="n">times</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k2</span> <span class="o">*</span> <span class="n">times</span><span class="p">))</span>
+<span class="n">exact_C</span> <span class="o">=</span> <span class="n">C_A0</span> <span class="o">-</span> <span class="n">exact_A</span> <span class="o">-</span> <span class="n">exact_B</span>
+
+<span class="n">err</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+    <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">num_A</span> <span class="o">-</span> <span class="n">exact_A</span><span class="p">))),</span>
+    <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">num_B</span> <span class="o">-</span> <span class="n">exact_B</span><span class="p">))),</span>
+    <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">num_C</span> <span class="o">-</span> <span class="n">exact_C</span><span class="p">))),</span>
+<span class="p">)</span>
+<span class="n">rel_error</span> <span class="o">=</span> <span class="n">err</span> <span class="o">/</span> <span class="n">C_A0</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Maximum absolute error against the series: </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> mol/m^3&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;  (</span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rel_error</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> % of C_A0)&quot;</span>
+<span class="p">)</span>
+
+<span class="n">B_peak_exact</span> <span class="o">=</span> <span class="n">C_A0</span> <span class="o">*</span> <span class="p">(</span><span class="n">k1</span> <span class="o">/</span> <span class="n">k2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">k2</span> <span class="o">/</span> <span class="p">(</span><span class="n">k2</span> <span class="o">-</span> <span class="n">k1</span><span class="p">))</span>
+<span class="n">i_peak</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">num_B</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;intermediate peak: numeric C_B_max = </span><span class="si">{</span><span class="n">num_B</span><span class="p">[</span><span class="n">i_peak</span><span class="p">]</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> at t = </span><span class="si">{</span><span class="n">times</span><span class="p">[</span><span class="n">i_peak</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s,&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;  analytic C_B_max = </span><span class="si">{</span><span class="n">B_peak_exact</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> at t = </span><span class="si">{</span><span class="n">t_peak</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span>
+<span class="p">)</span>
+
+<span class="n">mass_error</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">num_A</span> <span class="o">+</span> <span class="n">num_B</span> <span class="o">+</span> <span class="n">num_C</span> <span class="o">-</span> <span class="n">C_A0</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Maximum mass-balance error C_A+C_B+C_C-C_A0: </span><span class="si">{</span><span class="n">mass_error</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> mol/m^3&quot;</span><span class="p">)</span></code></pre></div><div class="nb-md"><h4>Figure</h4></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">t_fine</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+<span class="n">shown</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">//</span> <span class="mi">40</span><span class="p">))</span>
+<span class="n">fine_A</span> <span class="o">=</span> <span class="n">C_A0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k1</span> <span class="o">*</span> <span class="n">t_fine</span><span class="p">)</span>
+<span class="n">fine_B</span> <span class="o">=</span> <span class="n">C_A0</span> <span class="o">*</span> <span class="n">k1</span> <span class="o">/</span> <span class="p">(</span><span class="n">k2</span> <span class="o">-</span> <span class="n">k1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k1</span> <span class="o">*</span> <span class="n">t_fine</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k2</span> <span class="o">*</span> <span class="n">t_fine</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="n">points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;C_A&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">shown</span><span class="p">],</span> <span class="n">num_A</span><span class="p">[</span><span class="n">shown</span><span class="p">]),</span>
+        <span class="s2">&quot;C_B&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">shown</span><span class="p">],</span> <span class="n">num_B</span><span class="p">[</span><span class="n">shown</span><span class="p">]),</span>
+        <span class="s2">&quot;C_C&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">shown</span><span class="p">],</span> <span class="n">num_C</span><span class="p">[</span><span class="n">shown</span><span class="p">]),</span>
+    <span class="p">},</span>
+    <span class="n">reference</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;C_A&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">t_fine</span><span class="p">,</span> <span class="n">fine_A</span><span class="p">),</span>
+        <span class="s2">&quot;C_B&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">t_fine</span><span class="p">,</span> <span class="n">fine_B</span><span class="p">),</span>
+        <span class="s2">&quot;C_C&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">t_fine</span><span class="p">,</span> <span class="n">C_A0</span> <span class="o">-</span> <span class="n">fine_A</span> <span class="o">-</span> <span class="n">fine_B</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="n">vlines</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;peak of C_B&quot;</span><span class="p">:</span> <span class="n">t_peak</span><span class="p">},</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;time [s]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;concentration [mol/m^3]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Consecutive reactions: OneSimulation (markers) and exact solution (dashed)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Going further</h4>
+<p>Bring <span class="math">\(k_2\)</span> close to <span class="math">\(k_1\)</span> and watch the intermediate peak grow and move later; at <span class="math">\(k_2=k_1\)</span> the series solution switches to its <span class="math">\(t\,e^{-kt}\)</span> form. Make <span class="math">\(k_2\)</span> much larger than <span class="math">\(k_1\)</span> to approach the quasi-steady-state limit in which <span class="math">\(B\)</span> stays small and <span class="math">\(C\)</span> follows <span class="math">\(A\)</span>'s decay directly.</p></div></div><div class="button-row"><a class="button" href="/downloads/notebooks/consecutive_reactions.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/consecutive_reactions.py" download>Download the script (.py)</a></div><p class="source-note"><a href="https://johmey.github.io/OneSimulation-Showcase/examples/notebooks/consecutive_reactions.html">Original OneSimulation Showcase entry</a></p></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

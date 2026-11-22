@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solid mechanics · OneSimulation</title>
+<meta name="description" content="Stress, strain, equilibrium and beam deflection.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/solid-mechanics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solid mechanics · OneSimulation">
+<meta property="og:description" content="Stress, strain, equilibrium and beam deflection.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/solid-mechanics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Solid mechanics</h1><p class="lead">Stress, strain, equilibrium and beam deflection.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Stress, strain and equilibrium</a><a href="#boundary">Beam theory and a 3D continuum</a><a href="#worked">Worked example and lab</a><a href="#onesimulation">Model the physics in OneSimulation</a><a href="#case-studies">Notebook case studies</a><a href="#recipes">Additional worked models</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Stress, strain and equilibrium</h2>
+<p>For small displacement gradients, the strain tensor is \(\boldsymbol\epsilon=(\nabla\mathbf u+\nabla\mathbf u^\mathsf T)/2\). In small-strain isotropic elasticity, \(\boldsymbol\sigma=\lambda\,\mathrm{tr}(\boldsymbol\epsilon)\mathbf I+2\mu\boldsymbol\epsilon\), where \(\lambda\) and \(\mu\) are the Lamé moduli. Static force balance is \(\nabla\cdot\boldsymbol\sigma+\mathbf b=0\).</p>
+<p>A displacement condition constrains motion and produces a reaction. A traction condition sets \(\boldsymbol\sigma\mathbf n\); its surface integral is force. Constrain the rigid-body modes without clamping additional faces. Verify global equilibrium by comparing applied forces and reactions.</p>
+</section>
+<section>
+<h2 id="boundary">Beam theory and a 3D continuum</h2>
+<p>For a slender prismatic beam under end load \(F\), the Euler–Bernoulli theory gives tip deflection \(FL^3/(3EI)\), with \(I=bh^3/12\) for a rectangular section loaded in its height direction. The reference neglects transverse shear and local end effects.</p>
+<p>Static displacement usually converges more smoothly than local stress near concentrated loads or idealised sharp constraints. Apply load as a reproducible face traction and compare stresses at fixed physical locations under refinement.</p>
+</section>
+<section>
+<h2 id="worked">Worked example and lab</h2>
+<p>For \(L=0.2\) m, \(b=0.02\) m, \(h=0.01\) m, \(E=70\) GPa and \(F=1\) N, the beam reference is 22.86 µm. The nominal extreme-fibre bending stress at midspan is 0.30 MPa from \(Mc/I\), with moment \(F L/2\) and \(c=h/2\).</p>
+<ol><li>Run the clamped-beam notebook and recover the expected sign of displacement and the net reaction force.</li><li>Compare tip deflection and midspan bending stress on two meshes. For displacement use the same output point or surface average each time.</li><li>Repeat for a more slender beam and discuss whether the difference to Euler–Bernoulli is dominated by mesh error or beam assumptions.</li></ol>
+</section>
+<section><h2 id="onesimulation">Model the physics in OneSimulation</h2><p><code>onesim.physics.solid_mechanics</code></p>
+<p><code>LinearElasticity</code> uses small-strain elasticity and an elastic material. <code>FixedDisplacement</code>, <code>Traction</code>, <code>TractionFree</code> and <code>BodyForce</code> describe supports and loads. Remove rigid-body modes through physical constraints and evaluate stress inside the domain. Use the cantilever for a force, deflection and mesh-refinement workflow. For thermal strain, couple a temperature field and set a stress-free reference. Inspect stress component ordering before selecting the first normal component or constructing an invariant.</p>
+<p>For global dynamics, <code>StructuralOscillator</code> takes mass, stiffness, damping and force. <code>MaxwellRelaxation</code> evolves stress under a strain-rate input, <code>FatigueCrackGrowth</code> uses <code>ParisLaw</code>, <code>HertzImpact</code> uses <code>HertzContactLaw</code>, and <code>CohesiveOpening</code> uses <code>BilinearCohesiveLaw</code>. Initialize each law's state, follow its units and check the relevant quantity such as dissipated energy, contact force, crack length or traction versus opening. Use a resolved time step around rapid contact or softening. The vibration example in Chapter <a class="xref" href="/tutorials/time-dependent/">2</a> gives a complete extraction and plotting pattern.</p></section><section><h2 id="case-studies">Notebook case studies</h2><ul><li><a href="/blog/cantilever_beam_bending/">Bending of a clamped beam</a></li><li><a href="/blog/polynomial_hyperelastic_block/">Polynomial hyperelastic rubber</a></li></ul></section><section><h2 id="recipes">Additional worked models</h2><h3 id="stress-relaxation-in-a-maxwell-element"><span class="num">6.18.1</span> Stress relaxation in a Maxwell element</h3>
+<p>Hold strain rate at zero and initialize stress. The relaxation time equals viscosity divided by Young's modulus.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.solid_mechanics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxwellRelaxation</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">MaxwellRelaxation</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">youngs_modulus</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">viscosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">strain_rate</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">stress</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;stress&quot;</span><span class="p">,),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;stress&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">t</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Stress relaxation in a Maxwell element&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-maxwell-relaxation.png"><img loading="lazy" src="/showcase/figures/recipe-maxwell-relaxation.png" alt="Figure computed with OneSimulation: recipe maxwell relaxation"></a></figure>
+<h3 id="paris-law-crack-growth"><span class="num">6.18.2</span> Paris-law crack growth</h3>
+<p>Use a constant stress range and cycling frequency. At exponent two the stress-intensity law gives exponential crack growth for a fixed geometry factor.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.solid_mechanics</span><span class="w"> </span><span class="kn">import</span> <span class="n">FatigueCrackGrowth</span><span class="p">,</span> <span class="n">ParisLaw</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">FatigueCrackGrowth</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">stress_range</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">frequency</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">growth_law</span><span class="o">=</span><span class="n">ParisLaw</span><span class="p">(</span><span class="n">coefficient</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">exponent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">crack_length</span><span class="o">=</span><span class="mf">0.3</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;crack_length&quot;</span><span class="p">,),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;crack_length&quot;</span><span class="p">],</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.04</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span>
+<span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Paris-law crack growth&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-fatigue-crack-growth.png"><img loading="lazy" src="/showcase/figures/recipe-fatigue-crack-growth.png" alt="Figure computed with OneSimulation: recipe fatigue crack growth"></a></figure>
+<h3 id="elastic-hertz-contact-pulse"><span class="num">6.18.3</span> Elastic Hertz contact pulse</h3>
+<p>Initialize positive approach velocity at first contact. The force follows positive indentation to the three-halves power and the isolated energy stays nearly constant.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.solid_mechanics</span><span class="w"> </span><span class="kn">import</span> <span class="n">HertzImpact</span><span class="p">,</span> <span class="n">HertzContactLaw</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">HertzImpact</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">reduced_mass</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">contact_law</span><span class="o">=</span><span class="n">HertzContactLaw</span><span class="p">(</span><span class="n">effective_modulus</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">effective_radius</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">indentation</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">approach_velocity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;indentation&quot;</span><span class="p">,</span> <span class="s2">&quot;contact_force&quot;</span><span class="p">,</span> <span class="s2">&quot;mechanical_energy&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;contact_force&quot;</span><span class="p">],</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;indentation&quot;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span>
+<span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Elastic Hertz contact pulse&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-hertz-impact.png"><img loading="lazy" src="/showcase/figures/recipe-hertz-impact.png" alt="Figure computed with OneSimulation: recipe hertz impact"></a></figure>
+<h3 id="traction-and-damage-in-cohesive-opening"><span class="num">6.18.4</span> Traction and damage in cohesive opening</h3>
+<p>Drive the opening monotonically through the elastic and softening regimes. The work integral accumulates from the traction and the prescribed opening rate.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.solid_mechanics</span><span class="w"> </span><span class="kn">import</span> <span class="n">CohesiveOpening</span><span class="p">,</span> <span class="n">BilinearCohesiveLaw</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">CohesiveOpening</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">opening_rate</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">cohesive_law</span><span class="o">=</span><span class="n">BilinearCohesiveLaw</span><span class="p">(</span>
+        <span class="n">peak_traction</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">onset_opening</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">final_opening</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">opening</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">work_per_area</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;opening&quot;</span><span class="p">,</span> <span class="s2">&quot;traction&quot;</span><span class="p">,</span> <span class="s2">&quot;damage&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;damage&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;damage&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;traction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.9</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Traction and damage in cohesive opening&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-cohesive-opening.png"><img loading="lazy" src="/showcase/figures/recipe-cohesive-opening.png" alt="Figure computed with OneSimulation: recipe cohesive opening"></a></figure></section></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

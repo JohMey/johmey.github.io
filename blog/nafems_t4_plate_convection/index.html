@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plate with convection (NAFEMS T4) · OneSimulation</title>
+<meta name="description" content="The NAFEMS T4 benchmark: a plate held at 100 °C along its base and cooled by convection on two sides.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/blog/nafems_t4_plate_convection/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Plate with convection (NAFEMS T4) · OneSimulation">
+<meta property="og:description" content="The NAFEMS T4 benchmark: a plate held at 100 °C along its base and cooled by convection on two sides.">
+<meta property="og:url" content="https://onesimulation.onrender.com/blog/nafems_t4_plate_convection/">
+<meta property="og:image" content="https://onesimulation.onrender.com/showcase/figures/library/nafems_t4_plate_convection.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/" aria-current="location">Blog</a><a href="/teaching/">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/blog/">Notebook blog</a> / <a href="/blog/#flow-heat">Flow &amp; Heat</a></p><h1>Plate with convection (NAFEMS T4)</h1><p class="lead">The NAFEMS T4 benchmark: a plate held at 100 °C along its base and cooled by convection on two sides.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#what">What it computes</a><a href="#checks">What it checks</a><a href="#geometry">Geometry</a><a href="#notebook">The notebook</a></nav></aside><article class="prose reference"><p class="study-note">To reproduce the case, put its notebook and accompanying inputs in the same folder. Use the Python environment set up in the <a href="/tutorials/install/">installation tutorial</a>. Start with the original parameters and compare the result with the check reported below.</p><div class="chips"><span>STEP import</span><span>Benchmark</span><span>Quadratic triangles</span><span>Convection boundary</span><span>Mesh study</span></div><div class="button-row"><a class="button" href="/downloads/notebooks/nafems_t4_plate_convection.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/nafems_t4_plate_convection.py" download>Download the script (.py)</a><a class="button light" href="/downloads/notebooks/nafems_t4_plate_convection.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/nafems_t4_plate_convection_geometry.py" download>Download the geometry script (.py)</a></div><figure><img loading="lazy" src="/showcase/figures/library/nafems_t4_plate_convection.png" alt="Plate with convection (NAFEMS T4)"><figcaption>Plate with convection (NAFEMS T4). Run the notebook to produce its own figures.</figcaption></figure><h2 id="what">What it computes</h2><p>OneSimulation reads the plate from a STEP file, cuts its mid-plane section and solves the steady heat equation with linear and quadratic triangles on three meshes, with a fixed temperature, an insulated side and a convective film on the named sides. The script that builds the STEP file comes with the notebook.</p><h2 id="checks">What it checks</h2><p>The temperature at the benchmark point is 18.253 °C with quadratic triangles against the NAFEMS target of 18.25 °C (+0.003 K), and the heat entering at the base equals the heat leaving by convection (10303.0 W/m).</p><h2 id="geometry">Geometry</h2><p>The notebook starts at the import of the CAD file <a href="/downloads/notebooks/nafems_t4_plate_convection.step" download><code>nafems_t4_plate_convection.step</code></a>: STEP (AP242), readable by any CAD program, with the names of the faces that the boundary conditions use. Put it next to the notebook.</p><figure><img loading="lazy" src="/showcase/figures/library/nafems_t4_plate_convection_geometry.png" alt="Geometry of the example: Plate with convection (NAFEMS T4)"><figcaption>The geometry as the notebook reads it from the STEP file and draws it.</figcaption></figure><div class="button-row"><a class="button light" href="/downloads/notebooks/nafems_t4_plate_convection.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/nafems_t4_plate_convection_geometry.py" download>Download the geometry script (.py)</a></div><h3 id="geometry-script">The geometry script</h3><p>The script <a href="/downloads/notebooks/nafems_t4_plate_convection_geometry.py" download><code>nafems_t4_plate_convection_geometry.py</code></a> builds the geometry with the CAD objects of OneSimulation and writes the file. Change a dimension there, run it, and run the notebook again.</p><div class="notebook"><div class="nb-code"><pre class="code" data-lang="python"><code><span class="sd">&quot;&quot;&quot;Geometry of the OneSimulation example &quot;Two-dimensional conduction with convection (NAFEMS T4)&quot;.</span>
+
+<span class="sd">Builds the plate, 0.6 m wide, 1.0 m high and 0.1 m deep, with the CAD objects of OneSimulation and</span>
+<span class="sd">writes nafems_t4_plate_convection.step. The heated base is named base, the insulated left side</span>
+<span class="sd">insulated and the two cooled sides form the group cooled. The example computes on the</span>
+<span class="sd">cross-section z = 0.05 m.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d3</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
+
+<span class="n">plate</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">faces</span> <span class="o">=</span> <span class="n">plate</span><span class="o">.</span><span class="n">boundaries</span>
+<span class="n">plate</span> <span class="o">=</span> <span class="n">plate</span><span class="o">.</span><span class="n">grouped</span><span class="p">(</span>
+    <span class="n">base</span><span class="o">=</span><span class="n">faces</span><span class="o">.</span><span class="n">y_min</span><span class="p">,</span> <span class="n">insulated</span><span class="o">=</span><span class="n">faces</span><span class="o">.</span><span class="n">x_min</span><span class="p">,</span> <span class="n">cooled</span><span class="o">=</span><span class="n">faces</span><span class="o">.</span><span class="n">x_max</span> <span class="o">|</span> <span class="n">faces</span><span class="o">.</span><span class="n">y_max</span>
+<span class="p">)</span>
+<span class="n">plate</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;nafems_t4_plate_convection.step&quot;</span><span class="p">)</span></code></pre></div></div><h2 id="notebook">The notebook</h2><p class="muted">The complete notebook, cell by cell. Run it to produce the figures and the comparison printout.</p><div class="notebook"><div class="nb-md"><p>The NAFEMS thermal benchmark T4 is the standard test for steady two-dimensional conduction with a convective boundary. A rectangular plate, 0.6 m wide and 1.0 m high, conducts heat from its base into two cooled sides:</p>
+<div class="math display">\[\nabla\cdot(k\,\nabla T)=0,\qquad k=52\ \mathrm{W/(m\,K)}.\]</div>
+<p>| side | condition | |---|---| | base <span class="math">\(y=0\)</span> | fixed temperature <span class="math">\(T=100\)</span> °C | | left side <span class="math">\(x=0\)</span> | insulated, <span class="math">\(q_n=0\)</span> | | right side <span class="math">\(x=0.6\)</span> m and top <span class="math">\(y=1.0\)</span> m | convection <span class="math">\(-k\,\partial_nT=h\,(T-T_\infty)\)</span>, <span class="math">\(h=750\)</span> W/(m² K), <span class="math">\(T_\infty=0\)</span> °C |</p>
+<p>The corner where the base meets the cooled right side is singular (the fixed temperature meets a strong convective sink), so the field changes fast near the benchmark point.</p>
+<p>The plate comes from the CAD file <code>nafems_t4_plate_convection.step</code>; the script <code>nafems_t4_plate_convection_geometry.py</code> builds it with the CAD objects of OneSimulation and names the heated base, the insulated side and the cooled sides. The two-dimensional model is the mid-plane section of the plate.</p>
+<p><strong>Reference.</strong> NAFEMS, <em>The Standard NAFEMS Benchmarks</em> (TNSB, Rev. 3, 1990), test T4: the temperature at point E <span class="math">\(=(0.6,\,0.2)\)</span> m on the cooled side is <strong>18.25 °C</strong>.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.exchange</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">IsotropicSolid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriangularMesher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.fem</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiniteElement</span><span class="p">,</span> <span class="n">Lagrange</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.linear</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseDirect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.heat_transfer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConvectiveHeatFlux</span><span class="p">,</span>
+    <span class="n">FixedTemperature</span><span class="p">,</span>
+    <span class="n">HeatConduction</span><span class="p">,</span>
+    <span class="n">HeatFlux</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span><span class="p">,</span> <span class="n">theme</span>
+
+<span class="n">theme</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Geometry and mesh</h4>
+<p><code>load</code> returns the plate with its named faces; <code>section</code> cuts it at mid-depth and returns the planar region, whose sides keep the names of the faces they were cut from. Three triangular meshes halve the cell size from one to the next and are refined towards the cooled right side.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">plate</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;nafems_t4_plate_convection.step&quot;</span><span class="p">)</span>
+<span class="n">faces</span> <span class="o">=</span> <span class="n">plate</span><span class="o">.</span><span class="n">boundaries</span>
+<span class="n">region</span> <span class="o">=</span> <span class="n">plate</span><span class="o">.</span><span class="n">section</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">plate</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sides</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">boundaries</span>
+<span class="n">sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">]</span>
+<span class="n">meshes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">TriangularMesher</span><span class="p">(</span>
+        <span class="n">target_size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">grading</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">local_sizes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x_max&quot;</span><span class="p">:</span> <span class="n">size</span> <span class="o">/</span> <span class="mi">3</span><span class="p">}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">sizes</span>
+<span class="p">]</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span>
+    <span class="n">plate</span><span class="p">,</span>
+    <span class="n">selection</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;base, 100 °C&quot;</span><span class="p">:</span> <span class="n">faces</span><span class="o">.</span><span class="n">base</span><span class="p">,</span>
+        <span class="s2">&quot;insulated&quot;</span><span class="p">:</span> <span class="n">faces</span><span class="o">.</span><span class="n">insulated</span><span class="p">,</span>
+        <span class="s2">&quot;cooled&quot;</span><span class="p">:</span> <span class="n">faces</span><span class="o">.</span><span class="n">cooled</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">camera</span><span class="o">=</span><span class="n">plots</span><span class="o">.</span><span class="n">Camera</span><span class="p">(</span><span class="n">elevation</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=-</span><span class="mi">110</span><span class="p">),</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Plate with its named faces&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span>
+    <span class="n">meshes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">groups</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,),</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Middle mesh: </span><span class="si">{</span><span class="n">meshes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cell_count</span><span class="si">}</span><span class="s2"> triangles&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Model</h4>
+<p>The steel conducts with 52 W/(m K); only the conductivity matters for the steady field. The same problem is solved with linear and with quadratic triangles on the three meshes.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">steel</span> <span class="o">=</span> <span class="n">IsotropicSolid</span><span class="p">(</span>
+    <span class="n">density</span><span class="o">=</span><span class="mf">7850.0</span><span class="p">,</span>
+    <span class="n">specific_heat_capacity</span><span class="o">=</span><span class="mf">460.0</span><span class="p">,</span>
+    <span class="n">thermal_conductivity</span><span class="o">=</span><span class="mf">52.0</span><span class="p">,</span>
+    <span class="n">youngs_modulus</span><span class="o">=</span><span class="mf">2.1e11</span><span class="p">,</span>
+    <span class="n">poisson_ratio</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">thermal_expansion_coefficient</span><span class="o">=</span><span class="mf">1.2e-5</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">HeatConduction</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">region</span><span class="o">.</span><span class="n">domain</span><span class="p">(),</span> <span class="n">material</span><span class="o">=</span><span class="n">steel</span><span class="p">,</span> <span class="n">heating</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;NAFEMS T4&quot;</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+    <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="p">,),</span>
+    <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">FixedTemperature</span><span class="p">(</span><span class="n">boundary</span><span class="o">=</span><span class="n">sides</span><span class="o">.</span><span class="n">y_min</span><span class="p">,</span> <span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">373.15</span><span class="p">),</span>
+        <span class="n">HeatFlux</span><span class="p">(</span><span class="n">boundary</span><span class="o">=</span><span class="n">sides</span><span class="o">.</span><span class="n">x_min</span><span class="p">,</span> <span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">ConvectiveHeatFlux</span><span class="p">(</span>
+            <span class="n">boundary</span><span class="o">=</span><span class="n">sides</span><span class="o">.</span><span class="n">x_max</span> <span class="o">|</span> <span class="n">sides</span><span class="o">.</span><span class="n">y_max</span><span class="p">,</span>
+            <span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">heat_transfer_coefficient</span><span class="o">=</span><span class="mf">750.0</span><span class="p">,</span>
+            <span class="n">ambient_temperature</span><span class="o">=</span><span class="mf">273.15</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">fields</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span> <span class="n">Simulation</span><span class="p">(</span>
+        <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+        <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span>
+        <span class="n">numerics</span><span class="o">=</span><span class="n">Numerics</span><span class="p">(</span>
+            <span class="n">spatial</span><span class="o">=</span><span class="n">FiniteElement</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">Lagrange</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)),</span>
+            <span class="n">linear_solver</span><span class="o">=</span><span class="n">SparseDirect</span><span class="p">(),</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">solve_stationary</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">order</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">size</span><span class="p">,</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sizes</span><span class="p">,</span> <span class="n">meshes</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">field</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">sizes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span></code></pre></div><div class="nb-md"><h4>Results</h4>
+<p>The temperature at point E for every run, and the energy balance (heat entering at the base, heat leaving by convection).</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">point_e</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">evaluate</span><span class="p">([[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]])[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mf">273.15</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;element     mesh size [m]   triangles   T(E) [°C]   deviation from 18.25 °C&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">size</span><span class="p">),</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">point_e</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;quadratic&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;linear&#39;</span><span class="si">:</span><span class="s2">10s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">13.3f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">meshes</span><span class="p">[</span><span class="n">sizes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span><span class="o">.</span><span class="n">cell_count</span><span class="si">:</span><span class="s2">11d</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">11.3f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">18.25</span><span class="si">:</span><span class="s2">+12.3f</span><span class="si">}</span><span class="s2"> K&quot;</span>
+    <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;heat per metre depth: in at the base </span><span class="si">{</span><span class="o">-</span><span class="n">field</span><span class="o">.</span><span class="n">boundary_flux</span><span class="p">(</span><span class="n">sides</span><span class="o">.</span><span class="n">y_min</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> W/m, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;out by convection </span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="n">boundary_flux</span><span class="p">(</span><span class="n">sides</span><span class="o">.</span><span class="n">x_max</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">sides</span><span class="o">.</span><span class="n">y_max</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> W/m&quot;</span>
+<span class="p">)</span></code></pre></div><div class="nb-md"><h4>Figure</h4>
+<p>The temperature field with isotherms, the temperature along the cooled right side with the benchmark point, and the convergence of <span class="math">\(T(E)\)</span> for both element orders.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">201</span><span class="p">)</span>
+<span class="n">right</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;quadratic&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;linear&#39;</span><span class="si">}</span><span class="s2">, h = </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">y</span><span class="p">,</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="n">y</span><span class="p">)))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">-</span> <span class="mf">273.15</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">size</span><span class="p">),</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="o">!=</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">surface</span><span class="p">(</span>
+    <span class="n">field</span><span class="p">,</span>
+    <span class="n">component</span><span class="o">=</span><span class="k">lambda</span> <span class="n">T</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="n">T</span> <span class="o">-</span> <span class="mf">273.15</span><span class="p">,</span>
+    <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+    <span class="n">contours</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+    <span class="n">subdivisions</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;x [m]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;y [m]&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;T [°C]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Temperature, quadratic, finest mesh&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">right</span><span class="p">,</span>
+    <span class="n">points</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;NAFEMS target at E&quot;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">18.25</span><span class="p">])},</span>
+    <span class="n">xlimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;height y on the cooled side [m]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;T [°C]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Along the cooled side x = 0.6 m&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="n">y</span><span class="o">=</span><span class="p">{</span>
+        <span class="p">(</span><span class="s2">&quot;quadratic&quot;</span> <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">&quot;linear&quot;</span><span class="p">):</span> <span class="p">(</span>
+            <span class="n">sizes</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">point_e</span><span class="p">[</span><span class="n">order</span><span class="p">,</span> <span class="n">size</span><span class="p">]</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">order</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">hlines</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;NAFEMS target 18.25 °C&quot;</span><span class="p">:</span> <span class="mf">18.25</span><span class="p">},</span>
+    <span class="n">markers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;logx&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;mesh size [m]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;T(E) [°C]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Mesh study at point E&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Going further</h4>
+<p>Change the plate in <code>nafems_t4_plate_convection_geometry.py</code> and write the STEP file again, or raise the film coefficient: as <span class="math">\(h\to\infty\)</span> the cooled sides approach a fixed 0 °C and the solution becomes the classical Fourier series of a rectangle. Replace the convection by <code>RadiativeHeatFlux</code> for a furnace wall that loses heat by radiation.</p></div></div><div class="button-row"><a class="button" href="/downloads/notebooks/nafems_t4_plate_convection.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/nafems_t4_plate_convection.py" download>Download the script (.py)</a><a class="button light" href="/downloads/notebooks/nafems_t4_plate_convection.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/nafems_t4_plate_convection_geometry.py" download>Download the geometry script (.py)</a></div><p class="source-note"><a href="https://johmey.github.io/OneSimulation-Showcase/examples/notebooks/nafems_t4_plate_convection.html">Original OneSimulation Showcase entry</a></p></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
