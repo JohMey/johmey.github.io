@@ -1,0 +1,11 @@
+services:
+  - type: web
+    runtime: static
+    name: onesimulation
+    branch: codex/render-site
+    autoDeployTrigger: 'off'
+    buildCommand: mkdir -p dist && git archive HEAD . ':(exclude)render.yaml' | tar -xf - -C dist
+    staticPublishPath: dist
+    envVars:
+      - key: SKIP_INSTALL_DEPS
+        value: "true"
