@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polynomial roots and coefficient sensitivity · OneSimulation</title>
+<meta name="description" content="Evaluate a polynomial and its derivative in one sweep, then estimate how far a coefficient error can move a simple root.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/07-polynomial-roots/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Polynomial roots and coefficient sensitivity · OneSimulation">
+<meta property="og:description" content="Evaluate a polynomial and its derivative in one sweep, then estimate how far a coefficient error can move a simple root.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/07-polynomial-roots/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Polynomial roots and coefficient sensitivity</h1><p class="lead">Evaluate a polynomial and its derivative in one sweep, then estimate how far a coefficient error can move a simple root.</p><p class="byline">Chapter 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-root-belongs-to-a-set-of-coefficients">A root belongs to a set of coefficients</a><a href="#carry-derivative-information-through-horner-evaluation">Carry derivative information through Horner evaluation</a><a href="#the-cost-of-removing-a-root">The cost of removing a root</a><a href="#choose-a-formula-by-the-size-of-the-root">Choose a formula by the size of the root</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-root-belongs-to-a-set-of-coefficients">A root belongs to a set of coefficients</h2>
+<p>Write \(p(x)=a_nx^n+\cdots+a_0\) and suppose a simple real root \(r\) satisfies \(p'(r)\ne0\). Perturb the coefficients and write the displaced root as \(r+\delta r\). Keeping first-order terms in the equation gives \(p'(r)\delta r+\sum_{j=0}^n\delta a_j r^j=0\). Consequently the effect of a given coefficient error depends on both the slope at the root and the size of the corresponding power. An evaluation routine can be backward accurate and still return an uncertain root when the input coefficients are insufficiently precise.</p>
+<p>For \(p=(x-1)(x-1.01)=x^2-2.01x+1.01\), the derivative at 1 is \(-0.01\). Increasing the constant coefficient by \(10^{-6}\) moves this root upward by approximately \(10^{-4}\). The exact perturbation is easier to see by completing the square: \(p=(x-1.005)^2-0.000025\). The new lower root is \(1.005-\sqrt{0.000024}\approx1.00010102\). The first-order estimate captures the direction and scale. A coefficient change of \(0.000025\) merges the roots; a larger upward change removes both real roots.</p>
+</section>
+<section>
+<h2 id="carry-derivative-information-through-horner-evaluation">Carry derivative information through Horner evaluation</h2>
+<p>Collect the polynomial as a sequence of nested multiply-add operations starting with \(b=a_n\). Appending the next coefficient replaces \(b\) by \(xb+a_j\). Differentiating that operation shows that a derivative accumulator \(d\) must be replaced by \(xd+b\), where \(b\) is its old value. Starting \(d=0\) and updating it before updating \(b\) yields \(p(x)\) and \(p'(x)\) without forming high powers. For \(x^3-3x+1\) at \(x=2\), the successive values of \(b\) are \(1,2,1,3\) and the derivative accumulator ends at 9. A Newton step gives \(2-3/9=5/3\).</p>
+<p>Operation count alone says little about cancellation: near a root, large terms can subtract to produce a tiny value. A scale for the accumulated terms is \(s(x)=\sum|a_j||x|^j\), also computable by a Horner sweep. Reporting \(|p(x)|/s(x)\) when the denominator is nonzero measures how small a relative componentwise coefficient change could explain that residual. Dividing by the slope provides an approximate forward correction for a simple isolated root.</p>
+</section>
+<section>
+<h2 id="the-cost-of-removing-a-root">The cost of removing a root</h2>
+<p>Dividing the polynomial by \(x-\hat r\) after locating one root reduces subsequent work. Synthetic division leaves a remainder \(p(\hat r)\). Discarding it changes the equations for every remaining root. In the close-pair example, using \(\hat r=1.001\) produces quotient \(x-1.009\) and remainder \(-0.000009\). The remaining estimate shifts by the same 0.001 magnitude. Recheck candidate roots against the original polynomial; where coefficients represent uncertain measurements, a range of compatible roots can communicate more information than many printed digits.</p>
+</section>
+<section>
+<h2 id="choose-a-formula-by-the-size-of-the-root">Choose a formula by the size of the root</h2>
+<p>For \(x^2-10^8x+1=0\), the usual formula for the small root subtracts two numbers close to \(10^8\). Rounding in their last digits can dominate the small difference. Compute the large root instead by adding the positive square root and dividing by two. The product of the two roots is one, so the small root follows as its reciprocal, approximately \(10^{-8}\). This change removes a source of arithmetic cancellation. Whether the underlying coefficients determine the desired root accurately can then be assessed separately using the derivative-based sensitivity formula.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/nonlinear-equations/problem-sheets/3/">Problem sheet 3 · Safeguards and continuation</a></span><span>Next<br><a href="/teaching/numerics/nonlinear-equations/chapters/08-interval-newton/">Chapter 8 · Root enclosures with interval Newton</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

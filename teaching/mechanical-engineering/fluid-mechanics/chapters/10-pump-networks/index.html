@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pump curves, pipe networks and operating points · OneSimulation</title>
+<meta name="description" content="Construct a hydraulic system curve and solve the operating point of a pump connected to serial or parallel flow paths.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/fluid-mechanics/chapters/10-pump-networks/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pump curves, pipe networks and operating points · OneSimulation">
+<meta property="og:description" content="Construct a hydraulic system curve and solve the operating point of a pump connected to serial or parallel flow paths.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/fluid-mechanics/chapters/10-pump-networks/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Pump curves, pipe networks and operating points</h1><p class="lead">Construct a hydraulic system curve and solve the operating point of a pump connected to serial or parallel flow paths.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#system">Why a pump does not prescribe a unique flow</a><a href="#branches">Combine resistances by their physical constraints</a><a href="#operating-point">Open a parallel return line</a><a href="#pressure-node">Determine which side of a branch controls the flow</a></nav></aside><article class="prose reference"><section><h2 id="system">Why a pump does not prescribe a unique flow</h2>
+<p>A centrifugal pump at fixed speed can deliver different combinations of flow and head. The connected network selects an operating point by requiring the head gained through the machine to match the static lift and losses elsewhere. For two large reservoirs, surface speeds are negligible and equal surface pressures cancel. A steady mechanical energy balance then gives \(H_{\rm pump}=\Delta z+h_L\). With turbulent pipe resistance represented locally by constant loss coefficients, the losses can be written \(h_L=KQ^2\) for positive flow.</p>
+<p>This quadratic law is an approximation over a specified operating range. It follows because fittings and pipe friction have head losses proportional to velocity squared when the relevant coefficients vary little. In laminar pipe flow, the pressure loss at fixed viscosity is instead proportional to flow. A system curve extrapolated far outside its underlying Reynolds-number range can give a misleading operating point.</p>
+</section>
+<section><h2 id="branches">Combine resistances by their physical constraints</h2>
+<p>In series the same flow passes through each component and head losses add. Thus two quadratic loss coefficients combine as \(K_s=K_1+K_2\). Parallel branches between the same nodes have equal head loss while their flow rates add. For two branches with forward flow, \(Q_i=\sqrt{h/K_i}\), giving</p>
+<div class="math display">\[Q=\sqrt h\,(K_1^{-1/2}+K_2^{-1/2}),\qquad K_{\parallel}=(K_1^{-1/2}+K_2^{-1/2})^{-2}.\]</div>
+<p>A second identical branch divides the flow equally and reduces the quadratic coefficient of that section to one quarter of the single-branch value. Any upstream or downstream common pipe is still in series with the equivalent section and carries total flow.</p>
+</section>
+<section><h2 id="operating-point">Open a parallel return line</h2>
+<p>Use \(Q\) in litres per second and head in metres. A pump has \(H_p=30-0.20Q^2\); two open reservoirs differ in elevation by 6 m. Initially one pipe connects them with loss \(0.40Q^2\). Equating the heads gives \(30-0.20Q^2=6+0.40Q^2\), so \(Q=\sqrt{40}=6.32\,\mathrm{L/s}\) and \(H_p=22.0\,\mathrm m\). Hydraulic power delivered to water is \(\rho gQ H_p=1000(9.81)(0.00632)(22)=1.36\,\mathrm{kW}\).</p>
+<p>Now add a second identical parallel pipe over the whole route. The system curve becomes \(6+0.10Q^2\). The new flow is \(\sqrt{80}=8.94\,\mathrm{L/s}\) and pump head 14.0 m. Each pipe takes only 4.47 L/s, less than the original single-pipe flow. Total delivery increases by about 41% while hydraulic power falls to 1.23 kW. The input shaft power also depends on the efficiency at each operating point. If a flow controller holds the original delivery after the second branch opens, its valve or speed controller changes the operating curve and the free-running comparison no longer predicts the duty.</p>
+</section>
+<section><h2 id="pressure-node">Determine which side of a branch controls the flow</h2>
+<p>A check valve on a return line permits only positive branch flow. If an added elevated reservoir imposes a static threshold of 5 m on that branch, the forward branch law becomes \(Q_b=\sqrt{(H-5)/K_b}\) only for driving head \(H&gt;5\) m. Below that threshold the flow is zero. The resulting system curve changes form as the valve opens, so a single constant equivalent coefficient cannot describe both regimes.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/fluid-mechanics/chapters/09-drag-lift/">Chapter 9 · Pressure integration, lift and drag</a></span><span>Next<br><a href="/teaching/mechanical-engineering/fluid-mechanics/problem-sheets/5/">Problem sheet 5 · Surface forces and system curves</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iterative refinement and backward error · OneSimulation</title>
+<meta name="description" content="Recover accuracy from an approximate factorisation and determine when a small residual genuinely certifies a linear solve.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/11-refinement/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Iterative refinement and backward error · OneSimulation">
+<meta property="og:description" content="Recover accuracy from an approximate factorisation and determine when a small residual genuinely certifies a linear solve.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/11-refinement/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Iterative refinement and backward error</h1><p class="lead">Recover accuracy from an approximate factorisation and determine when a small residual genuinely certifies a linear solve.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-correction-equation">A correction equation</a><a href="#diagonal-model-for-imperfect-factors">Diagonal model for imperfect factors</a><a href="#asking-which-equation-was-solved">Asking which equation was solved</a><a href="#a-stopping-decision">A stopping decision</a><a href="#separate-data-accuracy-from-solve-accuracy">Separate data accuracy from solve accuracy</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-correction-equation">A correction equation</h2>
+<p>Suppose a large matrix has already been factored at modest precision. Let \(x\) be the resulting approximation and recompute \(r=b-Ax\) using the original coefficients. The exact missing correction solves \(Ad=r\). Reusing the approximate factors is cheap because the expensive elimination has finished. If their effective matrix is \(M\), one refinement step solves \(Md=r\) and updates \(x\leftarrow x+d\). Forming the residual from the factors themselves could erase the very discrepancy being measured.</p>
+<p>With \(e=x_\star-x\), the residual equals \(Ae\) in exact arithmetic. Substitution yields \(e_{\mathrm{new}}=(I-M^{-1}A)e\). Thus a sufficient convergence condition in a chosen induced norm is \(\|I-M^{-1}A\|&lt;1\). The size of the initial error affects how many corrections are needed, while the quality of the approximate inverse controls the contraction. The availability of more accurate residual arithmetic matters once cancellation in \(b-Ax\) competes with the true defect.</p>
+</section>
+<section>
+<h2 id="diagonal-model-for-imperfect-factors">Diagonal model for imperfect factors</h2>
+<p>Take \(A=\operatorname{diag}(3,7)\), \(b=(3,7)^T\), and use \(M=\operatorname{diag}(3,8)\) throughout. The first approximate solve gives \(x_0=(1,0.875)^T\). Its residual is \((0,0.875)^T\), and the inexpensive correction is \((0,0.109375)^T\). Hence the second component becomes 0.984375. The corresponding errors in that coordinate decrease from \(1/8\) to \(1/64\). Each further update divides the error by eight because \(1-7/8=1/8\). The exact first component stays fixed.</p>
+<p>If the incorrect factor were 3 instead of 8 in the second equation, its error multiplier would be \(1-7/3=-4/3\). Iterating would alternate across the solution with increasing amplitude. Extra residual accuracy could reveal that failure promptly but could never turn this correction matrix into a contraction.</p>
+</section>
+<section>
+<h2 id="asking-which-equation-was-solved">Asking which equation was solved</h2>
+<p>A backward error asks for the smallest perturbation of the input for which the computed vector is exact. For relative, componentwise changes to both coefficients and load, \(|\Delta A|\leq\eta|A|\) and \(|\Delta b|\leq\eta|b|\), the rowwise correction must absorb \(r_i\). The triangle inequality bounds its capacity by \(\eta(|A||x|+|b|)_i\). Choosing perturbation signs independently within each row attains this capacity, giving</p>
+<div class="math display">\[\eta=\max_i\frac{|r_i|}{(|A||x|+|b|)_i}.\]</div>
+<p>A row with zero denominator and zero residual contributes zero. In the example's second row the initial backward error is \(0.875/(7\cdot0.875+7)=1/15\), even though its forward error is one eighth of the true component. After one correction the denominator is 13.890625 and the residual is 0.109375. The resulting backward error is \(1/127\). Uniformly changing that row's units leaves both ratios unchanged.</p>
+</section>
+<section>
+<h2 id="a-stopping-decision">A stopping decision</h2>
+<p>Record the residual obtained using the original data and monitor the size of each accepted correction. Once the residual is comparable to accumulated rounding in its evaluation, more corrections may stagnate. A small backward error then certifies compatibility with nearly identical equations. Converting it to a forward accuracy statement also needs sensitivity information about those equations and the particular output of interest.</p>
+</section>
+<section>
+<h2 id="separate-data-accuracy-from-solve-accuracy">Separate data accuracy from solve accuracy</h2>
+<p>Suppose the second load in the diagonal example was measured as \(7.00\pm0.07\). Even an exact linear solve then gives a second coordinate known only to about 0.01. The initial solve error of 0.125 matters relative to that scale. Two corrections already reduce this error to about 0.00195. Further corrections improve the numerical solution of the nominal input but cannot resolve variation in the measured load. Stating both uncertainties clarifies the practical value of the last digits.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/linear-algebra/problem-sheets/5/">Problem sheet 5 · Graphs and search spaces</a></span><span>Next<br><a href="/teaching/numerics/linear-algebra/chapters/12-schur-complements/">Chapter 12 · Eliminating constraints with Schur complements</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transfer functions and connections between systems · OneSimulation</title>
+<meta name="description" content="Build a model of a sensor-actuator chain from individual balances and determine which responses a measurement can reveal.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/02-transfer-functions-and-interconnections/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transfer functions and connections between systems · OneSimulation">
+<meta property="og:description" content="Build a model of a sensor-actuator chain from individual balances and determine which responses a measurement can reveal.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/02-transfer-functions-and-interconnections/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Transfer functions and connections between systems</h1><p class="lead">Build a model of a sensor-actuator chain from individual balances and determine which responses a measurement can reveal.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#eliminate-a-state-in-the-transform-domain">Eliminate a state in the transform domain</a><a href="#connect-the-sensor-and-plant">Connect the sensor and plant</a><a href="#close-a-loop-algebraically">Close a loop algebraically</a><a href="#recognise-an-invisible-mode">Recognise an invisible mode</a></nav></aside><article class="prose reference"><section><h2 id="eliminate-a-state-in-the-transform-domain">Eliminate a state in the transform domain</h2>
+<p>Chapter 1 gave a differential equation and an initial condition for a single energy store. Cascading several components leads to simultaneous equations. The Laplace transform changes the time derivative into \(sY(s)-y(0)\). Applied to \(\tau\dot y+y=Kv\), this gives \((\tau s+1)Y=KV+\tau y(0)\). With zero initial deviation the ratio \(G(s)=Y/V=K/(\tau s+1)\) describes the forced response. For nonzero initial state the extra term predicts free decay. This is why an experimental transfer function should identify a particular operating point and initialisation procedure.</p>
+<p>The pole at \(s=-1/\tau\) locates the decaying exponential. The DC gain is \(G(0)=K\). The high-frequency magnitude of this model tends to zero because the energy store cannot change its state instantaneously in response to bounded power. A transfer function can thus be assessed from dimensions, a static balance and a short-time thought experiment before any curve fitting.</p>
+</section>
+<section><h2 id="connect-the-sensor-and-plant">Connect the sensor and plant</h2>
+<p>A sensor may have its own lag. Let the actual plant output be \(y\) and the indicated value \(z\). With plant \(G_p=1/(4s+1)\) and sensor \(G_s=1/(s+1)\), the individual relations \(Y=G_p U\) and \(Z=G_s Y\) give \(Z/U=1/[(4s+1)(s+1)]\). For a unit step divide by \(s\); partial fractions or substitution in the differential equation gives</p>
+<div class="math display">\[z(t)=1-\frac43e^{-t/4}+\frac13e^{-t}.\]</div>
+<p>Check \(z(0)=0\), \(z(\infty)=1\) and \(\dot z(0)=0\). The actual plant slope begins at \(1/4\) per second, but the indicated output starts with a horizontal tangent. At 4 s the plant has reached 0.632 and the indicator only 0.516. A designer who assigns the entire delay to the plant may demand an unnecessarily powerful actuator. A designer who ignores the sensor will underestimate the phase lag in feedback.</p>
+</section>
+<section><h2 id="close-a-loop-algebraically">Close a loop algebraically</h2>
+<p>Let \(C(s)\) be a controller and use the indicated output in negative feedback, so \(U=C(R-G_sY)\). Substitute this in \(Y=G_pU\) and collect all terms multiplying \(Y\). The result is \(Y/R=G_pC/(1+G_pCG_s)\). The same denominator occurs in other responses, but the numerator depends on where the signal enters. A disturbance \(D\) added at the plant input gives \(Y/D=G_p/(1+G_pCG_s)\) with zero reference. Measurement noise added to the feedback signal gives \(Y/N=-G_pC/(1+G_pCG_s)\). Forcing every disturbance to enter at the reference would predict the wrong amplitudes.</p>
+</section>
+<section><h2 id="recognise-an-invisible-mode">Recognise an invisible mode</h2>
+<p>A rational expression may simplify by cancellation. Consider a cascade of an integrator-like unstable stage \(1/(s-1)\) and a downstream stage \((s-1)/(s+2)\). The algebraic transfer from external input to final output is \(1/(s+2)\) at zero initial conditions. The state between stages can still grow as \(e^t\). A small mismatch in either factor also leaves an unstable component in the observed output. Physically realising two factors gives internal variables that still need checking even when their product has a well-behaved step response.</p>
+<p>For a stable example, the measured lag above can be estimated with a first-order fit from late observations alone. The resulting single pole describes the slow tail but loses the zero initial slope. Choosing the level of model detail therefore requires stating the quantity of interest: a long-time energy estimate and a rapid feedback correction need different bandwidths. The next chapter uses the true characteristic polynomial to determine stability before assessing accuracy of tracking.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/01-modelling-and-identification/">Chapter 1 · From a balance law to a measured plant</a></span><span>Next<br><a href="/teaching/mechanical-engineering/control-engineering/problem-sheets/1/">Problem sheet 1 · Modelling a plant and interpreting its signals</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

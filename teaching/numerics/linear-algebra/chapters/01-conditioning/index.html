@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conditioning and backward error · OneSimulation</title>
+<meta name="description" content="Distinguish an inaccurate measurement from an inaccurate solve by tracing how each changes the answer to a small equilibrium problem.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/01-conditioning/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Conditioning and backward error · OneSimulation">
+<meta property="og:description" content="Distinguish an inaccurate measurement from an inaccurate solve by tracing how each changes the answer to a small equilibrium problem.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/01-conditioning/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Conditioning and backward error</h1><p class="lead">Distinguish an inaccurate measurement from an inaccurate solve by tracing how each changes the answer to a small equilibrium problem.</p><p class="byline">Chapter 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#two-questions-about-a-reported-solution">Two questions about a reported solution</a><a href="#resolve-the-sensitive-direction">Resolve the sensitive direction</a><a href="#ask-which-equations-the-machine-solved">Ask which equations the machine solved</a><a href="#allow-uncertainty-in-the-coefficients">Allow uncertainty in the coefficients</a></nav></aside><article class="prose reference"><section>
+<h2 id="two-questions-about-a-reported-solution">Two questions about a reported solution</h2>
+<p>Suppose you determine two unknown forces by balancing their components in two directions. If the directions are almost parallel, the second measurement repeats much of the first. A machine can solve both written equations very accurately while the inferred forces vary considerably from trial to trial. To understand this, separate the map from data to physical answer from the algorithm used to evaluate that map. Conditioning describes the map locally near the supplied data. Stability describes the calculation that produced an answer from those data.</p>
+<p>Let \(A\) be a nonsingular real matrix, let \(Ax=b\) and suppose that only the right-hand side changes. Subtract \(Ax=b\) from \(A(x+\delta x)=b+\delta b\). The result \(A\delta x=\delta b\) says that \(A^{-1}\) maps the measurement disturbance into the answer. In a consistent norm, \(\|\delta x\|\leq\|A^{-1}\|\|\delta b\|\). To compare percentages rather than units, use \(\|b\|\leq\|A\|\|x\|\) and divide through by \(\|x\|\). For nonzero \(b\) this gives</p>
+<div class="math display">\[\frac{\|\delta x\|}{\|x\|}\leq\|A\|\|A^{-1}\|\frac{\|\delta b\|}{\|b\|}.\]</div>
+<p>The product is the condition number in the specified norm. Rotating the disturbance relative to the singular vectors changes the actual amplification, so a worst-case bound alone cannot tell which measurement caused trouble.</p>
+</section>
+<section>
+<h2 id="resolve-the-sensitive-direction">Resolve the sensitive direction</h2>
+<p>Consider \(A=\left(\begin{smallmatrix}1&amp;1\\1&amp;1.001\end{smallmatrix}\right)\) and \(b=(2,2.001)^T\). The exact answer is \((1,1)^T\). Subtract the first measurement from the second. The difference, 0.001, is exactly 0.001 times the second unknown. If the second measurement increases by 0.0001, its inferred value increases to 1.1. The first unknown must fall to 0.9 to preserve the first measurement. Neither individual equilibrium equation looks unstable by itself. It is their near redundancy that makes the difference sensitive.</p>
+<p>The infinity norm makes the scale explicit. The largest absolute row sum of \(A\) is 2.001. Its inverse is \(1000\left(\begin{smallmatrix}1.001&amp;-1\\-1&amp;1\end{smallmatrix}\right)\), whose largest row sum is 2001. The relative data change is \(0.0001/2.001\) while the relative solution change is 0.1. Multiplying the data change by the condition number gives about 0.200, a valid upper bound. Had the two measurements increased equally, their difference would have stayed fixed and the same amplification would not occur.</p>
+</section>
+<section>
+<h2 id="ask-which-equations-the-machine-solved">Ask which equations the machine solved</h2>
+<p>For a computed vector \(\hat x\), form \(r=b-A\hat x\). In exact arithmetic \(\hat x\) solves \(A\hat x=b-r\) exactly. Consequently \(\|r\|/\|b\|\) is a relative backward error when only \(b\) may change. In our example the vector \((0.9,1.1)^T\), tested against the original right-hand side, has a small residual in the second row. It is both an accurate answer to a nearby set of measurements and a poor estimate of the original forces.</p>
+<p>If the rows carry different physical units, an unscaled residual can let one equation dominate the judgement. Scale each balance by a stated characteristic magnitude or report the residuals separately. Recompute them from the original data when possible. Feeding the same rounded intermediate quantities back into a consistency check may merely confirm the internal arithmetic. For a sensitive inverse map, improving the accuracy of the input or measuring an independent direction can accomplish more than tightening the solver tolerance.</p>
+</section>
+<section>
+<h2 id="allow-uncertainty-in-the-coefficients">Allow uncertainty in the coefficients</h2>
+<p>If directions as well as forces are measured, the perturbed equations are \((A+\delta A)(x+\delta x)=b+\delta b\). Keeping first-order terms gives \(A\delta x\simeq\delta b-\delta A\,x\). Uncertainty in a coefficient therefore contributes an effective disturbance proportional to the magnitude of the state it multiplies. Reporting only uncertainty in the measured right-hand side can underestimate the final error.</p>
+<p>For a scalar calibration \(a x=b\), logarithmic differentiation gives \(\delta x/x\simeq\delta b/b-\delta a/a\). If both measurements are 1% too large with the same sign, their errors cancel exactly in the ratio. Opposite 1% changes give \(1.01/0.99-1\simeq2.02\%\). Componentwise measurement correlations affect typical errors even though a norm bound has to allow the worst admissible combination. In force reconstruction this is a reason to keep calibration information with the measured balances.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/linear-algebra/">Course contents</a></span><span>Next<br><a href="/teaching/numerics/linear-algebra/chapters/02-elimination/">Chapter 2 · Elimination, pivoting and factorisation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

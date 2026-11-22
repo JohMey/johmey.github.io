@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Energy coordinates and Lagrange’s equation · OneSimulation</title>
+<meta name="description" content="Derive a coupled translation–rotation equation with a rolling constraint and identify which reaction disappears from the energy balance.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-dynamics/chapters/10-lagrange-equations/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Energy coordinates and Lagrange’s equation · OneSimulation">
+<meta property="og:description" content="Derive a coupled translation–rotation equation with a rolling constraint and identify which reaction disappears from the energy balance.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-dynamics/chapters/10-lagrange-equations/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Energy coordinates and Lagrange’s equation</h1><p class="lead">Derive a coupled translation–rotation equation with a rolling constraint and identify which reaction disappears from the energy balance.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#choice">Let geometry remove a reaction</a><a href="#variation">Connect energy to a dynamical equation</a><a href="#cylinder">Predict a frequency and check rolling</a><a href="#inertia">Compare two cylinders with identical mass</a></nav></aside><article class="prose reference"><section><h2 id="choice">Let geometry remove a reaction</h2>
+<p>A cylinder rolls along a horizontal rail while a spring attached at its centre pulls it towards equilibrium. The rail friction is essential for rolling, but an ideal contact point is instantaneously at rest and the friction force does no work. One can write separate translational and rotational equations with an unknown friction force. Alternatively choose a coordinate that satisfies rolling from the beginning. The reduced energy then contains the rotational inertia without introducing a contact reaction.</p>
+<p>Take the rightward displacement \(x\) of the cylinder centre as independent coordinate and clockwise angle as positive. On the fixed surface the no-slip condition gives \(x=R\theta\), up to a reference offset. A body of total mass \(m\) and centre inertia \(I_G\) has kinetic energy from both translation and rotation. A centre spring with stiffness \(k\) has elastic potential \(kx^2/2\).</p>
+<div class="math display">\[T=\tfrac12(m+I_G/R^2)\dot x^2,\qquad V=\tfrac12kx^2 .\]</div>
+</section>
+<section><h2 id="variation">Connect energy to a dynamical equation</h2>
+<p>The virtual work of a horizontal force \(F\) applied at the centre is \(F\delta x\). In this coordinate its generalised force is simply \(F\). A torque \(M\) acting clockwise would do \(M\delta\theta=(M/R)\delta x\) and would enter as a force \(M/R\). With a centre damper \(c\), the dissipative force is \(-c\dot x\). Lagrange’s equation for this system becomes</p>
+<div class="math display">\[\frac{d}{dt}\frac{\partial T}{\partial\dot x}-\frac{\partial T}{\partial x}+\frac{\partial V}{\partial x}=F-c\dot x,\qquad (m+I_G/R^2)\ddot x+c\dot x+kx=F .\]</div>
+<p>For coordinates whose inertia depends on position, retain both derivatives involving \(T\). The differentiation of \(\partial T/\partial\dot x\) then generates a term proportional to \(\dot x^2\), part of which cancels \(\partial T/\partial x\). Simply multiplying a configuration-dependent effective mass by acceleration would miss the remaining term.</p>
+</section>
+<section><h2 id="cylinder">Predict a frequency and check rolling</h2>
+<p>A solid cylinder has \(m=8.0\,\mathrm{kg}\), \(R=0.10\,\mathrm m\), and \(I_G=mR^2/2=0.040\,\mathrm{kg\,m^2}\). The effective mass seen by the spring is \(8+0.040/0.10^2=12.0\,\mathrm{kg}\). With \(k=480\,\mathrm{N/m}\) and negligible damping the natural frequency is \(\sqrt{480/12}/(2\pi)=1.007\,\mathrm{Hz}\). Release it from rest at \(x=+0.060\,\mathrm m\). Its initial acceleration is \(-480(0.060)/12=-2.40\,\mathrm{m/s^2}\). Writing only the centre’s translation and ignoring rotation would overpredict the acceleration magnitude.</p>
+<p>Reconstruct the previously eliminated contact force from translation. The spring pulls leftwards with 28.8 N and the centre accelerates leftwards with \(m\ddot x=-19.2\,\mathrm N\). Friction must therefore point rightwards with 9.6 N to supply the appropriate angular acceleration. The coefficient of static friction must be at least \(9.6/(8\times9.81)=0.122\) at release. For a smaller coefficient, the assumed rolling constraint fails and the model needs separate rotational and translational coordinates together with a slipping contact law.</p>
+</section>
+<section><h2 id="inertia">Compare two cylinders with identical mass</h2>
+<p>A thin-walled hoop of the same mass and rolling radius has \(I_G=mR^2\). With the original spring its effective mass doubles the translational mass, giving natural frequency \(\sqrt{480/16}/(2\pi)=0.872\,\mathrm{Hz}\). A no-slip ring-down can therefore distinguish two bodies whose masses and outer dimensions are identical but whose internal mass distributions differ.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/machine-dynamics/chapters/09-rotor-balance/">Chapter 9 · Static and couple balance of rotors</a></span><span>Next<br><a href="/teaching/mechanical-engineering/machine-dynamics/problem-sheets/5/">Problem sheet 5 · Balancing and constrained motion</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

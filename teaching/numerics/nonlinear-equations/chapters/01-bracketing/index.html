@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Existence, brackets and error certificates · OneSimulation</title>
+<meta name="description" content="Decide whether a scalar balance has a root, isolate it with a sign-changing interval and translate an equation residual into a bound in physical units.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/01-bracketing/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Existence, brackets and error certificates · OneSimulation">
+<meta property="og:description" content="Decide whether a scalar balance has a root, isolate it with a sign-changing interval and translate an equation residual into a bound in physical units.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/01-bracketing/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Existence, brackets and error certificates</h1><p class="lead">Decide whether a scalar balance has a root, isolate it with a sign-changing interval and translate an equation residual into a bound in physical units.</p><p class="byline">Chapter 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#establish-the-meaning-of-a-root">Establish the meaning of a root</a><a href="#turn-existence-into-a-controlled-search">Turn existence into a controlled search</a><a href="#translate-a-balance-into-a-physical-uncertainty">Translate a balance into a physical uncertainty</a><a href="#calibrate-the-stop-against-a-noisy-measurement">Calibrate the stop against a noisy measurement</a></nav></aside><article class="prose reference"><section>
+<h2 id="establish-the-meaning-of-a-root">Establish the meaning of a root</h2>
+<p>A source supplies heat at a known rate, while a cooling surface loses heat at a rate that increases with temperature. A steady state equates the two rates. Writing generation minus loss as \(F(T)\) turns a physical balance into one scalar equation. Before selecting a numerical method, specify an admissible temperature interval and state which assumptions make the relation continuous there. A temperature-dependent material table with a discontinuous switch may require separate treatment of each regime.</p>
+<p>If \(F\) is continuous and \(F(a)F(b)&lt;0\), the intermediate value theorem guarantees at least one root in \((a,b)\). It does not count the roots. If \(F'\) has one strict sign throughout, the function is strictly monotonic and the root is unique. An even-multiplicity root can touch zero without changing sign, as \(F(x)=(x-1)^2\) does. Conversely, a sign change across the pole of \(1/x\) guarantees nothing. An interval and its regularity assumptions are part of the mathematical answer.</p>
+</section>
+<section>
+<h2 id="turn-existence-into-a-controlled-search">Turn existence into a controlled search</h2>
+<p>Evaluate the midpoint \(m=(a+b)/2\). If \(F(m)=0\) the machine has found a zero of its evaluated residual. Otherwise keep the half whose endpoint values have opposite signs. Continuity carries the existence argument through each subdivision. After \(n\) halvings the width is \(2^{-n}(b-a)\), so the midpoint has distance at most \(2^{-(n+1)}(b-a)\) from a root. A predetermined number of evaluations can therefore guarantee a target error in the independent variable even for an unknown local slope.</p>
+<p>For \(F(x)=x^3+x-1\) on \([0,1]\), the derivative \(3x^2+1\) is positive, while the endpoints have opposite signs. Test \(0.5\), giving \(-0.375\), and keep \([0.5,1]\). Testing 0.75 gives \(0.171875\), narrowing the bracket to \([0.5,0.75]\). The next midpoint 0.625 gives approximately \(-0.13086\), hence \([0.625,0.75]\). After ten halvings the midpoint is guaranteed within \(1/2048\), independent of how the subsequent signs turn out. A function evaluation whose uncertainty covers zero cannot safely be classified as strictly positive or negative without additional information.</p>
+</section>
+<section>
+<h2 id="translate-a-balance-into-a-physical-uncertainty">Translate a balance into a physical uncertainty</h2>
+<p>Let \(r\) be the root and suppose \(|F'|\geq m&gt;0\) on a bracket containing both \(r\) and a candidate \(x\). By the mean value theorem \(F(x)-F(r)=F'(\xi)(x-r)\), so \(|x-r|\leq|F(x)|/m\). For the cubic, \(m=1\) is valid globally, and within \([0.625,0.75]\) the sharper bound \(m=1+3(0.625)^2\) applies. A balance mismatch can thus yield an informative location estimate when the slope is well separated from zero.</p>
+<p>Suppose instead the residual of a thermal balance is expressed in watts and its slope is at least 2 W/K. A 0.1 W mismatch guarantees at most 0.05 K error under the exact model. Reporting a temperature tolerance of 0.1 solely from that residual would silently change units. Near a fold the slope can become arbitrarily small, so a tiny mismatch can coexist with substantial uncertainty about the state. In that case report the bracket, measurement uncertainty and nearby alternatives along with the small residual.</p>
+</section>
+<section>
+<h2 id="calibrate-the-stop-against-a-noisy-measurement">Calibrate the stop against a noisy measurement</h2>
+<p>Suppose temperatures 300 K and 302 K bracket a steady heat balance, and the residual slope is known to exceed 4 W/K. The net power sensor is accurate only to ±0.2 W. A reported mismatch of +0.1 W may have either sign, so it cannot safely choose a half-interval. Its magnitude plus the uncertainty is at most 0.3 W, however. The slope bound then implies distance at most 0.075 K from the exact balance under the model.</p>
+<p>This gives two ways to use the same observation. If its error interval excludes zero, the sign can tighten a bracket. If it includes zero, a magnitude bound can still constrain the root location. A stopping rule that requires a residual below the instrument’s resolution might keep iterating without improving the physical estimate. Decide the temperature accuracy of interest first, then choose an appropriate balance test.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/nonlinear-equations/">Course contents</a></span><span>Next<br><a href="/teaching/numerics/nonlinear-equations/chapters/02-contraction/">Chapter 2 · Fixed-point iteration and contraction</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

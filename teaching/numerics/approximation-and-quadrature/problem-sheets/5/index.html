@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spectral measures of error · OneSimulation</title>
+<meta name="description" content="Distinguish mean-square projections on continuous and sampled intervals and interpret the residual energy.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/problem-sheets/5/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spectral measures of error · OneSimulation">
+<meta property="og:description" content="Distinguish mean-square projections on continuous and sampled intervals and interpret the residual energy.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/problem-sheets/5/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Spectral measures of error</h1><p class="lead">Distinguish mean-square projections on continuous and sampled intervals and interpret the residual energy.</p><p class="byline">Problem sheet 5 · Chapters 9 and 10</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#recover-the-invisible-frequency">Recover the invisible frequency</a><a href="#which-modes-deserve-space">Which modes deserve space?</a><a href="#project-an-odd-function">Project an odd function</a></nav></aside><article class="prose reference"><section>
+<h2 id="recover-the-invisible-frequency">Recover the invisible frequency</h2>
+<p>A recorder samples \(\sin(7x)\) at \(x_j=2\pi j/10\). Identify its low-frequency alias. Give a point where the two functions disagree, and find the mean-square energy of their difference over a period.</p>
+<details><summary>Worked solution</summary>
+<p>Since 7 is congruent to −3 modulo 10, the sampled signal agrees with \(-\sin(3x)\). At \(x=\pi/10\) their difference is \(2\sin(3\pi/10)\approx1.618\).</p>
+<p>On the continuous period the two sine modes are orthogonal. Each has mean square \(1/2\), so their difference has mean square 1. A vanishing discrepancy at every sample therefore coexists with an order-one continuous error.</p>
+</details>
+</section>
+<section>
+<h2 id="which-modes-deserve-space">Which modes deserve space?</h2>
+<p>Let \(f(x)=1+0.6\sin x+0.8\cos(4x)\). Compute its mean square, the root-mean-square error after retaining frequencies at most one, and the best additional single real basis function among all higher-frequency sine and cosine modes.</p>
+<details><summary>Worked solution</summary>
+<p>Pairwise orthogonality gives \(1+0.36/2+0.64/2=1.5\). Omitting the fourth cosine leaves root-mean-square error \(\sqrt{0.32}\approx0.566\).</p>
+<p>The only omitted nonzero coefficient multiplies \(\cos(4x)\). Adding this mode removes the entire remaining mean-square error. Choosing an intermediate frequency for its lower index would make no change for this specific signal.</p>
+</details>
+</section>
+<section>
+<h2 id="project-an-odd-function">Project an odd function</h2>
+<p>Find the best linear mean-square approximation to \(x^3\) on \([-1,1]\) with unit weight. Compute its squared integrated error and compare the optimum slope with endpoint interpolation.</p>
+<details><summary>Worked solution</summary>
+<p>Symmetry forces zero constant. Orthogonality to \(x\) requires \(a=\int x^4/\int x^2=(2/5)/(2/3)=3/5\).</p>
+<p>Expanding the square gives \(2/7-2(3/5)(2/5)+(9/25)(2/3)=8/175\). Endpoint interpolation gives slope 1. The least-squares line trades endpoint accuracy for lower integrated loss.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/approximation-and-quadrature/chapters/10-orthogonal-projection/">Chapter 10 · Weighted projections and Legendre polynomials</a></span><span>Next<br><a href="/teaching/numerics/approximation-and-quadrature/chapters/11-endpoint-behaviour/">Chapter 11 · Quadrature near singularities and oscillations</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

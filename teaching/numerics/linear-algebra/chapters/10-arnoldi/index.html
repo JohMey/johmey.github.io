@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arnoldi iteration and GMRES · OneSimulation</title>
+<meta name="description" content="Construct an orthonormal basis for a nonsymmetric operator and use a small least-squares problem to choose an approximation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/10-arnoldi/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Arnoldi iteration and GMRES · OneSimulation">
+<meta property="og:description" content="Construct an orthonormal basis for a nonsymmetric operator and use a small least-squares problem to choose an approximation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/10-arnoldi/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Arnoldi iteration and GMRES</h1><p class="lead">Construct an orthonormal basis for a nonsymmetric operator and use a small least-squares problem to choose an approximation.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-residual-as-a-polynomial">A residual as a polynomial</a><a href="#replacing-large-products-by-small-coordinates">Replacing large products by small coordinates</a><a href="#one-eigenvalue-and-two-directions">One eigenvalue and two directions</a><a href="#paying-for-a-long-memory">Paying for a long memory</a><a href="#read-a-preconditioned-residual">Read a preconditioned residual</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-residual-as-a-polynomial">A residual as a polynomial</h2>
+<p>Consider a square nonsingular matrix and an initial residual \(r_0=b-Ax_0\). A correction in the span of \(r_0,Ar_0,\ldots,A^{k-1}r_0\) is a polynomial in \(A\) applied to \(r_0\). After subtracting the action of \(A\), the new residual is \(p_k(A)r_0\) with \(p_k(0)=1\). This constraint matters because the zero polynomial would certify convergence before the calculation began. Generalised minimal residual iteration, or GMRES, minimises the Euclidean norm over all such residuals. The spaces are nested, so the exact-arithmetic residual norms cannot increase during a cycle.</p>
+</section>
+<section>
+<h2 id="replacing-large-products-by-small-coordinates">Replacing large products by small coordinates</h2>
+<p>Start with \(v_1=r_0/\beta\), where \(\beta=\|r_0\|_2\). For each new direction form \(w=Av_j\), subtract its projections onto the existing orthonormal columns, and normalise what remains. Each projection coefficient occupies one row of column \(j\) of a small matrix. The final normalising length occupies its first subdiagonal. This Arnoldi construction gives \(AV_k=V_{k+1}\bar H_k\). If the length vanishes, the current subspace is invariant and no further normalisation is possible.</p>
+<div class="math display">\[\|b-A(x_0+V_ky)\|_2=\|V_{k+1}(\beta e_1-\bar H_ky)\|_2=\|\beta e_1-\bar H_ky\|_2.\]</div>
+<p>The second equality uses orthonormality. Solve this small rectangular least-squares problem, for example by updating triangular factors using plane rotations. The resulting residual is orthogonal to the range of \(AV_k\). Repeated projection may be necessary when rounding spoils orthogonality. A freshly calculated physical residual can test the small model's estimate before reporting convergence.</p>
+</section>
+<section>
+<h2 id="one-eigenvalue-and-two-directions">One eigenvalue and two directions</h2>
+<p>Take \(A=\left(\begin{smallmatrix}1&amp;4\\0&amp;1\end{smallmatrix}\right)\), \(x_0=0\), \(b=e_2\). The first correction is \(\alpha e_2\), so the squared residual is \(16\alpha^2+(1-\alpha)^2\). Differentiation gives \(\alpha=1/17\) and length \(4/\sqrt{17}\), about 0.9701. Almost the entire initial residual survives despite every eigenvalue being one. The second direction comes from the component of \(Ae_2\) perpendicular to \(e_2\), namely \(4e_1\). With both directions available the exact solution \((-4,1)^T\) is accessible, and its residual vanishes.</p>
+<p>For a diagonal matrix equal to the identity, a single step would suffice for every right-hand side. Here a nonzero off-diagonal entry couples two coordinates and the minimal polynomial is \((z-1)^2\). Counting distinct eigenvalues alone misses that coupling.</p>
+</section>
+<section>
+<h2 id="paying-for-a-long-memory">Paying for a long memory</h2>
+<p>Each new direction needs storage and projections against earlier directions. Restarting after a fixed number releases memory, but discards those directions. A new cycle still starts from the best current iterate. It lacks the previous cycle's simultaneous freedom to alter its old coefficients. Record matrix-vector products and the residual after each restart when comparing costs. On the example, two directions retained together already achieve the exact answer, providing a direct check on a proposed implementation.</p>
+</section>
+<section>
+<h2 id="read-a-preconditioned-residual">Read a preconditioned residual</h2>
+<p>Left preconditioning with \(M^{-1}\) makes GMRES minimise \(\|M^{-1}(b-Ax)\|\) instead. If \(M=\operatorname{diag}(1,1000)\), a physical residual \((0,1)^T\) has preconditioned norm 0.001. A small number in the stopping display could therefore leave the second physical balance comparatively inaccurate. Right preconditioning solves \(AM^{-1}y=b\), then forms \(x=M^{-1}y\); for exact preconditioner actions its minimisation still uses the original residual. Compare work and physically meaningful residuals when assessing either choice, especially if the equations use different units.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/linear-algebra/chapters/09-sparsity/">Chapter 9 · Graph structure and fill-in</a></span><span>Next<br><a href="/teaching/numerics/linear-algebra/problem-sheets/5/">Problem sheet 5 · Graphs and search spaces</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

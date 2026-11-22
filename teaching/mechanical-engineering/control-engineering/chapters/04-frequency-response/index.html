@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frequency response, disturbance rejection and robustness · OneSimulation</title>
+<meta name="description" content="A loop that tracks slowly changing commands may amplify a disturbance at another frequency. Work from the sinusoidal response to a defensible choice of bandwidth.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/04-frequency-response/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Frequency response, disturbance rejection and robustness · OneSimulation">
+<meta property="og:description" content="A loop that tracks slowly changing commands may amplify a disturbance at another frequency. Work from the sinusoidal response to a defensible choice of bandwidth.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/04-frequency-response/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Frequency response, disturbance rejection and robustness</h1><p class="lead">A loop that tracks slowly changing commands may amplify a disturbance at another frequency. Work from the sinusoidal response to a defensible choice of bandwidth.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#read-a-complex-gain-as-an-experiment">Read a complex gain as an experiment</a><a href="#derive-the-sensitivity-functions">Derive the sensitivity functions</a><a href="#how-much-delay-can-a-loop-tolerate">How much delay can a loop tolerate?</a><a href="#translate-specifications-into-a-measurement">Translate specifications into a measurement</a></nav></aside><article class="prose reference"><section><h2 id="read-a-complex-gain-as-an-experiment">Read a complex gain as an experiment</h2>
+<p>Drive a stable linear plant with a small sinusoid about its operating point. Once the transient dies away, the output is a sinusoid at the same angular frequency. Inserting \(u=Ue^{i\omega t}\) and \(y=Ye^{i\omega t}\) in the differential equation gives \(Y=P(i\omega)U\). The modulus gives the amplitude ratio and the argument gives the time shift as a fraction of a cycle. The units on a Bode plot matter: for a dimensional plant gain its magnitude in decibels presupposes a reference gain. The product around a feedback loop is dimensionless.</p>
+<p>For \(P=K/(1+s\tau)\), the modulus falls to \(K/\sqrt{2}\) at \(\omega=1/\tau\), where its phase is \(-45^\circ\). Above this break, doubling frequency roughly halves the output amplitude. Adding a transport delay multiplies the frequency response by \(e^{-i\omega T}\); the magnitude is unchanged while phase falls by \(\omega T\) radians. A magnitude measurement alone cannot detect this mechanism.</p>
+</section>
+<section><h2 id="derive-the-sensitivity-functions">Derive the sensitivity functions</h2>
+<p>Let \(u=C(r-y-n)\) for command \(r\) and sensor noise \(n\), with disturbance \(d\) added directly to the physical plant output \(y=Pu+d\). Substitution gives</p>
+<div class="math display">\[S=(1+PC)^{-1},\quad T=PC(1+PC)^{-1},\qquad y=Tr+Sd-Tn .\]</div>
+<p>The identity \(S+T=1\) holds for complex numbers at each frequency. A slow output disturbance is strongly rejected when the loop gain is large and far from \(-1\). Sensor noise at the same frequency is then nearly reproduced by the physical output with opposite sign. At high frequencies a deliberately small loop gain protects the output against measurement noise. If the disturbance enters at the actuator instead, its output transfer function is \(PS\). Mark its point of entry before reading any plot.</p>
+</section>
+<section><h2 id="how-much-delay-can-a-loop-tolerate">How much delay can a loop tolerate?</h2>
+<p>For a unity feedback loop take \(L(s)=4/[s(1+s)]\), with time in seconds. A unity-gain crossover satisfies \(\omega^2(1+\omega^2)=16\). The positive root gives \(\omega_c=\sqrt{(\sqrt{65}-1)/2}=1.88\) rad/s. At that frequency the phase is \(-90^\circ-\tan^{-1}1.88=-152.0^\circ\). A further \(28.0^\circ\) of lag would bring the Nyquist curve through \(-1\), where the closed-loop denominator vanishes. For pure delay alone the first corresponding delay is about \(0.489/1.88=0.260\) s. A 0.10 s delay consumes about \(10.8^\circ\) at crossover.</p>
+<p>This estimate uses this plant's unique gain crossover and its initially stable closed loop. Multiple crossovers, unstable plant poles and poorly measured resonances require inspection of the entire Nyquist curve. Even before a pole crosses into instability, the distance to \(-1\) controls amplification: \(|S|=1/|1+L|\). For example \(L=-0.9+0.1i\) gives \(|S|=7.07\). A loop with low steady error may therefore magnify a narrow band of disturbance by a factor of seven.</p>
+</section>
+<section><h2 id="translate-specifications-into-a-measurement">Translate specifications into a measurement</h2>
+<p>Suppose a speed drive must reject load variations below 0.5 rad/s while its encoder contains noise above 20 rad/s. First locate the disturbance and noise on the block diagram. Specify maximum allowed output amplitude per unit amplitude at each point. Shape the gain, then inspect the two resulting transfer functions across the entire frequency range, including the transition between bands. Raising proportional gain alone shifts the crossover into regions of additional lag. A measured resonance there can set the achievable speed even when the motor model at low frequency is excellent.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/03-closed-loop-poles/">Chapter 3 · Closed-loop poles, damping and performance</a></span><span>Next<br><a href="/teaching/mechanical-engineering/control-engineering/problem-sheets/2/">Problem sheet 2 · Pole placement, gain and phase</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

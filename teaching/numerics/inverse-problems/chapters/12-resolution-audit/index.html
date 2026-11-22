@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A reconstruction audit from observations to a defensible claim · OneSimulation</title>
+<meta name="description" content="Combine residuals, resolution, uncertainty and independent predictions to decide what one spatial experiment establishes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/chapters/12-resolution-audit/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A reconstruction audit from observations to a defensible claim · OneSimulation">
+<meta property="og:description" content="Combine residuals, resolution, uncertainty and independent predictions to decide what one spatial experiment establishes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/chapters/12-resolution-audit/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>A reconstruction audit from observations to a defensible claim</h1><p class="lead">Combine residuals, resolution, uncertainty and independent predictions to decide what one spatial experiment establishes.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#set-a-question-that-can-fail">Set a question that can fail</a><a href="#derive-the-data-only-estimate-and-interval">Derive the data-only estimate and interval</a><a href="#compare-a-prior-based-inference-on-the-same-scale">Compare a prior-based inference on the same scale</a><a href="#buy-information-in-the-direction-the-decision-needs">Buy information in the direction the decision needs</a><a href="#communicate-the-final-claim">Communicate the final claim</a></nav></aside><article class="prose reference"><section><h2 id="set-a-question-that-can-fail">Set a question that can fail</h2>
+<p>Two adjacent thermal zones are blurred by the sensor matrix \(A=\left(\begin{smallmatrix}0.55&amp;0.45\\0.45&amp;0.55\end{smallmatrix}\right)\). Let the observations be \(y=(21.08,20.92)\) °C with independent standard deviations 0.10 K. The engineering question is whether the first zone is at least one kelvin hotter than the second. Work in mean and difference coordinates. The mean passes unchanged, while the difference is attenuated by 0.10. Before fitting, predict that uncertainty in the contrast will dominate this decision.</p>
+</section>
+<section><h2 id="derive-the-data-only-estimate-and-interval">Derive the data-only estimate and interval</h2>
+<p>The observed mean is 21 °C, with standard deviation \(0.10/\sqrt2=0.0707\) K. The estimated true contrast is \(\hat d=(21.08-20.92)/0.10=1.60\) K. Its standard deviation is \(\sqrt2(0.10)/0.10=1.414\) K. For known Gaussian noise, a two-sided 95% data-only interval is about \([-1.17,4.37]\) K. The inverse values \((21.8,20.2)\) exactly reproduce both readings. Nevertheless, even the sign of the contrast is uncertain at this level. The exact residual consumed both degrees of freedom and cannot test the instrument model.</p>
+</section>
+<section><h2 id="compare-a-prior-based-inference-on-the-same-scale">Compare a prior-based inference on the same scale</h2>
+<p>Assume an independent prior for the contrast \(d\sim N(0,1\ \mathrm{K}^2)\), leaving the mean very weakly constrained. In contrast coordinates the data variance is 2 and the observed estimate is 1.60. Adding precisions gives posterior variance \(1/(1+1/2)=2/3\) K² and mean \((2/3)(1.60/2)=0.533\) K. The probability \(P(d&gt;1\mid y)\) is \(1-\Phi[(1-0.533)/\sqrt{2/3}]\simeq0.28\). The prior changed both the centre and the width; this probability is explicitly conditional on the zero-centred prior. Repeating with a wider prior shows how much the conclusion depends on that assumption.</p>
+</section>
+<section><h2 id="buy-information-in-the-direction-the-decision-needs">Buy information in the direction the decision needs</h2>
+<p>Suppose one additional test is available. Another independent repeat with the same blurred sensor reduces the data-only standard deviation of the contrast by \(\sqrt2\), to 1.0 K. A new differential sensor reading \(d+\epsilon\) with standard deviation 0.50 K and errors independent of the original instrument directly adds precision 4 K⁻² to the existing 0.5 K⁻², giving combined standard deviation \(1/\sqrt{4.5}=0.471\) K. This pre-data comparison depends on geometry and precision alone, not on an unknown future reading. Use held-back calibration objects to verify that the new sensor's stated precision and averaging model hold near an actual interface.</p>
+</section>
+<section><h2 id="communicate-the-final-claim">Communicate the final claim</h2>
+<p>Retain the observable mean and the uncertain contrast as separate reported quantities. State the noise law and model assumptions behind any interval. Where a numerical solver contributed, distinguish verified numerical precision from the statistical precision of the data. The difference is also visible in the <a href="/teaching/numerics/inverse-problems/#experiment">temperature-design case</a>: making the optimisation converge more tightly cannot restore information lost when all temperatures are close to the reference. A successful analysis may conclude that a particular observation needs redesign while still supplying an accurate prediction of another quantity.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/inverse-problems/chapters/11-constraints-and-edges/">Chapter 11 · Constraints, sparse signals and edge-preserving penalties</a></span><span>Next<br><a href="/teaching/numerics/inverse-problems/problem-sheets/6/">Problem sheet 6 · Edges, decision thresholds and validation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

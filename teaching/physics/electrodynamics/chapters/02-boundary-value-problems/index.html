@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conductors and boundary-value problems · OneSimulation</title>
+<meta name="description" content="Use the uniqueness of the potential to replace a grounded conductor by an image charge and then recover its induced surface charge.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/electrodynamics/chapters/02-boundary-value-problems/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Conductors and boundary-value problems · OneSimulation">
+<meta property="og:description" content="Use the uniqueness of the potential to replace a grounded conductor by an image charge and then recover its induced surface charge.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/electrodynamics/chapters/02-boundary-value-problems/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/electrodynamics/">Electrodynamics</a></p><h1>Conductors and boundary-value problems</h1><p class="lead">Use the uniqueness of the potential to replace a grounded conductor by an image charge and then recover its induced surface charge.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#trade-unknown-surface-charge-for-known-potential">Trade unknown surface charge for known potential</a><a href="#construct-the-image">Construct the image</a><a href="#recover-the-induced-charge-and-force">Recover the induced charge and force</a><a href="#quantify-the-localisation">Quantify the localisation</a></nav></aside><article class="prose reference"><section><h2 id="trade-unknown-surface-charge-for-known-potential">Trade unknown surface charge for known potential</h2>
+<p>A point charge held above a large grounded metal plane attracts charge towards the region beneath it. The induced surface density is nonuniform and initially unknown. Direct integration of Coulomb’s law would therefore introduce the very quantity one wants to determine. In a boundary-value formulation the potential of the metal is known instead. Assume a perfectly conducting plane at \(z=0\), vacuum above it and a positive point charge \(q\) at \(z=a&gt;0\). Grounding fixes the plane at zero potential and allows charge to enter or leave it.</p>
+<p>Away from the point source the potential obeys Laplace’s equation, and at the charge its singular behaviour is the Coulomb potential. These properties with the boundary values determine a unique solution. To see why, subtract two candidate solutions with the same charges and Dirichlet boundary conditions. Their difference \(w\) has zero Laplacian and vanishes on the boundary. Integrating \(\nabla\cdot(w\nabla w)=|\nabla w|^2+w\nabla^2w\) over the domain gives zero net surface term, including the limit at infinity for appropriately decaying fields. Hence the integral of \(|\nabla w|^2\) vanishes and \(w=0\) throughout.</p>
+</section>
+<section><h2 id="construct-the-image">Construct the image</h2>
+<p>Put a fictitious charge \(-q\) at \(z=-a\). At any point on the plane its distance equals the distance to the actual charge, so the two potentials cancel pointwise. In the upper half-space the fictitious source lies outside the solution domain. The combined potential has the correct single singularity, is zero on the metal and decays at infinity. By uniqueness it is the upper-half-space solution. With \(s\) the horizontal distance from the projection of the charge,</p>
+<div class="math display">\[V(s,z)=\frac{q}{4\pi\epsilon_0}\left[\frac{1}{\sqrt{s^2+(z-a)^2}}-\frac{1}{\sqrt{s^2+(z+a)^2}}\right].\]</div>
+<p>It is important to keep the domain in view. The expression continued below \(z=0\) describes an auxiliary mathematical problem. Inside the real conductor electrostatic equilibrium gives a constant potential and zero field. The fictitious charge is a way to reproduce the valid exterior data, rather than a literal localisation of the induced charge.</p>
+</section>
+<section><h2 id="recover-the-induced-charge-and-force">Recover the induced charge and force</h2>
+<p>The field just outside a conducting surface has no tangential component. Its outward normal component is \(\sigma_s/\epsilon_0\) because the field inside is zero. Differentiate the potential with respect to height and set \(z=0^+\) to obtain \(\sigma_s(s)=-qa/[2\pi(s^2+a^2)^{3/2}]\). Integrating over rings \(2\pi s\,ds\) from zero to infinity gives total induced charge \(-q\). A nearby grounded conductor connected to a reservoir can supply that total charge even though its potential remains fixed.</p>
+<p>At the position of the real charge its own singular field is excluded when calculating force. The induced field equals that of the image at distance \(2a\), so the attraction has magnitude \(q^2/(16\pi\epsilon_0a^2)\). Integrating the force from infinity gives interaction energy \(-q^2/(16\pi\epsilon_0a)\). Simply multiplying the image potential at the charge by \(q\) would double the magnitude because the induced distribution adjusts as the charge moves. The work integral automatically includes the changing response.</p>
+</section>
+<section><h2 id="quantify-the-localisation">Quantify the localisation</h2>
+<p>Take \(q=1.0\) nC and \(a=20\) mm. The force magnitude is \(5.62\) µN. The surface density directly beneath the charge is \(-q/(2\pi a^2)=-0.398\) µC/m². Within a disk of radius \(S\) the integral gives \(-q[1-a/\sqrt{S^2+a^2}]\). Setting the fraction in brackets equal to one half yields \(S=\sqrt3\,a=34.6\) mm. The density peaks directly below the charge, but a disk wider than its height is needed to collect half the total.</p>
+<p>Bring the charge twice as close while keeping \(q\) fixed. Both the peak density and the attraction quadruple, while the radius containing half the induced charge halves. This spatial prediction is sensitive to finite plate size. A real plate with a radius comparable to \(a\) cannot reproduce the infinite-plane surface distribution far from the centre, even when the potential at its surface is tightly controlled.</p>
+<p>Only the half-space accessible to the physical charge enters the field-energy comparison. Extending the mathematical solution through the grounded boundary introduces a second singular source whose mechanical motion has no counterpart in the laboratory. This is especially important when computing energy by moving the real charge toward the plate.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/electrodynamics/chapters/01-charge-and-potential/">Chapter 1 · Charge, potential and field energy</a></span><span>Next<br><a href="/teaching/physics/electrodynamics/problem-sheets/1/">Problem sheet 1 · Fields from charge and metal boundaries</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gas mixtures, humidity and condensation · OneSimulation</title>
+<meta name="description" content="Translate relative humidity into a water mass balance and determine how much condensate a cooling coil removes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/engineering-thermodynamics/chapters/08-humid-air/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gas mixtures, humidity and condensation · OneSimulation">
+<meta property="og:description" content="Translate relative humidity into a water mass balance and determine how much condensate a cooling coil removes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/engineering-thermodynamics/chapters/08-humid-air/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>Gas mixtures, humidity and condensation</h1><p class="lead">Translate relative humidity into a water mass balance and determine how much condensate a cooling coil removes.</p><p class="byline">Chapter 8 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#mixture">Choose a quantity that survives condensation</a><a href="#coil">Find water removal and the associated cooling duty</a><a href="#reheat">Separate humidity ratio from relative humidity</a><a href="#dew-point">Bracket an unknown dew point</a></nav></aside><article class="prose reference"><section><h2 id="mixture">Choose a quantity that survives condensation</h2>
+<p>A ventilation duct can carry an unchanged mass flow of dry air while water evaporates into it or condenses out. It is therefore convenient to express water content and mixture energy per kilogram of dry air. Model the dry air and water vapour as ideal gases sharing a common temperature and total volume. The partial pressure of each gas is the pressure it would exert if it occupied this volume alone. Dalton’s law gives \(p=p_a+p_v\).</p>
+<p>Relative humidity \(\phi=p_v/p_{\rm sat}(T)\) describes proximity to saturation at the current temperature. It is not the mass fraction of water. For humidity ratio \(w=m_v/m_a\), divide the two ideal-gas mass equations. The common temperature and volume cancel, leaving a ratio of molar masses multiplied by the partial-pressure ratio.</p>
+<div class="math display">\[w=\frac{M_v}{M_a}\frac{p_v}{p-p_v}\simeq0.622\frac{p_v}{p-p_v},\qquad w_{\rm sat}(T)=0.622\frac{p_{\rm sat}(T)}{p-p_{\rm sat}(T)} .\]</div>
+<p>Before any water condenses during cooling at constant total pressure, the humidity ratio and vapour partial pressure remain fixed. Relative humidity rises because saturation pressure falls. The dew point is the temperature at which saturation pressure equals that fixed vapour pressure. Once that point is crossed, further cooling can remove water.</p>
+</section>
+<section><h2 id="coil">Find water removal and the associated cooling duty</h2>
+<p>Air enters a coil at 30 °C, 100 kPa and 60% relative humidity, and leaves saturated at 12 °C. Use \(p_{\rm sat}(30)=4.24\) kPa and \(p_{\rm sat}(12)=1.40\) kPa. The inlet vapour partial pressure is 2.544 kPa, giving \(w_1=0.01624\) kg water per kg dry air. The outlet ratio is \(w_2=0.00883\). For dry-air flow 0.50 kg/s the condensate flow is \(0.50(0.01624-0.00883)=0.00371\,\mathrm{kg/s}\), about 13.3 kg/h.</p>
+<p>Using a 0 °C liquid-water reference, approximate moist-air enthalpy per kilogram dry air by \(h=1.005T+w(2501+1.86T)\) kJ/kg dry air with \(T\) in °C. The duct streams carry about 71.7 and 34.3 kJ/kg dry air. Condensate leaving at 12 °C carries \(h_l\simeq4.18(12)=50.2\,\mathrm{kJ/kg}\). Energy conservation gives heat removed per kilogram dry air as \(h_1-h_2-(w_1-w_2)h_l\), approximately 37.0 kJ/kg dry air, or 18.5 kW.</p>
+</section>
+<section><h2 id="reheat">Separate humidity ratio from relative humidity</h2>
+<p>Suppose the outlet stream is reheated to 20 °C without adding water. Its vapour pressure remains 1.40 kPa at the same total pressure. Since \(p_{\rm sat}(20)=2.34\,\mathrm{kPa}\), the new relative humidity is 59.8%. Neither evaporating water nor drying the air was required during this reheat. A sensor reporting 60% at both the inlet and reheated outlet therefore describes two air streams containing rather different masses of water. The coil water balance, written on the dry-air basis, explains the apparent coincidence.</p>
+</section>
+<section><h2 id="dew-point">Bracket an unknown dew point</h2>
+<p>At the original inlet the vapour pressure was 2.544 kPa. Suppose a saturation table gives 2.487 kPa at 21 °C and 2.644 kPa at 22 °C. Linear interpolation over this short interval puts the dew point at \(21+(2.544-2.487)/(2.644-2.487)=21.36^\circ\mathrm C\). A coil surface warmer than this value cannot start condensing the entering air locally under the stated conditions.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/engineering-thermodynamics/chapters/07-phase-equilibrium/">Chapter 7 · Phase equilibrium and steam quality</a></span><span>Next<br><a href="/teaching/mechanical-engineering/engineering-thermodynamics/problem-sheets/4/">Problem sheet 4 · Saturation and moist air</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pole geometry and plant uncertainty · OneSimulation</title>
+<meta name="description" content="Find which poles are achievable, then test what happens when the plant deviates from the nominal design.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/problem-sheets/4/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pole geometry and plant uncertainty · OneSimulation">
+<meta property="og:description" content="Find which poles are achievable, then test what happens when the plant deviates from the nominal design.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/problem-sheets/4/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Pole geometry and plant uncertainty</h1><p class="lead">Find which poles are achievable, then test what happens when the plant deviates from the nominal design.</p><p class="byline">Problem sheet 4 · Chapters 7 and 8</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#1-a-position-loop-with-one-gain">1. A position loop with one gain</a><a href="#2-an-initial-movement-in-the-wrong-direction">2. An initial movement in the wrong direction</a><a href="#3-how-much-complex-model-error-fits">3. How much complex model error fits?</a></nav></aside><article class="prose reference"><section><h2 id="1-a-position-loop-with-one-gain">1. A position loop with one gain</h2>
+<p>Take \(P=1/[s(s+6)]\) and \(u=K(r-y)\). (a) Find the breakaway gain and pole location. (b) Choose the gain that gives damped frequency 4 rad/s. (c) Add velocity feedback and select both gains for poles at \(-4\pm3i\).</p>
+<details><summary>Compare the desired monic polynomial with the plant</summary>
+<p>The roots are \(-3\pm\sqrt{9-K}\); they meet at \(-3\) for \(K=9\). A damped frequency of 4 requires \(K=25\), yielding poles \(-3\pm4i\). The second desired pair has polynomial \(s^2+8s+25\). With \(u=K_p(r-y)-K_v\dot y\) its coefficients give \(K_v=2,\ K_p=25\). Both designs have the same natural frequency but different envelopes and peak times.</p>
+</details>
+</section>
+<section><h2 id="2-an-initial-movement-in-the-wrong-direction">2. An initial movement in the wrong direction</h2>
+<p>Let \(G=(1-s/2)/(1+s)^2\). (a) Determine the final response and initial slope for a unit step. (b) Obtain the full step response. (c) Find the time and value of its minimum.</p>
+<details><summary>Resolve the step into a repeated-pole response</summary>
+<p>The DC value is 1 and \(\lim_{s\to\infty}sG=-1/2\), giving the initial slope. Partial fractions of \(G/s\) yield \(y=1-e^{-t}-1.5t e^{-t}\). Its derivative is \((-0.5+1.5t)e^{-t}\); the minimum occurs at \(t=1/3\) s and equals \(1-1.5e^{-1/3}\simeq-0.0748\). It is a zero-induced inverse response in a stable system.</p>
+</details>
+</section>
+<section><h2 id="3-how-much-complex-model-error-fits">3. How much complex model error fits?</h2>
+<p>At one frequency \(L_0=-0.6+0.3i\). (a) Compute \(|S_0|,|T_0|\). (b) Test a multiplicative uncertainty radius of 40%. (c) Estimate a worst-case upper bound on uncertain sensitivity there. Explain what remains to establish robust stability.</p>
+<details><summary>Measure the distance to the critical point</summary>
+<p>The distance \(|1+L_0|=0.5\) gives \(|S_0|=2\) and \(|T_0|=\sqrt{0.45}/0.5=1.342\). The uncertainty product is about 0.537, below one here. The triangle bound yields \(|S|\le2/(1-0.537)=4.32\). Check the full frequency band, nominal internal stability and the properties of the uncertainty class before drawing a loop-wide conclusion.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/08-model-uncertainty/">Chapter 8 · Uncertainty envelopes and robust stability</a></span><span>Next<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/09-optimal-state-feedback/">Chapter 9 · Optimal state feedback and the Riccati equation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

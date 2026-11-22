@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sampling, saturation and commissioning · OneSimulation</title>
+<meta name="description" content="Carry a continuous-time design onto a sampled actuator, predict where its operating assumptions fail, and distinguish an observed final value from an equilibrium.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/06-sampled-control/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sampling, saturation and commissioning · OneSimulation">
+<meta property="og:description" content="Carry a continuous-time design onto a sampled actuator, predict where its operating assumptions fail, and distinguish an observed final value from an equilibrium.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/06-sampled-control/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Sampling, saturation and commissioning</h1><p class="lead">Carry a continuous-time design onto a sampled actuator, predict where its operating assumptions fail, and distinguish an observed final value from an equilibrium.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#derive-the-held-input-model">Derive the held-input model</a><a href="#why-a-saturated-integrator-remembers-the-past">Why a saturated integrator remembers the past</a><a href="#use-a-numerical-result-to-distinguish-two-errors">Use a numerical result to distinguish two errors</a></nav></aside><article class="prose reference"><section><h2 id="derive-the-held-input-model">Derive the held-input model</h2>
+<p>A processor reads a sensor every \(h\) seconds and holds its most recent command until the next sample. Solve \(\tau\dot y+y=Ku_k\) exactly from \(kh\) to \((k+1)h\) with this constant input. The result is \(y_{k+1}=a y_k+K(1-a)u_k\), where \(a=e^{-h/\tau}\). This recursion is exact at the sampling instants for the assumed hold. Taking a large Euler step through the continuous closed-loop equation describes a different experiment. A real controller has only the sampled information available when it computes \(u_k\).</p>
+<p>With proportional control \(u_k=K_p(r_k-y_k)\) the discrete pole is \(z=a-KK_p(1-a)\). Stability requires \(|z|\lt1\). A negative pole of modulus less than one alternates sign each update while decaying. For \(K=1,\ \tau=1\) s and \(K_p=3\), \(h=0.2\) s gives \(z=0.275\); \(h=0.8\) s gives \(z=-1.203\). The same nominal continuous design gives radically different sampled records. For positive gain the upper gain limit is \((1+a)/[K(1-a)]\). Additional computation and transport delays lower the available margin further.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/sampled-feedback.png" width="1264" height="720" loading="lazy" alt="Held-input step responses settle quickly at 0.2 seconds between samples, alternate and settle at 0.5 seconds, and grow in amplitude at 0.8 seconds."><figcaption>Same plant and gain, three sample intervals. The lines show the exact continuous output between updates; the held quantity is the actuator command.</figcaption></figure>
+<h3>Locate the sampling limit in a computed trace</h3>
+<p>Keep the plant integration at 40 RK4 substeps per hold. Predict which sample intervals give a monotone response, a decaying oscillation or a growing one. Compare the stored OneSimulation traces on either side of 0.69 s. Estimate the discrete pole from two successive output increments; their ratio removes the unknown equilibrium.</p>
+<div class="sampled-loop" data-sampled-loop hidden><label>Controller sample interval (s) <input type="range" min="0.15" max="0.95" step="0.05" value="0.65"></label>
+<output aria-live="polite"></output><table><caption>OneSimulation plant output at each controller update, for a unit reference from rest.</caption>
+<thead><tr><th scope="col">Update</th><th scope="col">Time (s)</th><th scope="col">Output</th></tr></thead><tbody></tbody></table></div>
+<p>At 0.65 s the measured pole is −0.9118, while at 0.70 s it is −1.0137. The latter increasingly overshoots even though the internal integration resolves each hold. Try 0.69 s and 0.70 s with <code>python sampled-feedback.py --period 0.69</code>, then double <code>--substeps</code> to check that the stability change is a sampling effect. <a href="/downloads/teaching/control-engineering/sampled-feedback.py" download>Download the runnable OneSimulation model</a>.</p>
+</section>
+<section><h2 id="why-a-saturated-integrator-remembers-the-past">Why a saturated integrator remembers the past</h2>
+<p>Let \(v_k=K_p e_k+I_k\) be the requested command, and \(u_k\) its value clipped to the actuator range. An unconstrained integrator adds \(hK_i e_k\) to \(I_k\) at every sample. While an unreachable command holds a heater at its upper limit, positive error keeps accumulating; when the command becomes reachable again the stored integral may keep the heater fully on. This delayed recovery is called windup. Logging only actual heater power hides the growth of the internal demand. Log both signals and the integral state.</p>
+<p>A back-calculation update feeds the clipping discrepancy back to the integrator:</p>
+<div class="math display">\[I_{k+1}=I_k+h[K_i e_k+(u_k-v_k)/T_t].\]</div>
+<p>When the request exceeds the upper stop, the second term is negative. At fixed error and fixed clipping level, this update attracts the requested command toward a value consistent with saturation, provided its discrete tracking dynamics are stable. For example, with \(h=0.1\) s, \(K_i=1\), \(e=2\), \(u=5\), \(v=8\), and \(T_t=0.5\) s, the integral increment is \(-0.4\), compared with \(+0.2\) without correction. Tuning \(T_t\) must account for the sample interval and actuator dynamics. Anti-windup cannot make an infeasible steady torque available.</p>
+</section>
+<section><h2 id="use-a-numerical-result-to-distinguish-two-errors">Use a numerical result to distinguish two errors</h2>
+<p>Return to the <a href="/teaching/mechanical-engineering/control-engineering/#experiment">OneSimulation tracking experiment</a>. It models a continuous, unsaturated proportional loop and reports the error at a finite time. For a unit step from rest with loop gain \(g=KK_p\), the error after \(N\) closed-loop time constants is \(e_N=(1+g e^{-N})/(1+g)\). With \(g=8\) and \(N=6\), predict \(0.11331\). Its difference from the equilibrium \(1/9\) is transient motion. Halving the plant speed changes the physical time needed to reach the same dimensionless sample, while this sampled error stays fixed.</p>
+<p>Test the interpretation by recording at three and six time constants and taking the ratio of the two deviations from equilibrium. Predict \(e^{-3}\) for the later deviation divided by the earlier. A persistent discrepancy warrants checking the recorded timestamps, the implementation of the step and whether a limit was active. To examine sampling or clipping, explicitly add these mechanisms to the model before comparing with the equations above. The logged linear-loop runs answer the finite-record question directly.</p>
+</section>
+<script src="/assets/sampled-feedback.js" defer></script><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/05-state-feedback/">Chapter 5 · States, reachability and estimation</a></span><span>Next<br><a href="/teaching/mechanical-engineering/control-engineering/problem-sheets/3/">Problem sheet 3 · What a controller can learn and deliver</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

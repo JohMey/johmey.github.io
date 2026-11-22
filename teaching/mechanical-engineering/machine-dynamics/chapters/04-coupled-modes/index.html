@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coupled oscillators and normal coordinates · OneSimulation</title>
+<meta name="description" content="Derive and interpret the two modes of a coupled machine, then decide which mode an applied load can excite.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-dynamics/chapters/04-coupled-modes/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Coupled oscillators and normal coordinates · OneSimulation">
+<meta property="og:description" content="Derive and interpret the two modes of a coupled machine, then decide which mode an applied load can excite.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-dynamics/chapters/04-coupled-modes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Coupled oscillators and normal coordinates</h1><p class="lead">Derive and interpret the two modes of a coupled machine, then decide which mode an applied load can excite.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#model">Two masses allow two independent shapes</a><a href="#eigenproblem">Separate space from time</a><a href="#reconstruct">Predict a release test at both instruments</a><a href="#excitation">Distinguish available modes from visible modes</a><a href="#frame-experiment">Predict which mode responds to adding rotary inertia</a></nav></aside><article class="prose reference"><section><h2 id="model">Two masses allow two independent shapes</h2>
+<p>Two identical instruments sit on separate spring mounts and are connected by a flexible link. Pull both by the same amount and the link keeps its natural length. Pull them in opposite directions and the link stretches twice as much as either displacement. The two tests reveal distinct restoring mechanisms. A model with one equivalent spring and the sum of both masses would discard one of them.</p>
+<p>Let \(x_1,x_2\) be horizontal displacements from equilibrium. Each mass is \(m\), each ground spring has stiffness \(k\), and the coupling spring has stiffness \(k_c\). With light springs, small displacements and no damping, the kinetic energy is \(m(\dot x_1^2+\dot x_2^2)/2\) and the elastic energy is \(k(x_1^2+x_2^2)/2+k_c(x_1-x_2)^2/2\). The coupling energy contains the difference of displacements because it is the extension between its ends.</p>
+</section>
+<section><h2 id="eigenproblem">Separate space from time</h2>
+<p>Taking the derivative of elastic energy with respect to each coordinate gives \(m\ddot x_1+(k+k_c)x_1-k_cx_2=0\) and the symmetric second equation. Look for \(\mathbf x=\boldsymbol\phi\cos\omega t\). Nonzero modal shapes solve \((\mathbf K-\omega^2\mathbf M)\boldsymbol\phi=0\). For this pair the determinant equation is</p>
+<div class="math display">\[(k+k_c-m\omega^2)^2-k_c^2=0.\]</div>
+<p>Taking both signs of the square root gives \(\omega_1^2=k/m\) and \(\omega_2^2=(k+2k_c)/m\). Substitution back yields shapes proportional to \((1,1)\) and \((1,-1)\). For the first, the connector transmits no incremental force. For the second, the connector acts strongly. Reversing both signs of a plotted eigenvector or multiplying it by a nonzero number describes the same physical mode.</p>
+</section>
+<section><h2 id="reconstruct">Predict a release test at both instruments</h2>
+<p>Take \(m=5.0\) kg, \(k=2000\) N/m and \(k_c=1500\) N/m. The two angular frequencies are 20.0 and 31.62 rad/s, or 3.18 and 5.03 Hz. Pull only the first instrument 4.0 mm and release from rest. The initial displacement vector equals \(2(1,1)+2(1,-1)\) mm. Each modal amplitude starts at its corresponding value with zero initial velocity. Hence</p>
+<div class="math display">\[x_1(t)=2\cos(20t)+2\cos(31.62t),\qquad x_2(t)=2\cos(20t)-2\cos(31.62t)\]</div>
+<p>in millimetres. At zero time the second displacement vanishes while the connector exerts 6.0 N on its mass. Its initial acceleration is 1.2 m/s² toward the first instrument’s displacement. This apparent transfer of motion needs neither forcing nor damping: modal displacements add and cancel differently at the two observation points.</p>
+</section>
+<section><h2 id="excitation">Distinguish available modes from visible modes</h2>
+<p>Define average and relative coordinates \(q_s=(x_1+x_2)/2\) and \(q_a=(x_1-x_2)/2\). Adding or subtracting the original equations decouples them. Equal external forces excite only \(q_s\); equal and opposite forces excite only \(q_a\). Taking the signal \((x_1+x_2)/2\) likewise hides the antisymmetric mode. A missing spectral peak can therefore reveal the symmetry of a load or sensor arrangement, even though the corresponding eigenmode still exists.</p>
+<p>If the two masses differ, the simple sum and difference cease to diagonalise the equations. The general route is to form the physical mass and stiffness matrices and solve the symmetric generalised eigenproblem. Distinct modes of an undamped conservative system are orthogonal with respect to mass, \(\boldsymbol\phi_i^T\mathbf M\boldsymbol\phi_j=0\). This weighted orthogonality is what permits a measured motion or distributed load to be projected into separate modal coordinates.</p>
+</section>
+<section><h2 id="frame-experiment">Predict which mode responds to adding rotary inertia</h2>
+<p>For a unit mode shape \(\phi\), the quotient \(\omega^2=\phi^TK\phi/(\phi^TM\phi)\) compares stored elastic energy with inertia. Increasing inertia at a coordinate matters most when that coordinate has appreciable motion in the mode. A frame with three tip coordinates offers a way to check this reasoning beyond the symmetric two-mass illustration.</p>
+<p>Compare two changes to the same frame: double only the tip mass from 200 to 400 kg, then restore it and double only the tip rotary inertia from 60 to 120 kg m². Predict whether either change can raise a natural frequency for the same stiffness and compute the fractional shift of the third mode in each case. Use the negligible-member-mass row throughout. <a href="/teaching/mechanical-engineering/machine-dynamics/#experiment">Check the frame frequency measurements</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/machine-dynamics/chapters/03-harmonic-forcing/">Chapter 3 · Harmonic forcing, phase and dissipated power</a></span><span>Next<br><a href="/teaching/mechanical-engineering/machine-dynamics/problem-sheets/2/">Problem sheet 2 · Frequency response and modes</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

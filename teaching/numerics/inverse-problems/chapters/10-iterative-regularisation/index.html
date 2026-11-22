@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iteration as a regulariser · OneSimulation</title>
+<meta name="description" content="Derive the spectral action of a matrix-free iteration and explain why more iterations can eventually make an inverse estimate worse.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/chapters/10-iterative-regularisation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Iteration as a regulariser · OneSimulation">
+<meta property="og:description" content="Derive the spectral action of a matrix-free iteration and explain why more iterations can eventually make an inverse estimate worse.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/chapters/10-iterative-regularisation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Iteration as a regulariser</h1><p class="lead">Derive the spectral action of a matrix-free iteration and explain why more iterations can eventually make an inverse estimate worse.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#multiply-by-the-operator-without-storing-its-matrix">Multiply by the operator without storing its matrix</a><a href="#derive-the-filter-after-a-finite-number-of-steps">Derive the filter after a finite number of steps</a><a href="#see-semiconvergence-in-a-two-mode-experiment">See semiconvergence in a two-mode experiment</a><a href="#select-an-observable-stopping-test">Select an observable stopping test</a></nav></aside><article class="prose reference"><section><h2 id="multiply-by-the-operator-without-storing-its-matrix">Multiply by the operator without storing its matrix</h2>
+<p>For large imaging systems a forward projection \(Bx\) and its adjoint \(B^\mathsf{T}r\) may be available as procedures while a matrix with one column per pixel is too large to store. Landweber iteration starts from zero and uses the least-squares gradient:</p>
+<div class="math display">\[x_{k+1}=x_k+\omega B^\mathsf{T}(b-Bx_k).\]</div>
+<p>An implementation requires both procedures to be adjoints in the same inner products. Check \(\langle Bv,w\rangle=\langle v,B^\mathsf{T}w\rangle\) on a variety of inputs; quadrature weights in a discretised integral can change the correct transpose. For the Euclidean norm choose \(0&lt;\omega&lt;2/\sigma_{\max}^2\) to ensure contraction in every nonzero singular direction. Choosing \(\omega\le1/\sigma_{\max}^2\) additionally avoids alternating scalar transients in these directions.</p>
+</section>
+<section><h2 id="derive-the-filter-after-a-finite-number-of-steps">Derive the filter after a finite number of steps</h2>
+<p>Let \(z_{j,k}=v_j^\mathsf{T}x_k\), \(\beta_j=u_j^\mathsf{T}b\). The recurrence becomes \(z_{j,k+1}=(1-\omega\sigma_j^2)z_{j,k}+\omega\sigma_j\beta_j\). Summing its geometric series at \(x_0=0\) gives</p>
+<div class="math display">\[z_{j,k}=\left[1-(1-\omega\sigma_j^2)^k\right]\frac{\beta_j}{\sigma_j}.\]</div>
+<p>Components with large singular values reach their least-squares values quickly. Small-singular-value components remain suppressed for many iterations because \(1-(1-\omega\sigma_j^2)^k\simeq k\omega\sigma_j^2\) while \(k\omega\sigma_j^2\) is small. Stopping early is therefore a choice of spectral filter. Changing the initial guess affects the pattern retained in weak or null directions; with initial zero the iteration never invents a null-space component.</p>
+</section>
+<section><h2 id="see-semiconvergence-in-a-two-mode-experiment">See semiconvergence in a two-mode experiment</h2>
+<p>Let \(B=\operatorname{diag}(1,0.1)\), true \(x=(1,0)\) and observed \(b=(1,0.02)\). Set \(\omega=1\). After one step the estimate is \((1,0.002)\), very close to truth, and the first mode is already exact. After 100 steps the second coordinate is \(0.2(1-0.99^{100})=0.1268\). At convergence it is 0.2. The residual shrinks steadily toward zero while the actual reconstruction has deteriorated after the first step. With a genuinely nonzero second component the error curve may initially improve for longer. Which iteration is best depends on the unknown signal and noise, so a solver's normal residual criterion is not a suitable scientific stopping rule by itself.</p>
+</section>
+<section><h2 id="select-an-observable-stopping-test">Select an observable stopping test</h2>
+<p>When a data error bound is known, stop the first time the residual falls below a noise-compatible level. With independent validation measurements monitor their predictive error across iterations. A fast Krylov method can bring useful modes in much sooner but may also reach noise-dominated directions sooner. Compare algorithms by scientific accuracy and forward/adjoint applications at a defensible stopping point. If a prior-weighted variable or preconditioner changes how quickly individual modes enter, the early-stopped result changes as well. Record that choice alongside the step size, starting state and stopping rule so the reconstruction can be interpreted.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/inverse-problems/chapters/09-adjoint-gradients/">Chapter 9 · Adjoint gradients through a forward solver</a></span><span>Next<br><a href="/teaching/numerics/inverse-problems/problem-sheets/5/">Problem sheet 5 · Derivatives and early stopping</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

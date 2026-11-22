@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Axial stress, strain and compatibility · OneSimulation</title>
+<meta name="description" content="Determine how much a stepped member stretches and why a restrained temperature change produces force.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/engineering-mechanics/chapters/02-axial-deformation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Axial stress, strain and compatibility · OneSimulation">
+<meta property="og:description" content="Determine how much a stepped member stretches and why a restrained temperature change produces force.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/engineering-mechanics/chapters/02-axial-deformation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Axial stress, strain and compatibility</h1><p class="lead">Determine how much a stepped member stretches and why a restrained temperature change produces force.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#cut">Find the force carried through a section</a><a href="#compatibility">Reassemble the pieces</a><a href="#worked">Stretch a two-material tie</a><a href="#restraint">Install the tie between rigid walls</a><a href="#verify-geometry">Test the difference between member force and extension</a></nav></aside><article class="prose reference"><section><h2 id="cut">Find the force carried through a section</h2>
+<p>Two shafts that support the same suspended mass can stretch by very different amounts. A load cell measures force, while a clearance specification usually limits displacement. Connect them by taking a cut normal to a straight member and replacing the removed material by its axial force \(N\). When the load is centred, changes slowly and is far from grips or abrupt changes in section, the nominal normal stress is \(\sigma=N/A\). Adopt tension as positive. Near holes or grips the mean value remains useful for equilibrium, while local stresses can differ appreciably.</p>
+<p>If a small material line of original length \(dx\) gains length \(du\), its engineering strain is \(du/dx\). Assume small strain, a uniform temperature across each section and a linear elastic material. Elastic strain is \(\sigma/E\), where Young’s modulus \(E\) has units of stress. Free thermal expansion adds the strain \(\alpha\Delta T\). Thus an element can change length even if its axial force is zero.</p>
+</section>
+<section><h2 id="compatibility">Reassemble the pieces</h2>
+<p>Multiply the strain by \(dx\) and add along the member. The displacement difference between its ends is</p>
+<div class="math display">\[u(L)-u(0)=\int_0^L\frac{N(x)}{E(x)A(x)}\,dx+\int_0^L\alpha(x)\Delta T(x)\,dx.\]</div>
+<p>Every term has units of length. Bars joined end to end carry the same force in a segment without an intervening axial load. Their extensions add, so their compliances \(L/(EA)\), measured in m/N, add. Bars between the same two rigid plates instead share the same extension. Their forces add, and their stiffnesses \(EA/L\), measured in N/m, add. Draw the connections before deciding which quantities are equal. The material with the larger modulus does not always carry the larger load because area and length also matter.</p>
+</section>
+<section><h2 id="worked">Stretch a two-material tie</h2>
+<p>A steel section is 0.60 m long with area 120 mm² and \(E_s=200\) GPa. An aluminium section continues another 0.40 m, has area 200 mm² and \(E_a=70\) GPa. Pull on the joined tie with 12 kN at constant temperature. Equilibrium gives 12 kN in both pieces. The nominal stresses are 100 MPa and 60 MPa respectively. Their elongations are \(12\,000(0.60)/(200\times10^9\,120\times10^{-6})=0.300\) mm and \(12\,000(0.40)/(70\times10^9\,200\times10^{-6})=0.343\) mm. The end displacement is 0.643 mm. The aluminium extends more although its nominal stress is smaller, because its compliance is larger.</p>
+<p>Dividing total force by total displacement gives a tie stiffness of 18.7 MN/m. This is smaller than the stiffness of either isolated piece. Checking this limit catches an accidental parallel-spring calculation. The stress calculation still treats each piece separately. Averaging their areas first would conceal the location of the larger nominal stress.</p>
+</section>
+<section><h2 id="restraint">Install the tie between rigid walls</h2>
+<p>Now let the same tie fit exactly between rigid walls with zero force at its installation temperature. Raise the uniform temperature by 30 K. Take \(\alpha_s=12\times10^{-6}\,\mathrm{K^{-1}}\) and \(\alpha_a=23\times10^{-6}\,\mathrm{K^{-1}}\). If free, the pieces would extend by 0.216 and 0.276 mm. The walls prescribe zero total displacement, so an elastic shortening of 0.492 mm must develop. Multiplying this mismatch by the combined stiffness gives \(N=-9.18\) kN. The negative sign denotes compression.</p>
+<p>A force balance on the entire tie merely says the two wall reactions are opposite. Their magnitude came from the displacement condition. Real supports deflect, giving part of the expansion back to the tie and reducing the force. If the tie is long and slender, check whether it can remain straight under this force before interpreting the compressive stress.</p>
+</section>
+<section><h2 id="verify-geometry">Test the difference between member force and extension</h2>
+<p>In a statically determinate pin-jointed truss the axial forces follow from joint equilibrium before the bar areas enter the displacement calculation. Predict both outputs when every bar area is doubled at unchanged geometry and load. If the compressive top chord initially carries 75 kN and the monitored joint moves down 3.219 mm, which reading changes, and by what factor? Check the two runs and explain the final rounding using \(\delta_i=N_iL_i/(E_iA_i)\). <a href="/teaching/mechanical-engineering/engineering-mechanics/#experiment">Open the truss experiment</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/engineering-mechanics/chapters/01-equilibrium/">Chapter 1 · Free bodies, moments and support reactions</a></span><span>Next<br><a href="/teaching/mechanical-engineering/engineering-mechanics/problem-sheets/1/">Problem sheet 1 · Equilibrium and axial compatibility</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

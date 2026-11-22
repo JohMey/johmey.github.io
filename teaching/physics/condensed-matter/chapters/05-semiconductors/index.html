@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carriers, neutrality and transport in semiconductors · OneSimulation</title>
+<meta name="description" content="Determine the chemical potential from particle balance and connect the same equilibrium to conductivity and a Hall measurement.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/condensed-matter/chapters/05-semiconductors/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Carriers, neutrality and transport in semiconductors · OneSimulation">
+<meta property="og:description" content="Determine the chemical potential from particle balance and connect the same equilibrium to conductivity and a Hall measurement.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/condensed-matter/chapters/05-semiconductors/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/condensed-matter/">Condensed matter and band theory</a></p><h1>Carriers, neutrality and transport in semiconductors</h1><p class="lead">Determine the chemical potential from particle balance and connect the same equilibrium to conductivity and a Hall measurement.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#integrate-the-occupation-near-a-band-edge">Integrate the occupation near a band edge</a><a href="#close-the-equations-with-charge-neutrality">Close the equations with charge neutrality</a><a href="#from-a-drift-balance-to-a-measured-signal">From a drift balance to a measured signal</a></nav></aside><article class="prose reference"><section><h2 id="integrate-the-occupation-near-a-band-edge">Integrate the occupation near a band edge</h2>
+<p>For a three-dimensional parabolic conduction band, the density of states per volume grows as \(\sqrt{E-E_c}\). If \(E_c-\mu\) is several \(k_BT\), the Fermi function is well approximated by \(e^{-(E-\mu)/k_BT}\). Substituting \(x=(E-E_c)/k_BT\) in the carrier integral produces a temperature-dependent prefactor and an exponential separation from the band edge. Carrying out the corresponding hole integral at the valence-band maximum gives</p>
+<div class="math display">\[n=N_c e^{-(E_c-\mu)/k_BT},\qquad p=N_v e^{-(\mu-E_v)/k_BT},\qquad np=N_cN_v e^{-E_g/k_BT}=n_i^2 .\]</div>
+<p>Here \(N_c,N_v\) include spin and any relevant valley degeneracies, \(E_g=E_c-E_v\), and \(n_i\) is the intrinsic concentration. In a parabolic band the prefactors scale as \(T^{3/2}\). The product relation assumes thermal equilibrium with a common chemical potential. Under illumination electrons and holes can have different quasi-Fermi levels; using the same mass-action product there requires additional justification.</p>
+</section>
+<section><h2 id="close-the-equations-with-charge-neutrality">Close the equations with charge neutrality</h2>
+<p>In an intrinsic uniform sample \(n=p=n_i\). Equating the two exponentials gives \(\mu=(E_c+E_v)/2+(k_BT/2)\ln(N_v/N_c)\). The intrinsic chemical potential is at midgap only if the effective state counts match. With fully ionised donors and acceptors, neutrality reads \(n-p=N_D-N_A=D\). Combining it with mass action gives \(n=(D+\sqrt{D^2+4n_i^2})/2,\ p=n_i^2/n\). For large negative \(D\), computing \(p\) first from the corresponding positive root avoids subtracting nearby numbers.</p>
+<p>For \(D=10^{16}\) cm⁻³ and \(n_i=10^{10}\) cm⁻³, the electron density is essentially \(10^{16}\) cm⁻³ while \(p\) is about \(10^4\) cm⁻³. Adding net donors moves the Fermi level upward and suppresses holes. At low temperature incomplete ionisation can matter, and at high donor concentration the nondegenerate approximation can fail. At sufficiently high temperature the intrinsic density can grow comparable to the dopant density. Use both balance equations when comparing data across such a crossover.</p>
+</section>
+<section><h2 id="from-a-drift-balance-to-a-measured-signal">From a drift balance to a measured signal</h2>
+<p>In a single isotropic parabolic band a relaxation-time model balances electric acceleration against momentum relaxation. For electrons \(m^*\dot v=-eE-m^*v/\tau\), so the steady drift velocity is \(-e\tau E/m^*\). Define the positive mobility \(u_n=e\tau/m^*\). Multiplying by electron charge and density gives current parallel to the field. With holes present, \(\sigma=e(nu_n+pu_p)\). A conductivity alone supplies a product of concentration and mobility and cannot separate the two.</p>
+<p>For one carrier type with charge \(q\), zero transverse current implies \(E_y=v_x B_z\). Substituting \(j_x=n q v_x\) yields \(R_H=E_y/(j_xB_z)=1/(nq)\) in this simple model. Combining its sign and magnitude with \(\sigma\) gives a density and mobility. If both types contribute, in weak fields the two-band expression becomes \(R_H=(p u_p^2-nu_n^2)/[e(pu_p+nu_n)^2]\). The mobility squared makes a highly mobile minority carrier disproportionately visible. Interpreting every measured Hall coefficient as the inverse density can therefore misidentify both carrier count and dominant mechanism.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/condensed-matter/problem-sheets/2/">Problem sheet 2 · Occupied states, heat capacity and band curvature</a></span><span>Next<br><a href="/teaching/physics/condensed-matter/chapters/06-periodic-media/">Chapter 6 · Predicting a gap and testing it in a periodic medium</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

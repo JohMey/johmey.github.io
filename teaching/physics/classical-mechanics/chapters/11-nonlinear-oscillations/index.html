@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nonlinear stiffness and amplitude-dependent period · OneSimulation</title>
+<meta name="description" content="Derive the leading frequency shift of a symmetric nonlinear oscillator and test whether a measured amplitude shift is consistent with a cubic spring.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/classical-mechanics/chapters/11-nonlinear-oscillations/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nonlinear stiffness and amplitude-dependent period · OneSimulation">
+<meta property="og:description" content="Derive the leading frequency shift of a symmetric nonlinear oscillator and test whether a measured amplitude shift is consistent with a cubic spring.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/classical-mechanics/chapters/11-nonlinear-oscillations/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/classical-mechanics/">Classical mechanics</a></p><h1>Nonlinear stiffness and amplitude-dependent period</h1><p class="lead">Derive the leading frequency shift of a symmetric nonlinear oscillator and test whether a measured amplitude shift is consistent with a cubic spring.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#start-from-a-reversible-force-law">Start from a reversible force law</a><a href="#obtain-the-first-frequency-correction">Obtain the first frequency correction</a><a href="#check-the-result-using-the-conserved-energy">Check the result using the conserved energy</a><a href="#infer-stiffness-from-period-data">Infer stiffness from period data</a></nav></aside><article class="prose reference"><section><h2 id="start-from-a-reversible-force-law">Start from a reversible force law</h2>
+<p>A spring that looks linear under small deflection can stiffen as it is displaced further. For an oscillator symmetric under \(x\mapsto-x\), the restoring force expanded about equilibrium has no even powers. Keep the leading correction and write \(m\ddot x+kx+\alpha x^3=0\), with \(k&gt;0\) and \(\alpha\) measured in N/m³. Assume the displacement is small enough that neglected fifth-order terms remain unimportant. Positive \(\alpha\) gives a hardening spring. A negative cubic coefficient describes local softening and may need higher-order terms to represent large displacements safely within the model.</p>
+<p>The potential is \(kx^2/2+\alpha x^4/4\). Without damping the total energy is conserved and a release at amplitude \(A\) fixes that energy. Unlike a harmonic oscillator, the quadratic curvature at the origin no longer fixes the period for every possible energy. We want a quantitative connection between the amplitude of the motion and its zero-crossing interval.</p>
+</section>
+<section><h2 id="obtain-the-first-frequency-correction">Obtain the first frequency correction</h2>
+<p>Try \(x\simeq A\cos\Omega t\) and substitute it into the cubic equation. The identity \(\cos^3 u=(3\cos u+\cos3u)/4\) shows that the nonlinearity introduces a component at the original frequency and a third harmonic. Balance the fundamental coefficient to get \(-m\Omega^2+k+3\alpha A^2/4\simeq0\). Expanding the square root gives</p>
+<div class="math display">\[\Omega\simeq\omega_0\left(1+\frac{3\alpha A^2}{8k}\right),\qquad \omega_0=\sqrt{k/m}.\]</div>
+<p>The control parameter is \(|\alpha|A^2/k\), the ratio of cubic to linear force at maximum displacement. The small additional third harmonic changes the waveform at first order but only feeds back into this leading frequency result at higher order. Fitting a perfect sinusoid to a high-precision trace may therefore show a residual even when the measured average period follows this formula.</p>
+</section>
+<section><h2 id="check-the-result-using-the-conserved-energy">Check the result using the conserved energy</h2>
+<p>The quarter-period is the time to move from equilibrium to \(A\). Substitution of the energy at the turning point gives an integral over \(dx/\sqrt{2[E-U(x)]/m}\). Let \(x=A\sin u\) to remove the square-root endpoint. The remaining integrand is proportional to \(\{1+[\alpha A^2/(2k)](1+\sin^2u)\}^{-1/2}\). Expanding and averaging over the interval from zero to \(\pi/2\) uses mean \(\sin^2 u=1/2\), yielding \(T\simeq(2\pi/\omega_0)[1-3\alpha A^2/(8k)]\). This agrees with the reciprocal of the harmonic-balance result.</p>
+<p>The integral approach generalises to experimentally tabulated conservative forces by integrating them first to obtain a potential. It would need modification for strong damping, where energy varies significantly between the two turning points of one cycle.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/duffing-period.png" width="1264" height="720" loading="lazy" alt="The energy integral and its straight-line approximation agree near zero cubic stiffness and separate as amplitude increases."><figcaption>A positive cubic stiffness shortens the period. The first-order expansion is tangent to the energy-integral curve at zero and gradually loses accuracy away from that limit.</figcaption></figure>
+</section>
+<section><h2 id="infer-stiffness-from-period-data">Infer stiffness from period data</h2>
+<p>For \(m=0.50\) kg, \(k=200\) N/m and \(\alpha=4.0\times10^4\) N/m³, \(\omega_0=20.0\) rad/s. At \(A=0.020\) m the force ratio is 0.080, giving a leading frequency increase of 3.0% to 20.6 rad/s. At half this amplitude the predicted increase is 0.75%. Measure the period over several cycles at each amplitude, keeping the amplitude change due to loss small. A plot of frequency against the square of amplitude should be approximately straight near the origin. A nonzero intercept shift under a change of temperature could indicate a change in ordinary linear stiffness instead of a new nonlinear coefficient.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/classical-mechanics/problem-sheets/5/">Problem sheet 5 · Rotation, damping and frequency measurements</a></span><span>Next<br><a href="/teaching/physics/classical-mechanics/chapters/12-bifurcation-of-a-rotating-hoop/">Chapter 12 · Bifurcation of a rotating hoop</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

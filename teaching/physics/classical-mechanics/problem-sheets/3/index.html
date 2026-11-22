@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moving frames and phase portraits · OneSimulation</title>
+<meta name="description" content="Apply Lectures 5 and 6 to distinguish real forces, phase-space geometry and numerical drift.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/classical-mechanics/problem-sheets/3/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Moving frames and phase portraits · OneSimulation">
+<meta property="og:description" content="Apply Lectures 5 and 6 to distinguish real forces, phase-space geometry and numerical drift.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/classical-mechanics/problem-sheets/3/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/classical-mechanics/">Classical mechanics</a></p><h1>Moving frames and phase portraits</h1><p class="lead">Apply Lectures 5 and 6 to distinguish real forces, phase-space geometry and numerical drift.</p><p class="byline">Problem sheet 3 · Chapters 5 and 6</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#test-the-surface-of-a-rotating-liquid">Test the surface of a rotating liquid</a><a href="#classify-pendulum-preparations">Classify pendulum preparations</a><a href="#follow-a-numerical-patch-of-phase-space">Follow a numerical patch of phase space</a></nav></aside><article class="prose reference"><section><h2 id="test-the-surface-of-a-rotating-liquid">Test the surface of a rotating liquid</h2>
+<p>A bucket rotates about a vertical axis. At radius 0.15 m the free surface is 12 mm higher than at the centre. Calculate the angular speed, the period and the predicted rise at radius 0.075 m. Specify a condition under which these measurements would no longer fit one parabola.</p>
+<details><summary>Integrate the equilibrium pressure</summary>
+<p>Steady rotation gives \(\partial_r p=\rho\Omega^2r\) and vertical hydrostatics gives \(\partial_zp=-\rho g\). Along a constant-pressure free surface these imply \(\Delta z=\Omega^2r^2/(2g)\). Therefore \(\Omega=\sqrt{2(9.81)(0.012)}/0.15=3.23\) rad/s and the period is 1.94 s. At half radius the rise is one quarter, 3.0 mm. Measurements during spin-up need the transient fluid velocity. Capillary menisci close to the wall can also bias the height used for the fit.</p>
+</details>
+</section>
+<section><h2 id="classify-pendulum-preparations">Classify pendulum preparations</h2>
+<p>A 0.25 kg mass on a rigid 0.60 m link starts at 60° from the downward vertical. Its canonical momentum is initially either 0.12 or 0.25 kg·m²/s. Calculate the energy for each and the positive momentum required for continuous rotation at that starting angle.</p>
+<details><summary>Locate the two phase points</summary>
+<p>The inertia is \(m\ell^2=0.090\) kg·m², potential energy at 60° is \(mg\ell/2=0.736\) J and the top lies at \(2mg\ell=2.943\) J. Adding \(p^2/(2m\ell^2)\) gives 0.816 and 1.083 J. Both states swing; different initial angular momenta need not change the class of motion. At threshold \(p=\sqrt{2(0.090)(2.943-0.736)}=0.630\) kg·m²/s. A larger value is needed to pass the top in finite time. Reversing the sign reverses the initial direction while preserving the energy.</p>
+</details>
+</section>
+<section><h2 id="follow-a-numerical-patch-of-phase-space">Follow a numerical patch of phase space</h2>
+<p>For \(m=1\) kg and \(k=25\) N/m compare a 0.10 s forward Euler step with an update that first changes momentum using the old position and then changes position using the new momentum. Derive the area factor for each and find the area ratio after ten identical steps.</p>
+<details><summary>Take the determinant of each map</summary>
+<p>In the order \((q,p)\) the forward Euler matrix has rows \((1,0.10)\) and \((-2.50,1)\) in consistent SI units, so its determinant is 1.25. A patch therefore expands by \(1.25^{10}=9.31\) after ten steps. For the second scheme \(p'=p-2.50q\) and \(q'=q+0.10p'=0.75q+0.10p\). Its determinant is \(0.75+0.25=1\) and the area is unchanged. Neither determinant measures phase error. For a timing test, compare the interval between same-direction zero crossings with the analytic period \(2\pi/5=1.257\) s.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/classical-mechanics/chapters/06-hamiltonian-phase-space/">Chapter 6 · Hamiltonian motion in phase space</a></span><span>Next<br><a href="/teaching/physics/classical-mechanics/chapters/07-two-body-gravity/">Chapter 7 · Two-body motion and binary masses</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

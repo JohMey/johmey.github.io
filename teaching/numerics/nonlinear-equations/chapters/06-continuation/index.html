@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Continuation and folds · OneSimulation</title>
+<meta name="description" content="Track a family of equilibria through parameter changes, identify the failure of ordinary parameter continuation at a fold and build a predictor–corrector step.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/06-continuation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Continuation and folds · OneSimulation">
+<meta property="og:description" content="Track a family of equilibria through parameter changes, identify the failure of ordinary parameter continuation at a fold and build a predictor–corrector step.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/06-continuation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Continuation and folds</h1><p class="lead">Track a family of equilibria through parameter changes, identify the failure of ordinary parameter continuation at a fold and build a predictor–corrector step.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-solution-curve-contains-more-than-one-isolated-solve">A solution curve contains more than one isolated solve</a><a href="#change-the-parameter-used-to-follow-the-curve">Change the parameter used to follow the curve</a><a href="#take-one-step-past-a-turning-point">Take one step past a turning point</a><a href="#check-the-prediction-error-against-the-step-length">Check the prediction error against the step length</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-solution-curve-contains-more-than-one-isolated-solve">A solution curve contains more than one isolated solve</h2>
+<p>A physical model often depends on a parameter \(\lambda\), such as heat input, end displacement or applied load. Solving \(F(x,\lambda)=0\) independently at each parameter value discards information about how neighbouring states are related. On a smooth branch where \(F_x\) is invertible, differentiation gives \(F_x\,dx/d\lambda=-F_\lambda\). This linear solve predicts how the state moves under a small parameter change. Re-evaluating the full residual at the prediction and correcting it by Newton accounts for the curvature omitted by the tangent.</p>
+<p>For a scalar illustration take \(F=x^2+\lambda-1\). The admissible solution set is a parabola in the \((x,\lambda)\) plane, with branches \(x=\pm\sqrt{1-\lambda}\) for \(\lambda&lt;1\). Its derivative \(dx/d\lambda=-1/(2x)\) grows without bound as \(x\) approaches zero. Starting at \(x=0.5,\lambda=0.75\), a change \(\Delta\lambda=0.1\) predicts \(x=0.4\). The positive exact value is \(\sqrt{0.15}=0.38730\). The predictor is close enough for a local correction here. Increasing the load beyond one would ask for a real equilibrium that this model cannot supply.</p>
+</section>
+<section>
+<h2 id="change-the-parameter-used-to-follow-the-curve">Change the parameter used to follow the curve</h2>
+<p>The curve itself is smooth at \((0,1)\) although \(\lambda\) is a poor local coordinate there. Introduce an arclength-like parameter and a normalised tangent \(t=(t_x,t_\lambda)\) satisfying \(F_x t_x+F_\lambda t_\lambda=0\). At a known point \(z_k=(x_k,\lambda_k)\) predict \(z_p=z_k+\Delta s\,t\). Correct by solving the physical equation together with a hyperplane constraint \(t^T(z-z_p)=0\). This pseudo-arclength condition selects a nearby point on the branch while allowing the load parameter itself to reverse direction.</p>
+<p>At the fold of the example \(F_x=0,\ F_\lambda=1\), and the tangent can be \(t=(-1,0)\). The augmented Jacobian has rows \((0,1)\) and \((-1,0)\), with determinant one. A Newton correction in the two unknowns is well posed even though the original scalar Jacobian for fixed \(\lambda\) was singular. The construction depends on a simple fold and the correct tangent. A more complicated branch intersection can require additional information to choose which path to follow.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/continuation-fold.png" width="1264" height="720" loading="lazy" alt="Two root branches turn at lambda equal to one and join at x equal to zero."><figcaption>The solution curve can be followed through the fold even though increasing the parameter beyond one would leave this particular equation with no real root.</figcaption></figure>
+</section>
+<section>
+<h2 id="take-one-step-past-a-turning-point">Take one step past a turning point</h2>
+<p>Start exactly at the fold, choose the negative-\(x\) tangent and take \(\Delta s=0.1\). The predictor gives \((-0.1,1)\). Its physical residual is \(0.01\). The transverse plane now fixes \(x=-0.1\). Correcting the physical balance therefore gives \(\lambda=1-0.1^2=0.99\). The parameter has decreased while the curve coordinate has advanced. This simple calculation illustrates why choosing fixed increments of \(\lambda\) alone cannot traverse both sides of the same load maximum.</p>
+<p>A solver can report an accurate branch even if a physical system would not settle on that branch. To test stability one needs a dynamical law. For instance, if \(\dot x=1-\lambda-x^2=-F\), then perturbing an equilibrium gives \(\dot e=-2x_\star e\). The positive branch is locally attracting and the negative branch repelling. The algebraic root residual vanishes on both. For a different specified dynamics the interpretation must be rederived. Keep separate records of equilibrium balance, tangent orientation, correction size and dynamical stability when interpreting a continuation diagram.</p>
+</section>
+<section>
+<h2 id="check-the-prediction-error-against-the-step-length">Check the prediction error against the step length</h2>
+<p>For the example, predict away from \((0.5,0.75)\) with the slope \(dx/d\lambda=-1\). A change of only 0.05 predicts \(x=0.45\), while the exact positive branch gives \(\sqrt{0.20}=0.447214\), an error about 0.00279. The larger change 0.10 gave error about 0.01270. Near this starting point halving the parameter step reduces the tangent prediction error by roughly a factor of four, consistent with the second-order remainder of a first-order predictor.</p>
+<p>Approaching the fold makes that comparison deteriorate because the second derivative with respect to the load becomes unbounded. Monitoring the ratio of correction length to predictor length provides one way to shorten steps before Newton loses the branch. At a successful step, orient the new tangent to have positive dot product with its predecessor in the scaled coordinates. Without that convention, an arbitrary sign change in a computed tangent could send the next predictor back along the path already followed.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/nonlinear-equations/chapters/05-globalisation/">Chapter 5 · Line searches and trust regions</a></span><span>Next<br><a href="/teaching/numerics/nonlinear-equations/problem-sheets/3/">Problem sheet 3 · Safeguards and continuation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

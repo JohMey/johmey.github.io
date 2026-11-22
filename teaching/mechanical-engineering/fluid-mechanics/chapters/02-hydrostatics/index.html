@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydrostatic pressure and forces on submerged surfaces · OneSimulation</title>
+<meta name="description" content="Derive pressure from a body-force balance and locate the resultant force on a vertical gate.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/fluid-mechanics/chapters/02-hydrostatics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hydrostatic pressure and forces on submerged surfaces · OneSimulation">
+<meta property="og:description" content="Derive pressure from a body-force balance and locate the resultant force on a vertical gate.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/fluid-mechanics/chapters/02-hydrostatics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Hydrostatic pressure and forces on submerged surfaces</h1><p class="lead">Derive pressure from a body-force balance and locate the resultant force on a vertical gate.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#gradient">Balance a stationary fluid element</a><a href="#resultant">Use two separate integrals</a><a href="#gate">Calculate hinge moment before actuator force</a><a href="#layers">Include stratification and buoyancy</a><a href="#gauge">Read a two-fluid differential manometer</a></nav></aside><article class="prose reference"><section><h2 id="gradient">Balance a stationary fluid element</h2>
+<p>A diver experiences pressure from all directions, while a sluice gate feels a net force mainly from one side. Pressure is a scalar state variable. The force on a surface element is directed opposite its outward normal and has magnitude \(p\,dA\). The net force on a real gate also depends on what presses on its back face. For a fluid at rest there is no viscous shear. Take a thin horizontal slab of area \(A\) and thickness \(dz\), with \(z\) upward. Its vertical force balance is \(p(z)A-p(z+dz)A-\rho gA\,dz=0\), or \(dp/dz=-\rho g\).</p>
+<p>For constant density this integrates to \(p=p_s+\rho gh\) at depth \(h\) below a free surface of pressure \(p_s\). A vented water surface has atmospheric absolute pressure. Gauge pressure subtracts that same atmospheric pressure at every point. It is convenient for net forces when the other face is exposed to the same atmosphere. A sealed gas space with appreciable excess pressure adds a uniform load component to the hydrostatic triangle.</p>
+</section>
+<section><h2 id="resultant">Use two separate integrals</h2>
+<p>For a flat vertical gate, add horizontal pressure forces to get \(F=\int_A p_g\,dA\), where \(p_g\) is the pressure difference across it. To find the force’s depth \(h_R\), match its moment: \(Fh_R=\int_A h p_g\,dA\). With a vented free surface on one side and air on the other, this gives \(F=\rho gA\bar h\) and \(h_R=\int_A h^2dA/(A\bar h)\). Decomposing the second moment into centroidal and parallel-axis pieces gives</p>
+<div class="math display">\[h_R=\bar h+\frac{I_G}{A\bar h}.\]</div>
+<p>Here \(I_G\) is the area’s second moment about its horizontal centroidal axis. Its SI unit is m⁴. The second term is positive: lower parts of a vertical gate carry more force per unit area, moving the resultant below the area centroid.</p>
+</section>
+<section><h2 id="gate">Calculate hinge moment before actuator force</h2>
+<p>A 1.20 m wide rectangular gate extends from the water surface to depth 1.80 m. Its horizontal hinge is at the surface. At the bottom the gauge pressure is \(1000(9.81)(1.80)=17.7\) kPa. The triangular pressure profile integrates to \(F=\rho g bH^2/2=19.1\) kN. The resultant lies at \(2H/3=1.20\) m beneath the hinge, producing a moment of 22.9 kN·m. A horizontal actuator at the bottom must pull with magnitude \(22.9/1.80=12.7\) kN to balance this water moment. This excludes gate weight and friction at the hinge.</p>
+<p>If the whole gate is submerged another metre with both ends still separated from the same air pressure on the back, its pressure diagram gains a uniform rectangle. That additional resultant acts at the gate centroid. It increases hinge moment, while the centre of pressure of the total load moves closer to the centroid measured relative to the gate. Simply adding one metre to the original lever arm would confuse a depth measured from the surface with a moment arm measured from the hinge.</p>
+</section>
+<section><h2 id="layers">Include stratification and buoyancy</h2>
+<p>In layered immiscible liquids, integrate \(\rho g\) through each layer. Pressure remains continuous across a flat interface when capillary effects are negligible, while its depth gradient changes. For a closed submerged object the resultant pressure force is upward with magnitude equal to the displaced fluid’s weight. To see this, replace the body by the fluid that would occupy its volume. In static equilibrium surface pressure must balance that fluid’s weight; the same surface pressure acts on the original object. Buoyancy concerns the net force on a closed surface. It cannot replace a hinge-moment calculation on an open gate.</p>
+</section>
+<section><h2 id="gauge">Read a two-fluid differential manometer</h2>
+<p>Two water taps at the same elevation connect to opposite legs of a manometer containing a heavier immiscible liquid of density 2500 kg/m³. If the heavy-fluid interfaces differ in height by 40 mm, following a hydrostatic path gives a pressure difference \((2500-1000)g(0.040)=589\,\mathrm{Pa}\). The tap above the lower heavy-fluid interface has the larger pressure. The water columns matter even though both taps sit at the same elevation.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/fluid-mechanics/chapters/01-kinematics/">Chapter 1 · Velocity fields, flow rates and conservation of mass</a></span><span>Next<br><a href="/teaching/mechanical-engineering/fluid-mechanics/problem-sheets/1/">Problem sheet 1 · Mass balances and hydrostatic loading</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

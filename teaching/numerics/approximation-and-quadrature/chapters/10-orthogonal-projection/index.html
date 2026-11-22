@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weighted projections and Legendre polynomials · OneSimulation</title>
+<meta name="description" content="Derive a best mean-square polynomial and determine how a change of weight changes what that polynomial predicts.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/chapters/10-orthogonal-projection/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Weighted projections and Legendre polynomials · OneSimulation">
+<meta property="og:description" content="Derive a best mean-square polynomial and determine how a change of weight changes what that polynomial predicts.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/chapters/10-orthogonal-projection/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Weighted projections and Legendre polynomials</h1><p class="lead">Derive a best mean-square polynomial and determine how a change of weight changes what that polynomial predicts.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#distance-depends-on-the-observation">Distance depends on the observation</a><a href="#construct-a-basis-on-a-symmetric-interval">Construct a basis on a symmetric interval</a><a href="#move-the-weight-toward-one-endpoint">Move the weight toward one endpoint</a><a href="#a-discrete-inner-product-can-give-a-different-optimum">A discrete inner product can give a different optimum</a></nav></aside><article class="prose reference"><section>
+<h2 id="distance-depends-on-the-observation">Distance depends on the observation</h2>
+<p>A large error over a small part of an interval may be acceptable when an instrument averages over the interval. With a positive integrable weight \(w\), minimise \(J(p)=\int_a^b w(x)|f(x)-p(x)|^2\,dx\) over polynomials of degree at most \(m\). The first variation in an arbitrary allowed direction \(q\) gives \(\int w(f-p)q=0\). Conversely this orthogonality implies \(J(p+q)=J(p)+\int wq^2\). This Pythagorean identity proves uniqueness and explains why a residual with large local extrema can still be optimal in the chosen metric.</p>
+<p>In a monomial basis these conditions couple every coefficient to every other. Choose polynomials \(\phi_j\) orthogonal for the same weight instead. Then \(p=\sum c_j\phi_j\) with \(c_j=\int wf\phi_j/\int w\phi_j^2\). Increasing the degree preserves every coefficient already computed. Using quadrature to estimate these integrals introduces another approximation. A rule that samples too sparsely can make two distinct basis vectors look identical under the discrete inner product.</p>
+</section>
+<section>
+<h2 id="construct-a-basis-on-a-symmetric-interval">Construct a basis on a symmetric interval</h2>
+<p>For unit weight on \([-1,1]\), start with \(1,x,x^2\). Odd integrands integrate to zero, so the first two are orthogonal already. Subtract the projection of \(x^2\) onto the constant, namely \(1/3\), and retain \(x^2-1/3\). Scaling this polynomial to take value one at the right endpoint gives \(P_2=(3x^2-1)/2\), the second Legendre polynomial. Its squared integral is \(2/5\), obtained by integrating its expanded fourth-degree square.</p>
+<p>Approximating \(x^2\) by a line retains just \(1/3\). Squaring the residual and integrating gives \(2/5-4/9+2/9=8/45\). The mean-square error is half that number and its square root is about 0.29814. The worst local error occurs at the endpoints and equals \(2/3\). The constant \(1/2\) has smaller uniform error but a larger squared integral of \(7/30\). The objective function explains the difference without appealing to how a fitted curve looks.</p>
+</section>
+<section>
+<h2 id="move-the-weight-toward-one-endpoint">Move the weight toward one endpoint</h2>
+<p>On \([0,1]\) choose density \(w(x)=2x\), normalised to integrate to one. Fitting a constant to \(f(x)=x\) now gives its weighted mean \(2\int_0^1 x^2\,dx=2/3\). The weighted mean-square error is \(2\int x^3\,dx-(2/3)^2=1/18\). Equal weighting would instead place the constant at \(1/2\). Selecting a weight thus amounts to specifying the region over which a loss should be economical. When interpreting coefficients state the interval, basis normalisation and weight together; otherwise two reported coefficients can be different descriptions of the same fitted polynomial.</p>
+</section>
+<section>
+<h2 id="a-discrete-inner-product-can-give-a-different-optimum">A discrete inner product can give a different optimum</h2>
+<p>If only the endpoints of \([-1,1]\) are sampled with equal weight, then \(x^2\) takes value one at every observation and the best discrete constant is one. Adding the midpoint with the same weight changes it to \(2/3\). Simpson weights on those three samples instead give \((1+4\cdot0+1)/6=1/3\), the exact continuous coefficient, because that particular integral is quadratic. A mismatch between a discrete fit and a continuous projection can thus arise entirely from the observation design, even with error-free measurements.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/approximation-and-quadrature/chapters/09-fourier/">Chapter 9 · Fourier projection and sampled frequencies</a></span><span>Next<br><a href="/teaching/numerics/approximation-and-quadrature/problem-sheets/5/">Problem sheet 5 · Spectral measures of error</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

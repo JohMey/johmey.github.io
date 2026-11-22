@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Root enclosures with interval Newton · OneSimulation</title>
+<meta name="description" content="Combine interval bounds and a single function evaluation to exclude roots or isolate one with a verifiable enclosure.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/08-interval-newton/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Root enclosures with interval Newton · OneSimulation">
+<meta property="og:description" content="Combine interval bounds and a single function evaluation to exclude roots or isolate one with a verifiable enclosure.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/08-interval-newton/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Root enclosures with interval Newton</h1><p class="lead">Combine interval bounds and a single function evaluation to exclude roots or isolate one with a verifiable enclosure.</p><p class="byline">Chapter 8 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#from-a-point-step-to-an-enclosure">From a point step to an enclosure</a><a href="#enclose-a-square-root">Enclose a square root</a><a href="#keep-the-certificate-valid">Keep the certificate valid</a><a href="#use-a-stronger-derivative-enclosure-when-possible">Use a stronger derivative enclosure when possible</a></nav></aside><article class="prose reference"><section>
+<h2 id="from-a-point-step-to-an-enclosure">From a point step to an enclosure</h2>
+<p>Let \(f\) have a continuous derivative throughout a closed interval \(I\). Choose \(m\in I\) and compute an interval \(D\) containing every derivative value on \(I\). If \(0\notin D\), any root \(r\in I\) satisfies \(0=f(m)+f'(\xi)(r-m)\) by the mean value theorem. Therefore \(r\in N=m-f(m)/D\). Intersecting \(N\) with \(I\) retains every possible root. An empty intersection certifies that the original interval contained none. Since the derivative has a fixed sign, there can be at most one.</p>
+<p>Existence needs an additional argument. Opposite endpoint signs suffice by continuity. Alternatively if \(N\) lies strictly inside \(I\), its extremal corrections force a sign change or a zero at \(m\): for an increasing function and \(f(m)&gt;0\), moving left by \(f(m)/\min D\) decreases the function by at least \(f(m)\). That point lies in \(I\). The other signs follow by reversing the interval or taking \(-f\). This argument explains why proper containment has stronger meaning than partial overlap.</p>
+</section>
+<section>
+<h2 id="enclose-a-square-root">Enclose a square root</h2>
+<p>For \(f=x^2-2\) on \([1,2]\), derivatives lie in \([2,4]\). The midpoint gives \(f(1.5)=0.25\), so \(N=[1.5-0.25/2,1.5-0.25/4]=[1.375,1.4375]\). Its width is one sixteenth of the starting width. Ordinary Newton at 1.5 would give \(1.416\overline6\); an accurate single estimate carries a different type of evidence from an enclosure with guaranteed endpoints.</p>
+<p>Choose \(m=1.40625\) in the new interval. Now \(f(m)=-0.0224609375\) and \(D=[2.75,2.875]\). The next interval lies between \(1.40625+0.0224609375/2.875\) and \(1.40625+0.0224609375/2.75\), approximately \([1.414062,1.414418]\) with endpoints rounded outward. For narrower intervals the variation in \(1/f'\) shrinks proportionally to width when \(f'\) is Lipschitz and bounded away from zero. Because \(f(m)\) is itself proportional to width near the root, the new width often decreases quadratically.</p>
+</section>
+<section>
+<h2 id="keep-the-certificate-valid">Keep the certificate valid</h2>
+<p>Each arithmetic operation needs outward rounding when performed in floating point. Rounding inward can exclude a root even when the algebra is exact. If a derivative interval crosses zero, ordinary interval division cannot give a single bounded correction. Subdivide and test again, or use an independent enclosure argument. For \(x^2\) on \([-1,1]\), repeated subdivision approaching zero encounters a true double root where the derivative vanishes. The usual simple-root contraction argument does not apply there. A sign-change test also misses this root because the function just touches the axis.</p>
+</section>
+<section>
+<h2 id="use-a-stronger-derivative-enclosure-when-possible">Use a stronger derivative enclosure when possible</h2>
+<p>For \(f(x)=x+x^3\) on \([-1,1]\), the derivative is \(1+3x^2\). Multiplying two independent copies of the interval \([-1,1]\) gives the loose product \([-1,1]\), leading to the derivative enclosure \([-2,4]\). Treating the expression as an actual square instead gives \([1,4]\), excluding zero. The latter bound allows the interval Newton step at the midpoint to collapse directly onto the root zero. Both interval results enclose every derivative, but keeping algebraic dependence between two identical factors greatly improves the certificate.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/nonlinear-equations/chapters/07-polynomial-roots/">Chapter 7 · Polynomial roots and coefficient sensitivity</a></span><span>Next<br><a href="/teaching/numerics/nonlinear-equations/problem-sheets/4/">Problem sheet 4 · Root sensitivity and certificates</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

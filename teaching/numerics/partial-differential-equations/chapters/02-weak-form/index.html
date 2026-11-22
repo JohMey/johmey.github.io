@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weak forms and finite elements · OneSimulation</title>
+<meta name="description" content="Derive a variational statement by integration by parts, assemble element matrices for a one-dimensional rod and explain what the Galerkin solution minimises.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/partial-differential-equations/chapters/02-weak-form/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Weak forms and finite elements · OneSimulation">
+<meta property="og:description" content="Derive a variational statement by integration by parts, assemble element matrices for a one-dimensional rod and explain what the Galerkin solution minimises.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/partial-differential-equations/chapters/02-weak-form/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Weak forms and finite elements</h1><p class="lead">Derive a variational statement by integration by parts, assemble element matrices for a one-dimensional rod and explain what the Galerkin solution minimises.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#reduce-the-differentiability-required-by-equilibrium">Reduce the differentiability required by equilibrium</a><a href="#assemble-one-element-and-connect-it-to-its-neighbour">Assemble one element and connect it to its neighbour</a><a href="#identify-the-energy-that-is-best-approximated">Identify the energy that is best approximated</a><a href="#recover-a-support-reaction">Recover a support reaction</a></nav></aside><article class="prose reference"><section>
+<h2 id="reduce-the-differentiability-required-by-equilibrium">Reduce the differentiability required by equilibrium</h2>
+<p>A rod is fixed at \(x=0\), pushed by a distributed load \(f\) and by an end force \(t\) at \(x=L\). Axial displacement \(u\) satisfies \(-(EAu')'=f\), \(u(0)=0\) and \(EAu'(L)=t\). The product \(EA\) is positive. A trial profile assembled from linear pieces has jumps in its derivative, so differentiating it twice pointwise is unsuitable. Instead multiply the strong equation by a test displacement \(v\) vanishing at the fixed end and integrate by parts once.</p>
+<p>The resulting equation is \(\int_0^L EA\,u'v'\,dx=\int_0^L fv\,dx+t v(L)\). Only first derivatives are required. The fixed displacement is imposed directly on trial and test spaces; the end traction appears in the load functional. This clarifies why prescribing both force and displacement independently at the same end can overconstrain a second-order problem. The test functions represent allowable virtual displacements, and the integral identity expresses equality of internal and external virtual work.</p>
+</section>
+<section>
+<h2 id="assemble-one-element-and-connect-it-to-its-neighbour">Assemble one element and connect it to its neighbour</h2>
+<p>On an element from \(x_i\) to \(x_{i+1}\) of length \(h\), use shape functions \(N_1=1-s,\ N_2=s\) with \(s=(x-x_i)/h\). Their physical derivatives are \(-1/h,\ 1/h\). For constant \(EA\), integrating products \(EA N'_aN'_b\) gives the matrix \((EA/h)\left(\begin{smallmatrix}1&amp;-1\\-1&amp;1\end{smallmatrix}\right)\). A constant distributed load contributes \(fh(1,1)^T/2\). Summing element contributions for a shared global node enforces balance there without prescribing the internal traction manually.</p>
+<p>Take \(L=1,\ EA=1,\ f=2,\ t=0\) in consistent units and use two equal elements. After eliminating the fixed displacement, the stiffness matrix is \(\left(\begin{smallmatrix}4&amp;-2\\-2&amp;2\end{smallmatrix}\right)\) and the load is \((1,0.5)^T\). Solving gives \(u(0.5)=0.75,\ u(1)=1\). The exact solution is \(2x-x^2\) and agrees at both nodes. Inside the first element at \(x=0.25\), the linear interpolant gives 0.375, whereas the exact value is 0.4375. Nodal agreement can coexist with a substantial interior error.</p>
+</section>
+<section>
+<h2 id="identify-the-energy-that-is-best-approximated">Identify the energy that is best approximated</h2>
+<p>Let \(a(u,v)=\int EA\,u'v'\) and denote the external work by \(\ell(v)\). The discrete solution \(u_h\) satisfies \(a(u_h,v_h)=\ell(v_h)\) for every test function from its finite-dimensional space. The continuous solution satisfies the same equation for every such test, so \(a(u-u_h,v_h)=0\). This Galerkin orthogonality means the error is perpendicular to the trial space in the energy inner product. For any other admissible discrete \(w_h\), write \(u-w_h=(u-u_h)+(u_h-w_h)\) and expand its squared energy norm. The cross term vanishes and \(\|u-w_h\|_a^2=\|u-u_h\|_a^2+\|u_h-w_h\|_a^2\).</p>
+<p>Thus the conforming Galerkin solution is the best energy approximation in its space for this symmetric linear problem and exact integration. The statement concerns a specific norm and model. It does not guarantee pointwise optimal stresses or carry unchanged into nonsymmetric transport problems. In the rod example the computed strain is constant on each element, replacing a linearly varying exact strain. Refinement improves this derivative field even when a table of nodal displacements already looks exact.</p>
+</section>
+<section>
+<h2 id="recover-a-support-reaction">Recover a support reaction</h2>
+<p>The reaction at a prescribed-displacement node is hidden if one inspects only the reduced interior system. Assemble all element internal forces \(Ku_h\) before discarding constrained rows, then subtract the full external load vector. The entries at free degrees of freedom should be near zero; the entry at a prescribed degree of freedom gives the reaction in the chosen sign convention.</p>
+<p>In the uniformly loaded rod, the first element strain is \((0.75-0)/0.5=1.5\). Its internal nodal force at the left is \(-1.5\), while the first node receives an external distributed-load share of \(+0.5\). Their difference \(-2\) is the support reaction. It balances the total applied load \(2\cdot1=2\). Looking only at the derivative in the first element would have reported magnitude 1.5, missing that load share. A reaction from assembled balance and a stress recovered by pointwise differentiation are related but distinct quantities on a finite mesh.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/partial-differential-equations/chapters/01-flux-differences/">Chapter 1 · Flux differences for an elliptic balance</a></span><span>Next<br><a href="/teaching/numerics/partial-differential-equations/problem-sheets/1/">Problem sheet 1 · Flux balances and virtual work</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

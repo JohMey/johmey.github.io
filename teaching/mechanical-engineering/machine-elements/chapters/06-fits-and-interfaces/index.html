@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tolerances, interference and torque transmission · OneSimulation</title>
+<meta name="description" content="Turn shaft and hub limits into a range of contact pressures and check whether a cylindrical interference fit can transmit torque.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-elements/chapters/06-fits-and-interfaces/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tolerances, interference and torque transmission · OneSimulation">
+<meta property="og:description" content="Turn shaft and hub limits into a range of contact pressures and check whether a cylindrical interference fit can transmit torque.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-elements/chapters/06-fits-and-interfaces/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Tolerances, interference and torque transmission</h1><p class="lead">Turn shaft and hub limits into a range of contact pressures and check whether a cylindrical interference fit can transmit torque.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#limits">Convert manufacturing limits into assembly conditions</a><a href="#pressure">Relate geometric mismatch to elastic deformation</a><a href="#torque">Integrate friction over the contact surface</a><a href="#assembly">Provide thermal clearance and account for combined service loads</a></nav></aside><article class="prose reference"><section><h2 id="limits">Convert manufacturing limits into assembly conditions</h2>
+<p>A shaft and a hub can share a nominal diameter while their manufactured diameters differ by several tens of micrometres. Name the diameters explicitly before subtracting them. For the present joint use positive diametral interference \(I=d_s-d_h\), where \(d_s\) is the free shaft diameter and \(d_h\) the free bore. Assemble the smallest shaft with the largest hole to obtain the minimum interference. The opposite pair gives the maximum. Worst-case limits do not require a probability distribution for the production process.</p>
+<p>Consider a 40 mm connection with shaft limits 40.030 to 40.045 mm and bore limits 40.000 to 40.015 mm. The minimum difference is 0.015 mm and the maximum 0.045 mm. Every permitted pair interferes. The radial mismatch is half the diametral interference because the radius changes on both sides of a diameter. Confusing these conventions introduces a factor of two in the inferred pressure and torque.</p>
+</section>
+<section><h2 id="pressure">Relate geometric mismatch to elastic deformation</h2>
+<p>When the parts return to their common assembly temperature, contact pressure compresses the shaft and expands the bore. Assume cylindrical surfaces, a short open-ended elastic hub with negligible axial stress, a solid elastic shaft and approximately uniform pressure away from the ends. Define the radial compliance \(c_r\) as the sum of the inward shaft and outward hub displacements per unit interface pressure. Compatibility across the common radius then reads</p>
+<div class="math display">\[\delta_r=I/2=|u_s|+u_h=p\,c_r,\qquad p=\frac{I}{2c_r}.\]</div>
+<p>The combined compliance can be found from an elastic cylinder calculation or a verified test of geometrically identical parts. Providing it separately permits a torque calculation without assuming an infinitely stiff hub. A thinner hub generally expands further at the same pressure. Its larger compliance reduces the pressure developed by a given interference. Surface roughness that flattens during assembly can also reduce the effective interference relative to a measurement over the original asperities.</p>
+</section>
+<section><h2 id="torque">Integrate friction over the contact surface</h2>
+<p>A narrow surface patch of area \(dA\) can support a tangential friction force up to \(\mu p\,dA\). All such forces act at radius \(r=d/2\) and oppose impending rotation. Under uniform contact pressure and fully mobilised Coulomb friction, integrating around the circumference and along the overlap length \(L\) gives the limiting torque. For a purely axial pull the same friction forces act along the axis and their direct sum gives the limiting pull-out force.</p>
+<div class="math display">\[T_{\lim}=\int r\mu p\,dA=\frac{\pi}{2}\mu pLd^2,\qquad F_{\lim}=\mu p\pi dL .\]</div>
+<p>Take \(L=35\,\mathrm{mm}\), \(\mu=0.12\), and \(c_r=0.50\,\mathrm{\mu m/MPa}\) in the 40 mm joint. The radial mismatches range from 7.5 to 22.5 micrometres, so calculated pressures range from 15 to 45 MPa. At the lower limit the tangential force capacity is \(0.12(15)\pi(40)(35)=7917\,\mathrm N\), and the torque capacity is \(7917(0.020)=158\,\mathrm{N\,m}\). At the upper limit pressure and capacity are three times larger. Use the lowest pressure to test transmission and the highest to evaluate hub stress.</p>
+</section>
+<section><h2 id="assembly">Provide thermal clearance and account for combined service loads</h2>
+<p>Suppose only the hub is heated, so its bore grows approximately by \(\alpha d\Delta T\). To slip the worst-case pair together with a further 0.020 mm of diametral assembly clearance, the bore must grow by \(0.045+0.020=0.065\,\mathrm{mm}\). With \(\alpha=12\times10^{-6}\,\mathrm{K^{-1}}\) a uniform temperature rise of \(0.065/[40(12\times10^{-6})]=135\,\mathrm K\) is required in this ideal expansion calculation. Heat loss during transfer changes the actual temperature at insertion.</p>
+<p>A shaft may also carry a sustained axial pull while delivering torque. Under the uniform-traction model the axial and circumferential components of the surface friction force share one bound. At the lower interference with a 4.0 kN pull the remaining circumferential capacity is \(\sqrt{7917^2-4000^2}=6832\,\mathrm N\), or about 137 N m. Checking the separate pure-load capacities would miss this interaction. If repeated microslip, an uncertain friction coefficient or stiffness near the hub edges is important, measurements of the actual assembly can determine which assumptions need closer investigation.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/machine-elements/chapters/05-gears/">Chapter 5 · Spur gear kinematics and tooth loads</a></span><span>Next<br><a href="/teaching/mechanical-engineering/machine-elements/problem-sheets/3/">Problem sheet 3 · Gear meshes and assembled fits</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

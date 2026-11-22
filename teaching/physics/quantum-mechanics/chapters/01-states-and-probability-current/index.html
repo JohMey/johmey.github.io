@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wave packets and probability current · OneSimulation</title>
+<meta name="description" content="Normalise a quantum wave packet and derive a local balance law that predicts the passage of probability through a detector plane.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/quantum-mechanics/chapters/01-states-and-probability-current/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wave packets and probability current · OneSimulation">
+<meta property="og:description" content="Normalise a quantum wave packet and derive a local balance law that predicts the passage of probability through a detector plane.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/quantum-mechanics/chapters/01-states-and-probability-current/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/quantum-mechanics/">Quantum mechanics</a></p><h1>Wave packets and probability current</h1><p class="lead">Normalise a quantum wave packet and derive a local balance law that predicts the passage of probability through a detector plane.</p><p class="byline">Chapter 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#specify-a-preparation">Specify a preparation</a><a href="#obtain-a-continuity-equation">Obtain a continuity equation</a><a href="#count-momenta-as-well-as-positions">Count momenta as well as positions</a><a href="#predict-a-free-flight-measurement">Predict a free-flight measurement</a></nav></aside><article class="prose reference"><section><h2 id="specify-a-preparation">Specify a preparation</h2>
+<p>Prepare many independent particles of the same mass in the same one-dimensional state and record one position from each preparation. The frequencies in small position bins reveal a probability density. Quantum theory assigns a complex wavefunction \(\psi(x,t)\) to a pure state. The probability for \(a&lt;x&lt;b\) is \(\int_a^b|\psi|^2dx\). The integral over the whole line equals one for a normalised packet. Thus \(|\psi|^2\) has units of inverse length and can numerically exceed one without any probability exceeding one.</p>
+<p>A single position histogram fixes the modulus of the wavefunction but contains no direct information about its phase. A global phase is unobservable, whereas a phase that varies across space changes the momentum distribution and subsequent evolution. Two preparations with the same initial histogram can reach a detector at different times. To predict how probability moves we need the phase information together with an equation of motion.</p>
+</section>
+<section><h2 id="obtain-a-continuity-equation">Obtain a continuity equation</h2>
+<p>For a particle in a real scalar potential \(V(x,t)\), the Schrödinger equation is \(i\hbar\partial_t\psi=-(\hbar^2/2m)\partial_{xx}\psi+V\psi\). Multiply by \(\psi^*\), subtract the conjugate equation multiplied by \(\psi\) and use the product rule. The two potential terms cancel because \(V\) is real. The result takes the conservative form</p>
+<div class="math display">\[\partial_t|\psi|^2+\partial_x j=0,\qquad j=\frac{\hbar}{2mi}\left(\psi^*\partial_x\psi-\psi\partial_x\psi^*\right).\]</div>
+<p>Integrated between two fixed points, the rate of change of probability inside equals the inward current at the left minus the outward current at the right. In this one-dimensional normalisation \(j\) has units of inverse seconds. Vanishing current at both infinities ensures that a normalised state stays normalised even if the shape of its density changes appreciably.</p>
+<p>Writing \(\psi=\sqrt\rho\,e^{i\varphi}\) gives \(j=(\hbar/m)\rho\,\partial_x\varphi\) where the phase is regular. For an initially real packet the current vanishes at that instant. A spatial phase ramp \(e^{ikx}\) leaves \(\rho\) unchanged yet gives current \(\hbar k\rho/m\). Current is a signed net flux. Interpreting every crossing of a point as a first arrival requires additional information about the detector and possible returns.</p>
+</section>
+<section><h2 id="count-momenta-as-well-as-positions">Count momenta as well as positions</h2>
+<p>Use the Fourier convention \(\psi(x)=(2\pi)^{-1/2}\int\tilde\psi(k)e^{ikx}dk\). Parseval’s identity preserves the normalisation. The probability in a wave-number interval is \(|\tilde\psi(k)|^2dk\), with momentum \(p=\hbar k\). A Gaussian packet having density variance \(\sigma_x^2\) at preparation can be written as \(\psi=(2\pi\sigma_x^2)^{-1/4}\exp[-(x-x_0)^2/(4\sigma_x^2)+ik_0x]\). Fourier transforming this Gaussian gives mean momentum \(\hbar k_0\) and standard deviation \(\hbar/(2\sigma_x)\). Tighter initial localisation broadens the momentum distribution.</p>
+<p>For a free particle the plane-wave components advance with \(\omega(k)=\hbar k^2/(2m)\). Different wave numbers give different group velocities. An initially minimal, unchirped Gaussian spreads to \(\sigma_x(t)=\sigma_x\sqrt{1+[\hbar t/(2m\sigma_x^2)]^2}\). Transferring this expression to an initially focused or phase-curved packet requires its position–momentum correlation as well as its initial width.</p>
+</section>
+<section><h2 id="predict-a-free-flight-measurement">Predict a free-flight measurement</h2>
+<p>An electron has initial width 100 nm and mean wave number \(1.0\times10^8\) m⁻¹. Its mean speed is \(\hbar k_0/m_e=1.16\times10^4\) m/s and its velocity spread is about 579 m/s. After 1.0 ns the centre has moved 11.6 µm. For the unchirped preparation the width grows to \(\sqrt{(0.100\,\mu\mathrm m)^2+(0.579\,\mu\mathrm m)^2}=0.588\) µm. The packet is well inside the nonrelativistic regime.</p>
+<p>The solution predicts two independent observables: the motion of the centre and the broadening about that centre. Reversing the phase ramp reverses the former while leaving the latter unchanged. The initial position histograms for the two preparations are identical. A downstream record is needed to discriminate their motion.</p>
+<p>One can measure spreading by repeating the preparation and recording the position distribution after several flight times. For an initially uncorrelated position and momentum, the free-particle variance is \(\sigma_x^2(t)=\sigma_x^2(0)+t^2\sigma_p^2/m^2\). This follows from the operator equation \(x(t)=x(0)+p(0)t/m\). A known initial position–momentum covariance adds a term linear in time and can even make the packet contract initially. Measuring a minimum downstream width alone therefore does not establish the width or the momentum uncertainty at release.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/quantum-mechanics/">Course contents</a></span><span>Next<br><a href="/teaching/physics/quantum-mechanics/chapters/02-scattering-and-tunnelling/">Chapter 2 · Scattering and tunnelling in one dimension</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

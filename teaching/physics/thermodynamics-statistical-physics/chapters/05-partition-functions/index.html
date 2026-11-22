@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Partition functions and thermal fluctuations · OneSimulation</title>
+<meta name="description" content="Calculate the occupation, heat capacity and energy fluctuations of a two-level system from a single partition function.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/thermodynamics-statistical-physics/chapters/05-partition-functions/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Partition functions and thermal fluctuations · OneSimulation">
+<meta property="og:description" content="Calculate the occupation, heat capacity and energy fluctuations of a two-level system from a single partition function.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/thermodynamics-statistical-physics/chapters/05-partition-functions/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Partition functions and thermal fluctuations</h1><p class="lead">Calculate the occupation, heat capacity and energy fluctuations of a two-level system from a single partition function.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#put-a-small-system-in-a-heat-bath">Put a small system in a heat bath</a><a href="#differentiate-the-normalisation">Differentiate the normalisation</a><a href="#locate-the-heat-capacity-peak">Locate the heat-capacity peak</a><a href="#infer-an-energy-scale-and-observe-a-fluctuation">Infer an energy scale and observe a fluctuation</a></nav></aside><article class="prose reference"><section><h2 id="put-a-small-system-in-a-heat-bath">Put a small system in a heat bath</h2>
+<p>A spectroscopic probe may resolve two energy levels even when a bulk thermometer gives only one temperature. Consider many independent units with ground energy zero and excitation energy \(\Delta&gt;0\). Each unit has two nondegenerate states and is weakly coupled to a much larger bath at temperature \(T\). Weak coupling lets us assign energies to the unit while still permitting energy exchange over the measurement time.</p>
+<p>Under the canonical distribution the probability of a microstate \(j\) is \(p_j=e^{-\beta E_j}/Z\), with \(\beta=1/(k_BT)\). The factor \(Z=\sum_j e^{-\beta E_j}\) normalises probabilities. This form comes from expanding the bath entropy about its energy before the exchange: the number of bath states compatible with system energy \(E_j\) is proportional to \(\exp[-E_j/(k_BT)]\). A bath with appreciable temperature change after one exchange would call for a finite-reservoir correction.</p>
+</section>
+<section><h2 id="differentiate-the-normalisation">Differentiate the normalisation</h2>
+<p>The mean energy is \(\sum_j p_j E_j\). Differentiating \(\ln Z\) with respect to \(\beta\) inserts a factor \(-E_j\) in the weighted sum, giving \(\langle E\rangle=-\partial_\beta\ln Z\). Differentiating a second time produces \(\langle E^2\rangle-\langle E\rangle^2\), which is the energy variance. Changing variables from \(\beta\) to \(T\) produces the fluctuation relation</p>
+<div class="math display">\[C=\frac{\partial\langle E\rangle}{\partial T}=\frac{\langle E^2\rangle-\langle E\rangle^2}{k_BT^2}.\]</div>
+<p>Hold fixed the external parameters that set the energy levels while taking this derivative. A change of magnetic field or volume can shift the levels and introduce an additional energy response. For independent identically prepared units, variances add. The standard deviation of total energy grows as the square root of the number of units, while its mean grows in proportion to that number. Relative fluctuations consequently shrink as a macroscopic sample is assembled.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/two-level-heat.png" width="1264" height="720" loading="lazy" alt="As temperature increases, the excited-state probability approaches one half while the heat capacity rises to a peak and then falls."><figcaption>The two-level heat-capacity maximum marks the temperature range where changing the temperature most rapidly redistributes occupation between the levels.</figcaption></figure>
+</section>
+<section><h2 id="locate-the-heat-capacity-peak">Locate the heat-capacity peak</h2>
+<p>For one two-level unit, \(Z=1+e^{-x}\) with \(x=\Delta/(k_BT)\). Its excited-state probability is \(p=1/(1+e^x)\). Hence \(\langle E\rangle=\Delta p\), the variance is \(\Delta^2p(1-p)\) and the heat capacity is \(C/k_B=x^2e^x/(1+e^x)^2\). At low temperature the excited population is exponentially small and little energy can be absorbed by a small temperature increase. At high temperature the two populations approach one half, so changing temperature redistributes them only weakly. A maximum must occur between these limits.</p>
+<p>Setting the derivative of \(\ln C\) with respect to \(x\) to zero gives \(2/x=\tanh(x/2)\). Its positive solution is about 2.40, placing the peak at \(T\simeq0.417\Delta/k_B\). This broadened heat-capacity feature is the Schottky anomaly of a two-level population. No collective phase transition is required to produce it. Degeneracy of either level would change the population ratio and modify the peak position.</p>
+</section>
+<section><h2 id="infer-an-energy-scale-and-observe-a-fluctuation">Infer an energy scale and observe a fluctuation</h2>
+<p>Take \(\Delta=12.0\) meV, so \(\Delta/k_B\simeq139\) K. A peak near 58 K is expected. At \(T=139\) K one has \(x\simeq1\), \(p=0.269\), mean energy 3.23 meV and \(C\simeq0.197k_B\) per unit. For a single unit the standard deviation of the energy is \(\Delta\sqrt{p(1-p)}=5.32\) meV. The standard deviation exceeding the mean is possible because most single observations return the ground energy and a minority return the full excitation energy.</p>
+<p>For a million independent units at the same temperature, the mean total energy scales up by a million and the standard deviation by a thousand. A calorimeter measuring the bulk value will therefore see a much smoother response than a single-unit spectroscopic probe. If measured fluctuations scale faster than this independent-unit prediction, correlations, common temperature fluctuations or instrumental noise deserve investigation before assigning a microscopic heat capacity.</p>
+<p>For a noninteracting collection the total partition function factorizes into one factor per unit. Taking its logarithm converts that product into a sum, so mean energy and heat capacity become extensive. The variance of total energy also grows in proportion to the number of units when correlations vanish. The standard deviation grows only as the square root of that number, explaining how a large specimen can display a reproducible macroscopic energy while its microscopic constituents exchange energy continuously with the bath.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/thermodynamics-statistical-physics/problem-sheets/2/">Problem sheet 2 · Potentials, phase lines and counting</a></span><span>Next<br><a href="/teaching/physics/thermodynamics-statistical-physics/chapters/06-quantum-gas-statistics/">Chapter 6 · Indistinguishable particles and quantum gases</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

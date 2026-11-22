@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preload, joint stiffness and separation · OneSimulation</title>
+<meta name="description" content="Compute how a tensile service load changes bolt force and clamp force, and determine when a closed-joint calculation ceases to apply.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-elements/chapters/03-bolted-joints/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Preload, joint stiffness and separation · OneSimulation">
+<meta property="og:description" content="Compute how a tensile service load changes bolt force and clamp force, and determine when a closed-joint calculation ceases to apply.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-elements/chapters/03-bolted-joints/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Preload, joint stiffness and separation</h1><p class="lead">Compute how a tensile service load changes bolt force and clamp force, and determine when a closed-joint calculation ceases to apply.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#initial">Establish the state before the external load arrives</a><a href="#increment">Apply compatibility to the load increment</a><a href="#joint">Check a service cycle and a separate overload</a><a href="#design">Use attainable preload, including its scatter</a></nav></aside><article class="prose reference"><section><h2 id="initial">Establish the state before the external load arrives</h2>
+<p>A tensioned bolt in an assembled flange has already elongated. The material clamped between head and nut has already shortened. In the ideal concentric joint these initial forces have equal magnitude \(F_i\), as a free-body diagram of either flange shows. Tightening stores elastic energy in both parts. Calling a joint unloaded usually means that the external service load is zero. The thread root can still carry a significant tensile stress.</p>
+<p>Represent the effective bolt grip by a tensile spring \(k_b\) and the compressed members by a spring \(k_m\). For a uniform segment the axial stiffness is \(EA/L\); threaded and plain segments in series have added compliances. The member stiffness depends on the path through which compressive force spreads from the head and washer. A thin flexible flange may also bend. For this derivation consider one bolt, an axial load introduced at the outside faces and no eccentricity or prying. Let clamp force denote a positive magnitude in compression.</p>
+</section>
+<section><h2 id="increment">Apply compatibility to the load increment</h2>
+<p>An external separating force \(P\) allows the bolt to extend a little while the clamped members recover some of their initial compression. As long as the faces remain in contact, the extension and recovery have the same magnitude \(x\). The bolt-force increase is \(k_bx\) and the clamp-force decrease is \(k_mx\). Force equilibrium across the joint gives \(P=F_b-F_m=(k_b+k_m)x\). Eliminate \(x\) and introduce the load fraction \(C\).</p>
+<div class="math display">\[C=\frac{k_b}{k_b+k_m},\quad F_b=F_i+CP,\quad F_m=F_i-(1-C)P.\]</div>
+<p>The slopes of bolt force and clamp-force magnitude have opposite signs. The joint opens in this ideal model when \(F_m\) reaches zero, at \(P_{\rm sep}=F_i/(1-C)\). Continuing the same line beyond that point would predict tension between unbonded faces. Once open, the bolt must carry the full external tensile force and the load slope changes to unity. Both expressions give the same bolt force at the instant of separation.</p>
+</section>
+<section><h2 id="joint">Check a service cycle and a separate overload</h2>
+<p>Take \(k_b=180\,\mathrm{kN/mm}\), \(k_m=720\,\mathrm{kN/mm}\), \(F_i=25\,\mathrm{kN}\) and bolt tensile stress area \(A_t=58.0\,\mathrm{mm^2}\). A pressure pulsation creates a separating force cycling between 4 and 16 kN. Here \(C=0.20\), hence bolt force ranges from 25.8 to 28.2 kN. Clamp force falls from 21.8 to 12.2 kN and remains positive. The bolt’s alternating tensile stress is the force range divided by twice its tensile stress area.</p>
+<div class="math display">\[\sigma_a=(28.2-25.8)10^3/(2\times58.0)=20.7\,\mathrm{MPa}.\]</div>
+<p>At the maximum ordinary load the calculated tensile stress is 486 MPa. If the specified proof stress is 600 MPa, the axial proof-load benchmark is \(600(58.0)=34.8\,\mathrm{kN}\). The estimated separation threshold is \(25/0.8=31.25\,\mathrm{kN}\). A singular tensile overload of 34 kN opens the interface and brings the bolt to 34 kN, just below the supplied axial proof benchmark. It can nevertheless break the seal at the flange face. Different requirements can control the same event.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/bolt-preload.png" width="1264" height="720" loading="lazy" alt="Bolt tension rises slowly while clamp force falls to zero, then the bolt carries the whole external tension."><figcaption>For a load-sharing factor of 0.20 the joint opens at 1.25 times its initial preload. The slope of bolt force against external force changes at separation.</figcaption></figure>
+</section>
+<section><h2 id="design">Use attainable preload, including its scatter</h2>
+<p>Increasing preload by 3 kN raises both initial forces and delays separation by \(3/(1-C)=3.75\,\mathrm{kN}\). It also raises the peak bolt stress by \(3000/58=51.7\,\mathrm{MPa}\) throughout the closed regime. Reducing bolt stiffness relative to the members can lower the alternating force. For example a longer effective grip can increase bolt compliance. Recheck the residual clamp and separation conditions whenever changing stiffness.</p>
+<p>If tightening produces a range of preloads, assess separation with the low end and proof stress with the high end. An assembly tolerance of ±3 kN around the nominal value gives a minimum separation threshold of \(22/0.8=27.5\,\mathrm{kN}\). The largest ordinary bolt force would be \(28+0.2(16)=31.2\,\mathrm{kN}\). The preload scatter enters these checks even though the external service force is perfectly known. In a real flange, surface settling, differential thermal expansion and off-axis loading can change the available clamp force after assembly.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/machine-elements/problem-sheets/1/">Problem sheet 1 · Duty blocks and shaft sections</a></span><span>Next<br><a href="/teaching/mechanical-engineering/machine-elements/chapters/04-rolling-bearings/">Chapter 4 · Bearing arrangements and rating life</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

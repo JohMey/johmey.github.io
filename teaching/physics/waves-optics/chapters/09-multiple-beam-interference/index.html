@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multiple-beam interference in a cavity · OneSimulation</title>
+<meta name="description" content="Sum the returning fields in a plane-parallel optical cavity and turn measured line spacing and width into a mirror diagnostic.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/waves-optics/chapters/09-multiple-beam-interference/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multiple-beam interference in a cavity · OneSimulation">
+<meta property="og:description" content="Sum the returning fields in a plane-parallel optical cavity and turn measured line spacing and width into a mirror diagnostic.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/waves-optics/chapters/09-multiple-beam-interference/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/waves-optics/">Waves and optics</a></p><h1>Multiple-beam interference in a cavity</h1><p class="lead">Sum the returning fields in a plane-parallel optical cavity and turn measured line spacing and width into a mirror diagnostic.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#many-transmitted-copies">Many transmitted copies</a><a href="#resolving-the-peaks">Resolving the peaks</a><a href="#inspect-a-scanned-cavity">Inspect a scanned cavity</a></nav></aside><article class="prose reference"><section><h2 id="many-transmitted-copies">Many transmitted copies</h2>
+<p>A transparent gap of length \(L\) and refractive index \(n\) sits between two identical plane mirrors. Illuminate it at normal incidence with a coherent, monochromatic plane wave. Assume the mirrors are lossless, their intensity reflectivity \(R\) is constant over the band, and the outgoing beams overlap in space. Each trip between mirrors adds phase. Each completed round trip also reflects the field twice. Because one mirror reflection has amplitude magnitude \(\sqrt R\), the field magnitude after both is multiplied by \(R\).</p>
+<p>Choose a phase convention absorbing constant reflection phases into the resonance condition. A single transmitted pass has amplitude magnitude \((1-R)\) times the incident amplitude. The pass emerging after one additional round trip acquires \(R e^{i\delta}\) with \(\delta=4\pi nL/\lambda_0\). Summing the geometric series and squaring the magnitude gives</p>
+<div class="math display">\[\mathcal T=\frac{(1-R)^2}{|1-Re^{i\delta}|^2}=\frac{1}{1+F\sin^2(\delta/2)},\qquad F=\frac{4R}{(1-R)^2}.\]</div>
+</section>
+<section><h2 id="resolving-the-peaks">Resolving the peaks</h2>
+<p>Transmission reaches unity at \(\delta=2\pi m\) in this symmetric lossless model. Coherent addition of multiply reflected fields simultaneously cancels the returning field at the input. With unequal mirrors or intracavity loss, peak transmission is generally lower. The resonance frequencies are \(\nu_m=mc/(2nL)\) when dispersion is negligible, giving a free spectral range \(\mathrm{FSR}=c/(2nL)\). If \(n\) varies appreciably, differentiation of round-trip phase replaces it with the group index.</p>
+<p>The half-power points satisfy \(|\sin(\delta/2)|=1/\sqrt F\) near resonance. Their full separation in phase is \(4\arcsin(1/\sqrt F)\) when \(F\ge1\). Dividing the \(2\pi\) phase interval by that width yields finesse, \(\mathcal F=\pi/[2\arcsin(1/\sqrt F)]\). For large \(F\) this reduces to \(\pi\sqrt R/(1-R)\). Finesse counts how many linewidths fit between adjacent orders. It is distinct from resolving power \(\nu/\Delta\nu\), which also depends on the order.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/cavity-lines.png" width="1264" height="720" loading="lazy" alt="Three unit-height transmission peaks become narrower as mirror reflectivity rises from 0.4 to 0.9."><figcaption>For a symmetric lossless cavity, stronger reflection narrows the allowed range of round-trip phase while the on-resonance transmission stays at unity.</figcaption></figure>
+</section>
+<section><h2 id="inspect-a-scanned-cavity">Inspect a scanned cavity</h2>
+<p>An air gap of 15.0 mm with \(R=0.900\) has a free spectral range of 9.99 GHz. The exact finesse is about 29.8, so adjacent half-power frequencies across one peak differ by 335 MHz. At a 600 nm carrier that width corresponds to about \(0.00040\) nm. Two lines one free spectral range apart nevertheless reach resonance together. Very narrow peaks and unambiguous identification across a broad input spectrum are different instrument requirements.</p>
+<p>Mirror tilt makes different parts of a beam see different round-trip phases. Finite source divergence has a similar effect, since oblique rays accumulate a different axial phase. If raising the nominal mirror reflectivity no longer narrows a measured peak as predicted, compare the line shape at two illuminated spot sizes or angular apertures. Such a test separates instrumental phase averaging from a change in the source spectrum.</p>
+<p>Measuring a frequency scan in both directions supplies a useful consistency test. Thermal expansion of the spacer or actuator hysteresis can change the calibration between scan position and optical frequency. An independently known reference line or sideband establishes that calibration without relying on the actuator displacement alone.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/waves-optics/problem-sheets/4/">Problem sheet 4 · Fourier pupils and image sampling</a></span><span>Next<br><a href="/teaching/physics/waves-optics/chapters/10-grating-spectrometers/">Chapter 10 · How a grating separates wavelengths</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

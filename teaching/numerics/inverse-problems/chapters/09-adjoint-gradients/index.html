@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adjoint gradients through a forward solver · OneSimulation</title>
+<meta name="description" content="Differentiate a scalar objective with respect to many parameters without recomputing a separate perturbed solution for each one.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/chapters/09-adjoint-gradients/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adjoint gradients through a forward solver · OneSimulation">
+<meta property="og:description" content="Differentiate a scalar objective with respect to many parameters without recomputing a separate perturbed solution for each one.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/chapters/09-adjoint-gradients/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Adjoint gradients through a forward solver</h1><p class="lead">Differentiate a scalar objective with respect to many parameters without recomputing a separate perturbed solution for each one.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#the-state-is-also-a-function-of-the-parameters">The state is also a function of the parameters</a><a href="#transpose-the-solve">Transpose the solve</a><a href="#work-a-two-cell-example">Work a two-cell example</a><a href="#test-the-computed-gradient-in-a-direction">Test the computed gradient in a direction</a></nav></aside><article class="prose reference"><section><h2 id="the-state-is-also-a-function-of-the-parameters">The state is also a function of the parameters</h2>
+<p>Suppose a discretised forward model solves \(K(p)u=f(p)\). Data enter through \(Hu\), and observations have been whitened. The objective is \(J=\tfrac12\|Hu-y\|^2+R(p)\). A direct perturbation of a material parameter changes the predicted state even when that parameter never appears in the observation operator. For fixed \(H\), the state derivative contribution is \(g_u^\mathsf{T}du\), with \(g_u=H^\mathsf{T}(Hu-y)\). Differentiating the state equation gives \(K\,du=df-(dK)u\). Solving this equation once per parameter would be prohibitively expensive for a fine material field.</p>
+</section>
+<section><h2 id="transpose-the-solve">Transpose the solve</h2>
+<p>Define an adjoint state by \(K^\mathsf{T}\lambda=g_u\). Then \(g_u^\mathsf{T}du=\lambda^\mathsf{T}K\,du=\lambda^\mathsf{T}[df-(dK)u]\). For each parameter component the gradient is</p>
+<div class="math display">\[\frac{\partial J}{\partial p_j}=\frac{\partial R}{\partial p_j}+\lambda^\mathsf{T}\left(\frac{\partial f}{\partial p_j}-\frac{\partial K}{\partial p_j}u\right).\]</div>
+<p>This uses one forward and one transposed solve for one scalar objective, independent of the number of gradient components. Forming the contractions for all components still costs work, often local to mesh elements. If sensors or boundary conditions also depend explicitly on parameters, their derivative terms must be included. A symmetric diffusion operator may reuse a factorisation; an advection operator need not equal its transpose.</p>
+</section>
+<section><h2 id="work-a-two-cell-example">Work a two-cell example</h2>
+<p>Consider \(K=\left(\begin{smallmatrix}p+1&amp;-1\\-1&amp;2\end{smallmatrix}\right)\), \(f=(1,0)\), and observe the second component with value \(y=0.4\). At \(p=1\), \(u=(2/3,1/3)\), so the residual is \(-1/15\). The adjoint load is \((0,-1/15)\); solving gives \(\lambda=(-1/45,-2/45)\). Only the first diagonal entry of \(K\) depends on \(p\). With no regulariser the derivative is \(-\lambda_1u_1=2/135\). Check independently: \(u_2=1/(2p+1)\), whose derivative at one is \(-2/9\). Multiplying by the residual gives the same positive gradient. Increasing \(p\) lowers an already underpredicted second reading.</p>
+</section>
+<section><h2 id="test-the-computed-gradient-in-a-direction">Test the computed gradient in a direction</h2>
+<p>Pick a physically scaled perturbation \(v\). A correct gradient gives a linear residual \(J(p+hv)-J(p)-h\,g^\mathsf{T}v\) of order \(h^2\) for a smooth problem. Halving \(h\) should roughly quarter this remainder across a useful range. At very small \(h\), forward-solver tolerances and floating-point cancellation can dominate. Repeat with directions touching different components and with the same boundary-condition handling used in production. A close fit to the observed data is a poor gradient test when residuals nearly vanish: a wrong data gradient can then look small by accident. Evaluate at a parameter away from the best fit, solve the state again for each perturbation and compare the resulting objective values. To detect a missing transpose, include a nonsymmetric forward operator in the test. The symmetric two-cell example above can expose a sign error but cannot distinguish the forward matrix from its transpose.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/inverse-problems/problem-sheets/4/">Problem sheet 4 · Which uncertainty came from the experiment?</a></span><span>Next<br><a href="/teaching/numerics/inverse-problems/chapters/10-iterative-regularisation/">Chapter 10 · Iteration as a regulariser</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

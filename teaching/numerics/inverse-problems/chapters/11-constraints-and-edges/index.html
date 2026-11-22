@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Constraints, sparse signals and edge-preserving penalties · OneSimulation</title>
+<meta name="description" content="Derive a solution at a bound, a soft-threshold rule and the behaviour of a total-variation penalty at a material interface.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/chapters/11-constraints-and-edges/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Constraints, sparse signals and edge-preserving penalties · OneSimulation">
+<meta property="og:description" content="Derive a solution at a bound, a soft-threshold rule and the behaviour of a total-variation penalty at a material interface.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/chapters/11-constraints-and-edges/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Constraints, sparse signals and edge-preserving penalties</h1><p class="lead">Derive a solution at a bound, a soft-threshold rule and the behaviour of a total-variation penalty at a material interface.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#physical-constraints-change-the-optimality-test">Physical constraints change the optimality test</a><a href="#derive-the-soft-threshold-rule">Derive the soft-threshold rule</a><a href="#penalise-changes-in-a-field">Penalise changes in a field</a><a href="#make-an-edge-claim-testable">Make an edge claim testable</a></nav></aside><article class="prose reference"><section><h2 id="physical-constraints-change-the-optimality-test">Physical constraints change the optimality test</h2>
+<p>An attenuation coefficient cannot be negative. In a convex inversion with lower bound zero, the unconstrained least-squares normal equations need not hold at a valid constrained solution. Consider minimising a differentiable \(F(x)\) with \(x_j\ge0\). At a free component the derivative must be zero. At a zero component only positive feasible perturbations exist, so the derivative must be nonnegative. Negative reconstructed cells cannot generally be repaired by clipping after inversion because the forward operator couples neighbouring parameters.</p>
+<p>For example minimise \(\tfrac12[(x_1+x_2-1)^2+(x_1+1)^2]\) under \(x_i\ge0\). The unconstrained solution is \((-1,2)\). Clipping gives \((0,2)\), which overpredicts the first observation. On the active face \(x_1=0\), the minimising \(x_2\) is 1. At \((0,1)\) the gradient is \((1,0)\) and the bound conditions hold. The price of feasibility appears in the data residual; it is important to show which observations the constrained model cannot fit.</p>
+</section>
+<section><h2 id="derive-the-soft-threshold-rule">Derive the soft-threshold rule</h2>
+<p>For a scalar coefficient with observation \(b\), minimise \(\tfrac12(x-b)^2+\lambda|x|\). On \(x&gt;0\) the stationary point is \(b-\lambda\), feasible there only when \(b&gt;\lambda\); on \(x&lt;0\) it is \(b+\lambda\). At zero, the admissible slopes of the absolute value range from \(-1\) to 1, so zero solves the condition when \(|b|\le\lambda\). Together these give \(x=\operatorname{sign}(b)\max(|b|-\lambda,0)\). Even retained coefficients shrink by \(\lambda\), a real amplitude bias. With \(b=(-0.2,0.7,2.4)\) and \(\lambda=0.5\), the estimate is \((0,0.2,1.9)\) for an identity forward map.</p>
+</section>
+<section><h2 id="penalise-changes-in-a-field">Penalise changes in a field</h2>
+<p>In one dimension discrete total variation is \(\sum_j|x_{j+1}-x_j|\). A single large jump and several monotone small steps spanning the same overall change have equal total variation. In contrast a squared difference penalty favours spreading the jump over several sites. That explains why total variation can preserve an abrupt edge when the data localise it. It can also create nearly constant plateaus in a field that really changes smoothly.</p>
+<p>For two observed values \(b_1,b_2\), use the variables \(m=(x_1+x_2)/2,\ d=(x_2-x_1)/2\). With objective \(\tfrac12\sum(x_i-b_i)^2+\lambda|x_2-x_1|\), the optimal mean is the observed mean and half-difference is the soft-thresholded observed half-difference with threshold \(\lambda\). When \(|b_2-b_1|\le2\lambda\) the two estimated levels fuse. This concrete loss of resolution should be reported when interpreting a uniform patch in a reconstructed image.</p>
+</section>
+<section><h2 id="make-an-edge-claim-testable">Make an edge claim testable</h2>
+<p>Generate test fields both with a sharp jump and with a smooth ramp. Pass them through the same sensor model and noise level, then fit with the same strength-selection procedure used for real data. Measure contrast bias and edge-location error separately; an image can put an edge in the correct place but suppress its amplitude. For a nonnegative material field inspect the gradient at active zeros alongside the residual. The regulariser and the bounds each supply information that the instrument may not have measured.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/inverse-problems/problem-sheets/5/">Problem sheet 5 · Derivatives and early stopping</a></span><span>Next<br><a href="/teaching/numerics/inverse-problems/chapters/12-resolution-audit/">Chapter 12 · A reconstruction audit from observations to a defensible claim</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

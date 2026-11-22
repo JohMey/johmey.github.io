@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adjoints and errors in a chosen output · OneSimulation</title>
+<meta name="description" content="Weight equation residuals by the response of a chosen observation and distinguish algebraic error from mesh error.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/partial-differential-equations/chapters/12-output-errors/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adjoints and errors in a chosen output · OneSimulation">
+<meta property="og:description" content="Weight equation residuals by the response of a chosen observation and distinguish algebraic error from mesh error.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/partial-differential-equations/chapters/12-output-errors/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Adjoints and errors in a chosen output</h1><p class="lead">Weight equation residuals by the response of a chosen observation and distinguish algebraic error from mesh error.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-residual-has-a-direction">A residual has a direction</a><a href="#compute-the-weight-of-each-row">Compute the weight of each row</a><a href="#move-from-an-algebraic-error-to-a-mesh-error">Move from an algebraic error to a mesh error</a><a href="#compare-a-point-observation-with-an-average">Compare a point observation with an average</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-residual-has-a-direction">A residual has a direction</h2>
+<p>Let \(Au=b\) be an invertible linear discrete model and let \(Q(u)=c^Tu\) report a scalar output, for example a weighted mean temperature. For a computed approximation \(\tilde u\), set \(r=b-A\tilde u\). The error is \(A^{-1}r\), and hence \(Q(u)-Q(\tilde u)=c^TA^{-1}r\). Define the adjoint or dual solution by \(A^Tz=c\). Then the exact output identity is</p>
+<div class="math display">\[Q(u)-Q(\tilde u)=z^Tr.\]</div>
+<p>A single adjoint gives the output effect of many possible residuals. A large residual where the observation has low sensitivity can contribute less than a small residual elsewhere. Opposite contributions can cancel in this particular output, even though they represent substantial state errors.</p>
+</section>
+<section>
+<h2 id="compute-the-weight-of-each-row">Compute the weight of each row</h2>
+<p>Take \(A=\left(\begin{smallmatrix}2&amp;-1\\-1&amp;2\end{smallmatrix}\right)\), \(b=(1,0)^T\), and observe the second unknown with \(c=(0,1)^T\). Then \(u=(2/3,1/3)^T\) and \(z=(1/3,2/3)^T\). For \(\tilde u=(0.6,0.3)^T\), the residual is \((0.1,0)^T\). Its weighted sum is \(1/30\), exactly the missing part \(1/3-0.3\). If a solve produced residual \((0,0.1)^T\) instead, the same residual norm would double the output error. This output cares twice as much about the second row as about the first.</p>
+<p>For residual \((0.2,-0.1)^T\), the signed estimate is exactly zero. The sum of absolute contributions is \(2/15\), an upper bound insensitive to cancellation. An analyst interested only in the selected output can accept a calculation whose state vector another observer would reject. Specify the observation before choosing stopping and refinement criteria.</p>
+</section>
+<section>
+<h2 id="move-from-an-algebraic-error-to-a-mesh-error">Move from an algebraic error to a mesh error</h2>
+<p>An accurately solved finite-element system has almost zero algebraic residual in its own discrete test space. It can still differ from the continuum solution. Let \(a(u,v)=\ell(v)\) be the continuum weak equation and define \(R(v)=\ell(v)-a(u_h,v)\). For a linear observation the continuum dual satisfies \(a(v,z)=Q(v)\), giving \(Q(u)-Q(u_h)=R(z)\). Galerkin orthogonality means \(R(z_h)=0\) for every test function on the same mesh, hence \(R(z)=R(z-z_h)\).</p>
+<p>Estimating this term requires a dual approximation richer than the test space used for the primal solve, or an independent reconstruction. Integrating element residuals by parts can expose both cell defects and jumps in normal flux. Weight these local contributions by the unresolved dual variation to discover which regions can affect the output strongly. Check an estimated correction against actual output changes on a refined mesh; a poor dual approximation can misidentify important regions even when the primal residuals have been evaluated exactly.</p>
+</section>
+<section>
+<h2 id="compare-a-point-observation-with-an-average">Compare a point observation with an average</h2>
+<p>In the two-unknown example, replace the second-node observation by the mean \(c=(1/2,1/2)^T\). The constant vector is an eigenvector of \(A\) with eigenvalue one, so the adjoint becomes \(z=c\). A purely antisymmetric residual \((0.1,-0.1)^T\) makes the mean output error zero. For the earlier second-node output the same residual gives \(-1/30\). A mesh designed to resolve an average can therefore allocate effort differently from one designed for a single sensor. Whenever a reported error changes markedly between observables, inspect the dual weights before attributing the change to a flaw in the physical simulation.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/partial-differential-equations/chapters/11-multigrid/">Chapter 11 · Multigrid and coarse-grid correction</a></span><span>Next<br><a href="/teaching/numerics/partial-differential-equations/problem-sheets/6/">Problem sheet 6 · Transfers and observation error</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

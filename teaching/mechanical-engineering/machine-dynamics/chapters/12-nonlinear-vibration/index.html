@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finite-amplitude oscillations and model validity · OneSimulation</title>
+<meta name="description" content="Use conservation of energy and a frequency approximation to quantify when a small-angle pendulum model loses timing accuracy.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-dynamics/chapters/12-nonlinear-vibration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Finite-amplitude oscillations and model validity · OneSimulation">
+<meta property="og:description" content="Use conservation of energy and a frequency approximation to quantify when a small-angle pendulum model loses timing accuracy.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-dynamics/chapters/12-nonlinear-vibration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Finite-amplitude oscillations and model validity</h1><p class="lead">Use conservation of energy and a frequency approximation to quantify when a small-angle pendulum model loses timing accuracy.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#exact">Retain the actual restoring moment</a><a href="#energy">Derive an integral valid at finite amplitude</a><a href="#clock">Estimate a measurable timing error</a><a href="#quadrature">Check the scale of the neglected term</a></nav></aside><article class="prose reference"><section><h2 id="exact">Retain the actual restoring moment</h2>
+<p>A pendulum gives a practical test of a linear model because its length and release angle are easy to set while its period can be measured over many cycles. Approximate the moving body first by a point mass \(m\) at distance \(l\) from a frictionless pivot. With \(\theta\) measured from vertically downwards, gravity produces torque \(-mgl\sin\theta\). Dividing the rotational balance by \(ml^2\) leaves \(\ddot\theta+(g/l)\sin\theta=0\). The linear small-angle frequency \(\omega_0=\sqrt{g/l}\) follows only after replacing \(\sin\theta\) by \(\theta\) in radians.</p>
+<p>The leading correction has a definite sign: \(\sin\theta\simeq\theta-\theta^3/6\). At a large positive angle the restoring force magnitude is smaller than the linear extrapolation. The pendulum should take longer to complete its swing. A sign test like this is useful before calculating a period correction.</p>
+</section>
+<section><h2 id="energy">Derive an integral valid at finite amplitude</h2>
+<p>For release from rest at amplitude \(A&lt;\pi\), conservation of mechanical energy gives \(\tfrac12ml^2\dot\theta^2+mgl(1-\cos\theta)=mgl(1-\cos A)\). During one quarter of the orbit the angle travels between zero and \(A\). Substitute \(\sin(\theta/2)=\sin(A/2)\sin\psi\) into the time integral. Cancelling common square roots gives</p>
+<div class="math display">\[T=4\sqrt{l/g}\int_0^{\pi/2}\frac{d\psi}{\sqrt{1-k^2\sin^2\psi}},\qquad k=\sin(A/2).\]</div>
+<p>For modest amplitudes expand the integrand as \(1+\tfrac12 k^2\sin^2\psi+\cdots\). The average of \(\sin^2\psi\) over the quarter interval is one half. Therefore \(T/T_0\simeq1+k^2/4\simeq1+A^2/16\) through second order in amplitude. The oscillation period depends on energy, while in the linear spring model all amplitudes share the same period.</p>
+</section>
+<section><h2 id="clock">Estimate a measurable timing error</h2>
+<p>Take \(l=0.80\,\mathrm m\), \(g=9.81\,\mathrm{m/s^2}\) and release at \(A=30^\circ=0.5236\,\mathrm{rad}\). The small-angle period is \(T_0=2\pi\sqrt{0.80/9.81}=1.794\,\mathrm s\). The leading correction is 1.71%, giving about 1.825 s. Over ten full oscillations the predicted delay relative to the small-angle model is roughly 0.31 s. Reducing the release angle to 15° reduces the leading relative correction by a factor of four.</p>
+<p>A timing series from a damped experimental pendulum may show the period drifting towards \(T_0\) as its amplitude decays. Measuring only the first release angle while averaging many later periods mixes different amplitudes. To test the finite-amplitude law, use consecutive same-direction crossings to measure each local period and estimate its associated amplitude from neighbouring turning points. The correction above is an expansion around zero amplitude. As \(A\) approaches the inverted equilibrium, the exact integral grows without bound and a low-order polynomial is no longer an adequate approximation.</p>
+</section>
+<section><h2 id="quadrature">Check the scale of the neglected term</h2>
+<p>Retaining one further term in the integrand gives \(1+\tfrac12 k^2\sin^2\psi+\tfrac38 k^4\sin^4\psi\). The quarter-interval average of the fourth power of sine is \(3/8\), so \(T/T_0\simeq1+k^2/4+9k^4/64\). At 30° this gives 1.01738, while the leading expansion in amplitude gave 1.01713. The small difference is measurable only if the uncertainty in pendulum length, release angle and crossing times supports the comparison.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/machine-dynamics/chapters/11-modal-forcing/">Chapter 11 · Modal participation and absorber tuning</a></span><span>Next<br><a href="/teaching/mechanical-engineering/machine-dynamics/problem-sheets/6/">Problem sheet 6 · Modal selectivity and finite amplitude</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

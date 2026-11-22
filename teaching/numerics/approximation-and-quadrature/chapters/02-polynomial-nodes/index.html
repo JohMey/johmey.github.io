@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polynomial interpolation and node placement · OneSimulation</title>
+<meta name="description" content="Derive the Lagrange interpolant, diagnose amplification of sample noise and use cosine-distributed nodes to control a polynomial error factor.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/chapters/02-polynomial-nodes/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Polynomial interpolation and node placement · OneSimulation">
+<meta property="og:description" content="Derive the Lagrange interpolant, diagnose amplification of sample noise and use cosine-distributed nodes to control a polynomial error factor.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/chapters/02-polynomial-nodes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Polynomial interpolation and node placement</h1><p class="lead">Derive the Lagrange interpolant, diagnose amplification of sample noise and use cosine-distributed nodes to control a polynomial error factor.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#one-polynomial-through-all-measurements">One polynomial through all measurements</a><a href="#separate-noise-and-approximation">Separate noise and approximation</a><a href="#why-the-alternating-extrema-matter">Why the alternating extrema matter</a><a href="#evaluate-without-forming-monomial-coefficients">Evaluate without forming monomial coefficients</a></nav></aside><article class="prose reference"><section>
+<h2 id="one-polynomial-through-all-measurements">One polynomial through all measurements</h2>
+<p>Given \(n+1\) distinct nodes \(x_j\), seek one polynomial \(p\) of degree at most \(n\) matching \(y_j\) at each node. Define \(\ell_j(x)=\prod_{i\ne j}(x-x_i)/(x_j-x_i)\). This basis has value one at its own node and zero at all the others, so \(p=\sum_j y_j\ell_j\) satisfies the observations. If another such polynomial existed, the difference would have \(n+1\) separate zeros despite degree at most \(n\). It must vanish identically. Uniqueness concerns exact arithmetic and says little by itself about sensitivity.</p>
+<p>For the nodes \(-1,0,1\), the three basis functions are \(x(x-1)/2,\ 1-x^2,\ x(x+1)/2\). At \(x=1/2\) their values are \(-1/8,3/4,3/8\). They sum to one but are not all positive. Consider samples \(2,1,2\): the predicted value is \(1.25\), consistent with the quadratic \(1+x^2\). If the three readings instead carry independent signed perturbations bounded by \(\epsilon\), the possible prediction error at this point reaches \((1/8+3/4+3/8)\epsilon=1.25\epsilon\). The worst perturbation takes signs matching those of the basis values.</p>
+</section>
+<section>
+<h2 id="separate-noise-and-approximation">Separate noise and approximation</h2>
+<p>The maximum of \(\sum_j|\ell_j(x)|\) over the interval, the Lebesgue constant, bounds the operator’s amplification of data errors. A different quantity controls the error of interpolation from exact samples. For sufficiently smooth \(f\), repeating the Rolle argument with \(n+2\) zeros gives \(f(x)-p(x)=f^{(n+1)}(\xi)\prod_j(x-x_j)/(n+1)!\). This formula compares the exact function with the selected polynomial. It contains both a geometric factor controlled by the nodes and a higher derivative that may grow quickly with degree. A small geometric factor cannot by itself establish convergence for an arbitrary function.</p>
+<p>On \([-1,1]\) let \(T_m(x)=\cos(m\arccos x)\). From the cosine addition formula, \(T_{m+1}=2xT_m-T_{m-1}\) with \(T_0=1,T_1=x\). Thus \(T_m\) is a polynomial of degree \(m\) with leading coefficient \(2^{m-1}\) for \(m\geq1\). Its \(m\) zeros lie at \(\cos[(2k+1)\pi/(2m)]\). Choosing them as interpolation nodes makes the monic geometric factor \(2^{1-m}T_m(x)\), whose maximum magnitude is exactly \(2^{1-m}\).</p>
+</section>
+<section>
+<h2 id="why-the-alternating-extrema-matter">Why the alternating extrema matter</h2>
+<p>At the \(m+1\) points \(\cos(k\pi/m)\), this monic factor alternates between its positive and negative extreme. Suppose another monic degree-\(m\) polynomial had a strictly smaller maximum magnitude. Subtract it from the Chebyshev factor. The leading powers cancel, leaving degree at most \(m-1\). At the successive extrema the difference must alternate in sign, forcing at least \(m\) distinct zeros between them. That contradicts its degree. This minimax argument concerns the node polynomial, and explains the deliberate concentration of nodes near the endpoints.</p>
+<p>For \(m=3\) the recommended points are \(0,\pm\sqrt3/2\); their monic factor is \(x^3-3x/4\) with magnitude at most 0.25. The equally spaced alternative \(-1,0,1\) has factor \(x^3-x\), whose largest magnitude is \(2/(3\sqrt3)=0.385\). If data already exist at fixed locations, moving them is seldom an option. Subdividing the interval and fitting lower-degree polynomials locally instead limits long-range coupling. For evaluation at many points, barycentric interpolation can reuse stored node weights while avoiding explicit construction of a large monomial coefficient vector.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/node-products.png" width="1264" height="720" loading="lazy" alt="The Chebyshev node polynomial alternates between minus and plus 0.25; the equally spaced case reaches larger extrema between its nodes."><figcaption>Three-node interpolation. The largest absolute value of the monic node factor is smaller for the Chebyshev roots, even though the endpoints are not interpolation nodes.</figcaption></figure>
+</section>
+<section>
+<h2 id="evaluate-without-forming-monomial-coefficients">Evaluate without forming monomial coefficients</h2>
+<p>Define barycentric weights \(w_j=1/\prod_{i\ne j}(x_j-x_i)\). Dividing the Lagrange interpolation formula and the identity \(\sum\ell_j=1\) by the common nodal polynomial gives the evaluation ratio \(\sum_j w_j y_j/(x-x_j)\) divided by \(\sum_j w_j/(x-x_j)\). At an exact interpolation node, return its stored value directly. Multiplying all weights by the same constant has no effect, which is useful for numerical scaling.</p>
+<p>For nodes \(-1,0,1\) the weights are proportional to \(1,-2,1\). At \(x=1/2\) with data \(2,1,2\), the weighted numerator is \(4/3-4-4=-20/3\), and the denominator is \(2/3-4-2=-16/3\). Their ratio gives 1.25. This evaluates the very same polynomial as the basis construction. Better arithmetic for evaluation cannot remove an intrinsically large Lebesgue constant associated with a poor set of nodes.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/approximation-and-quadrature/chapters/01-local-interpolation/">Chapter 1 · Piecewise interpolation and error bounds</a></span><span>Next<br><a href="/teaching/numerics/approximation-and-quadrature/problem-sheets/1/">Problem sheet 1 · Nodes and interpolation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verification, refinement and local error · OneSimulation</title>
+<meta name="description" content="Use a manufactured solution to verify an implementation, estimate observed convergence and identify when adaptivity is needed for the physical quantity of interest.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/partial-differential-equations/chapters/06-verification/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Verification, refinement and local error · OneSimulation">
+<meta property="og:description" content="Use a manufactured solution to verify an implementation, estimate observed convergence and identify when adaptivity is needed for the physical quantity of interest.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/partial-differential-equations/chapters/06-verification/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Verification, refinement and local error</h1><p class="lead">Use a manufactured solution to verify an implementation, estimate observed convergence and identify when adaptivity is needed for the physical quantity of interest.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#build-a-test-with-a-known-answer">Build a test with a known answer</a><a href="#read-a-three-grid-study">Read a three-grid study</a><a href="#decide-where-further-resolution-matters">Decide where further resolution matters</a><a href="#check-refinement-at-an-identical-location">Check refinement at an identical location</a></nav></aside><article class="prose reference"><section>
+<h2 id="build-a-test-with-a-known-answer">Build a test with a known answer</h2>
+<p>Consider \(-\nabla\cdot(D\nabla u)+\kappa u=f\) on the unit square. Select the exact field \(u_\star=\sin(\pi x)\sin(\pi y)\) and prescribe its value at the boundary. Now choose \(D=1+x\), \(\kappa=2\), using coordinates normalised to a metre. Differentiation gives \(\Delta u_\star=-2\pi^2u_\star\) and \(u_{\star,x}=\pi\cos(\pi x)\sin(\pi y)\). The required source is therefore</p>
+<div class="math display">\[f=[2(1+x)\pi^2+2]u_\star-\pi\cos(\pi x)\sin(\pi y).\]</div>
+<p>The derivative of \(D\) is essential: inserting only the local value of \(D\) times the Laplacian specifies a different differential equation. Manufacturing a source tests whether the code solves the stated model and boundary conditions. Experimental validation asks a separate question about fidelity to physical observations. A polished plot resembling the exact field does not substitute for a numerical error measure with defined sample positions and units.</p>
+</section>
+<section>
+<h2 id="read-a-three-grid-study">Read a three-grid study</h2>
+<p>On successively halved mesh spacings suppose the error in one norm follows \(E_h=C h^p+o(h^p)\). Taking ratios gives \(p\simeq\log_2(E_h/E_{h/2})\). Three grids provide two such estimates, indicating whether a consistent asymptotic trend is present. A single ratio may result from cancellation between terms of different order. State the norm, grid location, geometry representation, time step if applicable, and the residual tolerance. Comparing a cell average on one grid with a nodal peak on another can produce a meaningless rate.</p>
+<p>For the variable-diffusion square, maximum nodal errors at 24, 48 and 96 intervals per axis are approximately \(1.33345\times10^{-3},3.33763\times10^{-4},8.34283\times10^{-5}\). The observed orders are approximately 1.998 and 2.000. The finest-grid algebraic residual is already far below the field error in its respective normalisation. Tightening the iteration tolerance alone will not remove the leading spatial defect. Raising the sine mode while holding the mesh fixed increases derivatives of the exact solution and tests a different resolution regime. <a href="/teaching/numerics/partial-differential-equations/#experiment">Inspect the grid and mode experiment</a>.</p>
+</section>
+<section>
+<h2 id="decide-where-further-resolution-matters">Decide where further resolution matters</h2>
+<p>A manufactured sine is smooth everywhere. Actual domains may contain a re-entrant corner, a material jump or a narrow source. Derivative bounds used in theoretical convergence estimates can fail locally there. Uniformly halving a two-dimensional mesh roughly quadruples the cell count while spending most new cells away from a localised feature. Local refinement attempts to concentrate new degrees of freedom where they matter to a chosen output. Which cells merit refinement depends on the equation, boundary data and the output being measured.</p>
+<p>For a conforming finite-element approximation, one class of error indicators combines an element residual with jumps in normal flux across interior faces. The residual tests whether each element satisfies the differential balance, while the jumps measure disagreements between neighbouring reconstructed fluxes. In a constant-coefficient Poisson example, a piecewise linear solution can have zero elementwise Laplacian even when it bends globally; the slope changes then appear at interelement faces. An indicator using only the interior derivative would miss this information. Mesh-length factors and coefficient weights are necessary to combine the terms in a specific norm.</p>
+<p>Finish a refinement study by tracking the physical observable itself. If the objective is integrated heat flow, a changing maximum pointwise gradient near one corner may have little influence on that integral. Conversely, apparently stable domain averages can hide an unresolved peak. Report observed change with resolution and an independent balance or analytic check, specifying exactly which quantity has been verified.</p>
+</section>
+<section>
+<h2 id="check-refinement-at-an-identical-location">Check refinement at an identical location</h2>
+<p>Suppose a displacement is reported at the centre of a square. On an even grid that point may coincide with a node, whereas on an odd grid it can lie at the centre of a cell. Taking the maximum over mesh nodes produces a different sample on each grid. A refinement curve can then combine field discretisation error with the movement of the evaluation point. Choose a fixed physical point and evaluate each solution there with its own consistent interpolation, or compare a well-defined integral over the same physical region.</p>
+<p>Similarly, compare gradients on compatible supports. Nodal averages of element stresses can look smoother than the individual element values, yet smoothing can alter extrema and convergence rates. Record the native support and any recovery operator. This makes an apparent improvement reproducible and gives students enough information to explain a discrepancy between two otherwise credible simulation reports.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/partial-differential-equations/chapters/05-wave-propagation/">Chapter 5 · Wave speeds and numerical dispersion</a></span><span>Next<br><a href="/teaching/numerics/partial-differential-equations/problem-sheets/3/">Problem sheet 3 · Wave resolution and verification</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

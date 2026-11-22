@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Least squares and orthogonal factorisation · OneSimulation</title>
+<meta name="description" content="Fit a straight line to inconsistent observations, derive its residual conditions and explain why an orthogonal factorisation can preserve accuracy better than the normal equations.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/03-least-squares/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Least squares and orthogonal factorisation · OneSimulation">
+<meta property="og:description" content="Fit a straight line to inconsistent observations, derive its residual conditions and explain why an orthogonal factorisation can preserve accuracy better than the normal equations.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/03-least-squares/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Least squares and orthogonal factorisation</h1><p class="lead">Fit a straight line to inconsistent observations, derive its residual conditions and explain why an orthogonal factorisation can preserve accuracy better than the normal equations.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#replace-exact-consistency-by-an-optimisation-problem">Replace exact consistency by an optimisation problem</a><a href="#fit-three-imperfect-readings">Fit three imperfect readings</a><a href="#remove-redundant-precision-loss">Remove redundant precision loss</a><a href="#include-measurement-weights-explicitly">Include measurement weights explicitly</a></nav></aside><article class="prose reference"><section>
+<h2 id="replace-exact-consistency-by-an-optimisation-problem">Replace exact consistency by an optimisation problem</h2>
+<p>Three thermometers at different positions need not lie on a common straight temperature profile. Let the rows of \(A\) contain the values of candidate basis functions at those positions and let \(b\) contain the observations. With more independent measurements than unknown coefficients, \(Ax=b\) may have no solution. A least-squares fit chooses \(x\) to minimise \(\|b-Ax\|_2^2\). Equal unweighted terms assume the deviations are comparable in units and importance. If one instrument is much noisier than another, that assumption deserves review before interpreting a fitted slope.</p>
+<p>Take any coefficient perturbation \(sd\). Expanding the squared mismatch gives \(\|b-Ax\|^2-2s\,d^TA^T(b-Ax)+s^2\|Ad\|^2\). At a minimum the coefficient of \(s\) must vanish for every \(d\). Hence \(A^TAx=A^Tb\). This is also sufficient: when the linear term vanishes, every perturbation adds a nonnegative square. Geometrically the residual is perpendicular to the column space of \(A\). Full column rank makes the minimiser unique, since no nonzero coefficient perturbation then leaves the fitted values unchanged.</p>
+</section>
+<section>
+<h2 id="fit-three-imperfect-readings">Fit three imperfect readings</h2>
+<p>Take positions \(t=-1,0,1\) and deviations from a baseline temperature of \(1,2,5\) K. Fit \(b(t)\simeq c+mt\), using a constant and a linear column. Their dot product is zero because the positions sum to zero. Their squared lengths are three and two. Multiplying the observation vector by each column gives 8 and 4, so the normal equations are diagonal and yield \(c=8/3\) K and \(m=2\) K per position unit.</p>
+<p>The predicted values are \(2/3,8/3,14/3\) K. The residual \(b-Ax=(1/3,-2/3,1/3)^T\) has zero sum and zero dot product with \((-1,0,1)^T\), as required. Changing the intercept cannot lower the sum of squares because the positive and negative residuals already balance; changing the slope has the analogous weighted balance. The squared residual norm is \(2/3\) K². This measures fit to these readings. It does not tell whether a line will predict temperatures well outside the sampled interval.</p>
+</section>
+<section>
+<h2 id="remove-redundant-precision-loss">Remove redundant precision loss</h2>
+<p>If \(A\) has full column rank and singular values \(\sigma_i\), then \(A^TA\) has eigenvalues \(\sigma_i^2\). Consequently \(\kappa_2(A^TA)=\kappa_2(A)^2\). When two model columns are nearly parallel, forming the products explicitly can lose significant information about their small difference. For example, a straight-line fit on positions clustered around a very large offset has nearly proportional constant and position columns. Centering and scaling positions improves the parameterisation and gives an intercept with a local physical interpretation.</p>
+<p>Alternatively, factor \(A=QR\) with \(Q\) having orthonormal columns and \(R\) upper triangular. Decompose the residual into its orthogonal parts inside and outside the column space:</p>
+<div class="math display">\[\|b-Ax\|^2=\|Q^Tb-Rx\|^2+\|(I-QQ^T)b\|^2.\]</div>
+<p>The second term is independent of the fit. Solve \(Rx=Q^Tb\) by back substitution. Householder reflectors build this factorisation using length-preserving transformations. In the three-temperature example, dividing the constant column by \(\sqrt3\) and the position column by \(\sqrt2\) already produces \(Q\). The transformed data are \(8/\sqrt3\) and \(4/\sqrt2\). Dividing by the diagonal of \(R\) recovers exactly the same fit. When the columns are nearly dependent, inspect the rank explicitly, using column pivoting or singular values, before giving a physical interpretation to individual coefficients.</p>
+</section>
+<section>
+<h2 id="include-measurement-weights-explicitly">Include measurement weights explicitly</h2>
+<p>If an instrument gives independent errors with standard deviations \(s_i\), divide row \(i\) of both \(A\) and \(b\) by \(s_i\). The sum of squares now measures squared differences in units of each sensor’s own standard deviation. For two readings 0 and 10 with standard deviations 1 and 3, a constant fit minimises \(c^2+(10-c)^2/9\). Differentiation gives \(c=1\), versus the unweighted mean of 5. A reliable low reading exerts more influence on the weighted result.</p>
+<p>This weighting still assumes independence and an appropriate error description. If both readings share an uncertain offset, repeated observations can reduce independent fluctuations without removing the offset. Near a rank deficiency, a small weighted residual likewise cannot establish separate physical identifiability of the fitted coefficients. Examine uncertainty or singular directions in the parameter map as well as the final mismatch.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/linear-algebra/problem-sheets/1/">Problem sheet 1 · Measurements and elimination</a></span><span>Next<br><a href="/teaching/numerics/linear-algebra/chapters/04-stationary-iterations/">Chapter 4 · Stationary iterations and smoothing</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

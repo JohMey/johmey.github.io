@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spur gear kinematics and tooth loads · OneSimulation</title>
+<meta name="description" content="Use pitch-line compatibility and power balance to find gear speed, tooth forces and the bending demand at a tooth root.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-elements/chapters/05-gears/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spur gear kinematics and tooth loads · OneSimulation">
+<meta property="og:description" content="Use pitch-line compatibility and power balance to find gear speed, tooth forces and the bending demand at a tooth root.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-elements/chapters/05-gears/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Spur gear kinematics and tooth loads</h1><p class="lead">Use pitch-line compatibility and power balance to find gear speed, tooth forces and the bending demand at a tooth root.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#pitch">Replace the mesh by two rolling pitch circles</a><a href="#contact">Resolve the force along the common normal</a><a href="#reducer">A low-speed conveyor stage</a><a href="#root">Build a first tooth-root estimate</a></nav></aside><article class="prose reference"><section><h2 id="pitch">Replace the mesh by two rolling pitch circles</h2>
+<p>Two external spur gears have straight teeth parallel to their axes. The common normal to a pair of involute flanks passes through a fixed pitch point on the line joining the centres. At that point the pitch circles roll together at equal tangential speed. The actual contacting flanks slide relative to one another away from the pitch point. Distinguishing pitch-circle motion from local sliding explains why the simple velocity ratio can hold while the tooth surfaces still require lubrication.</p>
+<p>For unshifted standard gears of the same module \(m\), pitch diameter equals module times tooth count, and the design centre distance equals half the sum of the pitch diameters. With a common angular sign convention on both parallel axes, the two external gears turn in opposite directions. Writing equality of pitch speeds in magnitude and then inserting direction gives</p>
+<div class="math display">\[d_i=mz_i,\qquad a=(d_1+d_2)/2,\qquad \frac{\omega_2}{\omega_1}=-\frac{d_1}{d_2}=-\frac{z_1}{z_2}.\]</div>
+<p>An idler changes the direction of the last gear in a simple train without changing the magnitude of the first-to-last ratio. A compound shaft carrying two distinct gears is different. Those two gears share angular speed, so the ratios of successive meshes multiply. Draw the shafts before multiplying any tooth counts.</p>
+</section>
+<section><h2 id="contact">Resolve the force along the common normal</h2>
+<p>Neglect tooth friction in the force construction. The resultant \(F_n\) acts normal to the contacting flanks. Its projection along the pitch tangent, \(F_t=F_n\cos\alpha\), produces torque on each shaft. Its radial projection, \(F_r=F_t\tan\alpha\), pushes the two gear centres apart. A straight spur mesh with aligned shafts produces no ideal axial component. The bearings must return both transverse force components to the housing.</p>
+<div class="math display">\[T_1=F_t d_1/2,\qquad T_2=F_t d_2/2,\qquad P=F_t v,\quad v=\pi d_1 n_1/60 .\]</div>
+<p>The transmitted tooth forces have equal magnitudes on both gears. The larger gear develops more torque because that force acts through a larger radius. Multiplying output torque by the correspondingly lower output speed recovers the input power in an ideal mesh. When estimating useful output power for a real stage, multiply input power by the specified efficiency and state which shaft receives that output.</p>
+</section>
+<section><h2 id="reducer">A low-speed conveyor stage</h2>
+<p>A motor drives a 20-tooth pinion at 1200 rpm. It meshes with a 60-tooth gear of module 3 mm and pressure angle 20°. The input power is 4.0 kW. Pitch diameters are 60 and 180 mm, the centre distance is 120 mm, and the output turns at 400 rpm in the opposite direction. Angular input speed is 125.66 rad/s, giving pinion torque 31.83 N m. The pitch-line speed is 3.770 m/s.</p>
+<p>Tangential force follows from \(4000/3.770=1061\,\mathrm N\). The radial separating force is \(1061\tan20^\circ=386\,\mathrm N\). The normal force is \(1061/\cos20^\circ=1129\,\mathrm N\). The ideal output torque is 95.5 N m. With a measured stage efficiency of 0.96, useful output is 3.84 kW and output torque is 91.7 N m. A design based on shaft torque alone omits the transverse force that bends the shaft and loads the bearings.</p>
+</section>
+<section><h2 id="root">Build a first tooth-root estimate</h2>
+<p>For a preliminary bending model treat the loaded tooth as a short cantilever of face width \(b\), effective thickness \(s\) and moment arm \(h\). The rectangular section modulus is \(bs^2/6\); the bending moment is approximately \(F_t h\). Hence root stress scales as \(6F_t h/(bs^2)\). For geometrically similar teeth write \(Y=s^2/(6hm)\), a dimensionless form factor in the module convention used here. Then \(\sigma_b\simeq F_t/(bmY)\).</p>
+<p>Taking \(b=24\,\mathrm{mm}\), \(m=3\,\mathrm{mm}\) and an illustrative \(Y=0.32\) gives \(1061/(24\times3\times0.32)=46.1\,\mathrm{MPa}\). This estimates nominal bending in the simplified geometry. The real tooth also sees local root concentration and surface contact stress. Uneven load across the face, dynamic tooth loads and changing load sharing during mesh can change the result. The shaft experiences a transverse force throughout steady running; an individual tooth is loaded only as it enters each mesh. That distinction changes its number of fatigue cycles.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/machine-elements/problem-sheets/2/">Problem sheet 2 · Clamped interfaces and rolling contact</a></span><span>Next<br><a href="/teaching/mechanical-engineering/machine-elements/chapters/06-fits-and-interfaces/">Chapter 6 · Tolerances, interference and torque transmission</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

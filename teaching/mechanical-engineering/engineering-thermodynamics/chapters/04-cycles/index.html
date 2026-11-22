@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thermodynamic cycles, refrigeration and phase change · OneSimulation</title>
+<meta name="description" content="Analyse a vapour-compression cycle from supplied state properties and compare its performance with a reversible bound.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/engineering-thermodynamics/chapters/04-cycles/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thermodynamic cycles, refrigeration and phase change · OneSimulation">
+<meta property="og:description" content="Analyse a vapour-compression cycle from supplied state properties and compare its performance with a reversible bound.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/engineering-thermodynamics/chapters/04-cycles/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>Thermodynamic cycles, refrigeration and phase change</h1><p class="lead">Analyse a vapour-compression cycle from supplied state properties and compare its performance with a reversible bound.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#cycle">Account for transfers over a complete cycle</a><a href="#states">Follow the refrigerant once around the loop</a><a href="#calculation">Determine cooling, power and flash fraction</a><a href="#limits">Distinguish a property assumption from a bound</a><a href="#reverse">Follow the energy after the compressor stops</a></nav></aside><article class="prose reference"><section><h2 id="cycle">Account for transfers over a complete cycle</h2>
+<p>A cyclic machine returns a working fluid to its initial state. Its internal energy and entropy changes over one complete cycle are zero. Heat and shaft work can nevertheless have nonzero net values. For an engine receiving \(Q_h\), rejecting positive magnitude \(Q_c\) and delivering work \(W_{\rm out}\), the first law gives \(W_{\rm out}=Q_h-Q_c\). Thermal efficiency is \(W_{\rm out}/Q_h\). A refrigerator instead consumes work to remove heat from a cold space. Its useful effect is cooling, so its performance measure is \(\mathrm{COP}_R=Q_c/W_{\rm in}\).</p>
+<p>Between reservoirs at absolute temperatures \(T_h,T_c\) a reversible cycle transports equal entropy \(Q_h/T_h=Q_c/T_c\). Combining this condition with the first law gives \(\eta_{\rm rev}=1-T_c/T_h\) for an engine and \(\mathrm{COP}_{R,\rm rev}=T_c/(T_h-T_c)\) for a refrigerator. The latter can exceed one because cooling duty includes transported heat. A heat pump uses \(Q_h\) as useful output and has \(\mathrm{COP}_{HP}=\mathrm{COP}_R+1\) for the same cycle.</p>
+</section>
+<section><h2 id="states">Follow the refrigerant once around the loop</h2>
+<p>Label the compressor inlet 1, discharge 2, condenser outlet 3 and expansion-valve outlet 4. Assume steady operation, negligible kinetic and elevation changes and insulated compressor and valve. The evaporator absorbs \(q_c=h_1-h_4\) per kilogram, the compressor consumes \(w=h_2-h_1\), the condenser rejects \(q_h=h_2-h_3\) and throttling preserves enthalpy \(h_4=h_3\). Enter enthalpies from a consistent refrigerant table or supplied state data. A constant ideal-gas heat capacity cannot represent latent heat across a two-phase region.</p>
+<p>At saturation a mixture at quality \(x\) has \(h=(1-x)h_f+xh_g\), where \(x\) is vapour mass fraction and \(h_f,h_g\) are saturated liquid and vapour enthalpies at the same pressure. A throttle can create vapour as the pressure falls even though no external heat enters the valve. The mixture redistributes its enthalpy between phases at the new saturation temperature.</p>
+</section>
+<section><h2 id="calculation">Determine cooling, power and flash fraction</h2>
+<p>For an illustrative refrigerant take enthalpies \(h_1=390\), \(h_2=430\), \(h_3=h_4=250\) kJ/kg. At evaporator pressure the saturated values are \(h_f=200,\ h_g=390\) kJ/kg. With mass flow 0.060 kg/s, the evaporator removes \(0.060(390-250)=8.40\) kW, the compressor needs 2.40 kW and the condenser rejects 10.80 kW. The powers satisfy \(8.40+2.40=10.80\) kW, and cooling COP is 3.50. The valve outlet quality is \((250-200)/(390-200)=0.263\): just over a quarter of the mass is already vapour when it enters the evaporator.</p>
+<p>Suppose that at the actual discharge pressure an isentropic compression would give \(h_{2s}=420\) kJ/kg. The compressor isentropic efficiency is \((h_{2s}-h_1)/(h_2-h_1)=30/40=0.75\). Losses raise the required shaft power and increase condenser duty at unchanged evaporator inlet and outlet conditions.</p>
+</section>
+<section><h2 id="limits">Distinguish a property assumption from a bound</h2>
+<p>If heat is removed from a 268 K reservoir and rejected to a 308 K reservoir, the reversible refrigeration COP is \(268/(308-268)=6.70\). A measured COP of 3.50 lies below that limit. Real heat exchangers need finite temperature differences, compressors generate entropy and valves destroy expansion work. Reducing the required temperature lift improves the reversible limit. The working fluid’s actual pressures and enthalpies must be redetermined to estimate a real COP change. A cycle sketch and a numbered state table prevent accidentally using a compressor outlet temperature as the external hot-reservoir temperature in the bound.</p>
+</section>
+<section><h2 id="reverse">Follow the energy after the compressor stops</h2>
+<p>Consider a cold cabinet held at constant temperature by a refrigerator. If it receives a 100 W heat leak and a 25 W electric fan dissipates power inside it, the evaporator must remove 125 W in steady operation. At cooling COP 2.5 the compressor draws 50 W, and the condenser releases \(125+50=175\) W into the room. If both the condenser and the cabinet exterior exchange heat with that room, its net thermal gain from the refrigerator system is \(175-100=75\) W. This equals the total electrical input to fan and compressor. Boundary selection explains why the condenser duty and the net heating of the entire room have different values.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/engineering-thermodynamics/chapters/03-entropy/">Chapter 3 · Entropy, irreversibility and useful-work loss</a></span><span>Next<br><a href="/teaching/mechanical-engineering/engineering-thermodynamics/problem-sheets/2/">Problem sheet 2 · Entropy production and performance limits</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

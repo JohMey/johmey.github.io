@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>States, reachability and estimation · OneSimulation</title>
+<meta name="description" content="Two mechanisms can produce the same output at one instant and different outputs an instant later. Determine what the actuator can change and what a sensor history can reveal.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/05-state-feedback/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="States, reachability and estimation · OneSimulation">
+<meta property="og:description" content="Two mechanisms can produce the same output at one instant and different outputs an instant later. Determine what the actuator can change and what a sensor history can reveal.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/05-state-feedback/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>States, reachability and estimation</h1><p class="lead">Two mechanisms can produce the same output at one instant and different outputs an instant later. Determine what the actuator can change and what a sensor history can reveal.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#from-balances-to-independent-states">From balances to independent states</a><a href="#test-an-actuator-and-a-sensor">Test an actuator and a sensor</a><a href="#place-poles-and-restore-the-reference-scale">Place poles and restore the reference scale</a><a href="#reconstruct-velocity-without-differentiating-noisy-measurements">Reconstruct velocity without differentiating noisy measurements</a></nav></aside><article class="prose reference"><section><h2 id="from-balances-to-independent-states">From balances to independent states</h2>
+<p>A cart of mass \(m\) moves against a spring \(k\) and damper \(b\). Choose \(x=(q,v)^\mathsf{T}\), displacement and velocity. Newton's law gives \(\dot q=v,\ m\dot v=-kq-bv+u\). A state contains the initial information needed to propagate the motion with specified input. Measuring displacement at one instant supplies only half of that information. The state choice is not unique: replacing velocity by momentum changes the matrix entries, yet the predicted displacement history is the same.</p>
+<div class="math display">\[\dot x=Ax+Bu,\quad y=Cx,\qquad A=\begin{pmatrix}0&amp;1\\-k/m&amp;-b/m\end{pmatrix},\ B=\binom{0}{1/m},\ C=(1\;\;0).\]</div>
+<p>With zero input the transition \(e^{At}\) propagates initial conditions. Integrating the effect of forces applied at each earlier time gives \(x(t)=e^{At}x(0)+\int_0^t e^{A(t-s)}Bu(s)\,ds\). This decomposition explains why both the autonomous motion and the input direction enter control design.</p>
+</section>
+<section><h2 id="test-an-actuator-and-a-sensor">Test an actuator and a sensor</h2>
+<p>Over a short time, the vectors \(e^{At}B=B+tAB+\cdots\) show the directions that a force can excite. In two dimensions \(B,AB\) suffice by the characteristic equation of \(A\). For the cart their columns have determinant \(-1/m^2\); a finite mass allows the actuator to change both position and velocity over time. This rank test assumes arbitrary inputs and sufficient time. Getting to a distant position in a very short time can still exceed an actuator limit.</p>
+<p>With a known input, output and its first derivative contain \(Cx\) and \(CAx\). Here they are position and velocity, so the observability matrix has full rank. As a counterexample, consider two uncoupled tanks with equal decay rates, driven equally, and one sensor measuring the sum of levels. The difference evolves autonomously and never enters the sum. Recording a longer noiseless trace with that sensor cannot recover the initial difference. Moving a sensor or adding a distinct excitation has to break the symmetry responsible for the missing information.</p>
+</section>
+<section><h2 id="place-poles-and-restore-the-reference-scale">Place poles and restore the reference scale</h2>
+<p>Take \(m=1,\ b=1,\ k=2\) in compatible SI units. Apply \(u=-f_q q-f_v v+n r\). The homogeneous characteristic polynomial is \(s^2+(1+f_v)s+(2+f_q)\). Desired poles at \(-2,-3\) give \(f_v=4,\ f_q=4\) by coefficient matching. At constant reference the velocity vanishes and \((2+f_q)q=nr\), so \(n=6\) gives \(q=r\) in the nominal model. A constant unmodelled force shifts this equilibrium. State feedback with a static reference multiplier alone supplies no mechanism to learn that force.</p>
+</section>
+<section><h2 id="reconstruct-velocity-without-differentiating-noisy-measurements">Reconstruct velocity without differentiating noisy measurements</h2>
+<p>An observer runs the model and uses the disagreement with the measured output to correct its state. Write \(\dot{\hat x}=A\hat x+Bu+H(y-C\hat x)\). In the ideal deterministic model the estimation error obeys \(\dot e=(A-HC)e\). Here its polynomial is \(s^2+(1+h_1)s+(h_1+2+h_2)\). Desired observer poles \(-4,-5\) give \(h_1=8,\ h_2=10\). Thus an initial state error decays even though the sensor supplies only displacement.</p>
+<p>With the control law evaluated at \(\hat x\), the combined state and estimation-error dynamics are block triangular. The two sets of assigned poles therefore survive in the ideal linear model. Faster observer poles also give sensor noise larger correction gains. Compare simulated or measured velocity estimates during a quiet hold and during a sharp manoeuvre before accepting the faster design. A missing mode, a noisy estimate and the inability to measure an initial state exactly have distinct engineering implications.</p>
+<p>For additional examples of state estimation and output feedback, see Åström and Murray’s <a href="https://fbswiki.org/wiki/index.php/Feedback_Systems:_An_Introduction_for_Scientists_and_Engineers">Feedback Systems</a>.</p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/control-engineering/problem-sheets/2/">Problem sheet 2 · Pole placement, gain and phase</a></span><span>Next<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/06-sampled-control/">Chapter 6 · Sampling, saturation and commissioning</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

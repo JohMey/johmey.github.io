@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boundary and algebraic conditions · OneSimulation</title>
+<meta name="description" content="Recover missing initial data, measure shooting amplification, and calculate a consistent implicit step for a constrained state.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/ordinary-differential-equations/problem-sheets/6/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Boundary and algebraic conditions · OneSimulation">
+<meta property="og:description" content="Recover missing initial data, measure shooting amplification, and calculate a consistent implicit step for a constrained state.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/ordinary-differential-equations/problem-sheets/6/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Boundary and algebraic conditions</h1><p class="lead">Recover missing initial data, measure shooting amplification, and calculate a consistent implicit step for a constrained state.</p><p class="byline">Problem sheet 6 · Chapters 11 and 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-slope-from-an-endpoint">A slope from an endpoint</a><a href="#quantify-an-unstable-direction">Quantify an unstable direction</a><a href="#enforce-a-time-dependent-constraint">Enforce a time-dependent constraint</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-slope-from-an-endpoint">A slope from an endpoint</h2>
+<p>Solve \(y''=2\), \(y(0)=1,\ y(2)=3\) by shooting. Write the endpoint residual and derivative, take a Newton update from zero, and evaluate the fitted midpoint value.</p>
+<details><summary>Worked solution</summary>
+<p>With initial slope \(s\), \(y(t)=1+st+t^2\). The residual is \(1+2s+4-3=2+2s\). Its derivative is 2.</p>
+<p>The update from zero gives \(s=-1\) exactly because the residual is affine. At \(t=1\) the fitted value is 1; at \(t=2\) it returns 3. The trajectory initially decreases before turning upward.</p>
+</details>
+</section>
+<section>
+<h2 id="quantify-an-unstable-direction">Quantify an unstable direction</h2>
+<p>For \(y''=16y,\ y(0)=0\), express \(y(1)\) as a function of the initial slope. Calculate the slope needed for \(y(1)=2\), and estimate the change in terminal value caused by an absolute slope error of 0.001.</p>
+<details><summary>Worked solution</summary>
+<p>Superposition gives \(y(t)=(s/4)\sinh(4t)\). Hence \(s=8/\sinh4\approx0.29315\) and the endpoint sensitivity is \(\sinh4/4\approx6.8225\).</p>
+<p>A slope error of 0.001 causes terminal error about 0.00682. This is exact up to rounding in the multiplier because the differential equation and its slope dependence are linear.</p>
+</details>
+</section>
+<section>
+<h2 id="enforce-a-time-dependent-constraint">Enforce a time-dependent constraint</h2>
+<p>For \(y'=z,\ y+z=1+t,\ y(0)=0\), find consistent initial values and one backward Euler step of length 0.5. Solve the reduced equation and assess why the step has this particular error.</p>
+<details><summary>Worked solution</summary>
+<p>The initial constraint gives \(z(0)=1\) and therefore \(y'(0)=1\). At the new time \(y_1=0.5z_1\), \(y_1+z_1=1.5\), yielding \(y_1=0.5,z_1=1\).</p>
+<p>The reduced equation \(y'=1+t-y\) has exact solution \(y=t\) with this initial value. Its derivative is constant along the trajectory, so backward Euler reproduces it exactly here. Different initial data introduce an exponential transient for which the step would have time-discretisation error.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/ordinary-differential-equations/chapters/12-algebraic-constraints/">Chapter 12 · Differential–algebraic equations and consistency</a></span><span>Next<br><a href="/teaching/numerics/ordinary-differential-equations/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

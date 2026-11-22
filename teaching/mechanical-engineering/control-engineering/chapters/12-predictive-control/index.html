@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finite-horizon control with real actuator constraints · OneSimulation</title>
+<meta name="description" content="Build a small predictive controller from a sampled model and determine when the requested target is physically reachable.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/12-predictive-control/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Finite-horizon control with real actuator constraints · OneSimulation">
+<meta property="og:description" content="Build a small predictive controller from a sampled model and determine when the requested target is physically reachable.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/12-predictive-control/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Finite-horizon control with real actuator constraints</h1><p class="lead">Build a small predictive controller from a sampled model and determine when the requested target is physically reachable.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#predict-a-sequence-before-applying-the-first-action">Predict a sequence before applying the first action</a><a href="#solve-a-two-step-constrained-problem">Solve a two-step constrained problem</a><a href="#feasible-commands-and-feasible-trajectories-differ">Feasible commands and feasible trajectories differ</a><a href="#close-the-engineering-loop">Close the engineering loop</a></nav></aside><article class="prose reference"><section><h2 id="predict-a-sequence-before-applying-the-first-action">Predict a sequence before applying the first action</h2>
+<p>For \(x_{k+1}=Ax_k+Bu_k\) with measured or estimated \(x_k\), successive substitutions give \(x_{k+2}=A^2x_k+ABu_k+Bu_{k+1}\). The initial state sets the free response; the planned input sequence contributes linearly. With quadratic tracking and effort penalties, linear dynamics and linear bounds on states or inputs, planning becomes a convex quadratic programme. At each update apply only the first planned command, acquire a new measurement and solve again. Receding the horizon provides feedback when disturbances make actual motion depart from the earlier prediction.</p>
+</section>
+<section><h2 id="solve-a-two-step-constrained-problem">Solve a two-step constrained problem</h2>
+<p>Take the dimensionless integrator \(x_{k+1}=x_k+u_k\), \(x_k=2\), and target zero. Minimise \(x_{k+1}^2+x_{k+2}^2+u_k^2+u_{k+1}^2\). With \(u=u_k,v=u_{k+1}\), the objective is \((2+u)^2+(2+u+v)^2+u^2+v^2\). Its stationary equations are \(3u+v=-4,\ u+2v=-2\). The unconstrained plan \(u=-1.2,\ v=-0.4\) reaches states 0.8 and 0.4. If both input magnitudes are limited to one, the first command is infeasible. Fixing \(u=-1\) and reoptimising the second gives \(v=-0.5\), reaching 1 and 0.5. The derivative with respect to \(u\) points toward smaller \(u\) at this boundary, confirming the active limit.</p>
+<p>After applying −1, suppose the new state is exactly 1. The next two-step unconstrained plan scales the original one by one half, giving first action −0.6. The earlier second action was −0.5. This change is consistent even without disturbances, since the new optimisation includes a further future step. A terminal cost approximating the remaining cost of control can reduce this artificial dependence on the planning horizon.</p>
+</section>
+<section><h2 id="feasible-commands-and-feasible-trajectories-differ">Feasible commands and feasible trajectories differ</h2>
+<p>A command bound always has feasible choices if zero lies within it. Adding a hard state constraint, such as a position stop, may make all predicted trajectories infeasible from the current state. Before asking for a time-optimal move, compute elementary reachability bounds. With \(|u|\le1\), a scalar integrator can move at most \(N\) units in \(N\) samples. A terminal constraint demanding zero from state 3 in two samples is impossible. Allowing slack in a comfort-related temperature band may be defensible; a physical actuator limit must still be enforced. Report which constraints were active and what performance was sacrificed.</p>
+</section>
+<section><h2 id="close-the-engineering-loop">Close the engineering loop</h2>
+<p>For a practical comparison, first establish a verified baseline with the <a href="/teaching/mechanical-engineering/control-engineering/#experiment">OneSimulation proportional-loop record</a>. Reconstruct its pole and finite-record bias from the model parameters. This record witnesses how an unconstrained linear loop behaves; it does not itself exercise a predictive optimiser. Now design a separate held-input or constrained test whose command reaches a known bound, record measured timestamps and actuator signals, and compare with a by-hand prediction of the first active limit. The useful performance claims differ: accurate steady tracking, stable sampled dynamics, adequate estimator uncertainty and feasibility under limits each require an observation capable of testing them.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/11-multivariable-loops/">Chapter 11 · Interacting actuators, pairing and decoupling</a></span><span>Next<br><a href="/teaching/mechanical-engineering/control-engineering/problem-sheets/6/">Problem sheet 6 · Coupled plants and constrained predictions</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

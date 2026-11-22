@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inequalities and active constraints · OneSimulation</title>
+<meta name="description" content="Translate one-sided equilibrium into complementarity equations, identify an active set and verify both force and feasibility.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/12-complementarity/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Inequalities and active constraints · OneSimulation">
+<meta property="og:description" content="Translate one-sided equilibrium into complementarity equations, identify an active set and verify both force and feasibility.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/nonlinear-equations/chapters/12-complementarity/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Inequalities and active constraints</h1><p class="lead">Translate one-sided equilibrium into complementarity equations, identify an active set and verify both force and feasibility.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-stop-can-push-in-only-one-direction">A stop can push in only one direction</a><a href="#couple-two-potential-contact-points">Couple two potential contact points</a><a href="#a-residual-for-switching-equations">A residual for switching equations</a><a href="#read-the-reaction-as-the-price-of-a-constraint">Read the reaction as the price of a constraint</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-stop-can-push-in-only-one-direction">A stop can push in only one direction</h2>
+<p>A constrained coordinate \(u\) must remain nonnegative and has an elastic energy \(E(u)=ku^2/2-fu\), \(k&gt;0\). Minimising a differentiable energy on a half-line gives an interior stationary point when \(u&gt;0\). At the endpoint zero, only nonnegative variations are possible, so the one-sided derivative must be nonnegative. Introduce the reaction \(w=ku-f\). These conditions read \(u\ge0,\ w\ge0,\ uw=0\). They express that at least one of gap and reaction vanishes. A similar rule applies componentwise to a vector of gaps coupled through a stiffness matrix.</p>
+<p>The scalar solution is \(u=\max(f/k,0)\) and \(w=\max(-f,0)\). Increasing \(f\) through zero changes the slope of the load–displacement graph. The solution stays continuous while its derivative jumps. Near that change an unconstrained differentiable root solver can produce a negative gap or an inadmissible attractive reaction unless its equations include the inequalities.</p>
+</section>
+<section>
+<h2 id="couple-two-potential-contact-points">Couple two potential contact points</h2>
+<p>Let \(K=\left(\begin{smallmatrix}2&amp;-1\\-1&amp;2\end{smallmatrix}\right)\), \(f=(-1,1)^T\), \(w=Ku-f\) and \(u_i\ge0\). The unconstrained equilibrium gives \(u=K^{-1}f=(-1/3,1/3)^T\), violating the first gap. Test the set with \(u_1=0\), \(w_2=0\). The second equation becomes \(2u_2-1=0\), hence \(u_2=1/2\). Recover the first reaction \(w_1=-1/2+1=1/2\). Every gap and reaction is now nonnegative and every product vanishes. Positive definiteness of \(K\) makes the quadratic energy strictly convex, so a feasible stationary state satisfying these inequalities is its unique minimum.</p>
+<p>For a changed load \(f=(-0.4,1)^T\), the same assumed active set yields \(w_1=-0.1\), which is inadmissible. Release the first coordinate and solve \(Ku=f\). Using \(K^{-1}=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\end{smallmatrix}\right)/3\) gives \(u=(1/15,8/15)^T\), positive in both coordinates, with zero reactions. A small change of loading has switched the equations that determine the state.</p>
+</section>
+<section>
+<h2 id="a-residual-for-switching-equations">A residual for switching equations</h2>
+<p>After compatible nondimensionalisation, \(\min(u_i,w_i)=0\) is equivalent to the three componentwise complementarity conditions. Where \(u_i&lt;w_i\), linearising the minimum selects the gap equation; where \(w_i&lt;u_i\), it selects the equilibrium equation. At equality the derivative is not unique, which explains the need for a switching rule or a nonsmooth Newton formulation. A product alone is insufficient: a negative gap and zero reaction give a zero product. Report the largest feasibility violation and a complementarity residual together. At the scalar switching load \(f=0\), both gap and reaction vanish and the active designation is ambiguous even though the state itself is unique.</p>
+</section>
+<section>
+<h2 id="read-the-reaction-as-the-price-of-a-constraint">Read the reaction as the price of a constraint</h2>
+<p>Return to a single gap with stiffness 2 and load −4. Its minimum over \(u\ge0\) occurs at zero with reaction 4. Now move the lower stop to \(u\ge d\) for a small positive \(d\). The constrained minimum becomes \(E(d)=d^2+4d\), whose derivative at zero is 4, precisely the original reaction. A small imposed displacement of the active stop requires work to first order. For a positive load producing a strictly open gap, the same small stop shift would initially have no effect and the reaction would be zero. These energy changes provide an independent check on the reaction sign.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/nonlinear-equations/chapters/11-nonlinear-least-squares/">Chapter 11 · Gauss–Newton and residual curvature</a></span><span>Next<br><a href="/teaching/numerics/nonlinear-equations/problem-sheets/6/">Problem sheet 6 · Misfit and one-sided equilibrium</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

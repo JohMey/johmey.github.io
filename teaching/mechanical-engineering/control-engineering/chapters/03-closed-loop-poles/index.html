@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Closed-loop poles, damping and performance · OneSimulation</title>
+<meta name="description" content="Translate a time-domain requirement into acceptable poles and find when additional gain destabilises a higher-order plant.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/03-closed-loop-poles/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Closed-loop poles, damping and performance · OneSimulation">
+<meta property="og:description" content="Translate a time-domain requirement into acceptable poles and find when additional gain destabilises a higher-order plant.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/chapters/03-closed-loop-poles/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Closed-loop poles, damping and performance</h1><p class="lead">Translate a time-domain requirement into acceptable poles and find when additional gain destabilises a higher-order plant.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#relate-polynomial-coefficients-to-observed-motion">Relate polynomial coefficients to observed motion</a><a href="#design-for-a-specified-peak">Design for a specified peak</a><a href="#follow-a-gain-change-on-a-third-order-plant">Follow a gain change on a third-order plant</a></nav></aside><article class="prose reference"><section><h2 id="relate-polynomial-coefficients-to-observed-motion">Relate polynomial coefficients to observed motion</h2>
+<p>For a normalised second-order system, the free response satisfies \(\ddot y+2\zeta\omega_n\dot y+\omega_n^2y=0\). Substitution of \(e^{st}\) gives \(s=-\zeta\omega_n\pm\omega_n\sqrt{\zeta^2-1}\). The real part sets the decay rate. For \(0&lt;\zeta&lt;1\), the imaginary part \(\omega_d=\omega_n\sqrt{1-\zeta^2}\) sets the time between successive extrema. Doubling \(\omega_n\) at fixed \(\zeta\) halves all characteristic times but leaves the fraction of overshoot unchanged.</p>
+<p>Assume a unit DC gain, a constant numerator and zero initial displacement and velocity. The step response is \(y=1-e^{-\zeta\omega_n t}[\cos(\omega_dt)+(\zeta\omega_n/\omega_d)\sin(\omega_dt)]\). Differentiate the bracket together with its envelope. The cosine terms cancel and the remaining derivative is proportional to \(e^{-\zeta\omega_n t}\sin(\omega_dt)\). The first peak occurs at \(t_p=\pi/\omega_d\). Substituting that time gives the fractional overshoot</p>
+<div class="math display">\[M_p=\exp\!\left(-\frac{\pi\zeta}{\sqrt{1-\zeta^2}}\right).\]</div>
+</section>
+<section><h2 id="design-for-a-specified-peak">Design for a specified peak</h2>
+<p>Suppose a positioning axis may overshoot a 10 mm command by at most 1 mm. Solving the previous expression for the limiting damping ratio gives \(\zeta=-\ln M_p/\sqrt{\pi^2+(\ln M_p)^2}=0.591\). At \(\omega_n=5\) rad/s the corresponding poles are approximately \(-2.96\pm4.03i\) per second and the first peak occurs at 0.779 s. A nominal oscillatory second-order system with this damping just meets the 1 mm bound. A zero near the dominant poles, a saturated drive or another slow pole changes the transient, so the result should be checked against the full model after the poles are chosen.</p>
+<p>A settling specification differs from a peak specification. The absolute normalised error stays below the envelope \(e^{-\zeta\omega_n t}/\sqrt{1-\zeta^2}\). To guarantee a 2% settling band using this bound, solve \(t\ge-\ln[0.02\sqrt{1-\zeta^2}]/(\zeta\omega_n)\). This conservative time for the example is about 1.40 s. The commonly used \(4/(\zeta\omega_n)\) is a convenient estimate. The envelope bound spells out both the tolerance and its assumptions.</p>
+</section>
+<section><h2 id="follow-a-gain-change-on-a-third-order-plant">Follow a gain change on a third-order plant</h2>
+<p>A plant with two lags and an integrator has open-loop transfer \(K/[s(s+1)(s+2)]\) in units normalised to a common time base. Close unity negative feedback. The characteristic polynomial is \(s^3+3s^2+2s+K\). Its coefficients are all positive for \(K&gt;0\), which rules out positive real roots but allows an unstable complex pair. Form the first column of the Routh array: \(1,\ 3,\ (6-K)/3,\ K\). All entries must have the same sign for strict stability. Thus \(0&lt;K&lt;6\).</p>
+<p>At \(K=6\) the polynomial factors as \((s+3)(s^2+2)\). The step excites an undamped pair at angular frequency \(\sqrt2\), alongside a decaying component. At \(K=7\) the first-column signs change twice, so two roots have crossed into the right half-plane. The input-output gain alone did not reveal this upper bound. Additional lags allow feedback to arrive out of phase with motion. Chapter 4 reaches the same type of conclusion by examining sine-wave responses, which can often be measured even when coefficients of a polynomial are poorly known.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/control-engineering/problem-sheets/1/">Problem sheet 1 · Modelling a plant and interpreting its signals</a></span><span>Next<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/04-frequency-response/">Chapter 4 · Frequency response, disturbance rejection and robustness</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

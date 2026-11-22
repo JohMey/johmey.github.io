@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shaft reactions, twist and rotating bending · OneSimulation</title>
+<meta name="description" content="Trace power and belt forces into shaft reactions, then check the shaft section for yielding, twist and cyclic bending.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-elements/chapters/02-shafts/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shaft reactions, twist and rotating bending · OneSimulation">
+<meta property="og:description" content="Trace power and belt forces into shaft reactions, then check the shaft section for yielding, twist and cyclic bending.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/machine-elements/chapters/02-shafts/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Shaft reactions, twist and rotating bending</h1><p class="lead">Trace power and belt forces into shaft reactions, then check the shaft section for yielding, twist and cyclic bending.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#torque">Rotation determines the torque, contacts determine the bending</a><a href="#section">Determine the stress components from section geometry</a><a href="#pulley">Size the loading at the pulley seat</a><a href="#rotation">Follow one material point through a revolution</a></nav></aside><article class="prose reference"><section><h2 id="torque">Rotation determines the torque, contacts determine the bending</h2>
+<p>A shaft transmits a given power through torque at a specified speed. Mechanical work in a small rotation is \(dW=T\,d\theta\), so power is \(T\omega\), with angular speed in radians per second. Belt tensions act at opposite sides of a pulley. Their difference gives the net driving torque. For two nearly parallel belt spans pulling in the same transverse direction their sum loads the shaft sideways. A belt with greater pretension can increase bearing loads although the transmitted power remains constant.</p>
+<div class="math display">\[\omega=2\pi n/60,\qquad T=P/\omega=(F_1-F_2)r,\qquad F_\perp\simeq F_1+F_2 .\]</div>
+<p>Choose bearing centres as ideal simple supports and identify where each torque enters or leaves the shaft. A section between an input coupling and an output pulley carries the transmitted torque. Beyond the output pulley it may carry transverse shear while carrying virtually zero torque. Mark the bending and torque diagrams separately so the combination at a critical cross-section represents loads that actually coexist there.</p>
+</section>
+<section><h2 id="section">Determine the stress components from section geometry</h2>
+<p>For a solid circular shaft the bending second moment is \(I=\pi d^4/64\), and its polar moment is \(J=2I\). The elastic bending stress at the outer fibre is \(M(d/2)/I\); the torsional shear stress is \(T(d/2)/J\). Under proportional elastic loading, the plane-stress von Mises expression then gives a static yield check for a ductile material.</p>
+<div class="math display">\[\sigma_b=32M/(\pi d^3),\qquad \tau_t=16T/(\pi d^3),\qquad \sigma_v=\sqrt{\sigma_b^2+3\tau_t^2}.\]</div>
+<p>The cubic diameter dependence makes a shoulder important even before its local stress concentration is considered. These equations describe a smooth prismatic section and nominal stresses. At a fillet, the maximum stresses may be estimated from geometric concentration factors appropriate to bending and torsion. For cyclic design a fatigue concentration factor may differ from the elastic geometric factor because sensitivity to the notch depends on material and radius.</p>
+</section>
+<section><h2 id="pulley">Size the loading at the pulley seat</h2>
+<p>A 120 mm radius pulley sits at the middle of a 0.40 m span and draws 6.0 kW at 600 rpm. The two belt forces are parallel and their sum is 1800 N. The driving coupling lies immediately outside the left bearing. The shaft is 32 mm in diameter. From \(\omega=62.83\,\mathrm{rad/s}\), the transmitted torque is 95.5 N m and the tension difference is \(95.5/0.120=795.8\,\mathrm N\). Combining difference and sum gives 1298 and 502 N.</p>
+<p>Each bearing carries 900 N. Taking moments about a cut just to the left of the pulley gives \(M=900(0.20)=180\,\mathrm{N\,m}\). There the shaft still transmits full torque. Substitution gives 56.0 MPa bending and 14.8 MPa torsional shear. Thus the nominal von Mises stress is 61.6 MPa, giving a nominal yield safety factor of 4.06 for steel with 250 MPa yield strength. This calculation has not yet accounted for a keyway or the pulley seat fillet.</p>
+</section>
+<section><h2 id="rotation">Follow one material point through a revolution</h2>
+<p>A fixed vertical belt pull produces a steady bending moment in the laboratory. Mark a point on the rotating shaft surface. It passes through the tensile and compressive bending fibres once each per turn, so that its bending stress is fully reversed with amplitude 56.0 MPa. Steady driving torque supplies mean shear. A fatigue test at zero mean axial load describes only one part of this combined loading history. A shaft that spends a long time at constant speed can accumulate many stress cycles while the torque meter shows a level trace.</p>
+<p>The twist angle is a further service requirement. Integrate \(d\theta/dx=T/(GJ)\) along the torque-carrying length. With \(G=80\,\mathrm{GPa}\), \(J=1.029\times10^{-7}\,\mathrm{m^4}\), and a 0.20 m torque-carrying span, the relative twist is 0.00232 rad, or 0.133°. Bending stress varies as the inverse cube of diameter and twist at fixed torque as the inverse fourth power. A diameter selected from a strength limit can still give an unacceptable positioning error at the driven component.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/machine-elements/chapters/01-design-loads/">Chapter 1 · From machine duty to a design load</a></span><span>Next<br><a href="/teaching/mechanical-engineering/machine-elements/problem-sheets/1/">Problem sheet 1 · Duty blocks and shaft sections</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

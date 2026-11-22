@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coupled plants and constrained predictions · OneSimulation</title>
+<meta name="description" content="End the course by testing an actuator pairing, a finite-horizon plan and a specification that initially looks feasible.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/problem-sheets/6/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Coupled plants and constrained predictions · OneSimulation">
+<meta property="og:description" content="End the course by testing an actuator pairing, a finite-horizon plan and a specification that initially looks feasible.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/problem-sheets/6/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a> / <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Coupled plants and constrained predictions</h1><p class="lead">End the course by testing an actuator pairing, a finite-horizon plan and a specification that initially looks feasible.</p><p class="byline">Problem sheet 6 · Chapters 11 and 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#1-unequal-heat-paths">1. Unequal heat paths</a><a href="#2-active-limits-in-a-predictive-move">2. Active limits in a predictive move</a><a href="#3-a-requirement-beyond-actuator-authority">3. A requirement beyond actuator authority</a></nav></aside><article class="prose reference"><section><h2 id="1-unequal-heat-paths">1. Unequal heat paths</h2>
+<p>For \(G=\left(\begin{smallmatrix}3&amp;1\\2&amp;2\end{smallmatrix}\right)\), (a) compute its relative gain array. (b) Calculate both actuator changes needed to raise output 1 by one unit while holding output 2 fixed. (c) Are these changes available if both actuators already sit at their lower bounds?</p>
+<details><summary>Solve the outputs before choosing a controller</summary>
+<p>The determinant is 4, so the array has diagonal entries \(6/4=1.5\) and cross entries \(-2/4=-0.5\). The desired change \(G^{-1}(1,0)^\mathsf{T}=(0.5,-0.5)^\mathsf{T}\) needs the second heater to reduce its command. At its lower bound this is infeasible. Reassigning loop pairings does not remove this physical constraint.</p>
+</details>
+</section>
+<section><h2 id="2-active-limits-in-a-predictive-move">2. Active limits in a predictive move</h2>
+<p>Use the chapter's two-step integrator problem with initial state 3 and \(|u|,|v|\le1\). (a) Find the unconstrained plan. (b) Optimise the second action when the first is at its lower bound and compute the objective. (c) Can a requirement \(x_{k+2}=0\) be added?</p>
+<details><summary>Check the unconstrained optimum, then the active face</summary>
+<p>Scaling the unconstrained plan gives \((-1.8,-0.6)\). Fix \(u=-1\); the remaining derivative is \(2(2+v)+2v\), giving \(v=-1\), which is feasible. The input gradients at the lower bounds are nonnegative (the second is zero), establishing optimality for the convex objective. The states are 2 and 1, so the cost is \(4+1+1+1=7\). The largest two-step reduction is 2, so the terminal equality is infeasible.</p>
+</details>
+</section>
+<section><h2 id="3-a-requirement-beyond-actuator-authority">3. A requirement beyond actuator authority</h2>
+<p>A speed loop has steady plant \(y=2u-d\), with \(|u|\le2\), opposing disturbance \(d=1\) and desired speed 4 in normalised units. (a) Test whether any controller can track that command indefinitely. (b) Find the best possible steady output and error. (c) Give the measurements needed to distinguish saturation from an incorrect model gain in a logged experiment.</p>
+<details><summary>Apply the balance before retuning the loop</summary>
+<p>Steady tracking requires \(u=(4+1)/2=2.5\), beyond the upper bound. The maximum steady speed is 3, leaving error 1. Log the controller's requested action, the delivered actuator signal, the load and the measured response. Verify the gain using smaller feasible steady commands; if delivered and requested signals diverge at the limit, the balance predicts the observed loss of tracking. Increasing integral gain cannot change the feasible steady range.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/mechanical-engineering/control-engineering/chapters/12-predictive-control/">Chapter 12 · Finite-horizon control with real actuator constraints</a></span><span>Next<br><a href="/teaching/mechanical-engineering/control-engineering/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

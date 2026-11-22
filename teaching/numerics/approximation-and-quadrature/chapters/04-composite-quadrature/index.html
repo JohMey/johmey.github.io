@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Composite quadrature and cancellation · OneSimulation</title>
+<meta name="description" content="Derive midpoint, trapezoidal and Simpson formulas, and use the sign of curvature to interpret a pair of numerical integral estimates.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/chapters/04-composite-quadrature/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Composite quadrature and cancellation · OneSimulation">
+<meta property="og:description" content="Derive midpoint, trapezoidal and Simpson formulas, and use the sign of curvature to interpret a pair of numerical integral estimates.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/chapters/04-composite-quadrature/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Composite quadrature and cancellation</h1><p class="lead">Derive midpoint, trapezoidal and Simpson formulas, and use the sign of curvature to interpret a pair of numerical integral estimates.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#measure-an-integral-with-finite-samples">Measure an integral with finite samples</a><a href="#increase-the-order-by-cancelling-a-term">Increase the order by cancelling a term</a><a href="#check-the-signs-with-a-quartic-pulse">Check the signs with a quartic pulse</a><a href="#handle-a-jump-with-one-sided-values">Handle a jump with one-sided values</a></nav></aside><article class="prose reference"><section>
+<h2 id="measure-an-integral-with-finite-samples">Measure an integral with finite samples</h2>
+<p>The energy delivered by a time-varying power input is the area under its history. If readings are available only at a fixed interval, integration must proceed from those samples or from additional physical assumptions. On one panel \([a,a+h]\), the midpoint rule uses \(hf(a+h/2)\), while integration of the chord between the endpoints gives \(h[f(a)+f(a+h)]/2\). Both are exact for affine \(f\). They may nonetheless give opposite errors on the same curved signal, which makes their comparison informative.</p>
+<p>Expand about the midpoint \(m\), using \(s=x-m\). Odd powers of \(s\) integrate to zero on \([-h/2,h/2]\). The leading correction to \(hf(m)\) is \(f''(m)h^3/24\). Averaging the endpoint expansions instead gives \(hf(m)+f''(m)h^3/8+O(h^5)\). Subtracting the integral, the leading trapezoidal overestimate is \(+f''(m)h^3/12\), while the midpoint estimate has leading error \(-f''(m)h^3/24\). This expansion requires a smooth integrand. At a known abrupt switch in power, align a panel edge with the switch before applying it.</p>
+</section>
+<section>
+<h2 id="increase-the-order-by-cancelling-a-term">Increase the order by cancelling a term</h2>
+<p>Cover a fixed interval with equal panels. There are \(O(1/h)\) local errors of order \(h^3\), giving global second-order accuracy for both rules. Now combine two parts midpoint and one part trapezoid. Their leading second-derivative terms cancel. On a panel of width \(H\), the result is \(H[f(a)+4f(a+H/2)+f(a+H)]/6\), Simpson’s rule. It integrates all cubics exactly: the quadratic error cancels and odd terms about the midpoint cancel by symmetry. For sufficiently smooth data the panel error is \(O(H^5)\) and the composite error is \(O(H^4)\).</p>
+<p>Simpson’s formula needs midpoint readings. With an even number of equal subintervals, join consecutive pairs and obtain the familiar alternating weights \(1,4,2,4,\dots,4,1\). Applying those integer weights to unequally spaced observations loses the derivation. In that setting use correctly derived nonuniform weights or the trapezoidal rule panel by panel.</p>
+</section>
+<section>
+<h2 id="check-the-signs-with-a-quartic-pulse">Check the signs with a quartic pulse</h2>
+<p>Let \(P(t)=t^4\) W with \(t\) measured numerically in seconds over \([0,1]\). The exact energy is \(1/5\) J. With one whole panel, the midpoint estimate is \(1/16=0.0625\) J and the trapezoidal estimate is 0.5 J. Convexity explains why the true integral falls between them. Simpson gives \((0+4/16+1)/6=5/24=0.2083333\) J. Its positive error of \(1/120\) J is much smaller, though the quartic term prevents exactness.</p>
+<p>Now split into two Simpson panels. The fourth derivative is constant, so halving panel width reduces the global error by exactly 16. The new estimate is \(0.2+(1/120)/16=0.20052083\) J. In a real measurement, noise can dominate such a small discretisation improvement. A common positive bias of 0.01 W integrates to an extra 0.01 J regardless of panel count. Distinguish uncertainty on the measurements from the discretisation of a known smooth curve. The rod experiment provides a direct check of the trapezoidal error sign and its reduction on mesh refinement. <a href="/teaching/numerics/approximation-and-quadrature/#experiment">Measure the area under a sampled profile</a>.</p>
+</section>
+<section>
+<h2 id="handle-a-jump-with-one-sided-values">Handle a jump with one-sided values</h2>
+<p>Consider a heater that supplies 4 W until \(t=0.3\) s and 1 W from then to one second. The energy is \(4(0.3)+1(0.7)=1.9\) J. A two-panel trapezoidal rule reading at 0, 0.5 and 1 s sees the values 4, 1 and 1. It predicts \(0.5(4+1)/2+0.5(1+1)/2=1.75\) J. The piecewise linear representation invents a sloping transition lasting half a second.</p>
+<p>If the switch time is known, split there and use the left and right limiting powers separately. Each constant segment then integrates exactly, including the correct jump without treating an isolated endpoint as carrying energy. If the switch time itself has uncertainty 0.01 s, the resulting energy uncertainty is 0.03 J because the power level changes by 3 W. Refining a numerical integration grid cannot resolve that timing uncertainty by itself.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/approximation-and-quadrature/chapters/03-splines/">Chapter 3 · Hermite pieces and cubic splines</a></span><span>Next<br><a href="/teaching/numerics/approximation-and-quadrature/problem-sheets/2/">Problem sheet 2 · Smooth pieces and integrated loads</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

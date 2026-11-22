@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magnetic flux and material response · OneSimulation</title>
+<meta name="description" content="Predict how a narrow air gap changes a toroidal coil’s flux, stored energy and inductance from Ampère’s law and the magnetic boundary conditions.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/electrodynamics/chapters/03-magnetic-circuits/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Magnetic flux and material response · OneSimulation">
+<meta property="og:description" content="Predict how a narrow air gap changes a toroidal coil’s flux, stored energy and inductance from Ampère’s law and the magnetic boundary conditions.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/electrodynamics/chapters/03-magnetic-circuits/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/electrodynamics/">Electrodynamics</a></p><h1>Magnetic flux and material response</h1><p class="lead">Predict how a narrow air gap changes a toroidal coil’s flux, stored energy and inductance from Ampère’s law and the magnetic boundary conditions.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#specify-the-path-taken-by-the-field">Specify the path taken by the field</a><a href="#apply-the-two-circulation-and-flux-laws">Apply the two circulation and flux laws</a><a href="#link-field-energy-to-an-electrical-measurement">Link field energy to an electrical measurement</a><a href="#estimate-a-coil-with-a-machined-gap">Estimate a coil with a machined gap</a></nav></aside><article class="prose reference"><section><h2 id="specify-the-path-taken-by-the-field">Specify the path taken by the field</h2>
+<p>A toroidal winding wraps a ring of magnetic material. Large permeability can guide flux around the ring. Cutting a small gap into it can greatly reduce inductance. To understand this change we need to distinguish the field produced by free current from the magnetic response of the material. Write \(\mathbf B=\mu_0(\mathbf H+\mathbf M)\), where \(\mathbf M\) is magnetic moment per unit volume. For a linear isotropic material, \(\mathbf B=\mu_0\mu_r\mathbf H\). The approximation of a single constant \(\mu_r\) requires operation below strong saturation and negligible hysteresis over the field excursion.</p>
+<p>Treat the cross-section as narrow compared with the mean radius and assume tightly distributed turns. Let the material path length be \(\ell_c\), gap length \(g\) and common area \(A\). Neglect stray flux and fringing as a first approximation when the gap is short compared with the transverse dimensions. These choices reduce a spatially varying field to one representative flux through each cross-section. They do not imply equal values of \(H\) in the two materials.</p>
+</section>
+<section><h2 id="apply-the-two-circulation-and-flux-laws">Apply the two circulation and flux laws</h2>
+<p>Magnetic flux continuity follows from \(\nabla\cdot\mathbf B=0\). With negligible leakage, the same \(\Phi=BA\) crosses the core and the gap. Ampère’s law around the ring gives \(H_c\ell_c+H_g g=NI\) for \(N\) turns carrying current \(I\). Substitute \(H_c=B/(\mu_0\mu_r)\) and \(H_g=B/\mu_0\) to find</p>
+<div class="math display">\[B=\frac{\mu_0NI}{g+\ell_c/\mu_r},\qquad \Phi=\frac{NI}{\ell_c/(\mu_0\mu_r A)+g/(\mu_0 A)}.\]</div>
+<p>Each denominator contribution in the flux expression is called a reluctance. The sum follows from the distinct magnetic potential drops along one flux path. A gap as short as \(\ell_c/\mu_r\) accounts for half the total circulation even though it occupies only a small fraction of the length. For a ring of appreciable radial width, the ungapped toroidal field varies as \(1/r\) and flux should be integrated over the cross-section.</p>
+</section>
+<section><h2 id="link-field-energy-to-an-electrical-measurement">Link field energy to an electrical measurement</h2>
+<p>A coil’s flux linkage is \(N\Phi\) when each turn links the same flux. For a fixed, linear geometry \(L=N\Phi/I\). The voltage needed to raise the current is \(v=L\,dI/dt\) in the passive sign convention, omitting winding resistance. The power delivered to the magnetic field is \(vi\). Integrating as the current grows gives stored energy \(W=LI^2/2\). Equivalently, integrating \(B^2/(2\mu)\) over each region apportions this energy between the gap and the core.</p>
+<p>Since the same \(B\) passes through both regions but their permeabilities differ, a unit volume of gap stores \(\mu_r\) times the energy of the same volume of core in this model. The ratio of total gap energy to total core energy is \(g\mu_r/\ell_c\). If permeability depends on field, a small-signal inductance measured around a bias is the derivative \(d(N\Phi)/dI\). It can differ from the ratio \(N\Phi/I\) inferred from a single point.</p>
+</section>
+<section><h2 id="estimate-a-coil-with-a-machined-gap">Estimate a coil with a machined gap</h2>
+<p>Choose \(N=100\), \(I=0.40\) A, \(\ell_c=0.20\) m, \(\mu_r=2000\), \(A=1.0\) cm² and \(g=0.50\) mm. The effective length in the field denominator is \(0.50+0.10=0.60\) mm. Thus \(B=0.0838\) T, \(\Phi=8.38\) µWb and \(L=2.09\) mH. The gap contributes five sixths of the circulation and stores five sixths of the \(0.168\) mJ total energy.</p>
+<p>Closing the gap at the same current would predict \(0.503\) T from the linear law. The calculation itself supplies a reason to consult the real material curve before accepting that number. A measured inductance that departs from the prediction may reflect core saturation, imperfect contact at the joint or fringing that changes the effective gap area. Measuring a small current sweep at several gap widths helps distinguish material response from the geometry of a single fixed gap.</p>
+<p>The current-to-flux ratio and the incremental response need not agree near magnetic saturation. If \(\lambda\) is the linked flux, a slow voltage measurement detects \(d\lambda/dt=(d\lambda/dI)\dot I\), so small AC perturbations about a DC operating point report the local slope. In contrast, taking a single ratio \(\lambda/I\) effectively joins that point to the origin. The two are equal in the linear magnetic-circuit model derived above. Deliberately sweeping the bias provides an operational way to find where that model stops describing the core.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/electrodynamics/problem-sheets/1/">Problem sheet 1 · Fields from charge and metal boundaries</a></span><span>Next<br><a href="/teaching/physics/electrodynamics/chapters/04-induction-and-motion/">Chapter 4 · Induction in moving circuits</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

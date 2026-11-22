@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adaptive integration and error estimates · OneSimulation</title>
+<meta name="description" content="Construct a local error estimate from nested Simpson panels, allocate an absolute error budget and recognise signals that defeat sampling-based adaptivity.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/chapters/06-adaptive-integration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adaptive integration and error estimates · OneSimulation">
+<meta property="og:description" content="Construct a local error estimate from nested Simpson panels, allocate an absolute error budget and recognise signals that defeat sampling-based adaptivity.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/approximation-and-quadrature/chapters/06-adaptive-integration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Adaptive integration and error estimates</h1><p class="lead">Construct a local error estimate from nested Simpson panels, allocate an absolute error budget and recognise signals that defeat sampling-based adaptivity.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#use-two-resolutions-to-estimate-a-missing-integral">Use two resolutions to estimate a missing integral</a><a href="#build-a-global-tolerance-from-local-decisions">Build a global tolerance from local decisions</a><a href="#inspect-one-accepted-panel-and-one-failure">Inspect one accepted panel and one failure</a><a href="#choose-an-independent-comparison">Choose an independent comparison</a></nav></aside><article class="prose reference"><section>
+<h2 id="use-two-resolutions-to-estimate-a-missing-integral">Use two resolutions to estimate a missing integral</h2>
+<p>Suppose a composite rule on a smooth integrand has \(Q_h=I+Ch^p+O(h^{p+2})\). Halving the uniform spacing gives \(Q_{h/2}=I+Ch^p/2^p+\cdots\). Subtract the two approximations to eliminate \(I\). The fine-grid error satisfies \(I-Q_{h/2}\simeq(Q_{h/2}-Q_h)/(2^p-1)\). The sign of this estimate matters if correcting the numerical answer. Its magnitude supplies an error indicator. The relation assumes the same leading power operates on both grids and that the error exceeds the noise in the data.</p>
+<p>For Simpson’s rule \(p=4\). On a parent interval compare one Simpson panel \(S\) with two half-panels whose sum is \(S_2\). The fine estimate of the local integral error is \(|S_2-S|/15\), and an extrapolated value is \(S_2+(S_2-S)/15\). The comparison needs only two new function evaluations because the endpoints and original midpoint are reused. If the indicator is too large, split the interval and apply the same test to each child separately.</p>
+</section>
+<section>
+<h2 id="build-a-global-tolerance-from-local-decisions">Build a global tolerance from local decisions</h2>
+<p>Let the total absolute tolerance be \(\epsilon\). Begin with the whole interval assigned that budget. When a panel splits, a simple allocation gives half its budget to each child. By induction the sum of all final panel budgets equals the original tolerance. If each local <em>actual</em> error lies within its budget, the triangle inequality bounds the global error by \(\epsilon\). In practice the indicators estimate those actual errors, so this last statement is conditional. Around a discontinuity the fourth-order expansion can fail, and tiny intervals can run into evaluation noise or floating-point spacing.</p>
+<p>For signed integrals with strong cancellation, relative error alone is hard to interpret. A large positive area and nearly equal negative area may give a tiny sum that changes sign under rounding. Use an absolute tolerance meaningful for the physical output, possibly combined with a relative term based on a stable scale. Reusing shared endpoint values helps both reproducibility and cost, especially when each evaluation invokes a constitutive model or a simulation.</p>
+</section>
+<section>
+<h2 id="inspect-one-accepted-panel-and-one-failure">Inspect one accepted panel and one failure</h2>
+<p>On \([0,1]\) use \(f(x)=x^4\). One Simpson panel gives \(S=0.20833333\), and two panels give \(S_2=0.20052083\). Their difference divided by 15 is \(-0.00052083\). The corrected result is 0.2, exactly the known integral up to the printed rounding. Here the fourth derivative is constant and there are no higher powers in the integrand, so cancellation removes the entire leading error. An estimated error of \(5.21\times10^{-4}\) would pass a local tolerance of \(10^{-3}\) while \(10^{-4}\) would trigger another split.</p>
+<p>Now consider a narrow triangular pulse entirely between 0.10 and 0.11 of the interval, with height one. Its exact area is 0.005. The five points initially used by adaptive Simpson are \(0,0.25,0.5,0.75,1\). Every sampled ordinate is zero. The algorithm would accept zero with a zero indicator, even with a very small tolerance. This failure follows from lack of information, and it applies to any finite deterministic sample set when arbitrary narrow features are permitted. If event times or material interfaces are known, partition at them before sampling. If smoothness bounds are available, they supply an independent scale for an initial mesh. A small estimated local error should be interpreted together with those physical and mathematical assumptions.</p>
+</section>
+<section>
+<h2 id="choose-an-independent-comparison">Choose an independent comparison</h2>
+<p>A practical confirmation is to integrate the same signal using a different initial split and a different set of quadrature nodes. If a narrow pulse missed on one mesh is intersected on the other, their discrepancy reveals that the earlier indicator was misleading. Agreement between both estimates improves confidence but still cannot rule out an arbitrarily narrow feature absent from both sample sets.</p>
+<p>When a physical bound \(|f'|\leq B\) is known, it supplies complementary information. Across an unsampled gap of width \(h\) whose endpoint values are both zero, a possible positive pulse is bounded by two straight ramps of slopes \(+B\) and \(-B\). Integrating the triangular envelope gives a maximum hidden area \(Bh^2/4\). A credible slope bound therefore turns a statement about unsampled behaviour into a quantitative reason to reduce the largest gap.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/approximation-and-quadrature/chapters/05-gaussian-rules/">Chapter 5 · Gaussian quadrature and exactness</a></span><span>Next<br><a href="/teaching/numerics/approximation-and-quadrature/problem-sheets/3/">Problem sheet 3 · Accuracy with few evaluations</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

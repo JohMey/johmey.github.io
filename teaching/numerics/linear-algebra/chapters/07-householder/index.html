@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Householder reflections and practical QR · OneSimulation</title>
+<meta name="description" content="Build one reflection explicitly, use it to triangularise a rectangular system and locate the residual in transformed coordinates.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/07-householder/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Householder reflections and practical QR · OneSimulation">
+<meta property="og:description" content="Build one reflection explicitly, use it to triangularise a rectangular system and locate the residual in transformed coordinates.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/linear-algebra/chapters/07-householder/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a> / <a href="/teaching/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Householder reflections and practical QR</h1><p class="lead">Build one reflection explicitly, use it to triangularise a rectangular system and locate the residual in transformed coordinates.</p><p class="byline">Chapter 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#eliminate-a-column-without-stretching-it">Eliminate a column without stretching it</a><a href="#follow-the-data-into-the-triangular-system">Follow the data into the triangular system</a><a href="#detect-when-a-coefficient-is-poorly-determined">Detect when a coefficient is poorly determined</a><a href="#check-a-nearly-aligned-column">Check a nearly aligned column</a></nav></aside><article class="prose reference"><section>
+<h2 id="eliminate-a-column-without-stretching-it">Eliminate a column without stretching it</h2>
+<p>An orthogonal transformation applied simultaneously to the data matrix and right-hand side leaves every Euclidean residual length unchanged. A Householder reflector is \(H=I-2vv^T/(v^Tv)\) for a nonzero vector \(v\). Decompose any vector into components parallel and perpendicular to \(v\). The parallel component changes sign and the perpendicular component stays fixed, proving both length preservation and \(H^2=I\). Implementation requires just a dot product and a scaled vector subtraction rather than a dense matrix.</p>
+<p>To make the entries below the first element of a column \(x\) vanish, choose \(v=x-\alpha e_1\) where \(|\alpha|=\|x\|_2\). A short calculation gives \(v^Tv=2(\|x\|^2-\alpha x_1)\) and \(v^Tx=\|x\|^2-\alpha x_1\), hence \(Hx=x-v=\alpha e_1\). Choose \(\alpha\) with sign opposite to \(x_1\) to avoid subtracting nearly equal positive numbers when computing \(v_1\). A zero column requires a separate decision about rank.</p>
+</section>
+<section>
+<h2 id="follow-the-data-into-the-triangular-system">Follow the data into the triangular system</h2>
+<p>For \(x=(3,4)^T\), use \(\alpha=-5\) and \(v=(8,4)^T\). The reflection matrix is \(\left(\begin{smallmatrix}-.6&amp;-.8\\-.8&amp;.6\end{smallmatrix}\right)\). Take a one-column least-squares problem with measurements \(b=(4,3)^T\). Multiplication sends \(x\) to \((-5,0)^T\) and \(b\) to \((-4.8,-1.4)^T\). The optimum coefficient matches the first transformed measurement, giving \(c=0.96\). The second transformed measurement remains a residual of magnitude 1.4. Back in physical coordinates the predicted vector is \((2.88,3.84)\), with residual \((1.12,-0.84)\) and the same length.</p>
+<p>For several columns, apply the first reflector to the entire remaining block. Construct the next reflector only on rows below the first pivot, protecting the already triangular part. Saving the reflector vectors permits application of \(Q\) or \(Q^T\) later without explicitly forming either full matrix. Additional right-hand sides can then use the same orthogonal transformations and triangular solve.</p>
+</section>
+<section>
+<h2 id="detect-when-a-coefficient-is-poorly-determined">Detect when a coefficient is poorly determined</h2>
+<p>If a new column is nearly in the span of earlier columns, little of it survives below the preceding pivots. A small trailing diagonal of \(R\) signals potential coefficient sensitivity, but its scale depends on column units and order. An instrument model with one parameter measured in micro-units can naturally have a small column. Scale the columns according to the intended range of the corresponding parameters before interpreting a near-zero diagonal.</p>
+<p>Column-pivoted QR selects a remaining column with a large unrepresented component at each stage. It can help reveal effective rank and identify an independent set of measurements or basis functions. A numerical rank decision still needs a tolerance tied to data uncertainty or floating-point arithmetic. Reporting a fitted coefficient to ten digits after discarding an almost invisible direction would conceal the limitation that the factorisation has revealed.</p>
+</section>
+<section>
+<h2 id="check-a-nearly-aligned-column">Check a nearly aligned column</h2>
+<p>Consider \(x=(1,10^{-8})^T\). Its norm differs from one by only about \(5\times10^{-17}\), below the spacing between one and the next larger double precision number. Computing the exact difference \(x_1-\|x\|\) as that subtraction may therefore give zero. Choosing the target with opposite sign makes the first entry of the reflector vector about two and the remaining small entry is retained. This calculation explains the sign convention geometrically: two opposite points on a sphere provide valid reflection targets, and only one directs the subtraction away from severe cancellation.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/numerics/linear-algebra/problem-sheets/3/">Problem sheet 3 · Search directions and modes</a></span><span>Next<br><a href="/teaching/numerics/linear-algebra/chapters/08-singular-values/">Chapter 8 · Singular values and minimum-norm solutions</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffusion from a random walk · OneSimulation</title>
+<meta name="description" content="Derive a transport coefficient from a microscopic model and separate a diffusion length from a relaxation time in a finite container.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/thermodynamics-statistical-physics/chapters/08-diffusion-and-transport/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Diffusion from a random walk · OneSimulation">
+<meta property="og:description" content="Derive a transport coefficient from a microscopic model and separate a diffusion length from a relaxation time in a finite container.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/thermodynamics-statistical-physics/chapters/08-diffusion-and-transport/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a> / <a href="/teaching/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Diffusion from a random walk</h1><p class="lead">Derive a transport coefficient from a microscopic model and separate a diffusion length from a relaxation time in a finite container.</p><p class="byline">Chapter 8 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-spreading-cloud-without-a-mean-velocity">A spreading cloud without a mean velocity</a><a href="#why-a-gradient-drives-current">Why a gradient drives current</a><a href="#measure-a-coefficient-two-ways">Measure a coefficient two ways</a></nav></aside><article class="prose reference"><section><h2 id="a-spreading-cloud-without-a-mean-velocity">A spreading cloud without a mean velocity</h2>
+<p>Release a narrow band of neutral tracer particles into a stationary uniform medium. Repeated collisions erase velocity memory. At times long compared with the collision time, labelled particles can spread while the mean tracer velocity remains zero. Start with an ideal symmetric random walk on a line. During a time step \(\tau\) every particle moves a distance \(\ell\) left or right with equal probabilities, independently of previous steps.</p>
+<p>The concentration in cell \(x\) after a step is the mean of the two neighbouring concentrations before that step. Expanding the left side in \(\tau\) and the right side in \(\ell\) cancels all odd spatial derivatives, leaving</p>
+<div class="math display">\[\partial_t c=D\,\partial_x^2c,\qquad D=\ell^2/(2\tau).\]</div>
+<p>After \(N=t/\tau\) independent steps the variance is \(N\ell^2=2Dt\), confirming the same coefficient without a continuum expansion. The exact prefactor depends on which microscopic step model is used. In an isotropic gas the directional velocity correlations and distribution of free-flight lengths matter; an order-of-magnitude estimate is \(D\sim\overline v\ell_{\rm mfp}/3\). Substituting a fixed one-dimensional step length into this three-dimensional estimate would mix incompatible models.</p>
+</section>
+<section><h2 id="why-a-gradient-drives-current">Why a gradient drives current</h2>
+<p>Consider the cell boundary between \(x\) and \(x+\ell\). The two crossing populations are proportional to the concentrations on their respective sides. Outgoing minus incoming probability current is therefore proportional to \(c(x)-c(x+\ell)\). Taylor expansion gives Fick's law \(j=-D\partial_xc\). Local conservation \(\partial_tc=-\partial_xj\) recovers diffusion for constant \(D\) and remains useful when the transport coefficient varies in space. The continuum model assumes concentration changes little over one microscopic step.</p>
+<p>In an unbounded domain the response to a narrow initial band is Gaussian at late times with variance increasing by \(2Dt\). In a finite closed channel the final concentration is instead uniform. Reflecting ends impose zero gradient, so a prepared concentration modulation \(c(x,0)=c_0+a\cos(\pi x/L)\) relaxes through a single amplitude \(a(t)\). Substitution into diffusion gives \(a(t)=a(0)e^{-D\pi^2t/L^2}\). Spatial wavelength matters quadratically because a broad concentration feature supplies only a weak gradient for the mass that must move.</p>
+</section>
+<section><h2 id="measure-a-coefficient-two-ways">Measure a coefficient two ways</h2>
+<p>Suppose a dyed band in water broadens from variance \(0.250\) mm² to \(0.610\) mm² in 300 s, with negligible flow. Taking the difference removes the initial width and gives \(D=0.360/(600)=0.000600\) mm²/s, or \(6.00\times10^{-10}\) m²/s. In a 2.00 mm sealed channel, the longest nonuniform cosine mode then decays by \(1/e\) in \(L^2/(\pi^2D)=675\) s. The prediction connects an open-domain variance measurement to a finite-domain contrast decay.</p>
+<p>Bulk drift shifts the measured band centroid and can be removed by centring each profile. Shear, by contrast, can spread the band even after centring. Independent checks of the variance law and of the finite-channel decay help distinguish molecular diffusion from unresolved fluid motion.</p>
+<p>Over times short compared with a collision time, individual tracer trajectories are approximately straight and the displacement variance initially grows as the square of time. A fit to a diffusion coefficient should exclude this ballistic region. At long times finite walls can likewise limit the spread.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/teaching/physics/thermodynamics-statistical-physics/chapters/07-kinetic-theory-and-effusion/">Chapter 7 · Pressure and effusion from molecular motion</a></span><span>Next<br><a href="/teaching/physics/thermodynamics-statistical-physics/problem-sheets/4/">Problem sheet 4 · Molecular leaks and diffusing tracers</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

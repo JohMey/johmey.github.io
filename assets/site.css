@@ -295,3 +295,46 @@ td { font-variant-numeric: tabular-nums; white-space: nowrap; }
 @media (max-width: 800px) {
   .discipline-shortcuts { display: flex; flex-wrap: wrap; gap: .45rem 1.1rem; padding-bottom: 1.15rem; }
 }
+
+.course-readings { list-style: decimal; padding-left: 1.8rem; }
+.course-readings li { padding: .25rem 0 .65rem .25rem; }
+.course-readings li::marker { color: var(--stamp); font: 600 1.15rem var(--serif); }
+.course-readings li > a { font: 600 1.2rem/1.3 var(--serif); }
+.prose .course-readings li p { margin: .2rem 0 0; color: var(--subtle); }
+.case-introduction { border-top: 1px solid var(--rule); padding-top: 1.5rem; }
+.chapter-pager { margin-top: 2.4rem; padding-top: 1rem; border-top: 1px solid var(--rule);
+  display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .8rem 1.8rem; }
+.chapter-pager span { font-size: .85rem; color: var(--subtle); }
+.chapter-pager a { display: inline-block; font-size: 1rem; }
+.course-book { max-width: 49rem; padding-block: 2rem 3rem; }
+.book-header > p { margin-top: .8rem; }
+.course-book > nav { margin: 2rem 0; padding: 1rem 0; border-block: 1px solid var(--rule); }
+.course-book .book-part { margin-block: 2.8rem; }
+.course-book .book-part > .chapter-aim { color: var(--subtle); font-style: italic; }
+.course-book h4 { font: 600 1.15rem var(--serif); margin-bottom: .35rem; }
+.book-tools { margin-top: .9rem; }
+.book-tools button { font-family: inherit; cursor: pointer; }
+.prose:has(.chapter-pager), .course-book .prose { min-width: 0; }
+@media (max-width: 650px) {
+  :is(.prose:has(.chapter-pager), .prose:has(#experiment), .course-book .prose) :is(p, li, td) mjx-container {
+    display: inline-block; max-width: 100%; overflow-x: auto; padding-block: .18em; vertical-align: middle;
+  }
+  .course-book .experiment-runs { display: block; overflow-x: auto; }
+}
+.sampled-loop { margin-block: 1.2rem; padding: 1rem; border: 1px solid var(--rule); background: var(--page); }
+.sampled-loop label { display: block; font-weight: 600; }
+.sampled-loop input { display: block; width: 100%; margin-block: .75rem; accent-color: var(--stamp); }
+.sampled-loop output { display: block; font-variant-numeric: tabular-nums; }
+.sheet-pair { display: block; margin-top: .2rem; color: var(--subtle); font-size: .86rem; }
+.case-introduction > section { margin-top: 1.65rem; }
+.case-introduction > section > h3 { font: 600 1.4rem/1.25 var(--serif); }
+@media print {
+  .chapter-pager, .course-book .edition, .book-tools, .book-header > p:last-of-type, .sampled-loop { display: none; }
+  .course-book.shell { width: 100%; max-width: none; padding: 0; font-size: 10.5pt; }
+  .course-book .book-part { break-before: page; margin-block: 0; }
+  .course-book .book-part > h2 { margin-top: 0; }
+  .course-book .prose section { break-inside: auto; }
+  .course-book :is(h2, h3, h4) { break-after: avoid; }
+  .book-part figure, .book-part .math.display { break-inside: avoid; }
+  .course-book .book-part figure img { max-height: 16rem; }
+}
