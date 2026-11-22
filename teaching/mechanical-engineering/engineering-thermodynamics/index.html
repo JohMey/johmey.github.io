@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engineering thermodynamics and heat transfer · OneSimulation</title>
+<meta name="description" content="Size a heat exchanger from energy balances and determine the temperature limits of the design.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/engineering-thermodynamics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Engineering thermodynamics and heat transfer · OneSimulation">
+<meta property="og:description" content="Size a heat exchanger from energy balances and determine the temperature limits of the design.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/engineering-thermodynamics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a></p><h1>Engineering thermodynamics and heat transfer</h1><p class="lead">Size a heat exchanger from energy balances and determine the temperature limits of the design.</p><p class="prerequisites"><strong>Prerequisites</strong> The first law of thermodynamics and exponential functions.</p><nav class="study-links" aria-label="Study this subject"><a href="#exercises">Try the exercises</a><a href="#experiment">Explore the numerical problem</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#balance">Follow energy through an open system</a><a href="#counterflow">Derive the counterflow temperature profile</a><a href="#exchanger">Worked example · Two water channels</a><a href="#cycle">Transfer problem · A compressor and turbine</a><a href="#exercises">Exercises</a><a href="#experiment">Experiment · Vary the capacity rates</a></nav></aside><article class="prose reference"><section>
+<h2 id="balance">Follow energy through an open system</h2>
+<p>A heat exchanger recovers energy from a warm process stream to preheat an incoming cold stream. A turbine also cools a stream, yet delivers shaft work. A steady-flow control volume distinguishes the mechanisms. Neglect changes in kinetic and potential energy and let heat into the control volume and shaft work out be positive. For one inlet and one outlet the first law reads \(\dot Q-\dot W=\dot m(h_{\rm out}-h_{\rm in})\), where \(h\) is specific enthalpy. For an ideal gas with constant specific heat, or a liquid stream with constant specific heat and negligible pressure change, \(h_{\rm out}-h_{\rm in}=c_p(T_{\rm out}-T_{\rm in})\).</p>
+<p>Draw a boundary around an insulated exchanger containing both streams. With no shaft work, any heat given up by the hot stream must appear in the cold stream. Define heat-capacity rates \(C_h=\dot m_hc_{p,h}\) and \(C_c=\dot m_cc_{p,c}\), measured in W/K. The positive rate of internal heat transfer is</p>
+<div class="math display">\[\dot Q_{\rm ex}=C_h(T_{h,i}-T_{h,o})=C_c(T_{c,o}-T_{c,i}).\]</div>
+<p>The smaller capacity rate limits the possible transfer to \(\dot Q_{\max}=C_{\min}(T_{h,i}-T_{c,i})\). Energy balance alone gives one equation for the two outlet temperatures. The missing information is how much surface and thermal conductance connect the streams.</p>
+</section>
+<section>
+<h2 id="counterflow">Derive the counterflow temperature profile</h2>
+<p>Let \(x\) increase in the hot-stream direction. The cold stream enters at the other end. Per unit length, a strip of wall of width \(w\) transfers \(Uw(T_h-T_c)\). Assume steady operation, constant overall coefficient \(U\), no external losses and negligible axial conduction. A slice balance gives \(dT_h/dx=-Uw(T_h-T_c)/C_h\) and \(dT_c/dx=-Uw(T_h-T_c)/C_c\). Both slopes are negative in this coordinate. A cold parcel warms as it moves towards decreasing \(x\).</p>
+<p>Take \(C_h=C_{\min}\), \(C_r=C_h/C_c\) and \(\mathrm{NTU}=UA/C_h\), with transfer area \(A=wL\). Subtract the slice balances. The local temperature difference at \(L\) divided by its value at zero is \(\exp[-\mathrm{NTU}(1-C_r)]\). Substitute the two stream balances above to eliminate the outlet temperatures. The resulting effectiveness is</p>
+<div class="math display">\[\varepsilon=\frac{\dot Q_{\rm ex}}{\dot Q_{\max}}=\frac{1-e^{-\mathrm{NTU}(1-C_r)}}{1-C_r e^{-\mathrm{NTU}(1-C_r)}}.\]</div>
+<p>With equal capacity rates the difference is constant along the wall, and the limiting effectiveness is \(\mathrm{NTU}/(1+\mathrm{NTU})\). With a vanishing area there is no exchange. These limits provide simple checks on the algebra.</p>
+</section>
+<section>
+<h2 id="exchanger">Worked example · Two water channels</h2>
+<p>Use \(T_{h,i}=350\) K, \(T_{c,i}=290\) K, \(C_h=0.0054\) W/K and \(C_c=0.0090\) W/K. The wall and fluid films together give \(U=90\) W/(m² K) over \(A=0.045(0.002)=9.0\times10^{-5}\) m². Thus \(C_r=0.60\), \(\mathrm{NTU}=1.50\), and the exponential factor is \(e^{-0.60}=0.5488\). The effectiveness is 0.6727 and \(\dot Q_{\rm ex}=0.6727(0.0054)(60)=0.2180\) W.</p>
+<p>The hot outlet is \(350-0.2180/0.0054=309.64\) K, and the cold outlet is \(290+0.2180/0.0090=314.22\) K. These outlets lie at opposite ends. The local hot-to-cold differences at the ends are \(350-314.22=35.78\) K and \(309.64-290=19.64\) K, both positive. For a body cooling in time against a reservoir, the same conductance enters a different energy balance. <a href="/teaching/heat-transfer/">Study transient cooling of a solid</a>.</p>
+</section>
+<section>
+<h2 id="cycle">Transfer problem · A compressor and turbine</h2>
+<p>In an ideal gas-turbine cycle, a compressor raises the pressure by a factor of 8, heat is supplied at constant pressure and the turbine expands the stream back to its starting pressure. Let air enter the compressor at 300 K and the turbine at 1200 K. Assume ideal-gas air with constant \(\gamma=1.4\) and \(c_p=1.005\) kJ/(kg K), reversible adiabatic compression and expansion, and negligible pressure losses. For either isentropic machine \(T_{\rm out}/T_{\rm in}=(p_{\rm out}/p_{\rm in})^{(\gamma-1)/\gamma}\).</p>
+<p>The pressure factor raised to the temperature exponent is \(8^{0.4/1.4}=1.811\). The compressor therefore discharges at 543.4 K and the turbine at 662.5 K. By the steady-flow first law the turbine delivers \(c_p(1200-662.5)=540.2\) kJ/kg of work, while compression requires \(c_p(543.4-300)=244.6\) kJ/kg. The net output is 295.6 kJ/kg. Dividing by the heat input \(c_p(1200-543.4)=659.9\) kJ/kg gives an ideal thermal efficiency of 44.8%. The exhaust is hotter than the compressed air by about 119 K, so those two streams offer an opportunity for recuperation before further heat is supplied.</p>
+</section>
+<section>
+<h2 id="exercises">Exercises</h2>
+<h3>1. Size the exchanger at fixed flow</h3>
+<p>Keep both original capacity rates and \(U\) fixed. What area gives \(\varepsilon=0.80\)? How long would the 2 mm wide wall need to be?</p>
+<details><summary>Show the sizing calculation</summary><p>Inverting the effectiveness formula gives \(\mathrm{NTU}=\ln[(1-\varepsilon C_r)/(1-\varepsilon)]/(1-C_r)=\ln(2.6)/0.4=2.389\). Then \(A=\mathrm{NTU}\,C_h/U=1.43\times10^{-4}\,\mathrm{m^2}\) and \(L=A/w=71.7\) mm. The extra area supplies diminishing gains as the end temperatures approach one another.</p></details>
+<h3>2. Check the second law</h3>
+<p>For the original insulated exchanger assume negligible pressure drops and incompressible streams. Use the logarithmic entropy change of each stream to find the entropy-generation rate.</p>
+<details><summary>Show the second-law balance</summary><p>At steady state \(\dot S_{\rm gen}=C_h\ln(T_{h,o}/T_{h,i})+C_c\ln(T_{c,o}/T_{c,i})\). The hot stream loses entropy and the cold stream gains more. Substitution of 309.638 K and 314.217 K gives \(6.02\times10^{-5}\,\mathrm{W/K}\). The positive result is consistent with transfer through a finite temperature difference.</p></details>
+</section>
+<section>
+<h2 id="experiment">Experiment · Vary the capacity rates</h2>
+<p>Run the heat-exchanger example at <code>ntu=1.5</code>, <code>capacity_ratio=0.6</code> and inlet temperatures 350 and 290 K. Record both cross-section-averaged outlet temperatures and the power lost by the hot stream. In this code the geometry and conductance are fixed. Changing <code>ntu</code> changes the computed capacity rates and inlet speeds.</p>
+<ol><li>Set <code>ntu=3.0</code> at the original capacity ratio. Both flows halve. The one-dimensional model predicts an effectiveness of 0.853 and a hot outlet near 298.8 K. The heat rate should fall, despite the greater effectiveness, since there is now less hot water to cool every second.</li><li>Restore <code>ntu=1.5</code> and set <code>capacity_ratio=0.3</code>. The hot capacity stays fixed and the cold capacity doubles. Expect a lower cold outlet (about 303.1 K) and an increased heat rate (about 0.235 W). Check both energy balances against the numerical solution.</li></ol>
+<table class="experiment-runs">
+<caption>Computed exchanger outlets and heat released by the hot stream</caption>
+<thead><tr><th scope="col">NTU and capacity ratio</th><th scope="col">Hot outlet (K)</th><th scope="col">Cold outlet (K)</th><th scope="col">Heat rate (W)</th></tr></thead>
+<tbody>
+<tr><th scope="row">1.5, ratio 0.60</th><td>309.84</td><td>314.20</td><td>0.2168</td></tr>
+<tr><th scope="row">3.0, ratio 0.60</th><td>299.36</td><td>320.79</td><td>0.1367</td></tr>
+<tr><th scope="row">1.5, ratio 0.30</th><td>306.62</td><td>303.11</td><td>0.2343</td></tr>
+</tbody>
+</table>
+<p>As a numerical balance check, also calculate the heat gained by the cold stream. The two outlet-based estimates differ by about 0.5% in the baseline and 1.4% at NTU 3. Refining the mesh lets you test how much of this discrepancy comes from the spatial approximation.</p>
+<p><a href="/blog/counterflow_heat_exchanger_ntu/">View the OneSimulation counterflow model and its temperature profiles</a>.</p>
+<p><a class="button" href="/downloads/teaching/counterflow_heat_exchanger_ntu.zip" download>Download experiment files (ZIP)</a> <span class="run-help">Extract the files together and open <code>counterflow_heat_exchanger_ntu.ipynb</code> in a local <a href="/tutorials/install/">OneSimulation environment</a>.</span></p>
+</section>
+<nav class="lecture-onward" aria-label="More lecture notes">Next subject · <a href="/teaching/mechanical-engineering/control-engineering/">Control engineering</a></nav><script src="/assets/experiment-runs.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thermodynamics and statistical physics · OneSimulation</title>
+<meta name="description" content="Connect heat exchange and thermal equilibrium to energy conservation, entropy and microstates.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/thermodynamics-statistical-physics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thermodynamics and statistical physics · OneSimulation">
+<meta property="og:description" content="Connect heat exchange and thermal equilibrium to energy conservation, entropy and microstates.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/thermodynamics-statistical-physics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a></p><h1>Thermodynamics and statistical physics</h1><p class="lead">Connect heat exchange and thermal equilibrium to energy conservation, entropy and microstates.</p><p class="prerequisites"><strong>Prerequisites</strong> Energy conservation, exponentials and logarithms.</p><nav class="study-links" aria-label="Study this subject"><a href="#exercises">Try the exercises</a><a href="#experiment">Explore the numerical problem</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#balance">Which temperature will two bodies reach?</a><a href="#entropy">Count the ways to share energy</a><a href="#reservoir">From an isolated pair to a canonical ensemble</a><a href="#paths">Same change of state, different heat and work</a><a href="#time">Give the contact a conductance</a><a href="#example">A hot block and a larger cold block</a><a href="#exercises">Exercises on microscopic and macroscopic equilibrium</a><a href="#experiment">Experiment · Separate equilibrium from relaxation</a></nav></aside><article class="prose reference"><section>
+<h2 id="balance">Which temperature will two bodies reach?</h2>
+<p>Touch two metal blocks together inside an insulated container. Their final temperature is constrained by conservation of energy. That law alone also permits the hot block to heat up at the expense of the cold one. A second idea, entropy, selects the direction we actually observe. A third, thermal conductance, sets the time it takes.</p>
+<p>Assume that each block is internally close to equilibrium and has a constant total heat capacity \(C_i\) in J/K. The blocks exchange heat but do no external work. A transfer \(dQ\) from block 1 to block 2 produces \(C_1dT_1=-dQ\) and \(C_2dT_2=dQ\). Adding and integrating gives</p>
+<div class="math display">\[C_1T_1+C_2T_2=\text{constant},\qquad T_*=\frac{C_1T_{1,0}+C_2T_{2,0}}{C_1+C_2}.\]</div>
+<p>The second expression assumes the bodies have reached a common temperature. A larger heat capacity puts more weight on that block’s starting temperature.</p>
+</section>
+<section>
+<h2 id="entropy">Count the ways to share energy</h2>
+<p>At fixed total energy \(U\), suppose block 1 has energy \(U_1\). Weakly coupled blocks have \(\Omega_1(U_1)\Omega_2(U-U_1)\) accessible combinations of microscopic states. For an isolated equilibrium system with equally likely microstates, this multiplicity determines the probability of an energy partition. Taking \(S=k_B\ln\Omega\) turns the product into a sum. At its maximum</p>
+<div class="math display">\[\frac{dS_{\rm total}}{dU_1}=\frac{1}{T_1}-\frac{1}{T_2}=0,\qquad \frac{1}{T_i}=\frac{\partial S_i}{\partial U_i}.\]</div>
+<p>Positive heat capacities make the curvature negative, since \(\partial^2S_i/\partial U_i^2=-1/(C_iT_i^2)\). Equal temperature thus maximises total entropy. Before equilibrium a small transfer from hot to cold increases entropy by \(dQ(1/T_{\rm cold}-1/T_{\rm hot})&gt;0\). Temperatures here must be absolute.</p>
+</section>
+<section>
+<h2 id="reservoir">From an isolated pair to a canonical ensemble</h2>
+<p>When a small system contacts a much larger reservoir, its temperature is effectively set by the reservoir. The chance of observing a particular microstate of energy \(E_j\) is proportional to the number of reservoir states at energy \(U-E_j\). Expand the reservoir entropy about \(U\): \(S_R(U-E_j)\simeq S_R(U)-E_j/T\). Since multiplicity is exponential in entropy, the probability becomes \(p_j=e^{-\beta E_j}/Z\), with \(\beta=1/(k_BT)\) and \(Z=\sum_j e^{-\beta E_j}\).</p>
+<p>For one unit with levels \(0\) and \(\Delta\), \(Z=1+e^{-\beta\Delta}\). If \(\Delta=k_BT\ln 3\), the excited state has probability \(1/4\) and mean energy is \(\Delta/4\). Raising temperature at fixed gap drives the two probabilities toward one half. This microscopic account relates heat capacity to the response of mean energy to temperature.</p>
+</section>
+<section>
+<h2 id="paths">Same change of state, different heat and work</h2>
+<p>For a closed system the first law reads \(dU=\delta Q-\delta W\), with work positive when the system does it. Internal energy and entropy are state functions. Heat and work depend on the path. To see this, compare two ways for one mole of ideal gas initially at 300 K to expand to twice its volume.</p>
+<p>During reversible isothermal expansion, \(p=RT/V\) and \(W=\int p\,dV=RT\ln2=1.73\) kJ. The ideal gas’s internal energy depends only on temperature, so \(Q=W\). Free expansion into an evacuated chamber inside an insulated shell instead gives \(W=Q=0\). The final temperature is again 300 K. Both paths give the same gas entropy increase \(R\ln2=5.76\) J/K. In the reversible case the reservoir loses this much entropy, while in free expansion the insulated gas produces it internally. In the two-block problem the entropy production likewise measures irreversibility inside the chosen boundary.</p>
+</section>
+<section>
+<h2 id="time">Give the contact a conductance</h2>
+<p>Model a short thermal bridge by a constant conductance \(G\) in W/K with negligible heat storage. Its heat flow is \(\dot Q=G(T_1-T_2)\). Subtract the two heat balances to obtain \(d(T_1-T_2)/dt=-G(1/C_1+1/C_2)(T_1-T_2)\). The difference decays exponentially with \(\tau=C_1C_2/[G(C_1+C_2)]\). Meanwhile the entropy production rate is \(G(T_1-T_2)^2/(T_1T_2)\), which falls to zero at equilibrium.</p>
+<p>The equilibrium temperature is independent of the bridge conductance, provided heat transfer can continue. The same energy balance for a body in contact with a reservoir gives a different time constant because the reservoir temperature stays fixed. <a href="/teaching/heat-transfer/">Cooling a body in a room</a>.</p>
+</section>
+<section>
+<h2 id="example">A hot block and a larger cold block</h2>
+<p>Take \(C_1=500\) J/K at 360 K, \(C_2=1500\) J/K at 300 K and \(G=2.0\) W/K. The common equilibrium temperature is \(315\) K. Block 1 eventually releases \(500(360-315)=22.5\) kJ and block 2 absorbs \(1500(315-300)=22.5\) kJ. The initial heat current is 120 W and \(\tau=187.5\) s.</p>
+<p>To find the entropy change between the initial and final states, integrate \(dS=C\,dT/T\) for each block along a reversible reference path. The sum is \(500\ln(315/360)+1500\ln(315/300)=6.42\) J/K. Energy transfer cancels between the two bodies. Their entropy changes have different magnitudes because they receive or lose heat at different temperatures.</p>
+</section>
+<section>
+<h2 id="exercises">Exercises on microscopic and macroscopic equilibrium</h2>
+<h3>1. Count a small system by hand</h3>
+<p>Two groups each contain four distinguishable two-level units. Distribute four identical excitation quanta over the eight units, at most one quantum per unit, with all microstates equally likely. Which partition is most probable? Does it occur every time?</p>
+<details><summary>Count the microscopic arrangements</summary><p>If group 1 has \(j\) quanta, the multiplicity is \(\binom4j\binom4{4-j}\). For \(j=0,1,2,3,4\) this gives \(1,16,36,16,1\), summing to 70. Equal sharing is the most probable partition, with probability \(36/70\). A small system shows substantial fluctuations around this partition. In macroscopic systems the relative spread of the energy share is typically much smaller.</p></details>
+<h3>2. Diagnose an energy-conserving prediction</h3>
+<p>From the worked initial state a proposed model raises the hot block by 3 K and lowers the colder block by 1 K. Test its energy and entropy changes for an isolated, passive pair.</p>
+<details><summary>Apply both thermodynamic laws</summary><p>The net energy change is \(500(3)+1500(-1)=0\). But \(500\ln(363/360)+1500\ln(299/300)=-0.86\) J/K to two decimals. The macroscopic change contradicts the second law for a passive isolated pair. An external device moving heat uphill would require a larger system boundary to account for its operation.</p></details>
+</section>
+<section>
+<h2 id="experiment">Experiment · Separate equilibrium from relaxation</h2>
+<p>The notebook couples two thermal capacities through their temperature inputs. Run its parameter, solve and comparison cells for each setting. The log-slope of \(T_1-T_2\) provides a measured decay rate. Its inverse is the measured relaxation time. Use the capacity-weighted mean at every stored time to estimate \(T_*\), since the two temperatures still differ at the final stored sample. <a href="/blog/two_mass_thermal_exchange/">Two-body thermal exchange model</a>.</p>
+<ol>
+<li><strong>Baseline.</strong> Keep the worked-example settings. Compare the time for the initial temperature difference to fall by a factor \(e\) with 187.5 s. Check entropy by calculating \(C_1\ln(T_1/T_{1,0})+C_2\ln(T_2/T_{2,0})\) across the stored history.</li>
+<li><strong>Improve the bridge.</strong> Change <code>conductance</code> from 2 to 4 W/K and rerun. Predict which of the weighted mean and decay rate will double.</li>
+<li><strong>Change the hot body.</strong> Restore the conductance and set <code>heat_capacity_1 = 1500.0</code> J/K. Examine how the fitted rate and weighted mean both change. For each run compare the fitted rate with \(1/\tau\) within 0.1%, and check that the weighted mean drifts by less than 0.001 K.</li>
+</ol>
+<table class="experiment-runs"><caption>Stored temperature histories from the coupled model</caption><thead><tr><th scope="col">Thermal contact</th><th scope="col">Weighted mean (K)</th><th scope="col">Fitted decay rate (s⁻¹)</th><th scope="col">Relaxation time (s)</th></tr></thead><tbody>
+<tr><th scope="row">500 J/K hot block, 2 W/K bridge</th><td>315.00</td><td>0.005333</td><td>187.50</td></tr>
+<tr><th scope="row">500 J/K hot block, 4 W/K bridge</th><td>315.00</td><td>0.010667</td><td>93.75</td></tr>
+<tr><th scope="row">1500 J/K hot block, 2 W/K bridge</th><td>330.00</td><td>0.002667</td><td>375.00</td></tr>
+</tbody></table>
+<a class="button" href="/downloads/teaching/two_mass_thermal_exchange.zip" download>Download experiment files (ZIP)</a> <span class="run-help">Extract the files together and open <code>two_mass_thermal_exchange.ipynb</code> in a local <a href="/tutorials/install/">OneSimulation environment</a>.</span>
+</section>
+<nav class="lecture-onward" aria-label="More lecture notes">Next subject · <a href="/teaching/physics/quantum-mechanics/">Quantum mechanics</a></nav><script src="/assets/experiment-runs.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

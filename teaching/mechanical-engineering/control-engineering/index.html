@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control engineering · OneSimulation</title>
+<meta name="description" content="Design feedback for a tracking requirement and examine how loop gain changes speed, offset and stability.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Control engineering · OneSimulation">
+<meta property="og:description" content="Design feedback for a tracking requirement and examine how loop gain changes speed, offset and stability.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/control-engineering/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a></p><h1>Control engineering</h1><p class="lead">Design feedback for a tracking requirement and examine how loop gain changes speed, offset and stability.</p><p class="prerequisites"><strong>Prerequisites</strong> Linear first-order differential equations and basic dynamics.</p><nav class="study-links" aria-label="Study this subject"><a href="#exercises">Try the exercises</a><a href="#experiment">Explore the numerical problem</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#balance">Turn a machine balance into a plant model</a><a href="#feedback">Choose the loop gain from a tracking requirement</a><a href="#disturbance">Reject a load disturbance with integral action</a><a href="#exercises">Problem class</a><a href="#experiment">Experiment · Speed up a feedback loop</a></nav></aside><article class="prose reference"><section><h2 id="balance">Turn a machine balance into a plant model</h2>
+<p>A speed controller drives a motor against viscous drag. The shaft has inertia \(J\), drag coefficient \(b\), angular speed \(\omega\) and commanded torque \(u\). With a constant opposing load torque \(d\), the balance is \(J\dot\omega=u-b\omega-d\). Without feedback a step in load changes the steady speed by \(-d/b\). An engineer who can measure speed can command more torque as soon as the speed falls.</p>
+<p>Divide by \(b\). With output \(y=\omega\), time constant \(\tau=J/b\) and static gain \(K=1/b\), the unloaded plant becomes \(\tau\dot y+y=Ku\). A heating element with finite heat capacity and heat loss has the same first-order form under constant material properties. Transfer functions or step-response measurements can therefore guide controller design before the full machine is available.</p></section>
+<section><h2 id="feedback">Choose the loop gain from a tracking requirement</h2>
+<p>A proportional controller applies \(u=K_p(r-y)\) for a reference \(r\). Substitution gives \(\tau\dot y+(1+KK_p)y=KK_pr\). If \(1+KK_p&gt;0\), the closed loop settles with time constant \(\tau_{\rm cl}=\tau/(1+KK_p)\). Following a step from rest,</p>
+<div class="math display">\[y(t)=\frac{KK_p}{1+KK_p}r\,(1-e^{-t/\tau_{\rm cl}}),\qquad e_\infty=\frac{r}{1+KK_p}.\]</div>
+<p>The steady error supplies the command that balances the drag. For a normalised model with \(K=2\), \(\tau=20\) s, \(r=1\) and \(K_p=4\), the loop gain is 8. The output tends to \(8/9=0.8889\) with time constant 2.222 s. Keeping the steady error within 5% of the setpoint requires \(1/(1+2K_p)\le0.05\), hence \(K_p\ge9.5\). At the instant of a unit step this higher gain asks for 9.5 units of actuator effort. A drive limited to 5 units initially saturates, so the linear prediction for the rise time must be revised.</p></section>
+<section><h2 id="disturbance">Reject a load disturbance with integral action</h2>
+<p>For the motor with a constant load, proportional control settles at \(y=(K_pr-d)/(b+K_p)\). Adding \(K_i\int (r-y)\,dt\) to the command lets the controller supply constant torque even at zero error. If the loop settles and the actuator has sufficient reserve, a bounded steady integrator state requires \(r-y=0\).</p>
+<p>The extra state changes stability and damping. For the normalised plant and a PI controller, the closed-loop characteristic polynomial is \(\tau s^2+(1+KK_p)s+KK_i\). At \(K=2\), \(\tau=20\) s, \(K_p=4\) and \(K_i=1\) per second, its roots are \(-0.225\pm0.222i\) per second. Both decay, but a disturbance can now excite an oscillation. A gain that removes steady error can change the transient response substantially.</p></section>
+<section><h2 id="exercises">Problem class</h2>
+<h3>A motor picks up a load</h3><p>Take \(b=0.50\) N·m·s/rad, \(K_p=2.0\) N·m·s/rad and reference speed 10 rad/s. A 1 N·m load is added after the motor has settled. Find the two steady speeds and the torque an integral controller would need to restore 10 rad/s.</p>
+<details><summary>Balance torque before and after the load step</summary><p>Before the load, \(y=20/2.5=8.0\) rad/s. After it, \(y=(20-1)/2.5=7.6\) rad/s. At the desired speed the drag is 5 N·m, so the restored steady state needs a total of 6 N·m from the motor. At zero error the integral term supplies that torque.</p></details>
+<h3>Design for critical damping</h3><p>Keep the normalised plant and \(K_p=4\). Find the integral gain for a repeated pole. Predict the effect of doubling this integral gain on the pole locations.</p>
+<details><summary>Find the poles from the characteristic polynomial</summary><p>Critical damping requires \((1+KK_p)^2-4\tau KK_i=0\), giving \(K_i=81/160=0.50625\) per second. The pole is \(s=-9/40=-0.225\) per second. Doubling \(K_i\) leaves the real part unchanged and gives an imaginary part of magnitude 0.225 per second. The poles now form a complex pair.</p></details></section>
+<section><h2 id="experiment">Experiment · Speed up a feedback loop</h2>
+<p>The OneSimulation signal graph connects a setpoint, error junction, controller and first-order plant. Start with <code>plant_gain = 2.0</code> and <code>setpoint = 1.0</code>. Change <code>proportional_gain</code> or <code>time_constant</code>, keeping the other parameters fixed. Before comparing, decide which change affects the asymptotic error.</p>
+<table class="experiment-runs"><caption>Numerically fitted time constant and tracking error sampled after six closed-loop time constants. The unit step starts from rest.</caption><thead><tr><th scope="col">Controller gain and plant time constant</th><th scope="col">Fitted time (s)</th><th scope="col">Sampled error</th></tr></thead><tbody>
+<tr><th scope="row">Gain 4 · plant 20 s</th><td>2.22222</td><td>0.11331</td></tr>
+<tr><th scope="row">Gain 2 · plant 20 s</th><td>4.00000</td><td>0.20198</td></tr>
+<tr><th scope="row">Gain 4 · plant 40 s</th><td>4.44444</td><td>0.11331</td></tr>
+</tbody></table><p>Try \(K_p=9.5\) in the download. Compare the recorded final error against \(e_\infty=0.05\). To explain the difference, evaluate the exponential at the actual last sample time. <a href="/blog/first_order_plant_p_control/">Inspect the signal graph and its time histories</a>.</p><p><a class="button" href="/downloads/teaching/first_order_plant_p_control.zip" download>Download experiment files (ZIP)</a> <span class="run-help">Extract the files together and open <code>first_order_plant_p_control.ipynb</code> in a local <a href="/tutorials/install/">OneSimulation environment</a>.</span></p></section>
+<nav class="lecture-onward" aria-label="More lecture notes"><a href="/teaching/mechanical-engineering/">All subjects in mechanical engineering</a></nav><script src="/assets/experiment-runs.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

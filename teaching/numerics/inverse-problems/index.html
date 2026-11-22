@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inverse problems and least squares · OneSimulation</title>
+<meta name="description" content="Infer parameters from noisy observations and use sensitivity to design a more informative experiment.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Inverse problems and least squares · OneSimulation">
+<meta property="og:description" content="Infer parameters from noisy observations and use sensitivity to design a more informative experiment.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/inverse-problems/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a></p><h1>Inverse problems and least squares</h1><p class="lead">Infer parameters from noisy observations and use sensitivity to design a more informative experiment.</p><p class="prerequisites"><strong>Prerequisites</strong> Matrix algebra, derivatives and basic probability.</p><nav class="study-links" aria-label="Study this subject"><a href="#exercises">Try the exercises</a><a href="#experiment">Explore the numerical problem</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#forward">From predictions to parameter estimates</a><a href="#fit">Fit a spring and inspect the residuals</a><a href="#sensitivity">Design a measurement for a nonlinear model</a><a href="#exercises">Problem class</a><a href="#experiment">Experiment · Change the temperature range of a fit</a></nav></aside><article class="prose reference"><section><h2 id="forward">From predictions to parameter estimates</h2>
+<p>A forward problem takes material properties and predicts a response. In an inverse problem the responses have been observed and one or more material properties are unknown. Suppose a model predicts \(g_i(p)\) at observation \(i\), where \(p\) is a vector of parameters. Write \(y_i\) for the measured value and \(s_i&gt;0\) for its estimated standard deviation. With independent Gaussian measurement errors of known variance, the maximum-likelihood fit minimises</p>
+<div class="math display">\[\chi^2(p)=\sum_i r_i(p)^2,\qquad r_i(p)=\frac{g_i(p)-y_i}{s_i}.\]</div>
+<p>The weights put observations with different units or precision on a comparable scale. A small residual says that the chosen parameter fits the observations. To know whether it is the only plausible value, examine how the predictions change as the parameter moves.</p></section>
+<section><h2 id="fit">Fit a spring and inspect the residuals</h2>
+<p>A spring in its elastic range has force \(F=kx\). For equally precise force measurements at accurately known extensions, minimising the sum of squares gives \(\sum_i x_i(kx_i-F_i)=0\), hence \(\hat k=\sum_i x_i F_i/\sum_i x_i^2\). At extensions of 1, 2 and 3 mm the measured forces are 1.1, 1.9 and 3.0 N. The fitted stiffness is \(13.9/14=0.9929\) N/mm. Plotting the signed residuals against extension can reveal curvature or a preload that this model omits.</p>
+<p>If an unknown preload \(b\) is allowed, fit \(F=b+kx\). The columns of the design matrix are then \(1\) and \(x_i\). Measurements at a single extension can determine \(b+kx\) but cannot distinguish \(k\) from \(b\), however many times the measurement is repeated. Multiple extensions add independent information. For a general linear model a QR or singular-value decomposition solves this least-squares problem without squaring the condition number by explicitly forming the normal equations.</p></section>
+<section><h2 id="sensitivity">Design a measurement for a nonlinear model</h2>
+<p>For a nonlinear response, approximate the residual near a trial point by \(r(p+\Delta p)\simeq r(p)+J\Delta p\), with \(J_{ij}=\partial r_i/\partial p_j\). A Gauss–Newton step minimises the norm of this linear expression. A damped step can also penalise the size of \(\Delta p\) when the local linear model gives a poor prediction. Small singular values of the appropriately scaled Jacobian identify parameter combinations that the data barely constrain.</p>
+<p>Consider first-order decay \(c(t,T)=c_0e^{-k(T)t}\) with an unknown reference rate \(k_r\) and activation energy \(E\). Write \(k(T)=k_r\exp[-(E/R)(1/T-1/T_r)]\). At \(T=T_r\) the factor multiplying \(E\) vanishes. A complete decay curve at that temperature can estimate \(k_r\), but carries no information about \(E\). Taking measurements on either side of \(T_r\) changes that sensitivity. For a locally linear, full-rank, well-scaled problem with unit-variance normalised errors, \((J^\mathsf{T}J)^{-1}\) approximates parameter covariance. The diagonal estimates uncertainty under the assumed model and noise law.</p></section>
+<section><h2 id="exercises">Problem class</h2>
+<h3>Choose a second spring measurement</h3><p>A force sensor has an unknown constant offset. Compare measurements at 2 and 2 mm with measurements at 1 and 3 mm. For the latter design, suppose the measured forces are 1.3 N and 3.1 N. Recover the slope and offset. What remains unknown if each extension is sampled only once?</p>
+<details><summary>Check rank before fitting the line</summary><p>Two identical extensions give two identical rows \((1,2)\) and cannot separate slope and offset. At distinct extensions the difference gives \(k=(3.1-1.3)/(3-1)=0.9\) N/mm, then \(b=1.3-0.9=0.4\) N. Two observations exactly fit two unknowns. No residual degrees of freedom remain to estimate measurement noise or check linearity from those data alone.</p></details>
+<h3>Know when a sample is informative</h3><p>At one fixed temperature, \(c=c_0e^{-kt}\). Assume the same absolute concentration uncertainty at every sampling time. At what time is a single concentration measurement most sensitive to \(k\)? Evaluate the result for \(k=10^{-3}\ \mathrm{s}^{-1}\).</p>
+<details><summary>Maximise the derivative with respect to the rate</summary><p>The magnitude is \(c_0 t e^{-kt}\). Its time derivative is \(c_0e^{-kt}(1-kt)\), so it peaks at \(t=1/k=1000\) s. The slope is small at very early times because little decay has occurred. At very late times very little material remains. Relative rather than absolute measurement errors would give a different sampling criterion.</p></details></section>
+<section><h2 id="experiment">Experiment · Change the temperature range of a fit</h2>
+<p>Fit \(k_r\) and \(E\) simultaneously to five simulated concentration histories with a fixed noise seed. The data-generating values are \(k_r=0.001\) s⁻¹ and \(E=115\) kJ/mol. Keep the same starting guess. Predict which change most increases the standard error of \(E\): doubling <code>noise</code>, or moving the five <code>temperatures</code> closer to their common reference of 323.15 K.</p>
+<table class="experiment-runs"><caption>OneSimulation least-squares fits. The last column is the local standard error of the fitted activation energy.</caption><thead><tr><th scope="col">Temperature range and noise (mol/m³)</th><th scope="col">Fitted E (kJ/mol)</th><th scope="col">Standard error (kJ/mol)</th></tr></thead><tbody>
+<tr><th scope="row">313.15–333.15 K · noise 0.05</th><td>114.0367</td><td>0.3636</td></tr>
+<tr><th scope="row">313.15–333.15 K · noise 0.10</th><td>113.0635</td><td>0.7228</td></tr>
+<tr><th scope="row">321.15–325.15 K · noise 0.05</th><td>111.1489</td><td>1.4300</td></tr>
+</tbody></table>
+<p>In the wide case the five temperatures are spaced by 5 K. In the narrow case they are spaced by 1 K. Use the same 12 sampling times per experiment. Try a different random seed after checking the table. Compare the fitted error bar with the scatter of estimates across several seeds. Increasing the number of repeats probes noise; changing the temperature range also changes parameter identifiability. <a href="/blog/arrhenius_parameter_estimation/">Inspect the model, residuals and fitting procedure</a>.</p><p><a class="button" href="/downloads/teaching/arrhenius_parameter_estimation.zip" download>Download experiment files (ZIP)</a> <span class="run-help">Extract the files together and open <code>arrhenius_parameter_estimation.ipynb</code> in a local <a href="/tutorials/install/">OneSimulation environment</a>.</span></p></section>
+<nav class="lecture-onward" aria-label="More lecture notes"><a href="/teaching/numerics/">All subjects in numerical mathematics</a></nav><script src="/assets/experiment-runs.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

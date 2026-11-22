@@ -247,3 +247,51 @@ td { font-variant-numeric: tabular-nums; white-space: nowrap; }
     max-width: 100%; overflow-x: auto; padding-block: .18em; vertical-align: middle;
   }
 }
+
+.disciplines { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.7rem;
+  padding-block: .4rem 2rem; }
+.discipline h2 { margin-top: .7rem; font-size: clamp(1.45rem, 2.35vw, 2rem); }
+.discipline h2 a { text-decoration-thickness: .045em; }
+.discipline p { color: var(--subtle); margin-block: .55rem .85rem; }
+.discipline ul { list-style: none; padding: 0; margin: 0; }
+.discipline li { border-top: 1px solid var(--rule); padding-block: .45rem; }
+.discipline li a { text-decoration-thickness: .05em; }
+.discipline img { aspect-ratio: 16 / 9; object-fit: contain; border: 1px solid var(--rule); background: var(--page); }
+.further-study { border-top: 1px solid var(--rule); padding-top: 1rem; margin-top: 0; }
+.course-subjects { padding-left: 1.8rem; }
+.course-subjects li { padding: .65rem 0 1rem .3rem; border-bottom: 1px solid var(--rule); }
+.course-subjects li::marker { font-family: var(--serif); color: var(--stamp); }
+.course-subjects li p { margin-top: .35rem; }
+.subject-jumps { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-top: .45rem; font-size: .9rem; }
+.run-help { display: block; margin-top: .5rem; overflow-wrap: anywhere; }
+.experiment-controls { margin-top: 1rem; }
+.experiment-controls fieldset { min-width: 0; margin: 0; padding: .75rem 1rem 1rem; border: 1px solid var(--rule); background: var(--page); }
+.experiment-controls legend { color: var(--deep); font: 600 1.24rem var(--serif); padding-inline: .3rem; }
+.experiment-controls fieldset p { margin: 0 0 .75rem; }
+.experiment-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: .6rem 1rem; }
+.experiment-fields label { display: grid; gap: .25rem; font-weight: 600; font-size: .9rem; }
+.experiment-fields select, .experiment-fields input { width: 100%; min-width: 0; padding: .45rem; font: inherit; font-weight: 400;
+  color: var(--ink); background: var(--page); border: 1px solid #8e9a87; }
+.experiment-actions { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .8rem; }
+.experiment-actions button { font-family: inherit; cursor: pointer; }
+.experiment-controls output:not(:empty) { display: block; margin-top: .6rem; }
+.experiment-table { overflow: auto; }
+.prose:has(#experiment) { min-width: 0; }
+.prose .experiment-runs caption { margin-top: .7rem; }
+.prose section:has(> #exercises) { border-left: .2rem solid var(--stamp); padding: 1.15rem; background: var(--page); }
+@media (max-width: 800px) {
+  .disciplines { grid-template-columns: 1fr; gap: 2rem; }
+  .discipline img { max-width: 23rem; }
+}
+@media (max-width: 650px) {
+  .prose:has(#experiment) p mjx-container { max-width: 100%; overflow-x: auto; padding-block: .18em; vertical-align: middle; }
+  .prose:has(#experiment) pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+}
+@media print {
+  .experiment-runs tr[hidden] { display: table-row !important; }
+  .experiment-controls { display: none; }
+}
+.discipline-shortcuts { display: none; }
+@media (max-width: 800px) {
+  .discipline-shortcuts { display: flex; flex-wrap: wrap; gap: .45rem 1.1rem; padding-bottom: 1.15rem; }
+}

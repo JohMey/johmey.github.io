@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Numerical partial differential equations · OneSimulation</title>
+<meta name="description" content="Discretise a boundary-value problem and separate mesh error from solver and sampling errors.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/numerics/partial-differential-equations/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Numerical partial differential equations · OneSimulation">
+<meta property="og:description" content="Discretise a boundary-value problem and separate mesh error from solver and sampling errors.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/numerics/partial-differential-equations/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/numerics/">Numerical mathematics</a></p><h1>Numerical partial differential equations</h1><p class="lead">Discretise a boundary-value problem and separate mesh error from solver and sampling errors.</p><p class="prerequisites"><strong>Prerequisites</strong> Second derivatives, boundary conditions and linear systems.</p><nav class="study-links" aria-label="Study this subject"><a href="#exercises">Try the exercises</a><a href="#experiment">Explore the numerical problem</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#grid">Replace a continuum balance by nodal equations</a><a href="#consistency">Find the error made by a single stencil</a><a href="#worked">Use an exact sine mode to predict the discrete amplitude</a><a href="#exercises">Problem class</a><a href="#experiment">Experiment · Refine a manufactured solution on a square</a></nav></aside><article class="prose reference"><section>
+<h2 id="grid">Replace a continuum balance by nodal equations</h2>
+<p>Suppose a scalar diffuses along a unit interval, with a fixed value at each end. The steady balance is \(-u''=f\) for constant unit diffusivity. At equally spaced interior nodes \(x_i=ih\), approximate the derivative at each face by the difference between its neighbouring values divided by \(h\). Subtracting the outgoing and incoming diffusive fluxes and dividing by cell width gives</p>
+<div class="math display">\[\frac{2u_i-u_{i-1}-u_{i+1}}{h^2}=f(x_i).\]</div>
+<p>The endpoints are known, leaving \(N-1\) interior unknowns for \(N\) intervals. Each interior flux appears once with each sign in neighbouring balances. Summing balances therefore leaves the net boundary flux and the total source. With variable diffusivity \(D\), multiply each face gradient by its <em>face</em> value of \(D\) before taking the difference.</p>
+</section>
+<section>
+<h2 id="consistency">Find the error made by a single stencil</h2>
+<p>Insert the exact values \(u(x_i-h)\) and \(u(x_i+h)\), expand both in Taylor series and add them. Odd terms cancel. The central second difference satisfies \(\delta_{xx}u=u''+h^2u^{(4)}/12+O(h^4)\) for sufficiently smooth \(u\). This local consistency calculation predicts the scale of the defect when the exact solution is inserted in the discrete equations.</p>
+<p>Write the discrete problem \(A_hu_h=f_h\) and define \(\tau_h=A_hu_\star-f_h\) using exact nodal values \(u_\star\). Then \(A_h(u_\star-u_h)=\tau_h\). A stability bound on \(A_h^{-1}\), uniform in mesh size in the chosen norm, turns second-order consistency into second-order solution error. A tight iterative solve reduces the residual of \(A_hu_h=f_h\), but leaves \(\tau_h\) in place.</p>
+</section>
+<section>
+<h2 id="worked">Use an exact sine mode to predict the discrete amplitude</h2>
+<p>Prescribe \(u(0)=u(1)=0\) and \(f(x)=\pi^2\sin(\pi x)\). The exact solution is \(u_\star=\sin(\pi x)\). For its grid samples \(s_i=\sin(\pi ih)\), the sine addition formula yields \(A_hs=\lambda_hs\), with \(\lambda_h=4\sin^2(\pi h/2)/h^2\). The right-hand side is \(\pi^2s\), so the discrete solution has the same nodal shape and amplitude \(\pi^2/\lambda_h\).</p>
+<p>With four intervals, \(\lambda_h=64\sin^2(\pi/8)=9.3726\) and the numerical midspan value is 1.0530. The exact value is 1. The sign makes sense: the discrete stiffness of this mode is below \(\pi^2\), so the same load produces a larger amplitude. Expansion gives \(\pi^2/\lambda_h=1+\pi^2h^2/12+O(h^4)\), predicting a fourfold error reduction on refinement.</p>
+</section>
+<section>
+<h2 id="exercises">Problem class</h2>
+<h3>Test a polynomial before trusting the mesh</h3>
+<p>Keep the homogeneous end values and choose \(u_\star=x(1-x)\). Derive \(f\), then predict the nodal error for any uniform mesh in exact arithmetic. Would this make a good test for measuring convergence order?</p>
+<details><summary>Show the calculation</summary><p>Since \(u_\star''=-2\), use \(f=2\). The centred second difference of any quadratic equals its exact second derivative. The nodal vector therefore solves the discrete equations exactly. It is a useful stencil consistency check, but its zero leading error prevents a meaningful order measurement from a ratio of errors.</p></details>
+<h3>Manufacture a source for variable diffusion</h3>
+<p>On the unit square let \(D(x)=1+x\), \(u_\star=\sin(ax)\sin(ay)\), and \(a=m\pi\) for positive integer \(m\), using metre coordinates. What forcing makes \(-\nabla\cdot(D\nabla u)+2u=f\) hold with zero boundary values?</p>
+<details><summary>Show the calculation</summary><p>Apply the product rule, \(-\nabla\cdot(D\nabla u)=-D\Delta u-D'(x)u_x\). Here \(\Delta u_\star=-2a^2u_\star\) and \(D'=1\). Thus \(f=[2(1+x)a^2+2]u_\star-a\cos(ax)\sin(ay)\). Each boundary has a zero sine factor. Omitting \(D'u_x\) would produce a continuous modelling error that persists even when the mesh is refined.</p></details>
+</section>
+<section>
+<h2 id="experiment">Experiment · Refine a manufactured solution on a square</h2>
+<p>The script solves the second exercise by conservative flux differences and Jacobi-preconditioned CG. Compare the maximum error at grid nodes with the solver’s relative residual. Refine both axes together, then raise the sine mode on the same 48-cell mesh to see how wavelength affects the error. <a href="/downloads/teaching/numerics/partial-differential-equations.py" download>Download the Python experiment</a> · <a href="/tutorials/custom-equation/#read-the-measured-refinement-results">OneSimulation reaction–diffusion refinement study</a>.</p>
+<pre><code>python partial-differential-equations.py
+python partial-differential-equations.py --cells 48
+python partial-differential-equations.py --cells 96
+python partial-differential-equations.py --cells 48 --mode 2</code></pre>
+<table class="experiment-runs"><caption>Independent solves for the dimensionless scalar field on a unit square.</caption><thead><tr><th scope="col">Cells per axis, mode</th><th scope="col">Interior unknowns</th><th scope="col">Max. nodal error</th><th scope="col">Relative residual</th></tr></thead><tbody>
+<tr><th scope="row">24, 1</th><td>529</td><td>1.33345 × 10⁻³</td><td>9.79 × 10⁻¹¹</td></tr>
+<tr><th scope="row">48, 1</th><td>2,209</td><td>3.33763 × 10⁻⁴</td><td>7.14 × 10⁻¹¹</td></tr>
+<tr><th scope="row">96, 1</th><td>9,025</td><td>8.34283 × 10⁻⁵</td><td>4.21 × 10⁻¹¹</td></tr>
+<tr><th scope="row">48, 2</th><td>2,209</td><td>1.41546 × 10⁻³</td><td>8.89 × 10⁻¹¹</td></tr>
+</tbody></table>
+<p>At mode one the error falls by factors close to four while the number of interior unknowns roughly quadruples. On the same 48-cell mesh, mode two has half as many intervals per wavelength and a larger error. Both modes have small algebraic residuals. Mesh convergence is a property of the resolved field and its discretisation.</p>
+</section>
+<nav class="lecture-onward" aria-label="More lecture notes">Next subject · <a href="/teaching/numerics/inverse-problems/">Inverse problems and least squares</a></nav><script src="/assets/experiment-runs.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

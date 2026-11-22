@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluid mechanics · OneSimulation</title>
+<meta name="description" content="Connect a growing boundary layer to wall shear, momentum loss and drag.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/mechanical-engineering/fluid-mechanics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fluid mechanics · OneSimulation">
+<meta property="og:description" content="Connect a growing boundary layer to wall shear, momentum loss and drag.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/mechanical-engineering/fluid-mechanics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/mechanical-engineering/">Mechanical engineering</a></p><h1>Fluid mechanics</h1><p class="lead">Connect a growing boundary layer to wall shear, momentum loss and drag.</p><p class="prerequisites"><strong>Prerequisites</strong> Derivatives and Newtonian viscosity.</p><nav class="study-links" aria-label="Study this subject"><a href="#exercises">Try the exercises</a><a href="#experiment">Explore the numerical problem</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#momentum">How does a surface slow down a moving fluid?</a><a href="#shear">Relate a measured velocity slope to drag</a><a href="#plate">Worked example · Sample a plate halfway along</a><a href="#pipe">Transfer problem · Use a pressure drop to infer pipe flow</a><a href="#exercises">Exercises</a><a href="#experiment">Experiment · Measure the layer at the same station</a></nav></aside><article class="prose reference"><section>
+<h2 id="momentum">How does a surface slow down a moving fluid?</h2>
+<p>Upstream of a smooth plate, every parcel in a uniform stream moves at speed \(U\). At the plate the no-slip condition brings the fluid to rest. Momentum diffuses across the flow while the stream carries it downstream, so the region slowed by the wall thickens with distance. The wall shear determines how much power is needed to move a plate through the fluid.</p>
+<p>Consider steady two-dimensional incompressible laminar flow at constant density \(\rho\), dynamic viscosity \(\mu\) and zero streamwise pressure gradient. Measure \(x\) from the leading edge and \(y\) normal to the plate. When the viscous layer is thin relative to \(x\), the streamwise momentum and continuity equations reduce to</p>
+<div class="math display">\[u u_x+v u_y=\nu u_{yy},\qquad u_x+v_y=0,\qquad \nu=\mu/\rho.\]</div>
+<p>At the wall \(u=v=0\), while \(u\) approaches \(U\) far above it. Balancing \(U^2/x\) with \(\nu U/\delta^2\) gives the thickness scale \(\delta\sim\sqrt{\nu x/U}\). The thickness increases downstream even though \(\delta/x\) falls. Doubling the speed gives the fluid less time to diffuse momentum before it reaches the observation point.</p>
+</section>
+<section>
+<h2 id="shear">Relate a measured velocity slope to drag</h2>
+<p>Profiles at different stations have nearly the same shape when plotted against \(\eta=y\sqrt{U/(\nu x)}\). The laminar Blasius solution gives a wall slope \(\partial_y u|_0=0.332\,U\sqrt{U/(\nu x)}\). Therefore, with \(Re_x=Ux/\nu\),</p>
+<div class="math display">\[\tau_w=\mu\,\partial_yu|_0,\qquad c_f(x)=\frac{\tau_w}{\tfrac12\rho U^2}=\frac{0.664}{\sqrt{Re_x}},\qquad \delta_{99}\simeq\frac{5.0x}{\sqrt{Re_x}}.\]</div>
+<p>The last thickness is the height at which \(u=0.99U\). Integrating \(\tau_w\) from the leading edge to length \(L\) gives the drag on one face per unit width, \(D/b=0.664\rho U^2\sqrt{\nu L/U}\). The mean friction coefficient over the plate is twice the local coefficient at its trailing edge. Surface roughness, transition to turbulence and strong pressure gradients change this result.</p>
+</section>
+<section>
+<h2 id="plate">Worked example · Sample a plate halfway along</h2>
+<p>Use \(U=1.0\) m/s, \(\rho=1.0\,\mathrm{kg/m^3}\), \(\mu=10^{-4}\,\mathrm{Pa\,s}\) and \(x=0.50\) m. Then \(\nu=10^{-4}\,\mathrm{m^2/s}\) and \(Re_x=5000\). The 99% thickness is 35.4 mm, the friction coefficient is 0.00939, and the shear stress is \(0.5(1)(1)^2(0.00939)=0.00470\) Pa. At \(x=1.00\) m the layer has grown to 50 mm and the wall shear has fallen to 0.00332 Pa. The amount of fluid affected has increased while the near-wall velocity gradient has weakened.</p>
+</section>
+<section>
+<h2 id="pipe">Transfer problem · Use a pressure drop to infer pipe flow</h2>
+<p>In a sufficiently long straight pipe of radius \(R\), the viscous regions growing from the walls merge and the velocity profile stops changing downstream. For a fluid cylinder of radius \(r\) and length \(L\), the pressure force \(\Delta p\,\pi r^2\) balances the resisting shear force \(2\pi r L|\tau|\). Hence \(|\tau|=\Delta p\,r/(2L)\). Since \(du/dr=-|\tau|/\mu\), integration with \(u(R)=0\) gives \(u(r)=\Delta p(R^2-r^2)/(4\mu L)\). Integrating over circular rings yields \(Q=\pi R^4\Delta p/(8\mu L)\).</p>
+<p>A water line has \(R=5.0\) mm, \(L=2.0\) m, \(\mu=0.0010\,\mathrm{Pa\,s}\) and \(\rho=1000\,\mathrm{kg/m^3}\). Delivering \(Q=1.0\times10^{-6}\,\mathrm{m^3/s}\) requires \(\Delta p=8.15\) Pa over the developed portion. The mean speed is \(Q/(\pi R^2)=0.0127\) m/s and the diameter-based Reynolds number is 127, consistent with laminar flow. Halving the pipe radius at fixed flow multiplies the required pressure by sixteen. <a href="/teaching/hydrodynamics/">Compare the derivation for a parallel-plate channel</a>.</p>
+</section>
+<section>
+<h2 id="exercises">Exercises</h2>
+<h3>1. Choose an appropriate force measurement</h3>
+<p>A 0.20 m wide plate is exposed on one face from its leading edge to \(L=1.00\) m under the conditions above. What force should a balance measure? What bias would follow from using the trailing-edge wall shear across the entire plate?</p>
+<details><summary>Show the drag estimate</summary><p>The integrated force is \(0.20(0.664)(1)(1)^2\sqrt{10^{-4}(1)/1}=0.00133\) N. Using the final local shear gives only \(0.00332(1)(0.20)=0.000664\) N. Wall shear varies as \(x^{-1/2}\), so the leading part contributes more drag per unit length.</p></details>
+<h3>2. Distinguish dimensionless and dimensional changes</h3>
+<p>At the same station, double the free-stream speed without changing the fluid. Predict the changes in \(\delta_{99}\), \(c_f\), \(\tau_w\) and power lost to skin friction at fixed plate length.</p>
+<details><summary>Show the scaling argument</summary><p>Both thickness and friction coefficient scale as \(U^{-1/2}\), giving a factor 0.707. Dimensional shear includes \(U^2\), hence grows by \(2^{3/2}=2.83\). Drag has the same speed exponent and required power is \(DU\), which grows by \(2^{5/2}=5.66\).</p></details>
+</section>
+<section>
+<h2 id="experiment">Experiment · Measure the layer at the same station</h2>
+<p>The OneSimulation domain begins 0.2 m downstream of the leading edge. Use the row labelled \(x=0.50\) m, which already includes that offset. The baseline uses <code>stream=1.0</code> m/s, <code>density=1.0</code> kg/m³ and <code>dynamic_viscosity=1.0e-4</code> Pa·s.</p>
+<ol><li>Double <code>stream</code> to <code>2.0</code> m/s. Rebuild the model so the imposed inlet profile also changes. Expect a thickness near 25 mm and smaller \(c_f\), even though the dimensional wall stress increases.</li><li>Restore <code>stream=1.0</code> and double <code>dynamic_viscosity</code> to <code>2.0e-4</code> Pa·s. At unchanged density, expect a thickness near 50 mm and \(c_f\) near 0.0133. Compare the departures from the similarity approximation with the baseline.</li></ol>
+<table class="experiment-runs">
+<caption>Computed boundary layer at 0.50 m from the leading edge</caption>
+<thead><tr><th scope="col">Free stream and viscosity</th><th scope="col">Thickness (mm)</th><th scope="col">Friction coefficient (×10⁻³)</th></tr></thead>
+<tbody>
+<tr><th scope="row">1 m/s, 0.10 mPa·s</th><td>35.84</td><td>9.188</td></tr>
+<tr><th scope="row">2 m/s, 0.10 mPa·s</th><td>25.19</td><td>6.559</td></tr>
+<tr><th scope="row">1 m/s, 0.20 mPa·s</th><td>51.03</td><td>12.878</td></tr>
+</tbody>
+</table>
+<p><a href="/blog/blasius_flat_plate/">View the OneSimulation flat-plate model and its velocity profiles</a>.</p>
+<p><a class="button" href="/downloads/teaching/blasius_flat_plate.zip" download>Download experiment files (ZIP)</a> <span class="run-help">Extract the files together and open <code>blasius_flat_plate.ipynb</code> in a local <a href="/tutorials/install/">OneSimulation environment</a>.</span></p>
+</section>
+<nav class="lecture-onward" aria-label="More lecture notes">Next subject · <a href="/teaching/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></nav><script src="/assets/experiment-runs.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

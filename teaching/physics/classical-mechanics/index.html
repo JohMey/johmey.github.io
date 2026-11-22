@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classical mechanics · OneSimulation</title>
+<meta name="description" content="Use energy and angular momentum to find the turning points and period of an orbit.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/teaching/physics/classical-mechanics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Classical mechanics · OneSimulation">
+<meta property="og:description" content="Use energy and angular momentum to find the turning points and period of an orbit.">
+<meta property="og:url" content="https://onesimulation.onrender.com/teaching/physics/classical-mechanics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/physics/">Physics</a></p><h1>Classical mechanics</h1><p class="lead">Use energy and angular momentum to find the turning points and period of an orbit.</p><p class="prerequisites"><strong>Prerequisites</strong> Newton’s laws, vectors and single-variable calculus.</p><nav class="study-links" aria-label="Study this subject"><a href="#exercises">Try the exercises</a><a href="#experiment">Explore the numerical problem</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#motion">What fixes an orbit?</a><a href="#energy">Read the turning points from the energy</a><a href="#period">Recover the shape and the clock</a><a href="#coordinates">From force components to Lagrange’s equation</a><a href="#example">An ellipse from two distances</a><a href="#exercises">Exercises on speed and timing</a><a href="#experiment">Experiment · Reconstruct the period from a trajectory</a></nav></aside><article class="prose reference"><section>
+<h2 id="motion">What fixes an orbit?</h2>
+<p>An object at the same distance from Earth can follow a circle, a long ellipse or a path that escapes. Position sets the gravitational acceleration. The initial velocity distinguishes those trajectories. Begin in an inertial frame centred on a spherical Earth, and neglect atmospheric drag, other bodies and the motion of Earth in response to the much smaller satellite. With \(\mu=GM\), Newton’s law reads \(\ddot{\mathbf r}=-\mu\mathbf r/r^3\). Everything that follows concerns motion outside Earth.</p>
+<p>Crossing this equation with \(\mathbf r\) shows that the specific angular momentum \(\mathbf h=\mathbf r\times\dot{\mathbf r}\) is constant. The orbit lies in the plane perpendicular to \(\mathbf h\). In polar coordinates \(h=r^2\dot\theta\), so the area swept per second is \(h/2\). An object must move faster around the centre when it is closer to it.</p>
+</section>
+<section>
+<h2 id="energy">Read the turning points from the energy</h2>
+<p>Take the scalar product of Newton’s equation with velocity. The derivative of \(v^2/2\) equals the negative derivative of \(-\mu/r\), so the specific energy \(\mathcal E=v^2/2-\mu/r\) is constant. Substituting the angular momentum for tangential speed gives a one-dimensional radial balance</p>
+<div class="math display">\[\mathcal E=\frac{\dot r^2}{2}+U_{\rm eff}(r),\qquad U_{\rm eff}(r)=\frac{h^2}{2r^2}-\frac{\mu}{r}.\]</div>
+<p>Only radii with \(\mathcal E\ge U_{\rm eff}\) can be reached. At the minimum of \(U_{\rm eff}\) a circular orbit is possible. A bound eccentric orbit has two turning radii \(r_p,r_a\). At each, \(\dot r=0\), so both are roots of \(2\mathcal E r^2+2\mu r-h^2=0\). Their sum fixes \(\mathcal E=-\mu/(2a)\), with \(a=(r_p+r_a)/2\). Substitution into the energy gives the speed at any point, \(v^2=\mu(2/r-1/a)\).</p>
+</section>
+<section>
+<h2 id="period">Recover the shape and the clock</h2>
+<p>Set \(u=1/r\) and use \(d/dt=hu^2 d/d\theta\) in the radial force equation \(\ddot r-r\dot\theta^2=-\mu/r^2\). This gives \(u''+u=\mu/h^2\), with primes denoting angle derivatives. Choosing \(\theta=0\) at closest approach yields \(r=(h^2/\mu)/(1+e\cos\theta)\). For \(0&lt;e&lt;1\) the shape is an ellipse, with \(e=(r_a-r_p)/(r_a+r_p)\) and semiminor axis \(b=a\sqrt{1-e^2}\).</p>
+<figure class="lecture-figure"><img src="/assets/kepler-orbit.png" width="1440" height="810" loading="lazy" alt="Transfer ellipse with Earth at its left focus. Two equal-area sectors cover a long arc near perigee and a short arc near apogee."><figcaption>Each shaded sector sweeps out one tenth of the ellipse in one tenth of a period. The satellite follows a longer arc near perigee in the same 63.2 minutes. Earth is marked by its centre.</figcaption></figure>
+<p>An ellipse encloses area \(\pi ab\). Divide that area by \(h/2\) and use \(h^2=\mu a(1-e^2)\) to obtain \(T=2\pi\sqrt{a^3/\mu}\). Eccentricity redistributes the time spent along the path. At a given semimajor axis it leaves the full period unchanged. Angular momentum also constrains a rotating body about its own centre. <a href="/teaching/multibody/">Torque-free rigid-body motion</a>.</p>
+</section>
+<section>
+<h2 id="coordinates">From force components to Lagrange’s equation</h2>
+<p>A constrained system often has fewer independent coordinates than Cartesian components. Consider a bead of mass \(m\) on a light rigid rod of length \(\ell\), moving in a vertical plane. The pivot fixes the radius. Its force is perpendicular to the allowed displacement, so the angle \(\theta\) measured from the downward vertical suffices. The kinetic and gravitational energies are \(K=m\ell^2\dot\theta^2/2\) and \(U=mg\ell(1-\cos\theta)\).</p>
+<p>For conservative forces with ideal constraints, varying the action \(\int (K-U)\,dt\) with fixed endpoints gives \(d(\partial\mathcal L/\partial\dot q)/dt=\partial\mathcal L/\partial q\) for each independent coordinate \(q\), with \(\mathcal L=K-U\). For the rod this yields \(m\ell^2\ddot\theta=-mg\ell\sin\theta\). Close to the stable minimum \(U\simeq mg\ell\theta^2/2\), and the motion oscillates with period \(2\pi\sqrt{\ell/g}\). For \(\ell=1.00\) m and \(g=9.81\) m/s², the period is 2.01 s.</p>
+<p>The same curvature test works for a near-circular orbit. Expand the specific effective potential at \(r_c=h^2/\mu\). Its positive curvature is \(U''_{\rm eff}(r_c)=\mu/r_c^3\), so a small radial displacement oscillates at \(\sqrt{\mu/r_c^3}\). The period of this small radial motion agrees with the circular orbital period obtained from the area law. Both a pendulum and a nearly circular orbit reveal a restoring force through the curvature of an energy minimum.</p>
+</section>
+<section>
+<h2 id="example">An ellipse from two distances</h2>
+<p>Take \(\mu=3.9860\times10^{14}\) m³/s², \(r_p=6628.137\) km and \(r_a=42164\) km, all radii measured from the centre. The semimajor axis is 24396.1 km and \(e=0.7283\). The speed equation at closest approach gives 10.195 km/s. The product \(r_pv_p=r_av_a\) then gives 1.603 km/s at the far end. Using \(a\) in metres in the period formula gives 37 922 s, about 10.534 hours.</p>
+</section>
+<section>
+<h2 id="exercises">Exercises on speed and timing</h2>
+<h3>1. Compare two bound orbits</h3>
+<p>A circle and an ellipse have the same semimajor axis \(a\). The ellipse has \(e=0.6\). Compare their periods and find the ratio of the highest to the lowest speed in the ellipse.</p>
+<details><summary>Compare the two orbits</summary><p>The periods agree because \(T\) depends only on \(a\) and \(\mu\). At the turning points the velocity is tangent. Therefore \(v_p/v_a=r_a/r_p=(1+e)/(1-e)=4\). Equal periods are compatible with very different local speeds.</p></details>
+<h3>2. Find the escape threshold</h3>
+<p>At radius \(r\), compare the circular speed with the minimum speed needed to reach arbitrarily large radius. Assume an initially tangential velocity.</p>
+<details><summary>Derive the speed ratio</summary><p>For the circle, radial acceleration requires \(v_c^2/r=\mu/r^2\). Escape at threshold arrives at infinity with zero speed, so \(\mathcal E=0\) and \(v_e=\sqrt{2\mu/r}=\sqrt2\,v_c\). At a speed just below this threshold, energy is negative and there is still a finite outer turning point.</p></details>
+</section>
+<section>
+<h2 id="experiment">Experiment · Reconstruct the period from a trajectory</h2>
+<p>The orbit notebook integrates Cartesian position and velocity. Its upwards crossings of \(y=0\) measure successive revolutions. Run the supplied time-step study, reading the measured period and maximum radius from the 15 s run. Reset the orbital parameters to their original values before each change. <a href="/blog/spacecraft_kepler_orbit/">Model equations and worked orbit</a>.</p>
+<ol>
+<li><strong>Baseline.</strong> Use the supplied closest and farthest radii. Check the crossing period against 10.534 h and the largest radius against 42 164 km. Compare the largest relative energy error at steps of 30 and 15 s.</li>
+<li><strong>Bring the outer turning point closer.</strong> Set <code>apogee = 26.560e6</code> m, keeping the original perigee. Run from the orbital parameters onward so the initial velocity updates. Predict 5.909 h and a maximum radius of 26 560 km.</li>
+<li><strong>Raise the inner turning point.</strong> Restore the original apogee and set <code>perigee = earth_radius + 2000e3</code>. The predicted period becomes 11.106 h while the outer radius stays 42 164 km. Check both periods within 0.1% and both maximum radii within 1 km. Record which quantity distinguishes these orbits even when their maximum radius is identical.</li>
+</ol>
+<table class="experiment-runs"><caption>Orbits measured from the 15 s trajectory</caption><thead><tr><th scope="col">Perigee altitude / apogee radius (km)</th><th scope="col">Crossing period (s)</th><th scope="col">Maximum radius (km)</th></tr></thead><tbody>
+<tr><th scope="row">250 / 42 164</th><td>37921.96</td><td>42164.00</td></tr>
+<tr><th scope="row">250 / 26 560</th><td>21273.57</td><td>26560.00</td></tr>
+<tr><th scope="row">2000 / 42 164</th><td>39980.33</td><td>42164.00</td></tr>
+</tbody></table>
+<a class="button" href="/downloads/teaching/spacecraft_kepler_orbit.zip" download>Download experiment files (ZIP)</a> <span class="run-help">Extract the files together and open <code>spacecraft_kepler_orbit.ipynb</code> in a local <a href="/tutorials/install/">OneSimulation environment</a>.</span>
+</section>
+<nav class="lecture-onward" aria-label="More lecture notes">Next subject · <a href="/teaching/physics/electrodynamics/">Electrodynamics</a></nav><script src="/assets/experiment-runs.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
