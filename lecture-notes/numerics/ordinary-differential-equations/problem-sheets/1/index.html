@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From one update to a trajectory · OneSimulation</title>
+<meta name="description" content="Set up a global error recurrence, verify Runge–Kutta order conditions and identify the role of explicitly time-dependent forcing.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/ordinary-differential-equations/problem-sheets/1/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From one update to a trajectory · OneSimulation">
+<meta property="og:description" content="Set up a global error recurrence, verify Runge–Kutta order conditions and identify the role of explicitly time-dependent forcing.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/ordinary-differential-equations/problem-sheets/1/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>From one update to a trajectory</h1><p class="lead">Set up a global error recurrence, verify Runge–Kutta order conditions and identify the role of explicitly time-dependent forcing.</p><p class="byline">Problem sheet 1 · Chapters 1 and 2</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#propagate-a-sequence-of-local-disturbances">Propagate a sequence of local disturbances</a><a href="#integrate-a-time-ramp">Integrate a time ramp</a><a href="#design-a-second-order-formula">Design a second-order formula</a></nav></aside><article class="prose reference"><section>
+<h2 id="propagate-a-sequence-of-local-disturbances">Propagate a sequence of local disturbances</h2>
+<p>A one-step algorithm satisfies \(e_{n+1}\leq1.05e_n+0.0002\) K, and initially \(e_0=0.01\) K. Derive a bound after ten steps. How much is due to the initial uncertainty and how much is attributable to defects during the run?</p>
+<details><summary>Worked solution</summary>
+<p>Iterating the recurrence gives \(e_{10}\leq1.05^{10}e_0+0.0002(1.05^{10}-1)/(1.05-1)\). Using \(1.05^{10}=1.62889\) yields \(0.01629+0.00252=0.01881\) K.</p>
+<p>A more accurate numerical step reduces the second contribution directly; reducing uncertainty in the initial measurement reduces the first. The bound allows maximally aligned and amplified disturbances at every step and need not be attained on a particular trajectory.</p>
+</details>
+</section>
+<section>
+<h2 id="integrate-a-time-ramp">Integrate a time ramp</h2>
+<p>For \(y'=3t+1\) with \(y(0)=0\), take one step of length 0.4. Compute the Euler, explicit midpoint and Heun values. Explain their performance and predict what happens if both Heun stages mistakenly evaluate the forcing at the old time.</p>
+<details><summary>Worked solution</summary>
+<p>Euler gives 0.4. At the midpoint the slope is \(1+3(0.2)=1.6\), so midpoint gives 0.64. Heun averages slopes 1 and 2.2 and likewise gives 0.64. Integrating analytically gives \(y=t+1.5t^2\), hence 0.64.</p>
+<p>A linear forcing is integrated exactly by both second-order rules. If both evaluations use the old time the two slopes coincide and Heun degenerates into the Euler estimate 0.4 here, even if its state predictor is correct.</p>
+</details>
+</section>
+<section>
+<h2 id="design-a-second-order-formula">Design a second-order formula</h2>
+<p>A two-stage explicit method uses its second stage at \(c=a=2/3\). Find both output weights for order two. Apply the resulting scheme to \(y'=y,\ y_0=2,\ h=0.3\) and compare with the exact endpoint.</p>
+<details><summary>Worked solution</summary>
+<p>The order conditions are \(b_2c=1/2\) and \(b_1+b_2=1\), giving \(b_2=3/4,\ b_1=1/4\). The first slope is 2 and the second is \(2+0.2(2)=2.4\). The update gives \(2+0.3(0.25\cdot2+0.75\cdot2.4)=2.69\).</p>
+<p>The exact value is \(2e^{0.3}=2.69972\). Every explicit two-stage second-order method has the same stability polynomial on this constant linear equation, so this test alone cannot distinguish their different nonlinear error constants.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/ordinary-differential-equations/chapters/02-runge-kutta/">Chapter 2 · Runge–Kutta stages and order</a></span><span>Next<br><a href="/lecture-notes/numerics/ordinary-differential-equations/chapters/03-stiffness/">Chapter 3 · Absolute stability and stiffness</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

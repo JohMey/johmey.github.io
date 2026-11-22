@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shear force and bending moment · OneSimulation</title>
+<meta name="description" content="Construct the internal-force diagrams of a simply supported beam and locate the section with the largest nominal bending stress.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/03-beam-actions/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shear force and bending moment · OneSimulation">
+<meta property="og:description" content="Construct the internal-force diagrams of a simply supported beam and locate the section with the largest nominal bending stress.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/03-beam-actions/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Shear force and bending moment</h1><p class="lead">Construct the internal-force diagrams of a simply supported beam and locate the section with the largest nominal bending stress.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#section">Read a section cut as an equilibrium problem</a><a href="#derivatives">Build a diagram from the loading</a><a href="#calculation">Combine a point load and distributed weight</a><a href="#stress">Translate the moment into a fibre stress</a><a href="#applied-couple">What jumps under an applied couple?</a><a href="#moving-load">Derive an influence line at a fixed section</a><a href="#tandem">Place a pair of unequal wheels to maximise one reading</a></nav></aside><article class="prose reference"><section><h2 id="section">Read a section cut as an equilibrium problem</h2>
+<p>A transfer rail carries a trolley and the distributed weight of its own structure. Its supports may be strong enough while the rail still bends excessively at an interior section. Start with reactions for the entire beam. Next isolate the part from its left end to a cut at coordinate \(x\). The portion discarded from the drawing exerts an axial force, a shear force and a bending moment on the cut. For a horizontal beam with vertical loading the axial force is zero.</p>
+<p>Use downward distributed load \(q(x)&gt;0\), take \(M&gt;0\) for sagging and define positive shear \(V\) by the resultant upward external load on the left-hand part. Thus a positive \(V\) corresponds to a downward internal shear on its right cut face. Choose the signs once and test a cut just to the right of the left support. With a positive left reaction the first value of the shear diagram must be positive.</p>
+</section>
+<section><h2 id="derivatives">Build a diagram from the loading</h2>
+<p>Take an element between \(x\) and \(x+dx\). Its external load increases the downward resultant by \(q\,dx\), so \(V(x+dx)-V(x)=-q\,dx\). Moment balance retains the term \(V\,dx\); the distributed load times its half-element arm is second order in \(dx\). Passing to the limit gives</p>
+<div class="math display">\[\frac{dV}{dx}=-q(x),\qquad \frac{dM}{dx}=V(x).\]</div>
+<p>A point load produces a finite jump in \(V\) and a change of slope in \(M\). The bending moment is continuous there unless an applied concentrated couple acts. On an unloaded interval shear is constant and moment is a straight line. Under uniform loading the moment is parabolic. At a simple end support without an applied end couple the bending moment is zero. These four facts are often enough to find a sign mistake before calculating stress.</p>
+</section>
+<section><h2 id="calculation">Combine a point load and distributed weight</h2>
+<p>Let a simply supported 6.0 m rail carry uniform weight 2.0 kN/m over its full span and a 6.0 kN trolley 2.0 m from the left end. The total downward load is 18 kN. Moment balance about the left gives \(6R_B=12(3)+6(2)=48\) kN·m, so \(R_B=8\) kN and \(R_A=10\) kN. To the left of the trolley, \(V=10-2x\) kN and \(M=10x-x^2\) kN·m for \(x\) in metres. At \(x=2\), \(M=16\) kN·m. Shear falls from 6 kN to zero on crossing the trolley.</p>
+<p>To the right of the trolley, \(V=4-2x\) kN and \(M=10x-x^2-6(x-2)\) kN·m. Shear is negative throughout \(2&lt;x&lt;6\); the moment therefore falls to zero at the right support. The largest bending moment is 16 kN·m under the trolley. At the right end \(V(6^-)=-8\) kN. The upward reaction returns it to zero, another check on the construction.</p>
+</section>
+<section><h2 id="stress">Translate the moment into a fibre stress</h2>
+<p>For a symmetric homogeneous section undergoing small elastic curvature, strain varies linearly through depth. Integrating the moments of the Hookean normal stresses about the neutral axis gives \(M=EI\kappa\). A fibre a distance \(c\) from that axis has stress magnitude \(Mc/I=M/Z\), where \(Z=I/c\) is the section modulus. Take a rectangular section 80 mm wide and 160 mm deep. Then \(Z=bh^2/6=3.41\times10^{-4}\,\mathrm{m^3}\), giving a nominal bending stress of 46.9 MPa under the trolley. At a positive sagging moment the bottom is in tension. A local wheel-contact stress or weld stress requires its own length scale and model.</p>
+</section>
+<section><h2 id="applied-couple">What jumps under an applied couple?</h2>
+<p>A concentrated transverse force produces a jump in shear. A concentrated moment produces a jump in the bending-moment diagram. For example, apply only a clockwise couple of 4 kN m midway along a 2 m simply supported beam. Global moment equilibrium gives a right reaction of 2 kN upwards and a left reaction of 2 kN downwards. The shear stays at −2 kN between supports. The moment thus falls from zero to −2 kN m on the left half, jumps to +2 kN m at the couple and falls to zero at the right support. The two zero end moments provide a check on the jump direction.</p>
+</section>
+<section><h2 id="moving-load">Derive an influence line at a fixed section</h2>
+<p>A bending-moment diagram follows a fixed loading pattern along a beam. A travelling wheel poses the converse question: how does the moment at one strain gauge vary as the load crosses the span? Take a simply supported beam of span \(L\) and a downward point load \(P\) located at \(z\) from the left support. Equilibrium gives \(R_A=P(L-z)/L\). Keep the section coordinate \(a\) fixed while changing \(z\). The moment at \(a\) must be evaluated from a cut that contains the wheel only if the wheel lies to its left.</p>
+<p>When \(z&lt;a\), the moment is \(R_Aa-P(a-z)\); when \(z&gt;a\), it is \(R_Aa\). Divide through by \(P\) to obtain an influence ordinate \(i_M\), whose units are length. The two linear expressions agree when the wheel crosses the gauge:</p>
+<div class="math display">\[i_M(z)=\begin{cases}z(L-a)/L,&amp;0\le z\le a,\\ a(L-z)/L,&amp;a\le z\le L.\end{cases}\]</div>
+<p>The ordinate is zero when the force is directly over a support and reaches \(a(L-a)/L\) at the gauge. For a distributed load \(w(z)\) the moment is the integral of \(w i_M\) because a short loaded length contributes \(w(z)\,dz\) of force. This is an application of superposition in a beam with fixed geometry and fixed support conditions. A support that lifts off would invalidate the same influence line.</p>
+</section>
+<section><h2 id="tandem">Place a pair of unequal wheels to maximise one reading</h2>
+<p>Consider a 6 m span with a gauge at \(a=2.0\,\mathrm m\). A carriage has a front wheel carrying 8 kN and a rear wheel carrying 4 kN, a fixed 1.5 m behind it. It travels towards increasing \(z\). To maximise the moment, move both loads along the triangular influence line. The weighted sum is piecewise linear in carriage position, so its maximum occurs at a change of slope or over a level interval. The changes happen when a wheel enters the span, passes the gauge or exits. There is no need to sample many intermediate positions.</p>
+<p>With the front wheel over the gauge the rear wheel is at 0.50 m. The ordinates are \(2(4)/6=1.333\) m and \(0.5(4)/6=0.333\) m, giving \(M=8(1.333)+4(0.333)=12.0\,\mathrm{kN\,m}\). With the rear over the gauge the front is at 3.5 m. Its ordinate is \(2(6-3.5)/6=0.833\) m, and the moment is \(4(1.333)+8(0.833)=12.0\,\mathrm{kN\,m}\) again. Between these positions the front contribution falls at \(8(2/6)\) kN for each metre moved, exactly balancing the rear contribution rising at \(4(4/6)\) kN per metre. The peak is a plateau, so several carriage positions give exactly the same design moment at this gauge.</p>
+<p>For a narrow strain gauge on the bottom fibre of a symmetric elastic cross-section, the measured strain follows this moment history through \(\varepsilon=M y/(EI)\). Once the two wheels straddle the gauge, a flat measured strain interval is therefore physically plausible even though both wheels continue moving. A gauge near another section has a different influence line and need not show the same plateau.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/engineering-mechanics/problem-sheets/1/">Problem sheet 1 · Equilibrium and axial compatibility</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/04-beam-deflection/">Chapter 4 · Elastic curves and virtual work</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

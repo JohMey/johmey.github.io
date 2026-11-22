@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free bodies, moments and support reactions · OneSimulation</title>
+<meta name="description" content="Replace a distributed load by its force and moment, then determine which reactions a support can supply.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/01-equilibrium/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Free bodies, moments and support reactions · OneSimulation">
+<meta property="og:description" content="Replace a distributed load by its force and moment, then determine which reactions a support can supply.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/01-equilibrium/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Free bodies, moments and support reactions</h1><p class="lead">Replace a distributed load by its force and moment, then determine which reactions a support can supply.</p><p class="byline">Chapter 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#isolate">Choose the body before writing equations</a><a href="#balance">Sum forces and moments</a><a href="#calculation">Weigh a platform with a triangular load</a><a href="#shifting">Predict the next scale reading</a><a href="#verification">Find the load position from the reactions</a><a href="#contact-reactions">Determine when an assumed contact can exist</a><a href="#sliding-or-tipping">Decide which motion starts first on a test stand</a><a href="#worked-plot">Locate a trolley from two support reactions</a></nav></aside><article class="prose reference"><section><h2 id="isolate">Choose the body before writing equations</h2>
+<p>A platform scale under a shelf can read more than the weight placed directly above it. The measurement depends on all the other supports and the locations of all the applied forces. To predict it, imagine removing the shelf from its surroundings. Replace each lost contact by the force or couple that the surroundings could exert. Internal forces between parts of the isolated body cancel in pairs. The choice of boundary determines which forces are internal.</p>
+<p>In a planar model a smooth roller on a horizontal track supplies one vertical reaction. A pin supplies two force components and admits rotation. A clamp supplies both force components and a reaction moment. A cable pulls along its length. A roller simply resting on a track can push, but a negative calculated upward reaction would require a hold-down or a change of contact. These restrictions are part of the physical model, even before a single number is inserted.</p>
+</section>
+<section><h2 id="balance">Sum forces and moments</h2>
+<p>A rigid body at rest satisfies \(\sum F_x=\sum F_y=0\) and \(\sum M_O=0\) about any point \(O\). In two dimensions, a force applied at \((x,y)\) contributes \(xF_y-yF_x\) to the moment about the origin. Adopt positive upward force and counterclockwise moment throughout. Taking moments about a pin eliminates its two unknown forces at once. A specified couple has the same signed moment about every origin and contributes zero resultant force.</p>
+<p>For a vertical load distributed with downward intensity \(q(x)\) in N/m, a strip of width \(dx\) supplies \(q(x)\,dx\). Adding the strips gives the force magnitude \(W=\int q(x)\,dx\). Its clockwise moment magnitude about the left end is \(\int xq(x)\,dx\). The equivalent line of action therefore passes through \(\bar x=\int xq(x)\,dx/W\). This replacement preserves the external reactions. When finding an internal force at a cut, integrate only the load actually lying on the chosen side.</p>
+</section>
+<section><h2 id="calculation">Weigh a platform with a triangular load</h2>
+<p>A 4.0 m platform is pinned at its left end A and supported by a roller at B at its right end. Bulk material forms a triangular pile, loading the platform with intensity rising linearly from zero at A to 3.0 kN/m at B. A 2.0 kN crate sits 1.0 m from A. Platform self-weight has already been tared off. Write \(q(x)=q_Bx/L\). Integration gives \(W=q_BL/2=6.0\) kN and \(\bar x=(q_BL^2/3)/W=2L/3=2.667\) m. The resultant is closer to the heavily loaded end.</p>
+<div class="math display">\[4B_y-6(2.667)-2(1)=0,\qquad A_y+B_y=8.0\ {\rm kN}.\]</div>
+<p>The right reaction is 4.50 kN and the left is 3.50 kN. There is no applied horizontal force, so \(A_x=0\). Check independently about B: the clockwise effect of the left reaction is \(3.50(4)=14.0\) kN·m and the two weights give the opposite moment \(6(1.333)+2(3)=14.0\) kN·m. Replacing the triangle by a uniform load of equal total weight would pass a force check and fail this moment check.</p>
+</section>
+<section><h2 id="shifting">Predict the next scale reading</h2>
+<p>Move the crate 0.50 m to the right. Its force is unchanged, but its moment about A increases by 1.0 kN·m. The right reaction therefore rises by \(1.0/4.0=0.25\) kN and the left falls by the same amount. In practice this relation lets two load cells measure both weight and the position of a moving load. It assumes a stable support arrangement with known moment arms. Three vertical supports under a rigid platform introduce an extra unknown. Their individual readings then require information about deflections and support stiffness, which equilibrium alone cannot supply.</p>
+</section>
+<section><h2 id="verification">Find the load position from the reactions</h2>
+<p>An inverse problem uses the same equilibrium equations. A 2.0 m simply supported rail carries a single unknown load and sensors read 900 N at the left and 300 N at the right after taring the empty rail. The total applied downward load is 1200 N. Taking moments about the left support gives its position as \(300(2.0)/1200=0.50\,\mathrm m\). Repeating this reasoning for a distributed load gives the position of its resultant but cannot reconstruct its detailed distribution.</p>
+</section>
+<section><h2 id="contact-reactions">Determine when an assumed contact can exist</h2>
+<p>A support symbol on paper often hides a condition on the direction of its reaction. A dry foot resting on a horizontal floor can push on the floor, but it cannot pull the floor upwards. A stationary contact can transmit a range of tangential forces up to its friction limit. These statements convert an ordinary equilibrium problem into one with inequalities. First derive the forces required to maintain the proposed configuration. Then ask whether the contact can supply them. Assigning the maximum friction before writing equilibrium would generally give the wrong answer for a stationary body.</p>
+<p>Consider a rectangular machine base supported on two narrow feet a distance \(b\) apart. Its centre of mass lies midway between them, its weight is \(W\), and a horizontal force \(P\) acts to the right at height \(h\). Write upward contact forces \(N_L,N_R\). Neglect the thickness of the contact patches and consider only motion in the vertical plane. Vertical equilibrium requires \(N_L+N_R=W\). Taking moments about the midpoint between feet eliminates both unknown friction forces, which act along the floor. The right foot gains normal load as the left one loses it:</p>
+<div class="math display">\[(N_R-N_L)b/2=Ph,\qquad N_L=W/2-Ph/b,\qquad N_R=W/2+Ph/b .\]</div>
+<p>Both feet stay in contact only while \(P\le Wb/(2h)\). If both have the same coefficient \(\mu\), their combined available friction is \(\mu(N_L+N_R)=\mu W\). Thus impending tip and impending slip are distinct limiting states. The precise sharing of tangential load between the feet depends on their compliance; these three rigid-body equations alone need not fix it.</p>
+</section>
+<section><h2 id="sliding-or-tipping">Decide which motion starts first on a test stand</h2>
+<p>A movable test stand weighs 1800 N. Its feet are 0.80 m apart and the technician pushes horizontally on a handle 1.20 m above the floor. Suppose the measured static friction coefficient is 0.45. At a push of 400 N, the load shifts by \(400(1.20)/0.80=600\,\mathrm N\) to the right. The left reaction is 300 N and the right reaction is 1500 N. The available 810 N of total friction exceeds 400 N; a static configuration is possible. A calculation assigning each foot a friction force of 405 N would nevertheless violate the individual 135 N friction limit on the lightly loaded left foot.</p>
+<p>Increase the push gradually. The tip threshold is \(1800(0.80)/[2(1.20)]=600\,\mathrm N\), below the 810 N sliding threshold. At 600 N the right foot alone carries 1800 N; the required friction ratio there is \(600/1800=0.333\), within the measured friction limit. Now relocate the handle to 0.60 m. The calculated tip threshold doubles to 1200 N, so the base begins sliding at 810 N while both feet still carry weight. The dividing height follows directly from equating both thresholds, \(h=b/(2\mu)=0.889\,\mathrm m\). Lowering the handle changes the rotational demand without changing the total horizontal force that floor friction can transmit.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Locate a trolley from two support reactions</h2>
+<p>A simply supported 6 m runway weighs 12 kN uniformly and carries an 18 kN trolley. Take moments about the left support to find \(R_B\,6=12(3)+18a\). Then close the vertical force balance. Suppose the right load cell reads 18 kN. Where is the trolley?</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/engineering-mechanics/01-equilibrium.png" alt="Locate a trolley from two support reactions. Horizontal axis: Trolley position from left support (m). Vertical axis: Vertical reaction (kN). Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Subtracting the 6 kN permanent-load reaction leaves 12 kN on the right, placing the trolley at 4 m. The two readings must sum to 30 kN at every position. A constant bias in both sensors would violate this independent check.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/engineering-mechanics/01-equilibrium.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Vertical reaction (kN) at selected values of Trolley position from left support (m).</caption><thead><tr><th scope="col">Trolley position from left support (m)</th><th scope="col">Left support</th><th scope="col">Right support</th></tr></thead><tbody><tr><th scope="row">0</th><td>24</td><td>6</td></tr><tr><th scope="row">1.5</th><td>19.5</td><td>10.5</td></tr><tr><th scope="row">3</th><td>15</td><td>15</td></tr><tr><th scope="row">4.5</th><td>10.5</td><td>19.5</td></tr><tr><th scope="row">6</th><td>6</td><td>24</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/engineering-mechanics/01-equilibrium.csv" download>Download all 121 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/engineering-mechanics/">Course contents</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/02-axial-deformation/">Chapter 2 · Axial stress, strain and compatibility</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

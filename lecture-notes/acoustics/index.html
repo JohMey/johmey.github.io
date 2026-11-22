@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which notes can a closed room sustain? · OneSimulation</title>
+<meta name="description" content="Apply rigid-wall conditions to the wave equation and predict the frequencies and shapes of standing sound waves.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/acoustics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Which notes can a closed room sustain? · OneSimulation">
+<meta property="og:description" content="Apply rigid-wall conditions to the wave equation and predict the frequencies and shapes of standing sound waves.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/acoustics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/course/#oscillations">Waves and oscillations</a> / Acoustics</p><h1>Which notes can a closed room sustain?</h1><p class="lead">Apply rigid-wall conditions to the wave equation and predict the frequencies and shapes of standing sound waves.</p><p class="prerequisites"><strong>Prerequisites</strong> Sinusoidal waves and partial derivatives.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">From a pressure disturbance to a wave</a><a href="#boundary">Fit a wave between rigid walls</a><a href="#worked">Locate the lowest note and its silent plane</a><a href="#tutorial">Tutorial on listening positions and room shape</a><a href="#numerical">Optional numerical comparison</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">From a pressure disturbance to a wave</h2>
+<p>A loudspeaker sweeps through a range of pitches in a closed room. At a few frequencies the pressure response depends strongly on where the listener stands. To predict those frequencies, first consider air at rest with uniform density \(\rho_0\) and sound speed \(c\). Let \(p\) be a small pressure disturbance and \(\mathbf u\) the particle velocity.</p>
+<p>Pressure differences accelerate a parcel of air. Compression raises its density and, through the adiabatic relation \(p=c^2\rho'\), its pressure. Linear momentum and mass conservation therefore give</p>
+<div class="math display">\[\rho_0\,\partial_t\mathbf u=-\nabla p,\qquad
+\partial_t p=-\rho_0c^2\nabla\cdot\mathbf u.\]</div>
+<p>Differentiate the pressure equation in time and substitute the velocity equation to obtain \(\partial_{tt}p=c^2\nabla^2p\). A standing wave has a pressure shape \(P(\mathbf x)\) whose amplitude oscillates in time. Substituting \(p=P\cos(\omega t)\) gives \(\nabla^2P+(\omega/c)^2P=0\).</p>
+</section>
+<section>
+<h2 id="boundary">Fit a wave between rigid walls</h2>
+<p>At a fixed wall the normal air velocity stays zero, so momentum balance gives \(\partial_n P=0\). Along a box of length \(L_x\), a shape \(\cos(k_xx)\) has zero derivative at the first wall. The opposite wall requires \(\sin(k_x L_x)=0\), or \(k_x=n_x\pi/L_x\). Applying the same argument in the other directions gives products of three cosines and frequencies</p>
+<div class="math display">\[f_{n_x n_y n_z}=\frac{c}{2}\sqrt{(n_x/L_x)^2+(n_y/L_y)^2+(n_z/L_z)^2}.\]</div>
+<p>The indices are nonnegative integers. A zero index means uniform pressure along that direction. All three zero together give a static pressure offset. Uniform, lossless air and perfectly rigid walls give sharp resonances. In a real room, absorption also sets how long each note rings.</p>
+</section>
+<section>
+<h2 id="worked">Locate the lowest note and its silent plane</h2>
+<p>Consider a box of \(1.0\times0.7\times0.5\) m filled with air at \(c=343\) m/s. The longest dimension allows the longest half-wave. The lowest positive frequency is \(f_{100}=343/(2\times1.0)=171.5\) Hz. Its pressure shape is proportional to \(\cos(\pi x/L_x)\). The end walls have opposite pressure signs at each peak, and the midplane \(x=0.50\) m is a pressure node. A microphone on that plane can miss this mode entirely.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial on listening positions and room shape</h2>
+<h3>1. Can a microphone distinguish two modes?</h3>
+<p>Find the frequency of mode \((1,1,0)\). Choose a point that detects this mode and a point where it vanishes but the lowest mode still has a strong signal.</p>
+<details><summary>Solution to the microphone placement</summary><p>The frequency is \(171.5\sqrt{1+(1/0.7)^2}=299.1\) Hz. The shape is proportional to \(\cos(\pi x/1.0)\cos(\pi y/0.7)\), independent of height. Both modes have a pressure maximum in magnitude at the corner \(x=y=0\). Move along the end wall to \(y=0.35\) m. The second factor vanishes while the lowest mode’s first factor stays at 1.</p></details>
+<h3>2. Split a shared resonance</h3>
+<p>Find two distinct axial modes at 343 Hz. Raise the ceiling from 0.50 m to 0.55 m while keeping the other dimensions fixed. What would a frequency sweep resolve?</p>
+<details><summary>Solution to the ceiling change</summary><p>The original modes \((2,0,0)\) and \((0,0,1)\) fit two half-waves along \(x\) and one half-wave along \(z\), respectively. After raising the ceiling, the first remains at 343 Hz and the second falls to \(343/(2\times0.55)=311.8\) Hz. The original shared frequency was a consequence of the room dimensions. A suitable source and microphone can now resolve two distinct peaks if losses are small enough.</p></details>
+</section>
+<section>
+<h2 id="numerical">Optional numerical comparison</h2>
+<p>In the rigid-box calculation, discard the spatially constant mode and compare the lowest positive frequency with 171.5 Hz. Use a 1% relative error as a first check. Inspect the corresponding pressure shape for a node at \(x=0.50\) m. Its overall sign and amplitude can vary with eigenvector normalisation. <a href="/blog/rigid_box_acoustic_modes/">OneSimulation example of rigid-box modes</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/lecture-notes/optics/">Why does reflected light become polarised?</a></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

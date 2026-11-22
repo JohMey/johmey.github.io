@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wave resolution and verification · OneSimulation</title>
+<meta name="description" content="Prescribe the first time level of a vibrating string, measure a convergence order and decide what a residual reveals under grid refinement.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/problem-sheets/3/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wave resolution and verification · OneSimulation">
+<meta property="og:description" content="Prescribe the first time level of a vibrating string, measure a convergence order and decide what a residual reveals under grid refinement.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/problem-sheets/3/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Wave resolution and verification</h1><p class="lead">Prescribe the first time level of a vibrating string, measure a convergence order and decide what a residual reveals under grid refinement.</p><p class="byline">Problem sheet 3 · Chapters 5 and 6</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#release-a-mode-from-rest">Release a mode from rest</a><a href="#quantify-a-grid-dependent-observable">Quantify a grid-dependent observable</a><a href="#relate-flux-jumps-to-a-residual-indicator">Relate flux jumps to a residual indicator</a></nav></aside><article class="prose reference"><section>
+<h2 id="release-a-mode-from-rest">Release a mode from rest</h2>
+<p>For a unit string with fixed ends take initial shape \(u_i^0=\sin(\pi i/N)\) and initial velocity zero. Derive the factor relating \(u_i^1\) to \(u_i^0\) for the centred wave scheme with Courant number \(C\). Evaluate it for \(N=4,\ C=0.5\).</p>
+<details><summary>Worked solution</summary>
+<p>The central second difference of the sine is \(-4\sin^2(\pi/(2N))u_i^0\) before dividing by \(h^2\). The first-step Taylor formula therefore gives \(u_i^1=[1-2C^2\sin^2(\pi/(2N))]u_i^0\).</p>
+<p>At \(N=4,C=0.5\), the factor is \(1-0.5\sin^2(\pi/8)=0.92678\). Copying the initial displacement instead would omit the physical acceleration produced by the curved shape.</p>
+</details>
+</section>
+<section>
+<h2 id="quantify-a-grid-dependent-observable">Quantify a grid-dependent observable</h2>
+<p>A computed outflow on meshes \(h,h/2,h/4\) is 2.080, 2.020 and 2.005 W. Assuming an asymptotic \(Q_h=Q+c h^p\), estimate \(p\), the extrapolated flux and the fine-grid error. Can those figures alone demonstrate conservation to the same tolerance?</p>
+<details><summary>Worked solution</summary>
+<p>The successive differences are 0.060 and 0.015 W, whose ratio is 4. Thus \(2^p=4,\ p=2\). Extrapolate \(Q=2.005+(2.005-2.020)/3=2.000\) W, giving estimated fine-grid error +0.005 W.</p>
+<p>A separate conservation check must sum inflows, outflows, sources and storage. A sequence of outflow values can converge cleanly even under a method that systematically loses heat elsewhere.</p>
+</details>
+</section>
+<section>
+<h2 id="relate-flux-jumps-to-a-residual-indicator">Relate flux jumps to a residual indicator</h2>
+<p>A unit rod is approximated by two equal linear elements with nodal values \((0,1,1)\) and \(k=1\). Compute each element’s flux, the flux jump at their interface, and the elementwise second derivative. In a source-free steady model, explain what a check based only on that second derivative would miss.</p>
+<details><summary>Worked solution</summary>
+<p>The slopes are 2 and 0, giving fluxes −2 and 0 in the positive coordinate direction. The right-element flux minus the left-element flux is therefore 2. Second derivatives vanish inside both linear pieces.</p>
+<p>In a source-free steady conductor the same flux must cross the interface from either element. An interior derivative check would report zero inside each element while ignoring the change at the joining node. An indicator including interface flux mismatch detects this loss of balance.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/06-verification/">Chapter 6 · Verification, refinement and local error</a></span><span>Next<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/07-interface-fluxes/">Chapter 7 · Interfaces, contact resistance and Robin data</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

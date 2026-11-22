@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adjoint gradients through a forward solver · OneSimulation</title>
+<meta name="description" content="Differentiate a scalar objective with respect to many parameters without recomputing a separate perturbed solution for each one.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/inverse-problems/chapters/09-adjoint-gradients/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adjoint gradients through a forward solver · OneSimulation">
+<meta property="og:description" content="Differentiate a scalar objective with respect to many parameters without recomputing a separate perturbed solution for each one.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/inverse-problems/chapters/09-adjoint-gradients/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Adjoint gradients through a forward solver</h1><p class="lead">Differentiate a scalar objective with respect to many parameters without recomputing a separate perturbed solution for each one.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#the-state-is-also-a-function-of-the-parameters">The state is also a function of the parameters</a><a href="#transpose-the-solve">Transpose the solve</a><a href="#work-a-two-cell-example">Work a two-cell example</a><a href="#test-the-computed-gradient-in-a-direction">Test the computed gradient in a direction</a><a href="#reverse-a-sequence-of-state-updates">Reverse a sequence of state updates</a><a href="#make-the-transpose-observable-in-a-two-step-calculation">Make the transpose observable in a two-step calculation</a><a href="#worked-plot">Recognise an incorrect gradient by the rate of its remainder</a></nav></aside><article class="prose reference"><section><h2 id="the-state-is-also-a-function-of-the-parameters">The state is also a function of the parameters</h2>
+<p>Suppose a discretised forward model solves \(K(p)u=f(p)\). Data enter through \(Hu\), and observations have been whitened. The objective is \(J=\tfrac12\|Hu-y\|^2+R(p)\). A direct perturbation of a material parameter changes the predicted state even when that parameter never appears in the observation operator. For fixed \(H\), the state derivative contribution is \(g_u^\mathsf{T}du\), with \(g_u=H^\mathsf{T}(Hu-y)\). Differentiating the state equation gives \(K\,du=df-(dK)u\). Solving this equation once per parameter would be prohibitively expensive for a fine material field.</p>
+</section>
+<section><h2 id="transpose-the-solve">Transpose the solve</h2>
+<p>Define an adjoint state by \(K^\mathsf{T}\lambda=g_u\). Then \(g_u^\mathsf{T}du=\lambda^\mathsf{T}K\,du=\lambda^\mathsf{T}[df-(dK)u]\). For each parameter component the gradient is</p>
+<div class="math display">\[\frac{\partial J}{\partial p_j}=\frac{\partial R}{\partial p_j}+\lambda^\mathsf{T}\left(\frac{\partial f}{\partial p_j}-\frac{\partial K}{\partial p_j}u\right).\]</div>
+<p>This uses one forward and one transposed solve for one scalar objective, independent of the number of gradient components. Forming the contractions for all components still costs work, often local to mesh elements. If sensors or boundary conditions also depend explicitly on parameters, their derivative terms must be included. A symmetric diffusion operator may reuse a factorisation; an advection operator need not equal its transpose.</p>
+</section>
+<section><h2 id="work-a-two-cell-example">Work a two-cell example</h2>
+<p>Consider \(K=\left(\begin{smallmatrix}p+1&amp;-1\\-1&amp;2\end{smallmatrix}\right)\), \(f=(1,0)\), and observe the second component with value \(y=0.4\). At \(p=1\), \(u=(2/3,1/3)\), so the residual is \(-1/15\). The adjoint load is \((0,-1/15)\); solving gives \(\lambda=(-1/45,-2/45)\). Only the first diagonal entry of \(K\) depends on \(p\). With no regulariser the derivative is \(-\lambda_1u_1=2/135\). Check independently: \(u_2=1/(2p+1)\), whose derivative at one is \(-2/9\). Multiplying by the residual gives the same positive gradient. Increasing \(p\) lowers an already underpredicted second reading.</p>
+</section>
+<section><h2 id="test-the-computed-gradient-in-a-direction">Test the computed gradient in a direction</h2>
+<p>Pick a physically scaled perturbation \(v\). A correct gradient gives a linear residual \(J(p+hv)-J(p)-h\,g^\mathsf{T}v\) of order \(h^2\) for a smooth problem. Halving \(h\) should roughly quarter this remainder across a useful range. At very small \(h\), forward-solver tolerances and floating-point cancellation can dominate. Repeat with directions touching different components and with the same boundary-condition handling used in production. A close fit to the observed data is a poor gradient test when residuals nearly vanish: a wrong data gradient can then look small by accident. Evaluate at a parameter away from the best fit, solve the state again for each perturbation and compare the resulting objective values. To detect a missing transpose, include a nonsymmetric forward operator in the test. The symmetric two-cell example above can expose a sign error but cannot distinguish the forward matrix from its transpose.</p>
+</section>
+<section>
+<h2 id="reverse-a-sequence-of-state-updates">Reverse a sequence of state updates</h2>
+<p>Suppose the forward solver evolves \(u_{n+1}=G_n(u_n,p)\) for a fixed number of steps, and an objective sums observation losses \(\ell_n(u_n,p)\) from time zero to the final time. The direct chain rule carries a state derivative with respect to every parameter through the entire trajectory. To reverse the calculation, start with \(\lambda_N=\partial_{u_N}\ell_N\) as a column vector. A perturbation \(du_n\) affects both the loss at time \(n\) and the following state by \(G_{n,u}du_n\). Moving the latter action across a dot product gives the recursion \(\lambda_n=\partial_{u_n}\ell_n+G_{n,u}^T\lambda_{n+1}\).</p>
+<p>The parameter gradient is the sum of explicit derivatives of all losses, the initial term \((\partial_p u_0)^T\lambda_0\), and the contributions \(G_{n,p}^T\lambda_{n+1}\) from every step. Each reversed step needs the state information used by its forward counterpart. Storing the whole trajectory makes that information available immediately. Recomputing segments between stored checkpoints trades extra forward evaluations for memory. These formulas differentiate the actual discrete transitions, so an adaptive solver with parameter-dependent step rejection or event switches needs a careful interpretation of the differentiated computation.</p>
+</section>
+<section>
+<h2 id="make-the-transpose-observable-in-a-two-step-calculation">Make the transpose observable in a two-step calculation</h2>
+<p>Take a two-coordinate forward transition \(G(u,p)=Mu+pe_2\), with \(M=\left(\begin{smallmatrix}1&amp;2\\0&amp;1\end{smallmatrix}\right)\), \(u_0=0\), and \(p=1\). Two steps give \(u_1=(0,1)^T\) and \(u_2=(2,2)^T\). Observe the first coordinate only at the end, with target value one. The quadratic loss is one half and its final state derivative is \(\lambda_2=(1,0)^T\). One reverse step gives \(\lambda_1=M^T\lambda_2=(1,2)^T\). The two parameter contributions are \(e_2^T\lambda_2=0\) and \(e_2^T\lambda_1=2\), so the gradient is two.</p>
+<p>The zero contribution from the last injection has a physical meaning: the injected second coordinate can influence the first only during a subsequent transition. The first injection has time to do that through the off-diagonal element two. Using \(M\) in place of \(M^T\) in the backwards calculation would instead keep \(\lambda_1=(1,0)^T\), predicting zero total sensitivity. This example exercises a distinction that disappears when every state matrix is symmetric.</p>
+<p>For a scalar parameter perturbation \(h\), solving both steps again gives terminal first coordinate \(2(1+h)\) and loss \(J(1+h)=(1+2h)^2/2\). The remainder after subtracting the base loss and the predicted linear term is exactly \(2h^2\). For \(h=0.1\) and 0.05 the remainders are 0.02 and 0.005. The erroneous zero gradient instead gives 0.22 and 0.105. The two sequences have very different observed convergence factors even though they use identical forward trajectories and observation data.</p>
+<p>More generally an individual parameter may enter the map at several times with different signs. The corresponding gradient terms must be accumulated rather than overwritten during the backward pass. In this example overwriting after the earliest step happens to return the correct value because the last contribution is zero. Adding a simultaneous observation of the final second coordinate makes both contributions nonzero and provides a complementary regression case for the time-index accumulation.</p>
+<p>For a terminal loss summing both coordinate discrepancies, the adjoint load contains both sensor contributions before the first reverse transition.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Recognise an incorrect gradient by the rate of its remainder</h2>
+<p>Verify the reduced gradient for \(J(p)=(1/(p+2)-0.6)^2/2\) at \(p=1\). For each perturbation solve the scalar equilibrium again and subtract the original objective and the candidate linear term. The sign of the state sensitivity is essential.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/inverse-problems/09-adjoint-gradients.png" alt="Recognise an incorrect gradient by the rate of its remainder. Horizontal axis: Parameter perturbation h. Vertical axis: Absolute Taylor remainder. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>In the range shown the Taylor remainder falls quadratically with the correct gradient and approximately linearly with the reversed one. The use of an analytic scalar model isolates this diagnostic; tolerances in a larger forward solve can mask the small-h regime.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/inverse-problems/09-adjoint-gradients.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Absolute Taylor remainder at selected values of Parameter perturbation h.</caption><thead><tr><th scope="col">Parameter perturbation h</th><th scope="col">Correct gradient</th><th scope="col">Gradient with sign reversed</th></tr></thead><tbody><tr><th scope="row">3e−5</th><td>3.3334e−12</td><td>1.7778e−6</td></tr><tr><th scope="row">0.00028663</th><td>3.0431e−10</td><td>1.6985e−5</td></tr><tr><th scope="row">0.0027386</th><td>2.7795e−8</td><td>0.00016226</td></tr><tr><th scope="row">0.026166</th><td>2.5501e−6</td><td>0.001548</td></tr><tr><th scope="row">0.25</th><td>0.00024107</td><td>0.014574</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/inverse-problems/09-adjoint-gradients.csv" download>Download all 101 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/inverse-problems/problem-sheets/4/">Problem sheet 4 · Which uncertainty came from the experiment?</a></span><span>Next<br><a href="/lecture-notes/numerics/inverse-problems/chapters/10-iterative-regularisation/">Chapter 10 · Iteration as a regulariser</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

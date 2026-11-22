@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vorticity, circulation and swirling flow · OneSimulation</title>
+<meta name="description" content="Distinguish rotation of a fluid element from an orbiting streamline and use radial momentum balance to predict a free-surface shape.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/07-vorticity/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vorticity, circulation and swirling flow · OneSimulation">
+<meta property="og:description" content="Distinguish rotation of a fluid element from an orbiting streamline and use radial momentum balance to predict a free-surface shape.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/07-vorticity/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Vorticity, circulation and swirling flow</h1><p class="lead">Distinguish rotation of a fluid element from an orbiting streamline and use radial momentum balance to predict a free-surface shape.</p><p class="byline">Chapter 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#paddle">Distinguish a particle orbit from local spin</a><a href="#swirl">Compare two angular velocity distributions</a><a href="#tank">Recover pressure and free-surface rise</a><a href="#potential">Construct irrotational flow around a cylinder</a><a href="#cylinder-circulation">Add circulation and predict unequal side pressures</a></nav></aside><article class="prose reference"><section><h2 id="paddle">Distinguish a particle orbit from local spin</h2>
+<p>Drop a small paddle wheel into a swirling tank. Its centre can travel around the tank axis whether or not the wheel itself spins relative to distant reference axes. To measure local rotation, consider two short perpendicular material lines through the same fluid element. In a planar velocity field \((u,v)\), an initially horizontal line rotates at \(\partial v/\partial x\), and an initially vertical line rotates at \(-\partial u/\partial y\), both with counterclockwise positive. Their mean is the local angular velocity, one half the out-of-plane vorticity.</p>
+<div class="math display">\[\omega_z=\partial v/\partial x-\partial u/\partial y,\qquad \Gamma=\oint_C\mathbf v\cdot d\mathbf l=\iint_A\omega_z\,dA .\]</div>
+<p>The second relation is Stokes’ theorem. The curve encloses \(A\) with consistent orientation and the velocity must be regular throughout that surface. Circulation is measured in square metres per second. In a region with zero vorticity a closed curve can still enclose a singular or otherwise excluded core; then the area needed for the usual zero-circulation argument does not lie entirely in that region.</p>
+</section>
+<section><h2 id="swirl">Compare two angular velocity distributions</h2>
+<p>In axisymmetric swirl with only tangential velocity \(v_\theta(r)\), circulation on a circular path is \(2\pi r v_\theta\). Dividing its change between neighbouring rings by the annular area gives \(\omega_z=(1/r)\,d(rv_\theta)/dr\). A forced vortex rotates like a rigid body, \(v_\theta=\Omega r\), with vorticity \(2\Omega\). At radius 0.10 m and angular speed 8 rad/s, its velocity is 0.80 m/s and the circular-path circulation is 0.503 m²/s.</p>
+<p>In a free-vortex exterior \(v_\theta=K/r\); the vorticity is zero at every regular point there although the streamlines are circular. If its velocity at the same radius is also 0.80 m/s, then \(K=0.080\,\mathrm{m^2/s}\). At radius 0.20 m its speed falls to 0.40 m/s, while in the forced vortex the speed rises to 1.60 m/s. Both flows have the same circulation at the original radius. A second measuring circle distinguishes them without an instrument that directly senses local shear.</p>
+</section>
+<section><h2 id="tank">Recover pressure and free-surface rise</h2>
+<p>For steady axisymmetric circular streamlines without radial or vertical motion the radial acceleration points inward with magnitude \(v_\theta^2/r\). Radial momentum balance requires \(dp/dr=\rho v_\theta^2/r\). Vertical equilibrium gives \(\partial p/\partial z=-\rho g\). Along a free surface at uniform ambient pressure their contributions cancel, so \(dz/dr=v_\theta^2/(gr)\). For rigid rotation, integration gives \(z(r)-z(0)=\Omega^2r^2/(2g)\).</p>
+<p>A cylindrical open tank of radius 0.20 m rotating at 8 rad/s has a predicted wall-to-centre rise of \(64(0.20)^2/[2(9.81)]=0.1305\,\mathrm m\). If no water spills, volume conservation places its former flat level halfway between the new centre and rim elevations for this paraboloid. Each shifts by about 65 mm in opposite directions. A nearly full tank will spill instead, and the average-level constraint then changes. A free vortex produces a different surface profile and its singular axis must be replaced by a physical core.</p>
+</section>
+<section><h2 id="potential">Construct irrotational flow around a cylinder</h2>
+<p>Outside a vortex core or boundary layer, a two-dimensional incompressible flow can often be approximated as irrotational. In a simply connected region irrotationality permits a velocity potential with \(\mathbf v=\nabla\phi\), and continuity then requires \(\nabla^2\phi=0\). For a circular cylinder of radius \(a\) in a uniform stream \(U\) along the positive \(x\) direction, try \(\phi=(Ar+B/r)\cos\theta\). The two radial factors solve Laplace’s equation for the angular first harmonic. Matching the distant uniform potential \(Ur\cos\theta\) gives \(A=U\). No penetration requires radial velocity \(\partial_r\phi=0\) at \(r=a\), giving \(B=Ua^2\).</p>
+<div class="math display">\[v_r=U(1-a^2/r^2)\cos\theta,\qquad v_\theta=-U(1+a^2/r^2)\sin\theta .\]</div>
+<p>The boundary has zero normal speed but a nonzero tangential speed. This is consistent with an inviscid slip condition. It does not satisfy the no-slip condition for an actual viscous wall, so predicted surface pressure is meaningful only insofar as outer flow remains attached and nearly irrotational. In a real cylinder wake, separation breaks the fore–aft symmetry of this ideal solution.</p>
+<p>Applying steady Bernoulli relative to the uniform upstream stream gives the surface pressure coefficient \(C_p=1-4\sin^2\theta\). Its values change considerably around the cylinder even though integrating the pressure forces yields zero net drag and lift by symmetry. Zero potential-flow drag does not imply uniform pressure.</p>
+</section>
+<section><h2 id="cylinder-circulation">Add circulation and predict unequal side pressures</h2>
+<p>A mathematical cylinder excludes its interior from the fluid. Superpose a free-vortex velocity \(\Gamma/(2\pi r)\) in the positive counterclockwise direction; this preserves the no-penetration condition while changing circulation around the body. Its sign adds to the negative surface velocity on one side and opposes it on the other. For a 50 mm radius cylinder in air at \(U=10\,\mathrm{m/s}\), choose \(\Gamma=0.50\,\mathrm{m^2/s}\) counterclockwise. The added surface speed is \(0.50/[2\pi(0.050)]=1.59\,\mathrm{m/s}\). At the top the signed tangential speed is −18.41 m/s, and at the bottom it is +21.59 m/s.</p>
+<p>For air density 1.20 kg/m³ the dynamic pressure is 60 Pa. The top and bottom coefficients \(1-(v_\theta/U)^2\) are −2.39 and −3.66, respectively. The lower pressure is now at the bottom, producing downward lift. Integrate \(-p\,n_y a\,d\theta\) around the circumference: the terms even between top and bottom cancel, leaving signed lift per span \(L'=-\rho U\Gamma=-6.0\,\mathrm{N/m}\) for these axes. A rigid-body rotation of the entire fluid would give a different vorticity field; the superposed free vortex has zero local vorticity outside the excluded body. Physical circulation in an experiment depends on how the flow and surface boundary layers are established, and cannot be selected by the potential solution alone.</p>
+<p>The stagnation points satisfy \(\sin\theta=\Gamma/(4\pi aU)\), or 0.0796 here. They shift by about 4.6° from their zero-circulation positions without changing the fact that pressure is highest where speed vanishes. This offers a second observable for estimating circulation, independent of integrating the measured lift, provided the observed surface points reasonably follow the attached outer-flow model.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/fluid-mechanics/problem-sheets/3/">Problem sheet 3 · Viscous transport and similarity</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/08-boundary-layers/">Chapter 8 · Boundary layers and momentum thickness</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

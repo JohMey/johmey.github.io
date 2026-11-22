@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gaussian beams and focusing · OneSimulation</title>
+<meta name="description" content="Relate beam waist, wavefront curvature and divergence, and estimate the focus of a collimated laser beam.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/physics/waves-optics/chapters/11-gaussian-beams/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gaussian beams and focusing · OneSimulation">
+<meta property="og:description" content="Relate beam waist, wavefront curvature and divergence, and estimate the focus of a collimated laser beam.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/physics/waves-optics/chapters/11-gaussian-beams/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/physics/">Physics</a> / <a href="/lecture-notes/physics/waves-optics/">Waves and optics</a></p><h1>Gaussian beams and focusing</h1><p class="lead">Relate beam waist, wavefront curvature and divergence, and estimate the focus of a collimated laser beam.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#diffraction-during-propagation">Diffraction during propagation</a><a href="#invert-the-gaussian-transform">Invert the Gaussian transform</a><a href="#a-focused-spot-with-finite-depth">A focused spot with finite depth</a><a href="#propagate-a-gaussian-that-already-has-curved-wavefronts">Propagate a Gaussian that already has curved wavefronts</a><a href="#reconstruct-a-focus-downstream-of-a-displaced-lens">Reconstruct a focus downstream of a displaced lens</a></nav></aside><article class="prose reference"><section><h2 id="diffraction-during-propagation">Diffraction during propagation</h2>
+<p>A narrow parallel-looking laser beam eventually spreads. Use a scalar monochromatic field \(U=u(x,y,z)e^{ikz}\), with \(u\) changing slowly on the scale of a wavelength. Substitution into the homogeneous Helmholtz equation cancels the largest longitudinal terms. Dropping \(\partial_z^2u\) relative to \(2ik\partial_zu\) gives the paraxial equation</p>
+<div class="math display">\[2ik\,\partial_z u+\nabla_\perp^2u=0 .\]</div>
+<p>This approximation requires a small angular spectrum about the optical axis. The transverse Fourier component with wavevector \(\mathbf q\) acquires phase \(\exp[-iq^2z/(2k)]\). A Gaussian waist field \(u(r,0)=u_0e^{-r^2/w_0^2}\) has a Gaussian angular spectrum proportional to \(\exp(-w_0^2q^2/4)\). On propagation, multiplication by the quadratic phase keeps that spectrum Gaussian with a complex width.</p>
+</section>
+<section><h2 id="invert-the-gaussian-transform">Invert the Gaussian transform</h2>
+<p>Collect its exponent as \(-q^2(w_0^2/4+iz/2k)\) and invert the transverse Fourier transform. The reciprocal complex width determines both the real amplitude decay in \(r\) and the phase curvature. Separating the real and imaginary parts gives</p>
+<div class="math display">\[w(z)=w_0\sqrt{1+(z/z_R)^2},\qquad R(z)=z[1+(z_R/z)^2],\qquad z_R=\pi w_0^2/\lambda .\]</div>
+<p>The convention here defines \(w\) at \(1/e\) of field amplitude and \(1/e^2\) of on-axis intensity. The on-axis intensity falls as \(w_0^2/w^2\) so the transverse integral of intensity stays constant. At a Rayleigh range from the waist the area doubles and the axial intensity halves. At large distance the half-angle divergence approaches \(\theta=\lambda/(\pi w_0)\). Waist size and angular spread therefore cannot be chosen independently for this fundamental mode.</p>
+</section>
+<section><h2 id="a-focused-spot-with-finite-depth">A focused spot with finite depth</h2>
+<p>A collimated ideal Gaussian at 633 nm has \(1/e^2\) intensity radius \(w_{\rm in}=1.00\) mm at a lens of focal length 100 mm. Assume negligible clipping and a nearly flat incident wavefront. The lens converts input radius into convergence angle \(w_{\rm in}/f=0.0100\) rad. Equating this angle to the far-field Gaussian divergence gives \(w_0\simeq\lambda f/(\pi w_{\rm in})=20.1\) μm. The focused Rayleigh range is \(2.01\) mm. At axial displacement 4.02 mm the spot radius grows to about \(45.0\) μm and the axial intensity drops to a fifth.</p>
+<p>Increasing the input radius by a factor of two halves the waist while reducing Rayleigh range by four. This trade matters when illuminating a sample extending several millimetres along the beam. A hard aperture that clips substantial power reshapes the angular spectrum, so this simple product no longer predicts the entire spot. A measured waist and divergence with product exceeding \(\lambda/\pi\) can also signal imperfect mode quality. Radius measurements must use the same intensity convention before making that comparison.</p>
+<p>Two radius measurements equidistant from a proposed waist should give the same result for an ideal beam. If they do not, first refine the estimate of waist position. Multiple axial samples can be fitted to \(w^2(z)=w_0^2[1+(z-z_0)^2/z_R^2]\) to infer the waist plane and divergence simultaneously. Power falling through an aperture, however, also depends on the beam centre. A beam walking sideways past a fixed detector can imitate a growing radius unless beam position is measured independently. Recording transverse profiles instead of only total collected power makes this distinction observable.</p>
+</section>
+<section><h2 id="propagate-a-gaussian-that-already-has-curved-wavefronts">Propagate a Gaussian that already has curved wavefronts</h2>
+<p>An input to a lens is often converging or diverging before reaching the lens. Its radius alone then cannot determine the new waist. Combine wavefront curvature and intensity radius in a complex beam parameter \(q\) defined by \(1/q=1/R-i\lambda/(\pi w^2)\). In homogeneous space the solution to the paraxial wave equation has \(q=z-z_0+i z_R\), where \(z_0\) is the waist plane and \(z_R&gt;0\) the Rayleigh range. Straight propagation through distance \(d\) therefore adds \(d\) to \(q\).</p>
+<p>A thin positive lens multiplies the field by a quadratic phase that changes curvature according to \(1/R_{\rm out}=1/R_{\rm in}-1/f\) and leaves transverse intensity unchanged at the lens. Combining its two effects in the definition gives</p>
+<div class="math display">\[\frac1{q_{\rm out}}=\frac1{q_{\rm in}}-\frac1f .\]</div>
+<p>More generally free propagation and lenses act through the same real ray matrices used for first-order geometrical optics. Composing their actions on \(q\) gives \(q_{\rm new}=(Aq+B)/(Cq+D)\). To locate a subsequent waist in free space, propagate until the real part of \(q\) is zero. Its positive imaginary part then supplies \(z_R\), hence the new waist radius. This construction retains finite diffraction and avoids predicting a singular geometric focus.</p>
+</section>
+<section><h2 id="reconstruct-a-focus-downstream-of-a-displaced-lens">Reconstruct a focus downstream of a displaced lens</h2>
+<p>An ideal beam of wavelength 633 nm has an initial Rayleigh range 100 mm. Its input waist is 50.0 mm upstream of a lens of focal length 100 mm. At the lens \(q_{\rm in}=50.0+i100\) mm, so \(1/q_{\rm in}=0.00400-i0.00800\) mm⁻¹. Subtracting \(1/f=0.0100\) mm⁻¹ gives \(1/q_{\rm out}=-0.00600-i0.00800\) mm⁻¹. On inversion \(q_{\rm out}=-60.0+i80.0\) mm. The waist is 60.0 mm after the lens and has Rayleigh range 80.0 mm.</p>
+<p>At this new waist \(w_0=\sqrt{\lambda z_R/\pi}=0.127\) mm. At the lens the outgoing parameter predicts \(w=w_0\sqrt{1+(60/80)^2}=0.159\) mm, the same incident radius obtained from the original 100 mm Rayleigh range and 50 mm propagation. This consistency check tests both the signs and the continuity of intensity. Treating the incident beam as fully collimated would place the waist close to the focal plane and miss its measured position by tens of millimetres. In the limit \(f\to\infty\) the reciprocal correction vanishes and the original waist and curvature are recovered. A measured beam profile at several axial planes can distinguish this finite-curvature effect from a simple error in the stated lens focal length.</p>
+<p>The complex parameter can be recovered experimentally from intensity alone if enough axial profiles are recorded. Fit squared radius to a quadratic in position, locate its minimum to obtain the waist plane, and infer Rayleigh range from how rapidly that squared radius increases on either side. A separately measured wavelength then predicts the relation between fitted waist radius and divergence for a fundamental Gaussian. If the fitted values violate that relation beyond uncertainty, the more likely problems include a higher-order mode contribution, clipping or an inconsistent radius definition. Simply adjusting the lens focal length cannot repair all three discrepancies at once.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/physics/waves-optics/problem-sheets/5/">Problem sheet 5 · Orders, linewidths and spectral identity</a></span><span>Next<br><a href="/lecture-notes/physics/waves-optics/chapters/12-stellar-interferometry/">Chapter 12 · Measuring a star with interference</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

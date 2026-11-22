@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nonlinear estimates and experimental design · OneSimulation</title>
+<meta name="description" content="Distinguish a successful optimisation step from a reliable parameter estimate and a prediction that generalises.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/inverse-problems/problem-sheets/3/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nonlinear estimates and experimental design · OneSimulation">
+<meta property="og:description" content="Distinguish a successful optimisation step from a reliable parameter estimate and a prediction that generalises.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/inverse-problems/problem-sheets/3/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Nonlinear estimates and experimental design</h1><p class="lead">Distinguish a successful optimisation step from a reliable parameter estimate and a prediction that generalises.</p><p class="byline">Problem sheet 3 · Chapters 5 and 6</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#1-one-step-two-possible-answers">1. One step, two possible answers</a><a href="#2-which-two-measurement-conditions">2. Which two measurement conditions?</a><a href="#3-read-a-fit-as-a-prediction">3. Read a fit as a prediction</a></nav></aside><article class="prose reference"><section><h2 id="1-one-step-two-possible-answers">1. One step, two possible answers</h2>
+<p>For \(r(p)=p^2-4\), (a) compute the Gauss–Newton steps from \(p=1\) and \(p=-1\). (b) Compare the actual and linear predicted residuals after the positive-start step. (c) Explain what happens from \(p=0\), and why one local standard error cannot describe all possibilities.</p>
+<details><summary>Inspect the slope at each starting point</summary>
+<p>The step is \(-r/(2p)\) for \(p\ne0\). It is \(+1.5\) at 1 and \(-1.5\) at −1. From 1 the linear model predicts residual zero, whereas \(r(2.5)=2.25\). Its magnitude still decreased from 3. At zero the derivative vanishes, and the linear model predicts no improvement in any direction. The two separated exact solutions \(+2,-2\) produce distinct local uncertainty regions unless physics fixes the sign.</p>
+</details>
+</section>
+<section><h2 id="2-which-two-measurement-conditions">2. Which two measurement conditions?</h2>
+<p>In dimensionless whitened coordinates each design may add two rows. Compare \(J_A=\left(\begin{smallmatrix}1&amp;0\\1&amp;0\end{smallmatrix}\right)\) and \(J_B=\left(\begin{smallmatrix}1&amp;-0.5\\1&amp;0.5\end{smallmatrix}\right)\). (a) Determine each information matrix and rank. (b) Find the uncertainty of the second parameter under design B and after repeating the whole design four independent times. (c) Relate the calculation to measuring decay only at a reference temperature.</p>
+<details><summary>Compute the information added by each row</summary>
+<p>Design A gives \(\operatorname{diag}(2,0)\), rank one. Design B gives \(\operatorname{diag}(2,0.5)\), rank two. In the local linear unit-noise model the second parameter has variance 2, hence standard deviation \(\sqrt2\). Four independent copies multiply information by four and halve that standard deviation. At the reference temperature the Arrhenius activation derivative vanishes. More sampling at that one temperature cannot recover the missing direction.</p>
+</details>
+</section>
+<section><h2 id="3-read-a-fit-as-a-prediction">3. Read a fit as a prediction</h2>
+<p>Use the <a href="/lecture-notes/numerics/inverse-problems/#experiment">temperature-design experiment</a>. (a) Compute the narrow-to-wide standard-error ratio for \(E\) at fixed noise. (b) Compare the wide-range fit error with its own standard error using the known 115 kJ/mol truth. (c) Design a validation that tests a new temperature and one that tests noise calibration.</p>
+<details><summary>Change a single condition per comparison</summary>
+<p>The ratio is \(1.4300/0.3636=3.93\). For the wide, lower-noise fit the signed error is \(114.0367-115=-0.9633\) kJ/mol, about \(-2.65\) reported standard errors. This is one draw; it does not estimate the long-run coverage fraction. To assess transfer, hold out a complete temperature series, fit the others and predict that entire curve. To assess noise calibration, repeat the same design with many independent seeds and compare scatter or interval coverage against the local uncertainty calculation.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/inverse-problems/chapters/06-design-and-validation/">Chapter 6 · Design an informative experiment and test its predictions</a></span><span>Next<br><a href="/lecture-notes/numerics/inverse-problems/chapters/07-bayesian-inversion/">Chapter 7 · Bayesian inversion and the information supplied by a prior</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

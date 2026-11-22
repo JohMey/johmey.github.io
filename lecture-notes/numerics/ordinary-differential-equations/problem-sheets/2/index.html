@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damping and multistep memory · OneSimulation</title>
+<meta name="description" content="Locate a stability region, compare two implicit formulas in the stiff limit and test whether a recurrence transports initial errors consistently.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/ordinary-differential-equations/problem-sheets/2/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Damping and multistep memory · OneSimulation">
+<meta property="og:description" content="Locate a stability region, compare two implicit formulas in the stiff limit and test whether a recurrence transports initial errors consistently.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/ordinary-differential-equations/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Damping and multistep memory</h1><p class="lead">Locate a stability region, compare two implicit formulas in the stiff limit and test whether a recurrence transports initial errors consistently.</p><p class="byline">Problem sheet 2 · Chapters 3 and 4</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#separate-positivity-from-decay">Separate positivity from decay</a><a href="#switch-off-a-stiff-transient">Switch off a stiff transient</a><a href="#diagnose-a-parasitic-solution">Diagnose a parasitic solution</a></nav></aside><article class="prose reference"><section>
+<h2 id="separate-positivity-from-decay">Separate positivity from decay</h2>
+<p>A mode obeys \(y'=-4y\). Starting at one, find the first two forward Euler values for steps 0.2, 0.35 and 0.55. Classify the histories by sign and decay, and find the exact positive-step threshold for each property.</p>
+<details><summary>Worked solution</summary>
+<p>The three factors \(1-4h\) are 0.2, −0.4 and −1.2. The first two values are respectively \((0.2,0.04)\), \((-0.4,0.16)\) and \((-1.2,1.44)\). The first sequence is nonnegative and decreasing, the second sign-changing with decreasing magnitude, and the third sign-changing with growing magnitude.</p>
+<p>For positive steps, nonnegative propagation requires \(h\leq0.25\); decay of magnitudes requires \(h&lt;0.5\). At 0.5 the amplitude remains one while the sign alternates.</p>
+</details>
+</section>
+<section>
+<h2 id="switch-off-a-stiff-transient">Switch off a stiff transient</h2>
+<p>At a proposed step, a fast mode has \(z=-50\). Compute its factors under backward Euler and the trapezoidal method, and the magnitude after two steps. Which would you use when the desired late-time response should no longer contain the fast mode?</p>
+<details><summary>Worked solution</summary>
+<p>Backward Euler gives \(1/51=0.01961\), hence \(1/2601=0.0003845\) after two steps. Trapezoidal gives \((1-25)/(1+25)=-12/13\), hence \(144/169=0.8521\) in magnitude after two steps. The physical magnitude is \(e^{-100}\).</p>
+<p>Backward Euler suppresses this unresolved transient much more strongly. If the early transient itself were the observable, reducing the step would remain necessary even with the more strongly damping formula.</p>
+</details>
+</section>
+<section>
+<h2 id="diagnose-a-parasitic-solution">Diagnose a parasitic solution</h2>
+<p>For \(y'=0\), a proposed two-step recurrence gives \(y_{n+2}-2y_{n+1}+y_n=0\). Start at \(y_0=1,y_1=1+\epsilon\). Obtain \(y_n\) and compare with BDF2 from the same values. Which can bound the propagated starting error independently of step count?</p>
+<details><summary>Worked solution</summary>
+<p>The characteristic polynomial is \((z-1)^2\). Solving for the constants in \(a+bn\) gives \(y_n=1+n\epsilon\); the starting error grows linearly with step count.</p>
+<p>BDF2 gives \(y_n=a+b(1/3)^n\). The initial conditions yield \(b=-3\epsilon/2\), \(a=1+3\epsilon/2\). Its departure from one stays bounded by \(1.5|\epsilon|\) for all \(n\). Two simple roots behave differently from a repeated unit root even when all root magnitudes are at most one.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/ordinary-differential-equations/chapters/04-multistep/">Chapter 4 · Multistep formulas and parasitic modes</a></span><span>Next<br><a href="/lecture-notes/numerics/ordinary-differential-equations/chapters/05-adaptive-steps/">Chapter 5 · Adaptive steps and event locations</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

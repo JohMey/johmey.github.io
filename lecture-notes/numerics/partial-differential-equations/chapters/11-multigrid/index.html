@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multigrid and coarse-grid correction · OneSimulation</title>
+<meta name="description" content="Combine smoothing with a coarse residual equation and compute which components a two-grid correction can remove exactly.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/11-multigrid/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multigrid and coarse-grid correction · OneSimulation">
+<meta property="og:description" content="Combine smoothing with a coarse residual equation and compute which components a two-grid correction can remove exactly.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/11-multigrid/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Multigrid and coarse-grid correction</h1><p class="lead">Combine smoothing with a coarse residual equation and compute which components a two-grid correction can remove exactly.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#two-kinds-of-persistent-error">Two kinds of persistent error</a><a href="#derive-the-correction">Derive the correction</a><a href="#compute-one-correction-by-hand">Compute one correction by hand</a><a href="#coarse-linear-solves-do-not-have-to-be-exact-at-every-level">Coarse linear solves do not have to be exact at every level</a><a href="#predict-a-smoothing-failure-in-anisotropic-diffusion">Predict a smoothing failure in anisotropic diffusion</a><a href="#evaluate-an-error-mode-ignored-by-the-ordinary-two-grid-cycle">Evaluate an error mode ignored by the ordinary two-grid cycle</a></nav></aside><article class="prose reference"><section>
+<h2 id="two-kinds-of-persistent-error">Two kinds of persistent error</h2>
+<p>For a uniform Dirichlet grid let \(A_h\) be the positive three-point approximation to \(-u''\). A smooth algebraic error changes slowly between adjacent nodes. Its local residual can be modest even when its amplitude is appreciable. High-frequency errors have large second differences and respond rapidly to a suitable relaxation sweep. Weighted Jacobi uses \(u\leftarrow u+\omega D^{-1}(f-A_hu)\), with diagonal \(D=2I/h^2\). On a sine mode of grid angle \(\theta\) its error multiplier is \(1-\omega(1-\cos\theta)\).</p>
+<p>For \(\omega=2/3\), this multiplier lies between \(-1/3\) and \(1/3\) for angles between \(\pi/2\) and \(\pi\). Low angles have multipliers near one, so repeated sweeps alone cost increasingly many iterations as the grid is refined. Those surviving smooth errors can often be represented on a coarser mesh. The purpose of restricting a residual is to solve an error equation for that representation.</p>
+</section>
+<section>
+<h2 id="derive-the-correction">Derive the correction</h2>
+<p>Let \(P\) interpolate coarse values to the fine grid and \(R\) restrict a fine vector. Choose the Galerkin coarse operator \(A_H=RA_hP\). Given current residual \(r=f-A_hu\), solve \(A_He_H=Rr\) and add \(Pe_H\). If the true error is precisely \(Pv\), the right-hand side equals \(A_Hv\). An exact coarse solve recovers \(v\) and removes the entire error in one correction. For general errors the new residual satisfies \(Rr_{\rm new}=0\); high-frequency components may remain on the fine grid.</p>
+</section>
+<section>
+<h2 id="compute-one-correction-by-hand">Compute one correction by hand</h2>
+<p>Take \(h=1/4\) with three interior fine nodes and one interior coarse node at the midpoint. Linear interpolation is \(P=(1/2,1,1/2)^T\), and full weighting gives \(R=P^T/2\). The fine operator is 16 times the tridiagonal matrix with diagonal 2 and off-diagonal −1. Multiplication gives \(A_hP=(0,16,0)^T\) and \(A_H=8\). Suppose \(u=0\) and the exact fine solution is \(P\), so the load is \((0,16,0)^T\). The restricted residual is 8. The coarse correction returns the coefficient one and removes the error exactly.</p>
+<p>For error \(e=(1,0,-1)^T\), the fine residual is \(32e\), whose restriction is zero. The coarse grid cannot correct this component. Its grid angle is \(\pi/2\), so one weighted Jacobi sweep leaves \(e/3\). These two vectors demonstrate why combining the two operations matters. Repeating the idea recursively gives a V-cycle. With a fixed number of smoothing steps per level, geometrically shrinking grids have total work proportional to the finest number of unknowns, provided coarse solvers and transfers also have linear cost. Good convergence rates still depend on smoothing and approximation properties for the actual operator.</p>
+</section>
+<section>
+<h2 id="coarse-linear-solves-do-not-have-to-be-exact-at-every-level">Coarse linear solves do not have to be exact at every level</h2>
+<p>In the three-node example with fine error \(P\), suppose an approximate coarse solve returns 0.9 instead of one. The correction leaves \(0.1P\), so the restricted residual falls from 8 to 0.8. A recursive V-cycle effectively uses one approximate correction of this kind on intermediate levels; only the smallest system is usually solved directly. Measure the residual reduction per cycle across a family of grids. A roughly constant work per unknown is valuable only if the number of cycles required for a fixed reduction also remains controlled.</p>
+</section>
+<section>
+<h2 id="predict-a-smoothing-failure-in-anisotropic-diffusion">Predict a smoothing failure in anisotropic diffusion</h2>
+<p>For the operator \(-\alpha u_{xx}-\beta u_{yy}\) on an equal-spacing Cartesian grid, weighted point Jacobi has error multiplier</p>
+<div class="math display">\[g(\theta_x,\theta_y)=1-\omega\frac{\alpha(1-\cos\theta_x)+\beta(1-\cos\theta_y)}{\alpha+\beta}.\]</div>
+<p>This follows by substituting a Fourier error mode into the tridiagonal second differences in each direction and dividing by the diagonal \(2(\alpha+\beta)/h^2\). Algebraic smoothness depends on the coefficients, while representability on a coarse mesh depends on geometric sampling. Under strong anisotropy a mode highly oscillatory in the weak direction can produce little residual relative to the diagonal and therefore survive point relaxation. A standard coarse interpolation space may also fail to represent it.</p>
+<p>A line smoother solves all strongly coupled unknowns along a row together. Its block diagonal retains the horizontal second differences and the diagonal part of the vertical coupling. Modes constant along that row see no horizontal stiffness after applying the block, so the scale of their correction is set by the weaker vertical coupling rather than the large point diagonal. Alternatively, semicoarsening retains fine resolution in a direction in which troublesome oscillations must remain representable. The correct choice depends on the orientation of the anisotropy relative to the actual mesh.</p>
+</section>
+<section>
+<h2 id="evaluate-an-error-mode-ignored-by-the-ordinary-two-grid-cycle">Evaluate an error mode ignored by the ordinary two-grid cycle</h2>
+<p>Take a periodic grid with an even number of rows, \(\alpha=100,\ \beta=1,\ \omega=2/3\), and error \(e_{ij}=(-1)^j\), constant along each row. Its discrete horizontal curvature is zero and its vertical curvature has eigenvalue \(4/h^2\). Point Jacobi divides by \(202/h^2\), giving \(g=1-4/(303)=299/303\approx0.9868\). Ten sweeps still leave about \(0.876\) of the error amplitude. Geometrically the mode is as oscillatory as the grid permits, yet pointwise smoothing barely changes it.</p>
+<p>Full weighting in the vertical direction uses weights \(1/4,1/2,1/4\). Applied to the alternating signs it gives zero, so the restricted residual also vanishes and an ideal coarse solve receives no information about this error. This calculation identifies a concrete failure of the usual assumption that all components missed by coarsening have already been strongly damped. A high-quality coarse linear solve cannot repair a zero coarse right-hand side.</p>
+<p>For a horizontal line Jacobi block the horizontal part contributes zero on a row-constant vector, leaving block eigenvalue \(2/h^2\). The preconditioned error-mode eigenvalue is now \((4/h^2)/(2/h^2)=2\), and a damped line sweep has multiplier \(1-(2/3)2=-1/3\). Ten such sweeps reduce the amplitude to \(1/59049\). Each line sweep costs more than a point sweep, so the practical comparison also depends on implementation and geometry. The dramatic contrast in this mode calculation explains which coupling the extra solve is buying and why iteration counts alone are insufficient for benchmarking.</p>
+<p>For diagonal anisotropy the identity of a strongly coupled row can change as the material rotates across the grid. A line relaxation designed only for horizontal coupling may then lose its advantage in another subdomain. Compare mode or patch tests aligned with several local principal directions before generalising the success of the horizontal example.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/partial-differential-equations/problem-sheets/5/">Problem sheet 5 · Transport weights and pressure spaces</a></span><span>Next<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/12-output-errors/">Chapter 12 · Adjoints and errors in a chosen output</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gaussian quadrature and exactness · OneSimulation</title>
+<meta name="description" content="Choose quadrature nodes from moment conditions, prove the polynomial exactness of Gauss rules and map a reference rule to a finite element.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/chapters/05-gaussian-rules/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gaussian quadrature and exactness · OneSimulation">
+<meta property="og:description" content="Choose quadrature nodes from moment conditions, prove the polynomial exactness of Gauss rules and map a reference rule to a finite element.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/chapters/05-gaussian-rules/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Gaussian quadrature and exactness</h1><p class="lead">Choose quadrature nodes from moment conditions, prove the polynomial exactness of Gauss rules and map a reference rule to a finite element.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#spend-samples-where-they-are-most-useful">Spend samples where they are most useful</a><a href="#prove-the-general-degree-claim">Prove the general degree claim</a><a href="#transfer-the-rule-into-a-physical-element">Transfer the rule into a physical element</a><a href="#distinguish-a-load-integral-from-a-stiffness-integral">Distinguish a load integral from a stiffness integral</a><a href="#retain-both-endpoints-and-derive-the-best-three-point-rule">Retain both endpoints and derive the best three-point rule</a><a href="#contrast-endpoint-inclusion-with-free-node-placement">Contrast endpoint inclusion with free node placement</a><a href="#worked-plot">Does a high polynomial degree resolve a narrow peak?</a></nav></aside><article class="prose reference"><section>
+<h2 id="spend-samples-where-they-are-most-useful">Spend samples where they are most useful</h2>
+<p>When the integrand is a callable function, quadrature nodes need not coincide with pre-existing sensors. A rule with \(n\) distinct nodes and \(n\) weights has \(2n\) scalar parameters. Can these integrate every polynomial through degree \(2n-1\)? Merely counting parameters does not prove existence. The Gauss construction supplies nodes for a positive weight function on an interval and establishes the exactness by orthogonality.</p>
+<p>Start on \([-1,1]\) with a symmetric two-node rule of the form \(w[f(-c)+f(c)]\). Testing the constant function gives \(2w=2\), hence \(w=1\). Symmetry automatically integrates the odd monomials \(x,x^3\). Testing \(x^2\) gives \(2c^2=2/3\), or \(c=1/\sqrt3\). These four independent moment conditions establish exactness on every cubic by linearity. Testing \(x^4\) produces \(2/9\), whereas its integral is \(2/5\). The error appears at degree four exactly as the parameter count suggested.</p>
+</section>
+<section>
+<h2 id="prove-the-general-degree-claim">Prove the general degree claim</h2>
+<p>Let \(P_n\) be the degree-\(n\) orthogonal polynomial for the prescribed positive integration weight \(w(x)\). Use its \(n\) distinct interior zeros as nodes. Define the weights by integrating the Lagrange basis on these nodes, so every polynomial of degree at most \(n-1\) is already integrated exactly. To treat any polynomial \(f\) of degree at most \(2n-1\), divide it by \(P_n\), giving \(f=P_n q+r\) with \(\deg q,\deg r\leq n-1\).</p>
+<p>The integral of \(P_nq\) vanishes by orthogonality, and every quadrature evaluation of that product vanishes because the nodes are zeros of \(P_n\). Both the integral and the rule therefore reduce to the same value for \(r\). This proves exactness. There is a sharp obstruction to one extra degree: \(P_n^2\) is nonnegative, positive except at finitely many points, and all its sampled values vanish. Its positive integral cannot be reproduced by this rule. Positivity of the individual Gauss weights follows by applying exactness to the square of each Lagrange basis polynomial.</p>
+</section>
+<section>
+<h2 id="transfer-the-rule-into-a-physical-element">Transfer the rule into a physical element</h2>
+<p>An element \([a,b]\) is obtained by the affine change \(x=m+\ell \xi\), with midpoint \(m=(a+b)/2\), half-length \(\ell=(b-a)/2\), and \(dx=\ell\,d\xi\). Both the node locations and their weights change. For \([2,4]\), the two physical nodes are \(3\pm1/\sqrt3\), with unit physical weights. The integral of \(x^3\) is \((4^4-2^4)/4=60\). Summing the nodal cubes gives \(2\cdot3^3+6\cdot3(1/3)=60\). A missing Jacobian would escape detection on this particular element where \(\ell=1\); test a second element of a different length.</p>
+<p>In a linear finite element with constant density, each consistent mass entry integrates a product of two linear basis functions, hence a quadratic. Two Gauss points integrate it exactly. On a unit element the true mass matrix has diagonal \(1/3\) and off-diagonal \(1/6\). Using just the midpoint makes all four entries \(1/4\). The alternating nodal vector \((1,-1)^T\) then has zero discrete mass although its interpolated field has a positive squared integral. This loss of a mode is a practical consequence of insufficient quadrature. With curved mappings or varying coefficients, determine the degree and smoothness of the entire transformed integrand before reusing a quadrature order.</p>
+</section>
+<section>
+<h2 id="distinguish-a-load-integral-from-a-stiffness-integral">Distinguish a load integral from a stiffness integral</h2>
+<p>On the same unit element, a constant axial stiffness integrand made from two derivatives of linear shape functions is itself constant. A single midpoint therefore reproduces the stiffness exactly, despite failing for the consistent mass. If \(EA(x)=1+x^2\), the same midpoint now approximates its integral by 1.25, whereas the exact result is \(4/3\). The difference is \(1/12\) in the chosen units. A rule sufficient for one element contribution may thus be insufficient for another in the same analysis.</p>
+<p>To select a quadrature order systematically, multiply out the shape functions or their derivatives, coefficient field and mapping Jacobian in the reference coordinate. For discontinuous coefficients, a single smooth polynomial degree may not exist on the entire element. Splitting at the interface, or integrating separate material subcells, then addresses the modelling geometry more directly than increasing the polynomial exactness of one unbroken-panel rule.</p>
+</section>
+<section>
+<h2 id="retain-both-endpoints-and-derive-the-best-three-point-rule">Retain both endpoints and derive the best three-point rule</h2>
+<p>Some instruments already provide readings at the ends of every panel, or adjacent elements need to communicate values at a shared boundary. If endpoints must be quadrature nodes, the unrestricted Gaussian degree \(2n-1\) is generally unavailable. To see the obstruction on \([-1,1]\) with \(n\) nodes including both ends, form the polynomial \((1-x^2)\prod_{\rm interior}(x-x_j)^2\). It vanishes at every evaluation point and is nonnegative throughout the interval. Its true integral is positive but every quadrature rule using just these values returns zero. Its degree is \(2n-2\), so exactness can extend at most through \(2n-3\).</p>
+<p>For three symmetric nodes the interior point is zero. Symmetry forces equal endpoint weights \(a\), with central weight \(b\). Reproducing the constants and the square gives \(2a+b=2\) and \(2a=2/3\), so \(a=1/3,\ b=4/3\). Odd powers integrate to zero by symmetry, hence the rule is exact through degree three, attaining its constrained upper bound. Under affine mapping this is the three-node Gauss–Lobatto rule, also known as the single-panel Simpson rule. Its weights and node placement now follow directly from a measurement constraint and a moment calculation.</p>
+</section>
+<section>
+<h2 id="contrast-endpoint-inclusion-with-free-node-placement">Contrast endpoint inclusion with free node placement</h2>
+<p>Consider the local mass entry on one dimensionless interval \([-1,1]\) for a quadratic middle-node shape function \(\phi(x)=1-x^2\) and uniform density. Its exact consistent mass contribution is \(\int\phi^2dx=\int(1-2x^2+x^4)dx=2-4/3+2/5=16/15\). The endpoint-constrained three-node rule sees values \(0,1,0\), giving \(4/3\), an overestimate of \(4/15\), or 25 percent. The discrepancy arises solely from the quartic term. For a quadratic field, reproducing the field at all interpolation nodes does not imply correct integration of its square.</p>
+<p>A three-point Gauss rule has free nodes at zero and \(\pm\sqrt{3/5}\), with weights \(8/9,5/9,5/9\). The outer samples have \(\phi^2=(1-3/5)^2=4/25\). Their total contribution is \(2(5/9)(4/25)=8/45\); adding \(8/9\) recovers \(16/15\). In a nodal element the endpoint-constrained rule makes off-diagonal mass entries vanish when basis functions are evaluated only at their own interpolation nodes. This diagonal mass approximation facilitates explicit updates even while changing the exact form.</p>
+<p>Selecting either rule is therefore a physical and numerical modelling choice. A modal frequency depends on the ratio of stiffness energy to mass energy, so changing one mass entry may shift computed frequencies even if a static patch test passes. If the density varies across the element, include its degree or smoothness in the integrand before claiming exactness from polynomial degree counting. A discontinuity inside a panel defeats this counting argument until the integration interval is split.</p>
+<p>As a check on assembly, sum all rows of the mass matrix. The shape functions form a partition of unity, so the total mass of a constant field is the integral of the density. The nodal diagonal rule reproduces this total for uniform density despite the incorrect middle diagonal entry just calculated. Testing the mass of a constant alone would therefore fail to expose the approximation affecting internal motion.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Does a high polynomial degree resolve a narrow peak?</h2>
+<p>Integrate \(1/(x^2+a^2)\) on \([-1,1]\). The exact answer is \(2\arctan(1/a)/a\). Use the ordinary Legendre nodes without centring a separate subinterval on the peak; vary only its half-width \(a\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/approximation-and-quadrature/05-gaussian-rules.png" alt="Does a high polynomial degree resolve a narrow peak?. Horizontal axis: Gauss–Legendre nodes. Vertical axis: Absolute integration error. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Odd orders sample the centre directly and even orders straddle it. When the peak is narrow both can be substantially wrong despite high polynomial exactness. Choosing subintervals that resolve the physical width can help more than an extra node.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/approximation-and-quadrature/05-gaussian-rules.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Absolute integration error at selected values of Gauss–Legendre nodes.</caption><thead><tr><th scope="col">Gauss–Legendre nodes</th><th scope="col">Peak half-width 0.12</th><th scope="col">Peak half-width 0.35</th><th scope="col">Peak half-width 0.7</th></tr></thead><tbody><tr><th scope="row">1</th><td>114.7</td><td>9.2744</td><td>1.3386</td></tr><tr><th scope="row">3</th><td>39.347</td><td>1.742</td><td>0.090369</td></tr><tr><th scope="row">5</th><td>19.029</td><td>0.41492</td><td>0.0066724</td></tr><tr><th scope="row">8</th><td>6.0323</td><td>0.051839</td><td>0.00013401</td></tr><tr><th scope="row">10</th><td>3.9106</td><td>0.013187</td><td>9.8795e−6</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/approximation-and-quadrature/05-gaussian-rules.csv" download>Download all 10 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/approximation-and-quadrature/problem-sheets/2/">Problem sheet 2 · Smooth pieces and integrated loads</a></span><span>Next<br><a href="/lecture-notes/numerics/approximation-and-quadrature/chapters/06-adaptive-integration/">Chapter 6 · Adaptive integration and error estimates</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

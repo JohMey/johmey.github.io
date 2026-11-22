@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regularisation, resolution and the price of stability · OneSimulation</title>
+<meta name="description" content="Choose which features to recover, derive the associated filter and quantify the bias introduced by that choice.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/inverse-problems/chapters/04-regularisation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Regularisation, resolution and the price of stability · OneSimulation">
+<meta property="og:description" content="Choose which features to recover, derive the associated filter and quantify the bias introduced by that choice.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/inverse-problems/chapters/04-regularisation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Regularisation, resolution and the price of stability</h1><p class="lead">Choose which features to recover, derive the associated filter and quantify the bias introduced by that choice.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#two-ways-to-control-the-unstable-inverse">Two ways to control the unstable inverse</a><a href="#calculate-the-bias-and-variance-for-one-component">Calculate the bias and variance for one component</a><a href="#choose-what-the-penalty-expresses">Choose what the penalty expresses</a><a href="#choose-a-strength-from-measurements-then-report-resolution">Choose a strength from measurements, then report resolution</a><a href="#when-a-specified-discrepancy-determines-a-unique-strength">When a specified discrepancy determines a unique strength</a><a href="#allocate-a-discrepancy-after-accounting-for-an-unmodelled-reading">Allocate a discrepancy after accounting for an unmodelled reading</a></nav></aside><article class="prose reference"><section><h2 id="two-ways-to-control-the-unstable-inverse">Two ways to control the unstable inverse</h2>
+<p>A truncated SVD keeps only the first \(k\) singular vectors ordered by decreasing singular value. All retained coefficients are inverted exactly; the others are set to zero. Its noiseless reconstruction is a projection onto the retained right-singular subspace. The choice is transparent but a hard cutoff can place two comparably informative directions on opposite sides of the threshold. In some spatial reconstructions sharp spectral cutoffs also introduce oscillations.</p>
+<p>A smoother choice is zero-order Tikhonov regularisation. In scaled parameters and whitened measurements minimise \(\|Bx-b\|^2+\lambda^2\|x\|^2\) for \(\lambda&gt;0\). Differentiation gives \((B^\mathsf{T}B+\lambda^2 I)x_\lambda=B^\mathsf{T}b\). Solve with an augmented QR or with the SVD. Each coefficient now carries a filter:</p>
+<div class="math display">\[x_\lambda=\sum_j\frac{\sigma_j}{\sigma_j^2+\lambda^2}(u_j^\mathsf{T}b)v_j,\qquad f_j=\frac{\sigma_j^2}{\sigma_j^2+\lambda^2}.\]</div>
+<p>If \(b=Bx\) exactly, the estimate of \(v_j^\mathsf{T}x\) is the true coefficient times \(f_j\). Where \(\sigma_j=\lambda\) the noiseless amplitude is halved. For a very small singular value, the noise gain now approaches zero; the price is that a real fine-scale feature in the same direction is also suppressed.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/mode-filters.png" width="1264" height="720" loading="lazy" alt="A smooth Tikhonov curve rises through one half at a singular value equal to lambda; a truncated singular-value filter jumps from zero to one there."><figcaption>Noiseless resolution of an individual singular mode. A value of one half means that the inversion retains half of the true amplitude, even with perfect data.</figcaption></figure>
+</section>
+<section><h2 id="calculate-the-bias-and-variance-for-one-component">Calculate the bias and variance for one component</h2>
+<p>Suppose a scalar instrument reads \(b=0.1x+\epsilon\), true \(x=2\), with noise standard deviation 0.1. Direct inversion gives an unbiased estimate with standard deviation 1. At \(\lambda=0.1\) the filter is \(1/2\); the estimated mean is 1 and the standard deviation is 0.5. Mean squared error is bias squared plus variance: 1.25 here, compared with 1 for direct inversion. For true \(x=0\) the same regularisation would reduce mean squared error from 1 to 0.25. Stabilising an estimate does not guarantee a smaller error for every possible signal. The importance assigned to plausible signals is part of the modelling decision.</p>
+</section>
+<section><h2 id="choose-what-the-penalty-expresses">Choose what the penalty expresses</h2>
+<p>For an expected background \(x_0\) and a derivative operator \(D\), a suitable criterion may use \(\|D(x-x_0)\|^2\). A first-difference penalty discourages adjacent jumps while leaving constants unpenalised; a second-difference penalty instead leaves affine trends unpenalised on a simple uniform open grid. The minimiser is unique if \(\ker B\cap\ker D=\{0\}\) for \(\lambda&gt;0\). Check this condition before interpreting a smooth result. Penalising a field whose true behaviour has a sharp interface spreads the interface; inspect the response to a synthetic sharp feature before claiming a physical transition width.</p>
+</section>
+<section><h2 id="choose-a-strength-from-measurements-then-report-resolution">Choose a strength from measurements, then report resolution</h2>
+<p>If a bound \(\delta\) for the whitened data error is known, the discrepancy principle seeks a fit whose residual norm is comparable to \(\delta\). Smaller \(\lambda\) usually fits data more closely; larger values raise residual and reduce the penalised norm. A noise level estimated in the original physical units must be transformed consistently. If model error alone exceeds the assumed discrepancy, no amount of careful parameter tuning makes the noise model correct. Other choices include validation on genuinely independent observations and examining the residual-versus-penalty curve across several decades.</p>
+<p>Report the chosen operator, units, strength and selection criterion. Alongside a reconstruction, show how its resolution changes under a modest change of regularisation. A feature that vanishes under a noise-consistent alternative requires more evidence. A predicted quantity can remain stable despite substantial uncertainty in the underlying image; testing that quantity directly can be the scientifically relevant validation.</p>
+<p>Per Christian Hansen develops the singular-value picture and parameter choice further in <a href="https://people.compute.dtu.dk/pcha/DIPbook.html">Discrete Inverse Problems</a>.</p></section>
+<section>
+<h2 id="when-a-specified-discrepancy-determines-a-unique-strength">When a specified discrepancy determines a unique strength</h2>
+<p>Consider the zero-background quadratic penalty and express the data in left singular coordinates \(b_j\). Substituting the filtered solution back into the forward model gives residual coefficient \(\lambda^2 b_j/(\sigma_j^2+\lambda^2)\), with the sign chosen as data minus prediction. The data component \(b_\perp\) orthogonal to the range of the matrix survives unchanged for every strength. Orthogonality therefore expresses the squared discrepancy as \(\|b_\perp\|^2+\sum_j |b_j|^2[\lambda^2/(\sigma_j^2+\lambda^2)]^2\), with the sum taken over positive singular values. This equation allows a statement more definite than the heuristic that smoothing worsens the fit.</p>
+<p>For each positive singular value the quantity in brackets increases strictly from zero to one as \(\lambda\) grows from zero to infinity. Thus the residual norm increases continuously from the irreducible distance \(\|b_\perp\|\) to the full data norm. There is a unique positive finite strength for every target strictly between these endpoints provided at least one measured singular component is nonzero. A target below the first endpoint is infeasible. A target near the upper endpoint can permit a nearly zero reconstruction. The exact same reasoning for general penalties needs care when some physical modes receive no penalty.</p>
+</section>
+<section>
+<h2 id="allocate-a-discrepancy-after-accounting-for-an-unmodelled-reading">Allocate a discrepancy after accounting for an unmodelled reading</h2>
+<p>A scaled instrument produces \(b=(3,1)^T\) for a single unknown \(x\), with predictions \(Bx=(2x,0)^T\). The second channel, which should be zero according to the stated model, already consumes one unit of residual norm. Set a total target of \(\sqrt{1.36}\) and use the zero-background criterion. Squaring the norm leaves \(1.36-1=0.36\) for the squared discrepancy in channel one. The required nonnegative first-coordinate discrepancy is therefore 0.6. Its prediction is \(3-0.6=2.4\), so the reconstructed coefficient must be 1.2.</p>
+<p>Check by solving the actual penalised problem. The normal equation is \((4+\lambda^2)x=6\). Substituting \(x=1.2\) gives \(4+\lambda^2=5\), hence \(\lambda=1\). The noiseless resolution factor for that coefficient is \(4/(4+1)=0.8\). This calculation identifies the amplitude tradeoff associated with the selected discrepancy. It also shows why setting the target to 0.9 could never work: the second channel alone contributes one unit for every value of \(x\).</p>
+<p>Suppose a second independent reading of the missing channel also repeatedly lies near one, despite a nominal uncertainty of only 0.05 units. The persistent signed defect would be evidence to inspect the forward model or reference subtraction. Treating that behaviour as an excuse to enlarge the noise budget can produce an attainable discrepancy while systematically oversmoothing the channel that does measure \(x\). Inspect residuals by physical observation as well as their aggregate norm before attributing a discrepancy-selected strength to the uncertainty of the instrument.</p>
+<p>In this example the formula for arbitrary strength is \(x=6/(4+\lambda^2)\). Differentiating it shows that near \(\lambda=1\) a strength increase of 0.1 initially lowers the coefficient by about 0.048. This local sensitivity is another interpretable number to publish if the noise target is itself estimated from a short calibration series.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/inverse-problems/chapters/03-singular-systems/">Chapter 3 · Singular systems and the amplification of noise</a></span><span>Next<br><a href="/lecture-notes/numerics/inverse-problems/problem-sheets/2/">Problem sheet 2 · Spectral filtering and recoverable detail</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

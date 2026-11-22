@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iterative refinement and backward error · OneSimulation</title>
+<meta name="description" content="Recover accuracy from an approximate factorisation and determine when a small residual genuinely certifies a linear solve.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/chapters/11-refinement/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Iterative refinement and backward error · OneSimulation">
+<meta property="og:description" content="Recover accuracy from an approximate factorisation and determine when a small residual genuinely certifies a linear solve.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/chapters/11-refinement/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Iterative refinement and backward error</h1><p class="lead">Recover accuracy from an approximate factorisation and determine when a small residual genuinely certifies a linear solve.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-correction-equation">A correction equation</a><a href="#diagonal-model-for-imperfect-factors">Diagonal model for imperfect factors</a><a href="#asking-which-equation-was-solved">Asking which equation was solved</a><a href="#a-stopping-decision">A stopping decision</a><a href="#separate-data-accuracy-from-solve-accuracy">Separate data accuracy from solve accuracy</a><a href="#track-residual-error-through-the-correction-equation">Track residual error through the correction equation</a><a href="#resolve-a-correction-lost-in-a-cancellation">Resolve a correction lost in a cancellation</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-correction-equation">A correction equation</h2>
+<p>Suppose a large matrix has already been factored at modest precision. Let \(x\) be the resulting approximation and recompute \(r=b-Ax\) using the original coefficients. The exact missing correction solves \(Ad=r\). Reusing the approximate factors is cheap because the expensive elimination has finished. If their effective matrix is \(M\), one refinement step solves \(Md=r\) and updates \(x\leftarrow x+d\). Forming the residual from the factors themselves could erase the very discrepancy being measured.</p>
+<p>With \(e=x_\star-x\), the residual equals \(Ae\) in exact arithmetic. Substitution yields \(e_{\mathrm{new}}=(I-M^{-1}A)e\). Thus a sufficient convergence condition in a chosen induced norm is \(\|I-M^{-1}A\|&lt;1\). The size of the initial error affects how many corrections are needed, while the quality of the approximate inverse controls the contraction. The availability of more accurate residual arithmetic matters once cancellation in \(b-Ax\) competes with the true defect.</p>
+</section>
+<section>
+<h2 id="diagonal-model-for-imperfect-factors">Diagonal model for imperfect factors</h2>
+<p>Take \(A=\operatorname{diag}(3,7)\), \(b=(3,7)^T\), and use \(M=\operatorname{diag}(3,8)\) throughout. The first approximate solve gives \(x_0=(1,0.875)^T\). Its residual is \((0,0.875)^T\), and the inexpensive correction is \((0,0.109375)^T\). Hence the second component becomes 0.984375. The corresponding errors in that coordinate decrease from \(1/8\) to \(1/64\). Each further update divides the error by eight because \(1-7/8=1/8\). The exact first component stays fixed.</p>
+<p>If the incorrect factor were 3 instead of 8 in the second equation, its error multiplier would be \(1-7/3=-4/3\). Iterating would alternate across the solution with increasing amplitude. Extra residual accuracy could reveal that failure promptly but could never turn this correction matrix into a contraction.</p>
+</section>
+<section>
+<h2 id="asking-which-equation-was-solved">Asking which equation was solved</h2>
+<p>A backward error asks for the smallest perturbation of the input for which the computed vector is exact. For relative, componentwise changes to both coefficients and load, \(|\Delta A|\leq\eta|A|\) and \(|\Delta b|\leq\eta|b|\), the rowwise correction must absorb \(r_i\). The triangle inequality bounds its capacity by \(\eta(|A||x|+|b|)_i\). Choosing perturbation signs independently within each row attains this capacity, giving</p>
+<div class="math display">\[\eta=\max_i\frac{|r_i|}{(|A||x|+|b|)_i}.\]</div>
+<p>A row with zero denominator and zero residual contributes zero. In the example's second row the initial backward error is \(0.875/(7\cdot0.875+7)=1/15\), even though its forward error is one eighth of the true component. After one correction the denominator is 13.890625 and the residual is 0.109375. The resulting backward error is \(1/127\). Uniformly changing that row's units leaves both ratios unchanged.</p>
+</section>
+<section>
+<h2 id="a-stopping-decision">A stopping decision</h2>
+<p>Record the residual obtained using the original data and monitor the size of each accepted correction. Once the residual is comparable to accumulated rounding in its evaluation, more corrections may stagnate. A small backward error then certifies compatibility with nearly identical equations. Converting it to a forward accuracy statement also needs sensitivity information about those equations and the particular output of interest.</p>
+</section>
+<section>
+<h2 id="separate-data-accuracy-from-solve-accuracy">Separate data accuracy from solve accuracy</h2>
+<p>Suppose the second load in the diagonal example was measured as \(7.00\pm0.07\). Even an exact linear solve then gives a second coordinate known only to about 0.01. The initial solve error of 0.125 matters relative to that scale. Two corrections already reduce this error to about 0.00195. Further corrections improve the numerical solution of the nominal input but cannot resolve variation in the measured load. Stating both uncertainties clarifies the practical value of the last digits.</p>
+</section>
+<section>
+<h2 id="track-residual-error-through-the-correction-equation">Track residual error through the correction equation</h2>
+<p>Let the approximate correction solve use a nonsingular matrix \(M\). Suppose residual evaluation returns \(\hat r=Ae+\delta r\), where \(\delta r\) includes accumulated rounding, and the state update has an additional absolute error \(\delta x\). One correction yields \(e_{\rm new}=(I-M^{-1}A)e-M^{-1}\delta r-\delta x\) if \(e=x_\star-x\). A contraction \(\|I-M^{-1}A\|\le q&lt;1\) shrinks the first term, but every iteration injects new errors. If their combined effect is bounded by \(d\), induction gives \(\|e_k\|\le q^k\|e_0\|+d(1-q^k)/(1-q)\).</p>
+<p>This inequality separates an initial geometric improvement from a possible long-run floor. A residual-evaluation bound must use scales of the terms being subtracted, such as \(|b|+|A||x|\), rather than the size of the tiny mathematical residual alone. Also distinguish errors in evaluating the residual from the final rounding of \(x+d\): very small corrections may be accurate but cannot change a stored state if they fall below its local spacing. Computing residuals in higher precision helps only when that residual error is a limiting contribution.</p>
+</section>
+<section>
+<h2 id="resolve-a-correction-lost-in-a-cancellation">Resolve a correction lost in a cancellation</h2>
+<p>Consider the decimal thought experiment \(1000x_1+x_2=1001,\ x_1+x_2=2\), whose exact state is \((1,1)^T\). Store the candidate \((1.00,0.990)^T\) and evaluate terms using three significant decimal digits with rounding to nearest. Even if the original input coefficients and load are kept exactly, evaluating the first row naively makes \(1000+0.990\) round to \(1.00\times10^3\); the rounded representation of the right-hand side 1001 is also \(1.00\times10^3\). A residual assembled entirely in that low precision therefore sees a first component of zero. The second component, \(2-1.99=0.01\), remains visible.</p>
+<p>Computing the residual using the original data with adequate precision gives \((0.01,0.01)^T\). Subtracting these two correction equations yields \(999d_1=0\), hence \(d_1=0,\ d_2=0.01\), recovering the exact state in one exact correction solve. If instead the low-precision residual \((0,0.01)^T\) is used with the same exact correction matrix, subtraction yields \(999d_1=-0.01\), giving \(d_1\approx-0.00001001,\ d_2\approx0.01001001\). Part of the estimated correction is now allocated to a coordinate that was already exact.</p>
+<p>The example uses an exact correction solve to isolate the residual effect. Low-precision factors introduce a separate perturbation. If 1001 had first been irreversibly stored as 1000 in the only surviving copy of the problem, later high-precision arithmetic could not restore the intended equation. Preserving the original coefficients and loads is therefore part of the method whenever refinement is expected to recover accuracy relative to higher-precision input data.</p>
+<p>One can estimate which digit was lost without rerunning the solve. The absolute first-row summands have total magnitude about one thousand, while their desired residual is one hundredth. The computation is extracting a quantity roughly one hundred thousand times smaller than its large terms. By comparison the corresponding factor in the second row is only a few hundred. Precision can therefore be inadequate in one equation long before it limits the others.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/linear-algebra/problem-sheets/5/">Problem sheet 5 · Graphs and search spaces</a></span><span>Next<br><a href="/lecture-notes/numerics/linear-algebra/chapters/12-schur-complements/">Chapter 12 · Eliminating constraints with Schur complements</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

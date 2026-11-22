@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Optimal state feedback and the Riccati equation · OneSimulation</title>
+<meta name="description" content="Choose how heavily to penalise tracking error and actuator effort, then derive the feedback gain that minimises that stated cost.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/09-optimal-state-feedback/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Optimal state feedback and the Riccati equation · OneSimulation">
+<meta property="og:description" content="Choose how heavily to penalise tracking error and actuator effort, then derive the feedback gain that minimises that stated cost.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/09-optimal-state-feedback/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Optimal state feedback and the Riccati equation</h1><p class="lead">Choose how heavily to penalise tracking error and actuator effort, then derive the feedback gain that minimises that stated cost.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#make-the-design-objective-explicit">Make the design objective explicit</a><a href="#derive-the-continuous-algebraic-riccati-equation">Derive the continuous algebraic Riccati equation</a><a href="#solve-the-scalar-unstable-case">Solve the scalar unstable case</a><a href="#distinguish-control-penalties-from-hard-actuator-limits">Distinguish control penalties from hard actuator limits</a><a href="#carriage-cost">Solve the Riccati equation for a position-and-velocity plant</a><a href="#motion-budget">Set a settling speed and calculate its actuator cost</a></nav></aside><article class="prose reference"><section><h2 id="make-the-design-objective-explicit">Make the design objective explicit</h2>
+<p>Pole placement prescribes decay rates but says nothing about how much actuator energy a manoeuvre consumes. For a continuous linear system \(\dot x=Ax+Bu\) consider the regulator objective \(J=\int_0^\infty(x^\mathsf{T}Qx+u^\mathsf{T}Ru)\,dt\). Assume \(Q\) positive semidefinite and \(R\) positive definite. A large displacement penalty or a small control penalty generally encourages stronger corrective action. The ratio matters: multiplying both matrices by the same positive scalar leaves the best control unchanged. Scale states and inputs before comparing entries; a displacement in millimetres and a velocity in metres per second cannot share an arbitrary numerical weight without a unit convention.</p>
+</section>
+<section><h2 id="derive-the-continuous-algebraic-riccati-equation">Derive the continuous algebraic Riccati equation</h2>
+<p>For an infinite-horizon stationary problem propose a quadratic remaining cost \(V(x)=x^\mathsf{T}Px\). During a short interval \(dt\), optimality requires the minimum of instantaneous cost plus the change in remaining cost to vanish. In the limit this gives \(0=\min_u[x^\mathsf{T}Qx+u^\mathsf{T}Ru+2x^\mathsf{T}P(Ax+Bu)]\). Completing the square in \(u\) yields</p>
+<div class="math display">\[u^*=-R^{-1}B^\mathsf{T}Px,\qquad A^\mathsf{T}P+PA-PBR^{-1}B^\mathsf{T}P+Q=0.\]</div>
+<p>The desired solution is the stabilising symmetric solution. Under standard stabilisability and detectability conditions it exists and yields finite nonnegative cost. Other algebraic roots need not make sense as stored future cost. Once a candidate is found, check the eigenvalues of \(A-BR^{-1}B^\mathsf{T}P\) and the residual of the matrix equation.</p>
+</section>
+<section><h2 id="solve-the-scalar-unstable-case">Solve the scalar unstable case</h2>
+<p>Let \(\dot x=x+u\) with \(Q=R=1\). The scalar equation is \(2P-P^2+1=0\), giving \(P=1\pm\sqrt2\). Only \(1+\sqrt2\) is positive and makes the closed-loop pole \(1-P=-\sqrt2\). From initial state \(x_0=2\), the theoretical minimum cost is \(4(1+\sqrt2)\simeq9.657\). Verify independently: insert \(x=2e^{-\sqrt2t}, u=-Px\) into the cost integral to obtain \(4(1+P^2)/(2\sqrt2)\), the same value. By contrast a stabilising gain of 2 gives state pole −1 and cost 10. Stabilising the state is necessary but still leaves a meaningful optimisation problem.</p>
+</section>
+<section><h2 id="distinguish-control-penalties-from-hard-actuator-limits">Distinguish control penalties from hard actuator limits</h2>
+<p>The optimal initial input for the scalar example has magnitude \(2P=4.83\). If the actuator is limited to 3, clipping the command invalidates the quadratic unconstrained solution during the clipped interval. Increasing \(R\) makes large inputs more expensive but generally supplies no absolute guarantee for arbitrary initial conditions. A concrete certificate is possible inside a stated region. In one dimension \(|u|\le u_{\max}\) is guaranteed by \(|x|\le u_{\max}/P\) under this gain, and the resulting stable exponential stays in that interval. Later we will impose hard constraints directly in a finite-horizon design.</p>
+<p>The <a href="https://underactuated.mit.edu/lqr.html">MIT notes on linear quadratic regulators</a> extend this derivation to time-varying and finite-horizon problems.</p></section>
+<section><h2 id="carriage-cost">Solve the Riccati equation for a position-and-velocity plant</h2>
+<p>A carriage moving on nearly frictionless guides is locally a double integrator. Take its position error \(x_1\) and velocity \(x_2\) as states and acceleration command \(u\) as input. After selecting consistent physical scales, use \(A=\left(\begin{smallmatrix}0&amp;1\\0&amp;0\end{smallmatrix}\right)\), \(B=(0,1)^T\) and diagonal cost \(Q=\operatorname{diag}(q_x,q_v)\), \(R=r\). Assume \(q_x&gt;0,\ q_v\ge0,\ r&gt;0\). Both states are reachable because acceleration changes velocity immediately and position through integration. Choosing a positive position penalty also makes a stationary position error visible to the cost.</p>
+<p>Set \(P=\left(\begin{smallmatrix}p_{11}&amp;p_{12}\\p_{12}&amp;p_{22}\end{smallmatrix}\right)\) in \(A^TP+PA-PBr^{-1}B^TP+Q=0\). Matching the upper-left, lower-right and off-diagonal entries gives three scalar equations:</p>
+<div class="math display">\[p_{12}^2/r=q_x,\qquad p_{22}^2/r=2p_{12}+q_v,\qquad p_{11}=p_{12}p_{22}/r .\]</div>
+<p>Choose the positive roots giving stabilising feedback. The gains in \(u=-k_x x_1-k_v x_2\) become \(k_x=\sqrt{q_x/r}\), \(k_v=\sqrt{2\sqrt{q_x/r}+q_v/r}\). Substitution into the state equations gives \(s^2+k_vs+k_x=0\). The effort penalty and position penalty enter the squared natural frequency through a square root; the natural frequency itself varies as a fourth root. This explains why a moderate change of settling speed may require a surprisingly large change in a numerical cost weight.</p>
+</section>
+<section><h2 id="motion-budget">Set a settling speed and calculate its actuator cost</h2>
+<p>In chosen metre, second and acceleration units let \(q_x=16,\ q_v=0,\ r=1\), with weights understood to include the needed unit conversions. Then \(k_x=4\,\mathrm{s^{-2}},\ k_v=\sqrt8=2.828\,\mathrm{s^{-1}}\). The poles are \(-1.414\pm1.414i\,\mathrm{s^{-1}}\), with natural frequency 2 rad/s and damping ratio \(1/\sqrt2\). From an initial positive position error of 0.20 m and zero speed, commanded acceleration is −0.80 m/s². The optimum quadratic cost is \(V=x^TPx\). Here \(p_{12}=4\), \(p_{22}=2.828\), \(p_{11}=11.314\), so the initial cost value is \(11.314(0.2)^2=0.453\) in the chosen cost units.</p>
+<p>To double natural frequency while keeping \(q_v=0,\ r=1\), increase \(q_x\) by sixteen to 256. The new position gain is 16 s⁻², velocity gain is \(\sqrt{32}=5.657\,\mathrm{s^{-1}}\), and the same initial condition demands −3.2 m/s². An acceleration-limited drive rated for ±1.5 m/s² cannot execute this ideal motion from that initial error. For the larger gain, the zero-velocity initial error must be no more than \(1.5/16=0.0938\,\mathrm m\) for the first command to lie within its limit. That calculation addresses the initial state only; subsequent velocity feedback must also be checked. Comparing physical demand rather than weight values makes the practical tradeoff visible.</p>
+<p>The chosen gains can be tested without explicitly solving the Riccati equation again. Along an optimal unconstrained trajectory \(V=x^TPx\) decreases according to \(\dot V=-(x^TQx+u^TRu)\). At the original initial state the instantaneous cost is \(16(0.20)^2+(-0.80)^2=1.28\) cost units per second. Directly differentiating \(V\) there gives \(2x^TP\dot x=2(0.20)(4)(-0.80)=-1.28\), since initial speed is zero and acceleration equals the command. The sign and magnitude agree. This check simultaneously tests the gain sign, state ordering and cost convention. Introducing an input clip breaks the square-completion identity for the proposed unconstrained controller, so the same matrix cannot simply be read as the realised accumulated cost of the clipped manoeuvre.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/control-engineering/problem-sheets/4/">Problem sheet 4 · Pole geometry and plant uncertainty</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/control-engineering/chapters/10-stochastic-estimation/">Chapter 10 · Estimating hidden states from noisy measurements</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uncertainty envelopes and robust stability · OneSimulation</title>
+<meta name="description" content="Turn a bounded discrepancy between plant and model into a frequency-by-frequency test of the feedback design.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/08-model-uncertainty/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Uncertainty envelopes and robust stability · OneSimulation">
+<meta property="og:description" content="Turn a bounded discrepancy between plant and model into a frequency-by-frequency test of the feedback design.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/08-model-uncertainty/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Uncertainty envelopes and robust stability</h1><p class="lead">Turn a bounded discrepancy between plant and model into a frequency-by-frequency test of the feedback design.</p><p class="byline">Chapter 8 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#what-do-several-plant-tests-tell-us">What do several plant tests tell us?</a><a href="#factor-the-perturbed-characteristic-equation">Factor the perturbed characteristic equation</a><a href="#work-a-frequency-domain-budget">Work a frequency-domain budget</a><a href="#add-a-performance-requirement">Add a performance requirement</a><a href="#additive">Distinguish absolute from relative uncertainty</a><a href="#envelope-design">Budget uncertainty for a lightly coupled actuator resonance</a><a href="#worked-plot">Test a frequency-dependent uncertainty budget</a></nav></aside><article class="prose reference"><section><h2 id="what-do-several-plant-tests-tell-us">What do several plant tests tell us?</h2>
+<p>The gain of a drive changes as it warms up, and a flexible mounting introduces poorly measured phase lag at high frequency. Let \(P_0\) be a nominal model. One useful description is multiplicative uncertainty, \(P=P_0(1+W\Delta)\), with stable dimensionless \(\Delta\) of gain at most one and a specified frequency weight \(W\). The magnitude of \(W\) bounds relative error. Estimate it from \(|P/P_0-1|\) across an ensemble of measurements, retaining phase in the complex ratio. A 20% amplitude difference and a 20° phase difference generally produce a larger relative error than either alone.</p>
+<p>Where \(P_0\) is close to zero this relative description can be poorly conditioned. An additive uncertainty \(P=P_0+W_a\Delta\) can describe an absolute error floor there. A bound fitted only at sampled frequencies requires a reason to hold between samples, especially near flexible resonances. A robustness calculation is conditional on this modelling work.</p>
+</section>
+<section><h2 id="factor-the-perturbed-characteristic-equation">Factor the perturbed characteristic equation</h2>
+<p>For the nominal controller \(C\), set \(L_0=P_0C\) and \(T_0=L_0/(1+L_0)\). Under multiplicative perturbation,</p>
+<div class="math display">\[1+PC=(1+L_0)(1+W T_0\Delta).\]</div>
+<p>Assume internal stability of the nominal interconnection and stable, proper uncertainty factors with no hidden unstable cancellation. If \(\sup_\omega|W(i\omega)T_0(i\omega)|&lt;1\), the perturbation loop has gain less than one and cannot destabilise the feedback. One way to see the mechanism is the convergent inverse series \(1-G+G^2-\cdots\) for \(G=WT_0\Delta\) in the stable-system norm. The pointwise bound protects against all allowed dynamic phase choices. Failure of a sufficient test alone does not prove the particular measured plant unstable.</p>
+</section>
+<section><h2 id="work-a-frequency-domain-budget">Work a frequency-domain budget</h2>
+<p>At one frequency a nominal loop has \(L_0=-0.8+0.4i\). Then \(|1+L_0|=\sqrt{0.2}\), \(|L_0|=\sqrt{0.8}\), and \(|T_0|=2\). Relative uncertainty below 50% at that frequency keeps \(|W T_0|&lt;1\) there. A measured 60% bound crosses this threshold. Geometrically the perturbed loop samples a disk centred at \(L_0\) of radius \(|L_0 W|\). At 50% its rim touches \(-1\). Other frequencies still require examination, and a physically narrower family such as a single real gain may occupy far less than the full disk.</p>
+</section>
+<section><h2 id="add-a-performance-requirement">Add a performance requirement</h2>
+<p>A stable loop can still amplify an output disturbance unacceptably. For the uncertain plant the sensitivity is \(S=S_0/(1+WT_0\Delta)\). The triangle inequality gives \(|S|\le |S_0|/(1-|WT_0|)\) where the denominator is positive. If \(|S_0|=0.10\) and \(|WT_0|\le0.25\), disturbances can be amplified by at most 0.133 in this bound. Very near the robustness limit that bound becomes large. Shaping the nominal loop for a small uncertainty product near troublesome resonances can therefore protect both stability and useful performance. Record the sensor configuration, loading and frequency band over which the underlying plant measurements were made.</p>
+</section>
+<section><h2 id="additive">Distinguish absolute from relative uncertainty</h2>
+<p>Several tested plants may differ by an approximately fixed absolute transfer at high frequency although their nominal output gain is nearly zero there. Dividing each difference by a near-zero nominal transfer gives an enormous relative error and may make a multiplicative envelope awkward. An additive description writes \(P_a=P_0+W_a\Delta\), where \(|\Delta(i\omega)|\le1\), the stable filter \(W_a\) has the same units as the plant and its magnitude bounds absolute discrepancies. The controller \(C\) and nominal plant first form an internally stable feedback system. Assume the uncertainty interconnection is well posed and the normalised uncertainty is stable.</p>
+<p>Factor the uncertain return difference using the nominal sensitivity \(S_0=1/(1+C P_0)\):</p>
+<div class="math display">\[1+CP_a=(1+CP_0)[1+W_a C S_0\Delta].\]</div>
+<p>For unstructured complex uncertainty the small-gain bound \(\|W_a C S_0\|_\infty&lt;1\) is sufficient for robust stability. The relevant nominal transfer is from measurement error to control effort, \(CS_0\), rather than complementary sensitivity alone. At high frequency \(S_0\) often approaches one, so a derivative action that increases high-frequency controller gain can stress an additive uncertainty bound even where nominal loop gain has already fallen.</p>
+<p>The inequality uses the worst permitted complex phase at each frequency. A point violating the envelope test indicates loss of this guarantee. It does not by itself establish that a particular measured plant is unstable. Conversely a few passing frequency samples do not certify the continuous-frequency supremum.</p>
+</section>
+<section><h2 id="envelope-design">Budget uncertainty for a lightly coupled actuator resonance</h2>
+<p>Suppose a calibration expresses position in millimetres and actuator input in volts. At 40 rad/s the nominal gain is only \(0.020\,\mathrm{mm/V}\), while an unmodelled flexible path can add up to \(0.030\,\mathrm{mm/V}\) in any phase. A measured nominal loop has \(|CS_0|=18\,\mathrm{V/mm}\) there, giving an uncertainty product \(0.030(18)=0.54\). The corresponding allowable absolute uncertainty before the unit threshold is \(1/18=0.0556\,\mathrm{mm/V}\). Stating only the 150% relative plant discrepancy would conceal the controller-dependent margin at that frequency.</p>
+<p>At 70 rad/s suppose the absolute uncertainty bound increases to \(0.045\,\mathrm{mm/V}\) and \(|CS_0|=25\,\mathrm{V/mm}\). Their product is 1.125. To reserve a factor of 1.25 on the uncertainty envelope, impose a target product of at most 0.80. Then \(|CS_0|\) must be at most \(0.80/0.045=17.8\,\mathrm{V/mm}\) at that frequency. A revised compensator with measured \(|CS_0|=16\) gives 0.72 at the suspect point. Check the complete response around any new filter resonance and recompute nominal tracking. Reducing this single frequency peak cannot establish whether the remainder of the frequency band also satisfies the reserve.</p>
+<p>Suppose the absolute uncertainty envelope comes from three nominally identical machines. At each frequency calculate the complex difference of each measured response from the nominal complex response before taking magnitudes. At 70 rad/s, two transfer measurements of equal magnitude but opposite phase can differ by twice that magnitude. Subtracting magnitudes alone would assign zero discrepancy. Also retain independent test uncertainty such as force calibration and motion-sensor noise, which may be especially important where nominal motion is small. The largest observed discrepancy only covers those three machines and operating conditions. A justified production bound requires considering the frequency regions between measurement points and whether later mounting or payload changes can introduce another flexible path.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Test a frequency-dependent uncertainty budget</h2>
+<p>Use the same nominal loop and model multiplicative uncertainty by the weight \(W(s)=(0.1+a s)/(1+s)\) times a stable unit-gain perturbation. Inspect the product \(|WT|\) rather than the two factors separately. A uniform bound below one supplies a sufficient robust-stability test.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/control-engineering/08-model-uncertainty.png" alt="Test a frequency-dependent uncertainty budget. Horizontal axis: Angular frequency (rad/s). Vertical axis: Uncertainty-weighted loop magnitude. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>The largest products occur near the nominal resonance, not at the largest plotted frequency where |T| is already small. A curve crossing unity means this envelope test no longer certifies the whole allowed family; a particular tested plant may still be stable.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/control-engineering/08-model-uncertainty.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Uncertainty-weighted loop magnitude at selected values of Angular frequency (rad/s).</caption><thead><tr><th scope="col">Angular frequency (rad/s)</th><th scope="col">High-frequency relative error 0.4</th><th scope="col">High-frequency relative error 0.8</th><th scope="col">High-frequency relative error 1.2</th><th scope="col">Small-gain threshold</th></tr></thead><tbody><tr><th scope="row">0.03</th><td>0.10069</td><td>0.10281</td><td>0.10626</td><td>1</td></tr><tr><th scope="row">0.17533</th><td>0.12112</td><td>0.17082</td><td>0.231</td><td>1</td></tr><tr><th scope="row">1.0247</th><td>0.37743</td><td>0.73878</td><td>1.1037</td><td>1</td></tr><tr><th scope="row">5.9887</th><td>0.048717</td><td>0.097371</td><td>0.14604</td><td>1</td></tr><tr><th scope="row">35</th><td>0.0013094</td><td>0.0026187</td><td>0.003928</td><td>1</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/control-engineering/08-model-uncertainty.csv" download>Download all 301 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/control-engineering/chapters/07-root-locus/">Chapter 7 · Following poles as a controller gain changes</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/control-engineering/problem-sheets/4/">Problem sheet 4 · Pole geometry and plant uncertainty</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electromagnetic waves and energy flux · OneSimulation</title>
+<meta name="description" content="Derive the electromagnetic energy balance and use it to infer field amplitudes and transmitted energy from a measured wave intensity.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/physics/electrodynamics/chapters/05-field-energy-and-waves/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Electromagnetic waves and energy flux · OneSimulation">
+<meta property="og:description" content="Derive the electromagnetic energy balance and use it to infer field amplitudes and transmitted energy from a measured wave intensity.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/physics/electrodynamics/chapters/05-field-energy-and-waves/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/physics/">Physics</a> / <a href="/lecture-notes/physics/electrodynamics/">Electrodynamics</a></p><h1>Electromagnetic waves and energy flux</h1><p class="lead">Derive the electromagnetic energy balance and use it to infer field amplitudes and transmitted energy from a measured wave intensity.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#charge-conservation-requires-a-changing-field-term">Charge conservation requires a changing field term</a><a href="#read-a-propagating-field">Read a propagating field</a><a href="#identify-work-and-transport-locally">Identify work and transport locally</a><a href="#convert-intensity-into-field-and-pulse-energy">Convert intensity into field and pulse energy</a><a href="#locate-the-energy-entering-a-resistor">Locate the energy entering a resistor</a><a href="#audit-the-flux-at-different-radii">Audit the flux at different radii</a><a href="#carry-energy-from-source-to-load-through-a-coaxial-gap">Carry energy from source to load through a coaxial gap</a></nav></aside><article class="prose reference"><section><h2 id="charge-conservation-requires-a-changing-field-term">Charge conservation requires a changing field term</h2>
+<p>Ampère’s magnetostatic law relates magnetic circulation to current. A surface passing through a wire detects a conduction current, whereas a second spanning surface between the plates of a charging capacitor may intercept none. The evolving electric field supplies the missing current. In vacuum, \(\nabla\times\mathbf B/\mu_0=\mathbf J+\epsilon_0\partial_t\mathbf E\). Taking the divergence of both sides and using Gauss’s electric law gives \(\nabla\cdot\mathbf J+\partial_t\rho=0\), the continuity equation for charge.</p>
+<p>Together with Faraday’s law and the two divergence laws, this term permits waves even in a region containing no material charges. In source-free vacuum take the curl of \(\nabla\times\mathbf E=-\partial_t\mathbf B\). Use \(\nabla\times(\nabla\times\mathbf E)=\nabla(\nabla\cdot\mathbf E)-\nabla^2\mathbf E\) and substitute the Maxwell–Ampère law. The result is \(\nabla^2\mathbf E=\mu_0\epsilon_0\partial_{tt}\mathbf E\). The coefficient sets \(c=1/\sqrt{\mu_0\epsilon_0}\).</p>
+</section>
+<section><h2 id="read-a-propagating-field">Read a propagating field</h2>
+<p>Take a sinusoidal electric field \(\mathbf E=E_0\cos(kz-\omega t)\,\hat{\mathbf x}\). The wave equation gives \(\omega=ck\), and Faraday’s law fixes \(\mathbf B=(E_0/c)\cos(kz-\omega t)\,\hat{\mathbf y}\). The divergence equations require these plane-wave fields to be transverse. Their relative orientation selects the positive direction of travel. Flipping the sign of the magnetic field alone with the same electric waveform would reverse the local energy flow but would violate Faraday’s law for this chosen propagation phase.</p>
+<p>Wave speed and field amplitude answer different questions. A stronger sinusoidal source increases the energy in a given volume without changing its speed through linear vacuum. Changing to a lossless homogeneous nondispersive material changes the propagation speed to \(1/\sqrt{\mu\epsilon}\) and the impedance relating electric and magnetic fields to \(\sqrt{\mu/\epsilon}\). Near a source, the simple wave relation between amplitudes need not hold.</p>
+</section>
+<section><h2 id="identify-work-and-transport-locally">Identify work and transport locally</h2>
+<p>Dot the Maxwell–Ampère equation with \(\mathbf E\) and Faraday’s law with \(\mathbf B/\mu_0\). Use the identity \(\nabla\cdot(\mathbf E\times\mathbf B)=\mathbf B\cdot(\nabla\times\mathbf E)-\mathbf E\cdot(\nabla\times\mathbf B)\) to combine them. Rearranging gives Poynting’s theorem</p>
+<div class="math display">\[\partial_t u+\nabla\cdot\mathbf S=-\mathbf J\cdot\mathbf E,\qquad u=\frac{\epsilon_0E^2}{2}+\frac{B^2}{2\mu_0},\quad \mathbf S=\frac{\mathbf E\times\mathbf B}{\mu_0}.\]</div>
+<p>Integrated over a volume, the equation says that net incoming electromagnetic power increases stored field energy or performs work on matter. In a vacuum plane wave the electric and magnetic energy densities are equal and \(\mathbf S=cu\,\hat{\mathbf z}\). In a standing wave counterpropagating energy flows can cancel on average while local fields and stored energy remain large. A detector of heating and a point probe of electric amplitude need not then respond in the same way.</p>
+</section>
+<section><h2 id="convert-intensity-into-field-and-pulse-energy">Convert intensity into field and pulse energy</h2>
+<p>A broad, normally incident vacuum wave has mean intensity 2.0 W/m². For a sinusoid the cycle mean of \(\cos^2\) is one half. Therefore \(\langle S\rangle=E_0^2/(2Z_{\rm vac})\) with \(Z_{\rm vac}=\mu_0c\simeq377\) Ω. The electric peak is 38.8 V/m and the magnetic peak is \(1.30\times10^{-7}\) T. Using the RMS electric field instead gives \(\langle S\rangle=E_{\rm rms}^2/Z_{\rm vac}\). Mixing a peak-valued field with that RMS formula would overestimate the power by a factor of two.</p>
+<p>An absorbing disk of area 0.010 m² intercepts a 3.0 ms pulse with this mean intensity throughout its flat top. Neglect edge effects and switching intervals. The energy received is \(2.0(0.010)(0.0030)=60\) µJ. In the lossless TEM line, the same flux principle becomes the circuit power \(VI\). The <a href="/lecture-notes/physics/electrodynamics/#experiment">coaxial-line experiment</a> reports \(Z_0=47.45\) Ω for the baseline cross-section. A 1 V RMS forward sinusoid there carries about 21.1 mW. A 1 V peak sinusoid carries half that mean power, which gives a direct check on the convention used by a voltage probe.</p>
+<p>For a travelling plane-wave pulse, integrate the instantaneous Poynting flux over a plane normal to propagation and over the time during which the pulse crosses. The result is the total transported energy. Equivalently integrate field energy density throughout the pulse volume at one instant. The length of the pulse is its speed multiplied by its duration, so the two constructions agree. This provides a check when a detector reports time-averaged irradiance but an independent instrument reports energy per pulse; the averaging interval and illuminated area enter explicitly.</p>
+</section>
+<section><h2 id="locate-the-energy-entering-a-resistor">Locate the energy entering a resistor</h2>
+<p>A steady resistor has constant fields and still receives a continuous supply of energy. Model a long straight cylindrical wire of radius \(a\), conductivity \(\sigma\) and resistive length \(\ell\). A DC current \(I\) flows in the positive axial direction. Assume a uniform current density, negligible end effects and a coaxial return sufficiently far away that the magnetic field immediately outside the wire has cylindrical symmetry. The internal axial electric field is \(E_z=I/(\sigma\pi a^2)\). Continuity of tangential electric field gives the same axial value immediately outside its lateral surface.</p>
+<p>Ampère's law fixes the azimuthal magnetic field there at \(H_\phi=I/(2\pi a)\). Since \(\mathbf e_z\times\mathbf e_\phi=-\mathbf e_r\), the Poynting flux points radially inward. Multiplying its magnitude by the lateral area gives</p>
+<div class="math display">\[P_{\rm in}=E_zH_\phi(2\pi a\ell)=\frac{I^2\ell}{\sigma\pi a^2}=I^2R .\]</div>
+<p>The result is the familiar circuit power but obtained from fields on the surrounding surface. It accords with the local energy theorem: field energy within the chosen volume is steady while the inward flux supplies the material work \(\int\mathbf J\cdot\mathbf E\,dV\). A radial electrostatic field can also be present because of surface charge establishing a voltage relative to the return. It produces longitudinal Poynting transport in the gap. Its direction and magnitude depend on the wider circuit, whereas the inward component above accounts for the resistive loss in the selected segment.</p>
+</section>
+<section><h2 id="audit-the-flux-at-different-radii">Audit the flux at different radii</h2>
+<p>Use \(\ell=1.00\) m, \(a=0.500\) mm, \(\sigma=1.00\times10^6\) S/m and \(I=1.00\) A. The cross-sectional area is \(7.85\times10^{-7}\) m² and the resistance is \(1.273\) Ω. The axial electric field is \(1.273\) V/m and the surface magnetic field is \(318\) A/m. Their product gives an inward energy flux density of \(405\) W/m². Integrating over \(2\pi a\ell=0.00314\) m² yields \(1.27\) W, matching the measured electrical input.</p>
+<p>Now evaluate the field on an imaginary cylinder of radius \(r=a/2\) inside the wire. Uniform current density encloses only \(I/4\). Its magnetic field is half the surface value, and its area is also halved. The integrated inward power is therefore one quarter, \(0.318\) W. It supplies precisely the heat produced in one quarter of the wire volume. As \(r\) tends to zero the local inward flux vanishes with \(r\) while volumetric heating density remains finite. Taking the divergence in cylindrical coordinates reconciles these limits. A skin-effect current profile at high frequency would invalidate the uniform-field calculation and redistribute both heating and energy input toward the surface.</p>
+<p>Measured current and terminal voltage determine the inward energy rate without measuring either field directly, but they cannot locate the path of the incoming energy elsewhere in the circuit. To calculate that path one can choose a coaxial geometry with known conductor and return potentials. The radial field in the dielectric then combines with the azimuthal magnetic field to give longitudinal flux toward the load. Approaching the resistive segment, part of this flux turns inward as demonstrated above. Choosing a different return path may change the exterior pattern substantially while preserving the same resistance and the same total power budget.</p>
+</section>
+<section><h2 id="carry-energy-from-source-to-load-through-a-coaxial-gap">Carry energy from source to load through a coaxial gap</h2>
+<p>The same energy theorem closes the circuit picture if the wire is the inner conductor of a coaxial delivery line. In the uniform, low-loss part take inner radius \(a\), return-conductor inner radius \(b\), potential difference \(V\) and equal opposing currents of magnitude \(I\). A cylindrical Gaussian surface gives radial field \(E_r=V/[r\ln(b/a)]\) in the dielectric. Ampère's law gives \(H_\phi=I/(2\pi r)\). The axial Poynting flux density is therefore proportional to \(1/r^2\). Integrate over the dielectric annulus,</p>
+<div class="math display">\[P_z=\int_a^b E_rH_\phi\,2\pi r\,dr=\frac{VI}{\ln(b/a)}\int_a^b\frac{dr}{r}=VI.\]</div>
+<p>The familiar terminal formula has emerged by integrating power moving through the dielectric. It remains compatible with power crossing the lateral surface into a resistor at the line's end. The outer return conductor also matters: it sets the radial electric field geometry and provides the return current defining where the external magnetic field cancels in the coaxial model.</p>
+<p>Take \(V=10.0\) V, \(I=0.200\) A, \(a=1.00\) mm and \(b=4.00\) mm. Delivered power is 2.00 W. The fraction flowing between \(a\) and any intermediate radius \(r\) is \(\ln(r/a)/\ln(b/a)\). At \(r=2.00\) mm this is one half. The outer part of the gap has greater cross-sectional area yet carries the other half because flux density falls outward. If the inner conductor develops finite resistance per length \(R'\) and leakage is negligible, a small segment loses \(I^2R'\,dz\) of longitudinal power. The longitudinal difference equals its radial inward flux, providing a local field interpretation of the ordinary circuit voltage drop.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/physics/electrodynamics/problem-sheets/2/">Problem sheet 2 · Flux linkage and mechanical work</a></span><span>Next<br><a href="/lecture-notes/physics/electrodynamics/chapters/06-radiating-dipoles/">Chapter 6 · Radiation from a small electric dipole</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

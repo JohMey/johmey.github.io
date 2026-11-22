@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bloch waves, band edges and effective mass · OneSimulation</title>
+<meta name="description" content="Derive an electronic band from both weak and strong binding, then use its slope and curvature to predict motion.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/physics/condensed-matter/chapters/04-bloch-bands/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bloch waves, band edges and effective mass · OneSimulation">
+<meta property="og:description" content="Derive an electronic band from both weak and strong binding, then use its slope and curvature to predict motion.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/physics/condensed-matter/chapters/04-bloch-bands/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/physics/">Physics</a> / <a href="/lecture-notes/physics/condensed-matter/">Condensed matter and band theory</a></p><h1>Bloch waves, band edges and effective mass</h1><p class="lead">Derive an electronic band from both weak and strong binding, then use its slope and curvature to predict motion.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#why-label-a-state-by-crystal-momentum">Why label a state by crystal momentum?</a><a href="#a-weak-potential-couples-a-degenerate-pair">A weak potential couples a degenerate pair</a><a href="#build-a-band-from-a-localised-orbital">Build a band from a localised orbital</a><a href="#use-filling-to-decide-whether-current-can-flow">Use filling to decide whether current can flow</a><a href="#follow-a-wave-packet-through-the-whole-brillouin-zone">Follow a wave packet through the whole Brillouin zone</a><a href="#estimate-an-observable-oscillation-in-a-superlattice">Estimate an observable oscillation in a superlattice</a></nav></aside><article class="prose reference"><section><h2 id="why-label-a-state-by-crystal-momentum">Why label a state by crystal momentum?</h2>
+<p>A lattice translation by \(a\) commutes with the Hamiltonian when \(V(x+a)=V(x)\). Translation eigenvalues have modulus one because translation preserves norm. Write them \(e^{ika}\); then \(\psi_k(x)=e^{ikx}u_k(x)\) with \(u_k(x+a)=u_k(x)\). Since \(e^{i(k+G)a}=e^{ika}\) for \(G=2\pi h/a\), a single Brillouin zone suffices. The index distinguishing states at the same \(k\) is the band index. Crystal momentum labels translation symmetry and can change by a reciprocal vector in scattering.</p>
+</section>
+<section><h2 id="a-weak-potential-couples-a-degenerate-pair">A weak potential couples a degenerate pair</h2>
+<p>Near \(k=G/2\), free states \(|k\rangle\) and \(|k-G\rangle\) have nearly equal kinetic energies. The periodic potential has Fourier coefficients \(V_G\) that couple these waves. Absorbing the mean potential in both energies, the two-state characteristic equation is \((E-E_k)(E-E_{k-G})=|V_G|^2\), with solutions</p>
+<div class="math display">\[E_\pm=\tfrac12(E_k+E_{k-G})\pm\sqrt{\tfrac14(E_k-E_{k-G})^2+|V_G|^2}.\]</div>
+<p>At equality the splitting is \(2|V_G|\). For a real coefficient the states are standing waves whose densities peak at different locations relative to the potential. Far from the degeneracy, the square root is dominated by the kinetic splitting and one obtains two nearly free waves again. A Fourier component that vanishes by symmetry cannot open a first-order gap at that crossing. Check other bands before interpreting a local splitting as a gap for the entire solid.</p>
+</section>
+<section><h2 id="build-a-band-from-a-localised-orbital">Build a band from a localised orbital</h2>
+<p>Start instead with one localised orbital \(|n\rangle\) per cell, all of energy \(\epsilon_0\), with overlap neglected in the basis and nearest-neighbour hopping matrix element \(-t\). A translation eigenstate has site amplitudes \(c_n=e^{ikna}/\sqrt N\). Acting with \(H\) on one site amplitude gives \(E c_n=\epsilon_0 c_n-t(c_{n-1}+c_{n+1})\), and hence \(E(k)=\epsilon_0-2t\cos ka\). The bandwidth \(4|t|\) measures the energy spread produced by hopping. In the limit of vanishing hopping the local energy repeats for every \(k\). More than one orbital per cell generates a matrix eigenproblem even in this simple construction.</p>
+<p>The group velocity is \(v=\hbar^{-1}dE/dk\). Under a weak force with \(\hbar\dot k=F\), acceleration is \(F E''(k)/\hbar^2\). Define \(m^*=\hbar^2/E''(k)\), a local measure of curvature. Near the bottom of the cosine band with \(t&gt;0\), \(E\simeq\epsilon_0-2t+t(ka)^2\) and \(m^*=\hbar^2/(2ta^2)\). Near the top the curvature changes sign. Describing the missing electrons in a nearly full band as positively charged holes with positive mass simplifies transport calculations.</p>
+</section>
+<section><h2 id="use-filling-to-decide-whether-current-can-flow">Use filling to decide whether current can flow</h2>
+<p>For a complete time-reversal-symmetric band, the contributions of \(k\) and \(-k\) to current cancel. More generally the integral of the derivative of a periodic band over a whole zone is zero. A weak field can redistribute carriers near a partially filled band edge, whereas a fully filled isolated band has no vacant neighbouring states. With one spin-degenerate orbital per primitive cell there are two states per cell. One electron per cell half fills this noninteracting band; two fill it. Symmetry breaking, interactions and additional bands can change the conclusion. A single measured zone-edge splitting therefore gives incomplete information about conduction.</p>
+<p>For further work on three-dimensional bands, Fermi surfaces and electron motion, see David Tong’s <a href="https://davidtong.org/teaching/solid-state-physics/">Solid State Physics lectures at Cambridge</a>.</p></section>
+<section><h2 id="follow-a-wave-packet-through-the-whole-brillouin-zone">Follow a wave packet through the whole Brillouin zone</h2>
+<p>In a weak static field a band electron's crystal momentum changes even though its group velocity need not keep rising. Take one isolated tight-binding band \(E(k)=E_0-2t\cos(ka)\), positive hopping energy \(t\), lattice spacing \(a\) and electron charge \(-e\). Let the wave packet be narrow in \(k\) compared with the zone and neglect scattering and transitions to other bands. The semiclassical force equation is \(\hbar\dot k=-e\mathcal E\), while velocity follows from the band gradient: \(v=(2ta/\hbar)\sin(ka)\).</p>
+<p>Starting at \(k=0\) yields \(ka=-\omega_B t_{\rm lab}\) with Bloch angular frequency \(\omega_B=e\mathcal E a/\hbar\). Integrating velocity over laboratory time gives</p>
+<div class="math display">\[x(t_{\rm lab})-x(0)=\frac{2t}{e\mathcal E}[\cos(\omega_Bt_{\rm lab})-1],\qquad T_B=\frac{h}{e\mathcal E a}.\]</div>
+<p>Although the field never changes sign, velocity reverses when the packet samples regions of opposite band slope. Over a complete zone traversal there is no net displacement because the band energy is periodic. Energy conservation offers another derivation: the electrostatic potential-energy change of a negatively charged electron in a uniform field is \(+e\mathcal E\Delta x\), offsetting the change in band energy. The maximal excursion equals the band width \(4t\) divided by the force magnitude.</p>
+</section>
+<section><h2 id="estimate-an-observable-oscillation-in-a-superlattice">Estimate an observable oscillation in a superlattice</h2>
+<p>Use a one-dimensional superlattice with \(a=8.00\) nm, hopping \(t=5.00\) meV and field \(\mathcal E=2.00\times10^5\) V/m. The potential-energy change per lattice period is \(e\mathcal E a=1.60\) meV. Thus \(T_B=h/(1.60\,{\rm meV})=2.58\) ps and the peak-to-peak excursion is \(20.0\,{\rm meV}/(e\mathcal E)=100\) nm, about 12.5 lattice periods. The maximum speed from the band derivative is \(2ta/\hbar=1.22\times10^5\) m/s. At one quarter cycle velocity reaches its largest negative magnitude, while at half a cycle the electron reaches its furthest position and momentarily stops.</p>
+<p>A momentum-relaxation time of 0.20 ps would interrupt most trajectories before a cycle completes, obscuring a Bloch oscillation despite the periodic dispersion. Conversely a scattering time several times longer than 2.58 ps would make coherent oscillatory transport plausible if the field does not tunnel carriers into other bands. In the weak-field limit the period and excursion both grow, so the mathematical limit of arbitrarily large excursions cannot be taken in a finite imperfect specimen. Recording the oscillation frequency as field is varied tests the predicted linear scaling separately from the much more sample-dependent amplitude.</p>
+<p>The motion also clarifies the role of negative effective mass near a band top. The electron's crystal momentum continues to change in the direction of the applied force throughout the period. Its acceleration is proportional to the local band curvature, however, and can point in the opposite direction once that curvature changes sign. This reverses packet acceleration without a sudden elastic collision with a particular lattice plane. A spectrum measured along the direction of motion can predict the velocity through its local slope, giving a direct cross-check of the acceleration inferred from a time-domain trace.</p>
+<p>The probe must resolve the oscillations before relaxation for that comparison to be meaningful.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/physics/condensed-matter/chapters/03-fermions-and-density-of-states/">Chapter 3 · Filling electronic states and measuring the Fermi surface</a></span><span>Next<br><a href="/lecture-notes/physics/condensed-matter/problem-sheets/2/">Problem sheet 2 · Occupied states, heat capacity and band curvature</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

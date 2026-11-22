@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fronts and diffusive modes · OneSimulation</title>
+<meta name="description" content="Track conservation on a periodic mesh, distinguish shocks from expanding fans and choose a time step for an explicit diffusion solver.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/problem-sheets/2/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fronts and diffusive modes · OneSimulation">
+<meta property="og:description" content="Track conservation on a periodic mesh, distinguish shocks from expanding fans and choose a time step for an explicit diffusion solver.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Fronts and diffusive modes</h1><p class="lead">Track conservation on a periodic mesh, distinguish shocks from expanding fans and choose a time step for an explicit diffusion solver.</p><p class="byline">Problem sheet 2 · Chapters 3 and 4</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#advect-a-marked-volume">Advect a marked volume</a><a href="#identify-a-shock-and-a-fan">Identify a shock and a fan</a><a href="#allocate-a-time-budget-on-a-refined-grid">Allocate a time budget on a refined grid</a></nav></aside><article class="prose reference"><section>
+<h2 id="advect-a-marked-volume">Advect a marked volume</h2>
+<p>On a periodic ring of four cells take means \((1,0,0,0)\), positive speed and Courant number \(C=1/4\). Compute two first-order upwind updates, verify inventory and compare the maximum with that from an exact translation of a square pulse by half a cell.</p>
+<details><summary>Worked solution</summary>
+<p>The first update is \((3/4,1/4,0,0)\). Applying the same convex average gives \((9/16,6/16,1/16,0)\). Both arrays sum to one, so the total conserved amount is one cell width times this sum.</p>
+<p>After an exact shift of half a cell, the two overlapping cell averages are \(1/2,1/2\) and the other two vanish, although the pointwise pulse height is still one. The numerical maximum of \(9/16\) is larger than the exact cell-average peak at this instant, even as the numerical support is more spread out. A peak comparison must specify whether it uses point values or cell means.</p>
+</details>
+</section>
+<section>
+<h2 id="identify-a-shock-and-a-fan">Identify a shock and a fan</h2>
+<p>For \(f(u)=u^2/2\), consider left and right states 3 and 1. Compute the discontinuity speed, compare it with the two characteristic speeds and locate its position after 0.4 s from the origin. Reverse the states and identify the edges of the entropy-admissible solution.</p>
+<details><summary>Worked solution</summary>
+<p>Fluxes are 4.5 and 0.5, giving \(s=(0.5-4.5)/(1-3)=2\). Since the characteristic speeds \(f'(u)\) are 3 on the left and 1 on the right, both enter the discontinuity in its moving frame. Its position is \(0.4(2)=0.8\).</p>
+<p>With left 1 and right 3 the characteristics move apart and an expansion fan fills the region between \(x=0.4\) and \(x=1.2\). A single jump satisfying the algebraic jump balance would have the wrong entropy behaviour for these data.</p>
+</details>
+</section>
+<section>
+<h2 id="allocate-a-time-budget-on-a-refined-grid">Allocate a time budget on a refined grid</h2>
+<p>On a periodic rod \(D=2\times10^{-5}\) m²/s and \(h=1\) mm. Find the explicit diffusion step limit. To reach 1 s with \(r=0.4\), how many steps are needed? Repeat after halving spatial spacing and compare the total number of nodal updates on a fixed length.</p>
+<details><summary>Worked solution</summary>
+<p>The stability limit is \(h^2/(2D)=0.025\) s. For \(r=0.4\), use \(0.4h^2/D=0.020\) s, or 50 steps. Halving \(h\) quarters the step to 0.005 s, giving 200 steps.</p>
+<p>There are about twice as many spatial nodes on the refined line. The combination of twice as many nodes and four times as many steps requires about eight times as many local updates, neglecting boundary and setup costs.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/04-parabolic-equations/">Chapter 4 · Time-dependent diffusion</a></span><span>Next<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/05-wave-propagation/">Chapter 5 · Wave speeds and numerical dispersion</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

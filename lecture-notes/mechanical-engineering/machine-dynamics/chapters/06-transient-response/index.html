@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impulse response and finite-duration loading · OneSimulation</title>
+<meta name="description" content="Construct the response to a short pulse and determine when an impulse approximation preserves the peak motion.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-dynamics/chapters/06-transient-response/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Impulse response and finite-duration loading · OneSimulation">
+<meta property="og:description" content="Construct the response to a short pulse and determine when an impulse approximation preserves the peak motion.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-dynamics/chapters/06-transient-response/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Impulse response and finite-duration loading</h1><p class="lead">Construct the response to a short pulse and determine when an impulse approximation preserves the peak motion.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#momentum">A short event and a long response</a><a href="#superpose">Build a solution from elementary impulses</a><a href="#rectangular">Work a pulse of known duration</a><a href="#limiting">Find the criterion and its limitations</a><a href="#shape">Compare pulses of equal impulse</a><a href="#integration">Derive an energy-consistent time update for a force record</a><a href="#one-step">Check one step and distinguish stability from temporal resolution</a></nav></aside><article class="prose reference"><section><h2 id="momentum">A short event and a long response</h2>
+<p>A latch strikes a mounted instrument for only a few milliseconds, but its motion persists after contact has ended. Peak force alone gives an incomplete description of that motion. Duration, impulse and the system’s natural time scale all matter. Define impulse \(J=\int F(t)\,dt\), with units N·s. Integrating \(m\ddot x+c\dot x+kx=F\) over an ideal instantaneous event leaves \(m[\dot x(0^+)-\dot x(0^-)]=J\). The position remains continuous since no finite mass can jump a finite distance in zero time under a finite impulse.</p>
+<p>For an initially resting underdamped oscillator, the subsequent response follows from the two initial conditions \(x(0^+)=0\) and \(\dot x(0^+)=J/m\). With \(\alpha=c/(2m)\) and \(\omega_d=\sqrt{k/m-\alpha^2}\), the displacement is \(x=Je^{-\alpha t}\sin(\omega_dt)/(m\omega_d)\) for \(t&gt;0\). The response to a unit impulse is the same expression with \(J=1\). Its units are displacement per unit impulse.</p>
+</section>
+<section><h2 id="superpose">Build a solution from elementary impulses</h2>
+<p>Divide a general forcing record into short intervals at times \(s\). Each interval contributes impulse \(F(s)\,ds\) and creates a response delayed by \(s\). Adding all contributions in a linear time-invariant system with zero initial state produces the convolution</p>
+<div class="math display">\[x(t)=\int_0^t F(s)\,\frac{e^{-\alpha(t-s)}\sin[\omega_d(t-s)]}{m\omega_d}\,ds.\]</div>
+<p>This construction makes causality explicit: later parts of the force record cannot influence the current response. Nonzero initial conditions add the free solution. In a multi-mode system each mode has its own impulse response, and the load’s location determines the force projection into it. Replacing the structure by its first mode may describe long-wave displacement well while missing a short, local acceleration peak.</p>
+</section>
+<section><h2 id="rectangular">Work a pulse of known duration</h2>
+<p>Neglect damping and apply constant force \(F_0\) for \(0&lt;t&lt;t_p\). During the pulse integration gives \(x=(F_0/k)[1-\cos(\omega_n t)]\) and \(\dot x=F_0\omega_n\sin(\omega_n t)/k\). After unloading the mass oscillates freely. Compute its amplitude from the end displacement and velocity:</p>
+<div class="math display">\[A=\sqrt{x(t_p)^2+\big[\dot x(t_p)/\omega_n\big]^2}=\frac{2F_0}{k}\left|\sin(\omega_n t_p/2)\right|.\]</div>
+<p>Let \(m=4.0\) kg, \(k=1600\) N/m, \(F_0=20\) N and \(t_p=0.050\) s. Then \(\omega_n=20\) rad/s and the impulse is 1.0 N·s. The formula predicts \(A=25\sin(0.50)=12.0\) mm after unloading. Replacing the whole pulse by an instantaneous impulse gives \(A_{\rm imp}=J/(m\omega_n)=12.5\) mm. Some restoring force developed during the real pulse, so the impulse approximation is slightly high.</p>
+</section>
+<section><h2 id="limiting">Find the criterion and its limitations</h2>
+<p>Divide the finite-pulse amplitude by the impulse approximation to obtain \(|\sin z/z|\) with \(z=\omega_nt_p/2\). Its small-\(z\) expansion is \(1-z^2/6+\cdots\). At fixed impulse, a sufficiently short pulse therefore gives about the same low-mode amplitude regardless of duration. A shorter event has a broader frequency content, potentially increasing the importance of higher modes.</p>
+<p>A pulse lasting exactly one natural period gives zero residual amplitude in the ideal undamped oscillator, although the displacement during the pulse peaks at \(2F_0/k\). Checking only the post-event motion would miss that maximum. In experiments record the force and response during contact as well as after it. Damping, uncertain pulse shape or nearby modes make exact cancellation unlikely, but the example shows why pulse duration must accompany a quoted peak force.</p>
+</section>
+<section><h2 id="shape">Compare pulses of equal impulse</h2>
+<p>A force transducer may report identical total impulse for a sharp tap and a broader pulse. For an undamped mode, the amplitude after the force has ended is the modulus of its frequency-weighted impulse divided by \(m\omega_n\): \(A=|\int F(t)e^{-i\omega_nt}dt|/(m\omega_n)\). This follows by expanding the sine kernel of the convolution into two quadratures. For a rectangular pulse the ratio to the ideal instantaneous-impulse amplitude is \(|\sin(\omega_nt_p/2)/(\omega_nt_p/2)|\). At a duration equal to half the natural period that factor is \(2/\pi=0.637\). Two force records with equal signed area can therefore have visibly different post-event amplitudes at one sensor if their durations differ. A short force pulse can consequently calibrate a low-frequency mode while underexciting a faster one in the same structure.</p>
+</section>
+<section><h2 id="integration">Derive an energy-consistent time update for a force record</h2>
+<p>A measured force history may be irregular enough that a closed-form convolution is inconvenient. The constant-average-acceleration Newmark update advances a linear oscillator one time step at a time. Let \(x_n,v_n,a_n\) be displacement, velocity and acceleration at \(t_n\). Approximate the acceleration over the step through its endpoint average in the velocity update, and use the corresponding trapezoidal velocity update for displacement. With step \(h\) the relations are</p>
+<div class="math display">\[v_{n+1}=v_n+\tfrac h2(a_n+a_{n+1}),\qquad x_{n+1}=x_n+hv_n+\tfrac{h^2}4(a_n+a_{n+1}).\]</div>
+<p>Enforce the actual equation \(ma_{n+1}+cv_{n+1}+kx_{n+1}=F_{n+1}\) at the new time. Gathering unknown acceleration terms gives effective mass \(m+ch/2+kh^2/4\). The right side is \(F_{n+1}-c(v_n+ha_n/2)-k(x_n+hv_n+h^2a_n/4)\). Solve that scalar equation and back-substitute into both kinematic updates. For several coupled linear coordinates the same derivation gives a linear system with an effective matrix.</p>
+<p>For undamped unforced systems, multiply the average endpoint equilibrium by \(x_{n+1}-x_n=h(v_{n+1}+v_n)/2\). Differences of squares show that the discrete change in kinetic energy plus potential energy vanishes exactly. This property detects sign or unit errors in an implementation. It does not guarantee accurate phase at a coarse time step.</p>
+</section>
+<section><h2 id="one-step">Check one step and distinguish stability from temporal resolution</h2>
+<p>Take \(m=2\,\mathrm{kg}\), \(c=0\), \(k=200\,\mathrm{N/m}\). Begin from \(x_0=0.010\,\mathrm m,\ v_0=0\) and release without applied force. Initial acceleration is \(-kx_0/m=-1.00\,\mathrm{m/s^2}\). With \(h=0.10\,\mathrm s\), effective mass is \(2+200(0.10)^2/4=2.50\,\mathrm{kg}\). Its right side is \(-200[0.010+0.10^2(-1)/4]=-1.50\,\mathrm N\), giving \(a_1=-0.600\,\mathrm{m/s^2}\). The updates give \(v_1=-0.0800\,\mathrm{m/s}, x_1=0.00600\,\mathrm m\).</p>
+<p>The initial energy is \(200(0.010)^2/2=0.0100\,\mathrm J\); after one step it is \(2(0.080)^2/2+200(0.006)^2/2=0.0100\,\mathrm J\). The exact displacement at 0.10 s is nevertheless \(0.010\cos(1)=0.00540\,\mathrm m\). The numerical oscillator advances through angle \(2\arctan(\omega_nh/2)=0.9273\) rad per step instead of 1.00 rad. Over many cycles this small period error accumulates. Halving the step is a direct temporal convergence test. For a measured force pulse, a second check is that its sampled impulse and timing converge as well; an accurate oscillator update cannot recover a force feature missed by the acquisition system.</p>
+<p>It is possible to predict the amount of step refinement needed for a phase-sensitive comparison. For small \(z=\omega_n h/2\), expand \(2\arctan z=2z-2z^3/3+\cdots\). Dividing the numerical angular advance by the true advance gives \(1-(\omega_n h)^2/12+\cdots\). The leading relative frequency error therefore falls by a factor of four when the step is halved. A one-percent target suggests \(\omega_nh\lesssim\sqrt{0.12}=0.346\) for this single undamped mode. At 10 rad/s that means roughly 0.035 s or less, before checking the sampling of the force itself. This criterion addresses the fundamental frequency, not the fastest contributing mode in a multi-degree model. If a high-frequency mode contributes significantly at the measurement station, use its frequency to assess temporal phase resolution or test convergence of the complete measured signal directly.</p>
+<p>Once these conditions are met, comparing the computed displacement and velocity at the end of loading also tests the predicted initial condition for the subsequent free ring-down.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/machine-dynamics/chapters/05-vibration-isolation/">Chapter 5 · Base excitation and vibration isolation</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/machine-dynamics/problem-sheets/3/">Problem sheet 3 · Isolation and shock</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

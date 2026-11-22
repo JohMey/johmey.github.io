@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newton and secant updates · OneSimulation</title>
+<meta name="description" content="Derive derivative-based and derivative-free updates, measure their convergence near a simple zero and explain why a repeated zero changes the convergence order.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/nonlinear-equations/chapters/03-tangent-and-secant/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Newton and secant updates · OneSimulation">
+<meta property="og:description" content="Derive derivative-based and derivative-free updates, measure their convergence near a simple zero and explain why a repeated zero changes the convergence order.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/nonlinear-equations/chapters/03-tangent-and-secant/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Newton and secant updates</h1><p class="lead">Derive derivative-based and derivative-free updates, measure their convergence near a simple zero and explain why a repeated zero changes the convergence order.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#linearise-the-residual-where-you-stand">Linearise the residual where you stand</a><a href="#calculate-the-improvement-explicitly">Calculate the improvement explicitly</a><a href="#examine-a-root-of-higher-multiplicity">Examine a root of higher multiplicity</a><a href="#set-stopping-tests-that-survive-a-change-of-units">Set stopping tests that survive a change of units</a><a href="#prove-a-local-quadratic-bound-with-an-explicit-radius">Prove a local quadratic bound with an explicit radius</a><a href="#certify-a-square-root-and-assess-an-inexact-division">Certify a square root and assess an inexact division</a></nav></aside><article class="prose reference"><section>
+<h2 id="linearise-the-residual-where-you-stand">Linearise the residual where you stand</h2>
+<p>Suppose a scalar balance \(F(x)=0\) is smooth, with a simple root \(r\), meaning \(F'(r)\ne0\). Replacing the unknown function by its tangent at a current estimate \(x_k\) gives \(0\simeq F(x_k)+F'(x_k)(x_{k+1}-x_k)\). Hence \(x_{k+1}=x_k-F(x_k)/F'(x_k)\). The quotient has units of the unknown variable. When it is used in a coupled thermal model, for instance, a mismatch in watts divided by a derivative in W/K produces a temperature correction.</p>
+<p>Assume both the current iterate and the root lie where \(|F''|\leq M\) and \(|F'|\geq m&gt;0\). Taylor expand \(F(r)\) about \(x_k\) and insert the Newton update to obtain \(|x_{k+1}-r|\leq M|x_k-r|^2/(2m)\). For sufficiently small initial error the next iterate stays in the same neighbourhood and its error is of quadratic order. This is a local conclusion. A nearly horizontal tangent far away can give a huge update even when the desired root is simple.</p>
+</section>
+<section>
+<h2 id="calculate-the-improvement-explicitly">Calculate the improvement explicitly</h2>
+<p>For \(F(x)=x^2-2\), Newton’s update is \((x+2/x)/2\). From 1.5 it gives \(17/12=1.4166667\), then \(577/408=1.4142157\). The absolute errors fall from approximately 0.08579 to 0.002453 and then to \(2.12\times10^{-6}\). An exact identity explains these figures: \(x_{k+1}-\sqrt2=(x_k-\sqrt2)^2/(2x_k)\). The positive sequence stays on the high side after the first update and approaches the physically selected positive root.</p>
+<p>When analytic derivatives are expensive, replace \(F'(x_k)\) by the slope between \(x_k\) and \(x_{k-1}\). The resulting secant update uses two initial estimates and only one new residual evaluation per subsequent step. For the same quadratic, the divided difference is exactly \(x_k+x_{k-1}\); algebra gives \(e_{k+1}=e_ke_{k-1}/(x_k+x_{k-1})\), where \(e_j=x_j-\sqrt2\). Near the root the denominator is nearly constant. If \(e_{k+1}\) scales as \(e_k^p\), consistency with the product relation gives \(p^2=p+1\). The positive solution is about 1.618, superlinear but less than two.</p>
+</section>
+<section>
+<h2 id="examine-a-root-of-higher-multiplicity">Examine a root of higher multiplicity</h2>
+<p>For \(F(x)=(x-r)^m\), the tangent correction is only \((x-r)/m\). Newton therefore leaves \(e_{k+1}=(1-1/m)e_k\), a fixed linear reduction. With \(m=3\) and an initial error of 0.3, the first two errors are 0.2 and 0.13333. Meanwhile the residual is cubed, so even a small residual may mask appreciable positional error. Multiplying the Newton correction by \(m\) restores the exact root in one step for this pure power and restores quadratic convergence more generally when the multiplicity is known and the remaining factor is smooth and nonzero.</p>
+<p>Numerically differentiating a residual introduces its own scale. For the forward difference \([F(x+s)-F(x)]/s\), Taylor truncation decreases as \(O(s)\), while rounding or evaluation noise in the numerator is divided by \(s\). Blindly shrinking \(s\) can therefore spoil the derivative. Recompute at a second scale, compare with an analytic derivative when available, and check the final state against the original balance. A derivative that is accurate near the starting point need not stay accurate along the entire sequence.</p>
+</section>
+<section>
+<h2 id="set-stopping-tests-that-survive-a-change-of-units">Set stopping tests that survive a change of units</h2>
+<p>Multiplying a residual by a nonzero constant \(c\) leaves a Newton correction unchanged because both the residual and its derivative acquire that factor. Secant updates have the same invariance. An absolute stopping threshold on the residual alone, however, changes its meaning by \(c\). For \(F=x^2-2\) the trial \(x=1.414\) has \(|F|\simeq0.000604\). Reporting the equivalent balance as \(1000F\) gives a mismatch about 0.604, with the identical prospective Newton step.</p>
+<p>A useful report contains a scaled residual, the size of the accepted update in variable units and the conditions used to leave the iteration. Near a simple root a final undamped correction estimates the remaining positional error to first order. A small <em>damped</em> correction can equally be the consequence of a line search rejecting progress. Recheck the undamped balance or a bracket before treating a tiny change in the displayed state as convergence.</p>
+</section>
+<section>
+<h2 id="prove-a-local-quadratic-bound-with-an-explicit-radius">Prove a local quadratic bound with an explicit radius</h2>
+<p>Let \(r\) be a simple root of a twice differentiable scalar \(f\). On a surrounding interval suppose \(|f'|\ge m&gt;0\) and \(|f''|\le M\). Taylor expansion about a trial point \(x\) gives \(0=f(r)=f(x)+f'(x)(r-x)+f''(\xi)(r-x)^2/2\) for an intermediate \(\xi\). Subtract the exact root from the Newton update \(x_+=x-f(x)/f'(x)\). The linear terms cancel and \(|x_+-r|\le [M/(2m)]|x-r|^2\). This supplies both the mechanism and a coefficient for the familiar quadratic statement.</p>
+<p>The constants must continue to hold at every iterate. If the closed ball of radius \(R\) about the root lies in the stated interval and \(MR/(2m)&lt;1\), any starting point in that ball maps strictly closer to the root and remains in the ball. Repeating the bound is then justified by induction. Without such an invariant region, a single Taylor estimate says nothing about what happens after a step leaves the region of controlled derivatives. A relative update tolerance cannot substitute for a verified lower derivative bound near a flat or multiple root.</p>
+</section>
+<section>
+<h2 id="certify-a-square-root-and-assess-an-inexact-division">Certify a square root and assess an inexact division</h2>
+<p>For \(f(x)=x^2-9\), use the interval \([2,4]\), root three, \(m=4\), \(M=2\). The resulting quadratic error coefficient is \(1/4\). From \(x_0=2.4\) the true initial error is 0.6 and the first error is bounded by 0.09. The actual Newton update is \((2.4+9/2.4)/2=3.075\), leaving error 0.075. The next bound using the actual first error is \(0.075^2/4=0.00140625\). Independently the exact update error obeys \((x-3)^2/(2x)\), giving \(0.075^2/(2\cdot3.075)\approx0.0009146\). The guaranteed number is larger because it allows the smallest derivative on the whole interval.</p>
+<p>Now suppose the computed Newton update has an additional absolute rounding uncertainty of \(10^{-4}\) each time. The same reasoning gives \(|e_+|\le |e|^2/4+10^{-4}\). Once \(|e|\) falls below roughly 0.02, the allowed update uncertainty exceeds the quadratic contribution. Continuing iterations can still help, but the mathematical inequality no longer promises a doubling of correct digits. This transition is visible from the size of the actual input and evaluation errors and should not be fitted away as a mysterious change of convergence order.</p>
+<p>A final distance certificate can avoid using the exact root in a real calculation. If a sign-changing bracket is known to contain the root and \(|f'|\ge4\) throughout it, then \(|x-r|\le|f(x)|/4\) for a point \(x\) inside the bracket. The local Newton proof and the residual-based certificate therefore serve complementary roles: one predicts improvement per iteration, while the other assesses the current uncertainty from computable information.</p>
+<p>In the same square-root example a residual of 0.0008 with the iterate inside \([2,4]\) certifies error at most 0.0002, even without relying on observed convergence ratios. If one instead used the interval \([-4,4]\), the derivative lower bound would be zero and the same residual could not tell which of the two roots was nearby. Certifying a branch is part of certifying a distance.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/nonlinear-equations/problem-sheets/1/">Problem sheet 1 · Isolating and iterating roots</a></span><span>Next<br><a href="/lecture-notes/numerics/nonlinear-equations/chapters/04-coupled-newton/">Chapter 4 · Newton’s method for coupled balances</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

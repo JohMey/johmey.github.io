@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variation of constants and exponential steps · OneSimulation</title>
+<meta name="description" content="Integrate a stiff linear decay exactly while approximating only its slowly changing forcing term.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/ordinary-differential-equations/chapters/07-exponential-integrators/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Variation of constants and exponential steps · OneSimulation">
+<meta property="og:description" content="Integrate a stiff linear decay exactly while approximating only its slowly changing forcing term.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/ordinary-differential-equations/chapters/07-exponential-integrators/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Variation of constants and exponential steps</h1><p class="lead">Integrate a stiff linear decay exactly while approximating only its slowly changing forcing term.</p><p class="byline">Chapter 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#preserve-the-linear-response">Preserve the linear response</a><a href="#derive-the-leading-defect">Derive the leading defect</a><a href="#heat-loss-with-a-steady-input">Heat loss with a steady input</a><a href="#evaluating-the-weights">Evaluating the weights</a><a href="#constant-states-as-an-implementation-test">Constant states as an implementation test</a><a href="#integrate-a-linearly-varying-source-with-a-second-exponential-weight">Integrate a linearly varying source with a second exponential weight</a><a href="#propagate-a-linearly-increasing-acceleration-through-a-coupled-system">Propagate a linearly increasing acceleration through a coupled system</a></nav></aside><article class="prose reference"><section>
+<h2 id="preserve-the-linear-response">Preserve the linear response</h2>
+<p>For \(y'=Ay+g(t,y)\) with constant \(A\), multiply by \(e^{-At}\). The derivative of the product is \(e^{-At}g(t,y(t))\), because the two terms containing \(A\) cancel. Integrating between \(t_n\) and \(t_n+h\), then multiplying back, gives the exact variation-of-constants formula</p>
+<div class="math display">\[y(t_n+h)=e^{hA}y(t_n)+\int_0^he^{(h-s)A}g(t_n+s,y(t_n+s))\,ds.\]</div>
+<p>It separates the free propagation of the initial state from the accumulated, propagated forcing. Freezing \(g\) at the beginning of the step gives exponential Euler. Its forcing weight is \(h\varphi_1(hA)\), where \(\varphi_1(z)=(e^z-1)/z\) has the continuous value 1 at zero. The defining integral or power series applies to a singular matrix without computing an inverse.</p>
+</section>
+<section>
+<h2 id="derive-the-leading-defect">Derive the leading defect</h2>
+<p>Assume along the solution that the change in \(g\) over \(s\) is bounded by \(Ls\), and that the linear propagator has norm at most \(M\) during the step. Subtract the frozen approximation from the exact integral. Its norm is bounded by \(ML\int_0^h s\,ds=MLh^2/2\). This is a local error bound. To obtain a global first-order estimate one must also bound propagation of earlier state errors, using the stability of the linear propagator and the Lipschitz dependence of the remaining forcing on the state. A stiff term hidden inside \(g\) can still impose a severe practical restriction.</p>
+</section>
+<section>
+<h2 id="heat-loss-with-a-steady-input">Heat loss with a steady input</h2>
+<p>Let \(y'=-100y+20\) with \(y(0)=1\) and time in seconds. The equilibrium is 0.2. At \(h=0.1\), exponential Euler gives \(y_1=e^{-10}+0.2(1-e^{-10})\approx0.20003632\), exactly the analytical solution at that time. Forward Euler would give \(-7\), whereas backward Euler gives \(3/11\approx0.27273\). Both the exponential step and backward Euler damp the fast mode here, but the computed amount of transient that survives differs substantially. A large step that accurately reproduces its endpoint can still leave an output trace too sparse to measure the early decay time.</p>
+<p>Change the input to \(20+10t\). During the first step exponential Euler ignores its linear growth. The missing term is \(10\int_0^h e^{-100(h-s)}s\,ds=10[h/100-(1-e^{-100h})/10000]\). At 0.1 s it is approximately 0.00900005. Including a linear approximation to the forcing would recover this term exactly. This calculation isolates the effect of freezing a changing input while the stiff decay remains exact.</p>
+</section>
+<section>
+<h2 id="evaluating-the-weights">Evaluating the weights</h2>
+<p>For small \(|z|\), direct subtraction of one from \(e^z\) loses significant digits. A dedicated exponential-minus-one function or the series \(1+z/2+z^2/6+\cdots\) yields a reliable \(\varphi_1\). Large sparse systems often require only the action of an exponential on a vector. Computing this action introduces another error budget separate from time approximation; a constant-forcing test with a known equilibrium checks both parts together.</p>
+</section>
+<section>
+<h2 id="constant-states-as-an-implementation-test">Constant states as an implementation test</h2>
+<p>If \(Ay_\ast+g_\ast=0\), an exponential step starting at \(y_\ast\) must reproduce the same state for every step length. The series identity \(h\varphi_1(hA)A=e^{hA}-I\) makes the cancellation exact mathematically. Test this condition with a matrix containing both a zero eigenvalue and a strongly negative eigenvalue: the zero mode should accumulate a constant source linearly, while the decaying mode approaches its forced equilibrium. This test distinguishes a faulty treatment of the zero limit from ordinary temporal error caused by a varying input.</p>
+</section>
+<section>
+<h2 id="integrate-a-linearly-varying-source-with-a-second-exponential-weight">Integrate a linearly varying source with a second exponential weight</h2>
+<p>For \(y'=Ay+b_0+(t-t_n)b_1\) during a step, the variation-of-constants integral contains a constant and a linear source. Expand \(e^{(h-s)A}\) in its power series inside \(\int_0^h e^{(h-s)A}s\,ds\). Integrating each term gives \(h^{j+2}A^j/(j+2)!\). Consequently the appropriate weight for the slope is \(h^2\varphi_2(hA)\) with \(\varphi_2(z)=\sum_{j\ge0}z^j/(j+2)!\). Together with the constant-source \(\varphi_1\) term this gives the exact step for a source genuinely affine in time.</p>
+<p>The identity \(z\varphi_2(z)=\varphi_1(z)-1\) follows from the series. At zero the continuous value is one half, matching the elementary time integral of a ramp. Computing this weight by dividing two nearly equal numbers can lose digits near zero and fails as an ordinary matrix division when \(A\) is singular. The series definition and augmented-system formulations give well-defined actions in both cases. If the source depends on the unknown state, an independently known time slope is no longer enough: its total derivative includes the state sensitivity carried along the current trajectory.</p>
+</section>
+<section>
+<h2 id="propagate-a-linearly-increasing-acceleration-through-a-coupled-system">Propagate a linearly increasing acceleration through a coupled system</h2>
+<p>Let \(y=(q,v)^T,\ q'=v,\ v'=2+6t\), with \(q(0)=1\) m and \(v(0)=0\). The matrix \(A=\left(\begin{smallmatrix}0&amp;1\\0&amp;0\end{smallmatrix}\right)\) is singular and satisfies \(A^2=0\). The matrix series therefore terminate: \(e^{hA}=I+hA,\ h\varphi_1=hI+h^2A/2,\ h^2\varphi_2=h^2I/2+h^3A/6\), with arguments \(hA\) understood. Multiplying \(b_0=(0,2)^T\) by the first source weight gives \((h^2,2h)^T\). Multiplying \(b_1=(0,6)^T\) by the ramp weight gives \((h^3,3h^2)^T\).</p>
+<p>At \(h=0.5\) s, the freely propagated initial state is still \((1,0)^T\). The constant-source contribution is \((0.25,1)^T\) and the ramp contribution is \((0.125,0.75)^T\). The final state is therefore \((1.375,1.75)^T\). Independently integrating the acceleration gives \(v=2t+3t^2\) and \(q=1+t^2+t^3\), confirming both numbers. A method freezing acceleration at its initial value would report \(q=1.25,\ v=1\) despite propagating the coupling \(q'=v\) exactly.</p>
+<p>This example shows how information travels through a seemingly empty entry of the source: the position receives a ramp contribution although the forcing acts directly only on velocity. Treating the exponential as an entrywise operation would miss it. For larger sparse systems the same action can be obtained by augmenting the state with coordinates representing the constant and linear input, then applying one matrix exponential to the augmented initial vector.</p>
+<p>For the stated ramp, define two extra scalar coordinates \(c=1\) and \(s=t\) with \(c'=0,\ s'=c\). Then the augmented linear equation has \(y'=Ay+b_0 c+b_1 s\). Powers of this single augmented matrix transfer \(c\) successively into \(s\), acceleration, velocity and position. Its exponential is therefore a finite polynomial for the present nilpotent structure. This explicit construction supplies a second implementation that can test the individual \(\varphi\) actions without forming a matrix inverse. If the ramp is restarted at each step, initialise the auxiliary coordinate consistently with whether \(b_0\) is the original source or its value at the new time.</p>
+<p>Initialising both auxiliary coordinates anew with their original values while retaining a global-time ramp would repeatedly turn off the accumulated increase of the input.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/ordinary-differential-equations/problem-sheets/3/">Problem sheet 3 · Events and long trajectories</a></span><span>Next<br><a href="/lecture-notes/numerics/ordinary-differential-equations/chapters/08-splitting/">Chapter 8 · Operator splitting and noncommuting flows</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

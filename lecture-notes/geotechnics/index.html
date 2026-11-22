@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why does the ground sink when groundwater is pumped? · OneSimulation</title>
+<meta name="description" content="Trace how a drop in pore pressure transfers load to the soil skeleton and estimate the resulting settlement.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/geotechnics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why does the ground sink when groundwater is pumped? · OneSimulation">
+<meta property="og:description" content="Trace how a drop in pore pressure transfers load to the soil skeleton and estimate the resulting settlement.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/geotechnics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/course/#mechanics">Forces and motion</a> / Geotechnics</p><h1>Why does the ground sink when groundwater is pumped?</h1><p class="lead">Trace how a drop in pore pressure transfers load to the soil skeleton and estimate the resulting settlement.</p><p class="prerequisites"><strong>Prerequisites</strong> Hydrostatic pressure and normal strain.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Follow the weight from pore water to grains</a><a href="#boundary">Turn effective stress into settlement</a><a href="#worked">Estimate settlement after a five-metre drawdown</a><a href="#tutorial">Tutorial on layered ground</a><a href="#numerical">Optional numerical comparison</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Follow the weight from pore water to grains</h2>
+<p>A well draws water from a confined sediment layer. A survey benchmark at the surface begins to move down, although nobody has added weight at the surface. How can a change in water pressure shorten a column of sediment?</p>
+<p>Imagine a horizontal cut through saturated soil. The vertical force on the cut is carried by pore water and by contacts between grains. Taking compression as positive and using Terzaghi’s effective stress for a saturated soil gives \(\sigma'_v=\sigma_v-u\). The total vertical stress is \(\sigma_v\), the pore pressure is \(u\) and \(\sigma'_v\) loads the skeleton.</p>
+<p>At a fixed elevation \(z\), hydraulic head is \(h=z+u/(\rho_w g)\). Define drawdown \(d=h_{\rm before}-h_{\rm after}\), positive for a head decline. With water density \(\rho_w\) constant, pore pressure falls by \(\rho_w g d\). If the total overburden stays fixed, the effective compressive stress rises by precisely that amount.</p>
+</section>
+<section>
+<h2 id="boundary">Turn effective stress into settlement</h2>
+<p>Consider a laterally extensive layer with no lateral strain, small deformation and a rigid base. Let \(M\) be its constrained modulus measured under that lateral constraint. In its linear range the compressive vertical strain increment is \(\Delta\epsilon_v=\Delta\sigma'_v/M\). Integrating shortening through the layer gives the downward surface settlement</p>
+<div class="math display">\[s=\int_0^H \Delta\epsilon_v\,dz
+=\int_0^H S_{\rm sk}(z)\,d(z)\,dz,\qquad S_{\rm sk}=\frac{\rho_w g}{M}.\]</div>
+<p>The skeletal specific storage \(S_{\rm sk}\) has units m⁻¹. A head measured in a pumped aquifer describes the adjacent fine-grained layer only once pressure there has adjusted. If drawdown varies with depth, each slice must contribute its own strain.</p>
+</section>
+<section>
+<h2 id="worked">Estimate settlement after a five-metre drawdown</h2>
+<p>Take a 20 m layer with \(S_{\rm sk}=10^{-4}\) m⁻¹ and uniform \(d=5\) m. With \(\rho_w=1000\) kg/m³ and \(g=9.81\) m/s², pore pressure falls by \(49.05\) kPa. The constrained modulus is \(9810/10^{-4}=98.1\) MPa. Thus \(\Delta\epsilon_v=49.05/98100=0.00050\) and \(s=20(0.00050)=0.010\) m. Half a millimetre of shortening per metre adds up to one centimetre at the surface.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial on layered ground</h2>
+<h3>1. Account for incomplete drainage</h3>
+<p>At an earlier time a measured drawdown profile decreases linearly from 5 m at the top to zero at the base of the same layer. What settlement has occurred? What error follows if the upper reading is used throughout?</p>
+<details><summary>Solution to the drainage profile</summary><p>The area under a linear drawdown profile is a triangle. Its mean is \((5+0)/2=2.5\) m, giving \(s=(10^{-4})(20)(2.5)=0.0050\) m. Extending the upper reading to the base would predict 10 mm, twice the actual 5 mm. The skeleton near the base still carries almost its original effective stress.</p></details>
+<h3>2. Interpret a difference across the site</h3>
+<p>Two benchmarks sit above 20 m and 8 m of the same compressible sediment. Both columns experience 5 m of uniform drawdown. Estimate the differential settlement and identify a quantity that this column model cannot predict near an abrupt step in bedrock.</p>
+<details><summary>Solution to the two-column comparison</summary><p>The strain is 0.00050 in each column. Their settlements are 10 mm and 4 mm, giving a difference of 6 mm. Independent columns allow no lateral deformation. To determine horizontal strain near the step, a continuum model must transmit shear and enforce displacement compatibility across the change in thickness.</p></details>
+</section>
+<section>
+<h2 id="numerical">Optional numerical comparison</h2>
+<p>The basin study compares a column estimate with plane-strain poroelasticity over a buried step. Use the deep-side probe, 40 m from the step and 10 m below the surface. After ten years the coupled calculation gives 0.104 m of settlement there, close to the published 0.10 m. Check the change between the two finest meshes, then compare the 0.181 m column estimate at the same probe. The difference between the models is much larger than the change from mesh refinement. <a href="/blog/terzaghi_aquifer_compaction/">OneSimulation basin study</a> · <a href="https://pubs.usgs.gov/of/1997/ofr97-047/pdf/OFR97-47.pdf">Leake and Hsieh’s USGS benchmark (PDF)</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/lecture-notes/hydrodynamics/">Why does a narrower channel carry so much less fluid?</a></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

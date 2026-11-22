@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pressure integration, lift and drag · OneSimulation</title>
+<meta name="description" content="Resolve pressure and shear into integrated forces and infer drag independently from a far-wake velocity survey.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/09-drag-lift/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pressure integration, lift and drag · OneSimulation">
+<meta property="og:description" content="Resolve pressure and shear into integrated forces and infer drag independently from a far-wake velocity survey.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/09-drag-lift/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Pressure integration, lift and drag</h1><p class="lead">Resolve pressure and shear into integrated forces and infer drag independently from a far-wake velocity survey.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#traction">Build the resultant from surface measurements</a><a href="#wing">Integrate a pressure distribution</a><a href="#wake">Recover a drag force without surface taps</a><a href="#induced">Relate finite-span lift to a second contribution to drag</a><a href="#glider">Select a glide speed and check the angle assumptions</a></nav></aside><article class="prose reference"><section><h2 id="traction">Build the resultant from surface measurements</h2>
+<p>A wind tunnel balance reports force components along and across the incoming flow. A pressure tap reports only local pressure. To connect the two, draw the surface outward normal from the solid into the fluid. A pressure load then acts on the solid in direction \(-n\); fluid wall shear acts tangentially. Integrate pressure traction and shear traction over the body and project the result onto drag and lift axes. A uniform ambient pressure integrates to zero on a closed surface, so gauge pressure is sufficient for this calculation.</p>
+<p>For a thin wing at small incidence the upper and lower surfaces are almost horizontal. To leading order the upward pressure force is the planform integral of \(p_{\rm lower}-p_{\rm upper}\). With dynamic pressure \(q_\infty=\rho U^2/2\), define \(C_p=(p-p_\infty)/q_\infty\). For rectangular planform and a pressure difference independent of span, the lift coefficient is approximately</p>
+<div class="math display">\[C_L=\frac{L}{q_\infty S}\simeq \int_0^1(C_{p,l}-C_{p,u})\,d(x/c).\]</div>
+<p>The reference area \(S\) must be stated. A coefficient based on wing planform and a bluff-body coefficient based on frontal area cannot be compared as if they used the same force scale.</p>
+</section>
+<section><h2 id="wing">Integrate a pressure distribution</h2>
+<p>A wing panel has chord 0.30 m and span 0.80 m. Take the pressure-coefficient difference as a triangle, rising linearly from zero at the leading edge to 1.20 at \(x/c=0.25\) and decreasing linearly to zero at the trailing edge. The coefficient integral is the area under this triangle, \(C_L=0.60\). At \(U=20\,\mathrm{m/s}\) in air of density 1.20 kg/m³, \(q_\infty=240\,\mathrm{Pa}\). The estimated lift is \(240(0.24)(0.60)=34.56\,\mathrm N\).</p>
+<p>For this spanwise-uniform distribution the centre of pressure follows from the first moment of the triangle. Its chord fraction is the mean of the three vertex abscissae, \((0+0.25+1)/3=0.4167\). The resultant acts about 0.125 m aft of the leading edge. The moment magnitude about that edge is \(34.56(0.125)=4.32\,\mathrm{N\,m}\). Two panels with the same total lift can therefore transmit different support moments if their pressure distributions differ.</p>
+</section>
+<section><h2 id="wake">Recover a drag force without surface taps</h2>
+<p>For a survey far enough downstream that static pressure has returned to the external value, integrate the streamwise momentum deficit across the wake. With essentially parallel flow, constant density and negligible outer boundary shear, drag per unit span is \(D'=\rho\int u(U-u)\,dy\). This momentum survey includes the effect of both body pressure and surface shear.</p>
+<p>For a simplified wake 40 mm thick with uniform \(u=16\,\mathrm{m/s}\) inside it and \(U=20\,\mathrm{m/s}\) outside, the inferred drag per span is \(1.20(16)(4)(0.040)=3.07\,\mathrm{N/m}\). Replacing the product by \(\rho U(U-u)\) overestimates the deficit because it assigns the undisturbed mass flux to the wake. A survey close to the trailing edge often also needs a static pressure correction; insufficient lateral coverage can miss part of the deficit.</p>
+</section>
+<section><h2 id="induced">Relate finite-span lift to a second contribution to drag</h2>
+<p>A pressure integration on one two-dimensional section neglects a feature of every finite lifting surface. Bound circulation changes along the span and trailing vorticity produces downwash behind the wing. For attached lifting-line flow at small angles, downwash tilts the effective incoming stream downward by induced angle \(\alpha_i\). The section’s aerodynamic force is approximately perpendicular to that local stream, so its projection along the original incoming direction creates induced drag \(D_i\simeq L\alpha_i\). This contribution can remain even for an inviscid outer flow because momentum is carried away in a three-dimensional trailing wake.</p>
+<p>For elliptical span loading the ideal lifting-line result is \(\alpha_i=C_L/(\pi AR)\), where aspect ratio \(AR=b^2/S\), span \(b\) and planform area \(S\). A span efficiency factor \(e\) accounts approximately for a non-elliptic distribution at a given lift, giving \(C_{D,i}=C_L^2/(\pi e AR)\). With a locally constant parasite coefficient \(C_{D,0}\), total drag at fixed required lift \(W\) becomes</p>
+<div class="math display">\[D=qS C_{D,0}+\frac{W^2}{\pi e AR\,qS},\qquad q=\rho U^2/2.\]</div>
+<p>At low speed the necessary lift coefficient rises and induced drag dominates; at high speed parasite drag rises with dynamic pressure. Differentiating \(D\) with respect to \(qS\) gives minimum drag where the two terms are equal. Thus \(C_{L,\rm opt}=\sqrt{\pi e AR C_{D,0}}\). This optimum maximises lift-to-drag ratio for the adopted polar. Minimum power \(DU\) is a different operating point.</p>
+</section>
+<section><h2 id="glider">Select a glide speed and check the angle assumptions</h2>
+<p>A small unpowered survey glider has weight 120 N, area 1.20 m² and span 3.0 m. Use density 1.20 kg/m³, \(e=0.80\) and \(C_{D,0}=0.025\). Assume shallow steady glide so lift is approximately weight. Aspect ratio is \(3^2/1.2=7.50\) and \(\pi e AR=18.85\). The optimum lift coefficient is \(\sqrt{18.85(0.025)}=0.686\). From \(W=qSC_L\) the dynamic pressure is 145.8 Pa and the airspeed is \(\sqrt{2(145.8)/1.20}=15.6\,\mathrm{m/s}\).</p>
+<p>At this condition total drag coefficient is \(0.025+0.686^2/18.85=0.0500\). Drag is 8.75 N, giving \(L/D=13.7\) and glide angle approximately \(\arctan(1/13.7)=4.17^\circ\). The assumption \(L\simeq W\) is consistent to better than one percent. Doubling speed at unchanged weight reduces \(C_L\) by four, so induced drag falls by four while parasite drag rises by four. The original 4.38 N contributions become about 1.09 and 17.5 N. If an estimated optimum lies at or beyond the measured stall coefficient, the attached-flow polar and lifting-line argument no longer support that speed decision.</p>
+<p>Banking the same glider changes the required lift. In a coordinated near-level turn with bank angle \(\phi\), the vertical lift component must support the weight, so \(L=W/\cos\phi\). At 45° bank the required lift rises by \(\sqrt2\). At unchanged speed the induced portion of drag then doubles, while the parasite portion is approximately unchanged under the same polar. This transfer calculation explains why a straight-flight drag estimate cannot be inserted unchanged into a turning-flight performance prediction.</p>
+<p>The required lift coefficient at the higher bank angle must still remain inside the measured unstalled polar.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/fluid-mechanics/problem-sheets/4/">Problem sheet 4 · Swirling flows and wall drag</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/10-pump-networks/">Chapter 10 · Pump curves, pipe networks and operating points</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

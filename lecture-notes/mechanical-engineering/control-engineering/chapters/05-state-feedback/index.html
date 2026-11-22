@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>States, reachability and estimation · OneSimulation</title>
+<meta name="description" content="Two mechanisms can produce the same output at one instant and different outputs an instant later. Determine what the actuator can change and what a sensor history can reveal.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/05-state-feedback/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="States, reachability and estimation · OneSimulation">
+<meta property="og:description" content="Two mechanisms can produce the same output at one instant and different outputs an instant later. Determine what the actuator can change and what a sensor history can reveal.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/05-state-feedback/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>States, reachability and estimation</h1><p class="lead">Two mechanisms can produce the same output at one instant and different outputs an instant later. Determine what the actuator can change and what a sensor history can reveal.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#from-balances-to-independent-states">From balances to independent states</a><a href="#test-an-actuator-and-a-sensor">Test an actuator and a sensor</a><a href="#place-poles-and-restore-the-reference-scale">Place poles and restore the reference scale</a><a href="#reconstruct-velocity-without-differentiating-noisy-measurements">Reconstruct velocity without differentiating noisy measurements</a><a href="#integral-state">Add a state that estimates a constant load through tracking error</a><a href="#load-step">Place the integral servo poles and check the required voltage</a></nav></aside><article class="prose reference"><section><h2 id="from-balances-to-independent-states">From balances to independent states</h2>
+<p>A cart of mass \(m\) moves against a spring \(k\) and damper \(b\). Choose \(x=(q,v)^\mathsf{T}\), displacement and velocity. Newton's law gives \(\dot q=v,\ m\dot v=-kq-bv+u\). A state contains the initial information needed to propagate the motion with specified input. Measuring displacement at one instant supplies only half of that information. The state choice is not unique: replacing velocity by momentum changes the matrix entries, yet the predicted displacement history is the same.</p>
+<div class="math display">\[\dot x=Ax+Bu,\quad y=Cx,\qquad A=\begin{pmatrix}0&amp;1\\-k/m&amp;-b/m\end{pmatrix},\ B=\binom{0}{1/m},\ C=(1\;\;0).\]</div>
+<p>With zero input the transition \(e^{At}\) propagates initial conditions. Integrating the effect of forces applied at each earlier time gives \(x(t)=e^{At}x(0)+\int_0^t e^{A(t-s)}Bu(s)\,ds\). This decomposition explains why both the autonomous motion and the input direction enter control design.</p>
+</section>
+<section><h2 id="test-an-actuator-and-a-sensor">Test an actuator and a sensor</h2>
+<p>Over a short time, the vectors \(e^{At}B=B+tAB+\cdots\) show the directions that a force can excite. In two dimensions \(B,AB\) suffice by the characteristic equation of \(A\). For the cart their columns have determinant \(-1/m^2\); a finite mass allows the actuator to change both position and velocity over time. This rank test assumes arbitrary inputs and sufficient time. Getting to a distant position in a very short time can still exceed an actuator limit.</p>
+<p>With a known input, output and its first derivative contain \(Cx\) and \(CAx\). Here they are position and velocity, so the observability matrix has full rank. As a counterexample, consider two uncoupled tanks with equal decay rates, driven equally, and one sensor measuring the sum of levels. The difference evolves autonomously and never enters the sum. Recording a longer noiseless trace with that sensor cannot recover the initial difference. Moving a sensor or adding a distinct excitation has to break the symmetry responsible for the missing information.</p>
+</section>
+<section><h2 id="place-poles-and-restore-the-reference-scale">Place poles and restore the reference scale</h2>
+<p>Take \(m=1,\ b=1,\ k=2\) in compatible SI units. Apply \(u=-f_q q-f_v v+n r\). The homogeneous characteristic polynomial is \(s^2+(1+f_v)s+(2+f_q)\). Desired poles at \(-2,-3\) give \(f_v=4,\ f_q=4\) by coefficient matching. At constant reference the velocity vanishes and \((2+f_q)q=nr\), so \(n=6\) gives \(q=r\) in the nominal model. A constant unmodelled force shifts this equilibrium. State feedback with a static reference multiplier alone supplies no mechanism to learn that force.</p>
+</section>
+<section><h2 id="reconstruct-velocity-without-differentiating-noisy-measurements">Reconstruct velocity without differentiating noisy measurements</h2>
+<p>An observer runs the model and uses the disagreement with the measured output to correct its state. Write \(\dot{\hat x}=A\hat x+Bu+H(y-C\hat x)\). In the ideal deterministic model the estimation error obeys \(\dot e=(A-HC)e\). Here its polynomial is \(s^2+(1+h_1)s+(h_1+2+h_2)\). Desired observer poles \(-4,-5\) give \(h_1=8,\ h_2=10\). Thus an initial state error decays even though the sensor supplies only displacement.</p>
+<p>With the control law evaluated at \(\hat x\), the combined state and estimation-error dynamics are block triangular. The two sets of assigned poles therefore survive in the ideal linear model. Faster observer poles also give sensor noise larger correction gains. Compare simulated or measured velocity estimates during a quiet hold and during a sharp manoeuvre before accepting the faster design. A missing mode, a noisy estimate and the inability to measure an initial state exactly have distinct engineering implications.</p>
+<p>For additional examples of state estimation and output feedback, see Åström and Murray’s <a href="https://fbswiki.org/wiki/index.php/Feedback_Systems:_An_Introduction_for_Scientists_and_Engineers">Feedback Systems</a>.</p></section>
+<section><h2 id="integral-state">Add a state that estimates a constant load through tracking error</h2>
+<p>A feedforward reference gain can remove steady offset for an exact plant model. When an unknown constant load enters at an actuator, the equilibrium input changes. Integrating the tracking error gives the controller a memory with which to supply the missing steady effort. For a state model \(\dot x=Ax+Bu+Ed,\ y=Cx\), augment the state by \(z\) with \(\dot z=r-Cx\). If the augmented closed loop is stable and reaches equilibrium, then \(\dot z=0\) enforces \(y=r\). This argument assumes constant feasible \(r,d\), no actuator saturation and an unbiased measurement.</p>
+<p>Take a velocity servo \(\dot v=-av+bu+d\) with \(u=-k_vv+k_i z\); use \(v\) in m/s, \(u\) in volts and \(z\) in metres. The augmented characteristic polynomial follows by differentiating the velocity equation for a constant disturbance, or directly from its two-by-two state matrix:</p>
+<div class="math display">\[\dot v=-(a+bk_v)v+bk_i z+d,\quad \dot z=r-v,\qquad p(s)=s^2+(a+bk_v)s+bk_i .\]</div>
+<p>The augmented controllability test is important in more general plants: a servo integrator at zero frequency cannot arbitrarily impose an output that the input cannot sustain. Even here \(b=0\) would make the augmented system uncontrollable. Physical travel or voltage limits can also restrict the equilibrium although the ideal linear test passes.</p>
+</section>
+<section><h2 id="load-step">Place the integral servo poles and check the required voltage</h2>
+<p>Assume \(a=2\,\mathrm{s^{-1}}\), \(b=3\,\mathrm{(m/s^2)/V}\) and target poles at −3 and −4 s⁻¹. Matching \(p(s)=s^2+7s+12\) gives \(k_v=(7-2)/3=1.667\,\mathrm{V\,s/m}\) and \(k_i=12/3=4.0\,\mathrm{V/m}\). At command \(r=1.0\,\mathrm{m/s}\) and constant opposing disturbance \(d=-0.60\,\mathrm{m/s^2}\), equilibrium requires \(u=(ar-d)/b=0.867\,\mathrm V\). The integrator settles at \(z=(u+k_vr)/k_i=0.633\,\mathrm m\). The unit assigned to this internal state is integrated velocity error, not physical servo displacement.</p>
+<p>For a pure disturbance step with reference held fixed, eliminating \(z\) gives \(V(s)/D(s)=s/[(s+3)(s+4)]\) in deviation variables. A −0.60 m/s² step therefore produces \(\Delta v(t)=-0.60(e^{-3t}-e^{-4t})\,\mathrm{m/s}\). Its minimum occurs at \(t=\ln(4/3)=0.288\,\mathrm s\), with a speed error of about −0.063 m/s before recovery. An actuator limited to ±0.75 V could not maintain the stated final speed even though the assigned poles are stable. Integral feedback enforces the available equilibrium, and a command governor or anti-windup logic becomes necessary when the physical equilibrium lies outside the reachable input range.</p>
+<p>The disturbance response also gives a way to separate a constant accelerative load from a sensor bias. Once a real opposing load has been rejected, an independent speed measurement still reads the requested 1.0 m/s while the final actuator voltage has risen by \(-d/b=0.20\) V above its no-load value. A constant positive sensor bias of 0.05 m/s instead drives the measured velocity to the set point with a true speed of 0.95 m/s. If both effects are allowed but only the controller’s own sensor is logged, a final reading exactly at set point does not identify the source of error. An independent tachometer or a measured load torque supplies the missing observation. Integral convergence cannot by itself validate sensor calibration.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/control-engineering/problem-sheets/2/">Problem sheet 2 · Pole placement, gain and phase</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/control-engineering/chapters/06-sampled-control/">Chapter 6 · Sampling, saturation and commissioning</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

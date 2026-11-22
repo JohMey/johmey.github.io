@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interacting actuators, pairing and decoupling · OneSimulation</title>
+<meta name="description" content="Predict how closing one loop changes the apparent gain of another, and identify a physically expensive actuator combination.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/11-multivariable-loops/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Interacting actuators, pairing and decoupling · OneSimulation">
+<meta property="og:description" content="Predict how closing one loop changes the apparent gain of another, and identify a physically expensive actuator combination.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/11-multivariable-loops/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Interacting actuators, pairing and decoupling</h1><p class="lead">Predict how closing one loop changes the apparent gain of another, and identify a physically expensive actuator combination.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-second-loop-changes-the-experiment">A second loop changes the experiment</a><a href="#compare-candidate-pairings">Compare candidate pairings</a><a href="#diagonalise-a-symmetric-plant-by-physical-combinations">Diagonalise a symmetric plant by physical combinations</a><a href="#choose-a-practical-validation-test">Choose a practical validation test</a><a href="#singular-values">Find difficult demand directions with a singular-value decomposition</a><a href="#differential-demand">Allocate two actuators with a tight current budget</a></nav></aside><article class="prose reference"><section><h2 id="a-second-loop-changes-the-experiment">A second loop changes the experiment</h2>
+<p>Imagine two thermal zones with separate heaters and two temperature sensors. At steady state let \(y=G u\), with \(G=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\end{smallmatrix}\right)\) K per unit power. Increasing heater 1 with heater 2 fixed raises both temperatures. Increasing heater 1 while actively holding temperature 2 fixed is a different experiment: heater 2 must back off. The effective gain in the first channel changes. This difference matters when a controller is tuned with its neighbour disconnected and then commissioned with both loops active.</p>
+<p>For a general nonsingular two-by-two matrix hold \(y_2=0\). Solving \(g_{21}u_1+g_{22}u_2=0\) gives \(y_1/u_1=g_{11}-g_{12}g_{21}/g_{22}\). The ratio of the fixed-input gain to this fixed-output gain is \(g_{11}g_{22}/\det G\). More generally the relative gain array has entries \(\Lambda_{ij}=g_{ij}(G^{-1})_{ji}\). Its rows and columns each sum to one. Large magnitudes suggest cancellation. A negative relative gain indicates that the paired steady response changes sign when the other output is perfectly held, an important warning for independent-loop tuning.</p>
+</section>
+<section><h2 id="compare-candidate-pairings">Compare candidate pairings</h2>
+<p>For the two-zone matrix above the diagonal relative gains are \(4/3\) and the off-diagonal gains are \(-1/3\). The direct pairing has fixed-input gain 2 and fixed-other-output gain 1.5. The cross-pairing changes sign. These steady results do not include transport delays or transient coupling. If the direct heater path is very slow but the cross path changes quickly, a frequency-dependent model is needed around the intended control bandwidth.</p>
+</section>
+<section><h2 id="diagonalise-a-symmetric-plant-by-physical-combinations">Diagonalise a symmetric plant by physical combinations</h2>
+<p>Commanding both heaters together excites the common direction \((1,1)\) with gain 3; commanding them oppositely excites \((1,-1)\) with gain 1. For the desired temperature increment \((1,-1)\), exactly equal and opposite input increments \((1,-1)\) are required. Negative input here is a reduction from a positive bias; a heater already at zero cannot supply it. Inspecting a transformed system without retaining the original actuator limits can make an impossible target seem easy.</p>
+<p>Now bring the gains closer together: \(G=\left(\begin{smallmatrix}1&amp;0.98\\0.98&amp;1\end{smallmatrix}\right)\). The common gain is 1.98, while the differential gain is just 0.02. A unit differential target requires differential input of magnitude 50 in each actuator. Static inversion \(u=G^{-1}v\) algebraically decouples the two commands but amplifies measurement, calibration and modelling errors along that weak direction. If both temperature sensors move together during every available test, the weak direction is also particularly hard to identify.</p>
+</section>
+<section><h2 id="choose-a-practical-validation-test">Choose a practical validation test</h2>
+<p>First perturb each actuator separately about the operating bias and measure both outputs. Repeat at different loads and frequencies. Next excite the predicted weakest input combination within safe operating limits and check whether the differential output emerges above the noise. A design can prioritise the common temperature and relax allowable imbalance when the plant is inherently hard to split. A constrained controller can express this trade directly by penalising both output errors while respecting individual actuator bounds.</p>
+</section>
+<section><h2 id="singular-values">Find difficult demand directions with a singular-value decomposition</h2>
+<p>Relative gains help pair individual inputs and outputs, but some machines are controlled through combinations of actuators. A steady mapping \(y=Gu\) with adequate static rank can still require a large actuator change in a particular direction. Scale inputs by allowed physical excursions and outputs by meaningful error or command scales. After scaling, the Euclidean norm is interpretable and singular values quantify directional gains. Without scaling, changing position units from metres to millimetres could dominate the result.</p>
+<p>For a real square nonsingular \(G\), the symmetric positive definite matrix \(G^TG\) has orthonormal eigenvectors \(v_j\) and positive eigenvalues \(\sigma_j^2\). A unit actuator pattern \(v_j\) yields an output of length \(\sigma_j\) in direction \(u_j=Gv_j/\sigma_j\). Writing \(G=U\Sigma V^T\) then gives a transparent inverse. A desired output \(y_r\) requires actuator components \((u_j^Ty_r)/\sigma_j\) along \(v_j\). The smallest singular value therefore controls the largest gain of the inverse, and the ratio \(\sigma_{\max}/\sigma_{\min}\) measures conditioning.</p>
+<p>This geometry describes steady input effort, not necessarily dynamic stability. Two channels with different lags can have different difficult directions at higher frequencies. The singular values of the complex frequency-response matrix can reveal that change after consistent scaling at every frequency.</p>
+</section>
+<section><h2 id="differential-demand">Allocate two actuators with a tight current budget</h2>
+<p>Consider a scaled steady plant \(G=\left(\begin{smallmatrix}1&amp;0.9\\0.9&amp;1\end{smallmatrix}\right)\). Its symmetry gives unit common and differential directions \((1,1)/\sqrt2\) and \((1,-1)/\sqrt2\), with singular values 1.9 and 0.1. A common output target \((0.2,0.2)\) requires only \(u=(0.1053,0.1053)\). A differential target \((0.2,-0.2)\) needs \(u=(2,-2)\), a factor nineteen more effort for the same output norm. If each drive is limited to magnitude one, the first target is feasible and the second is not.</p>
+<p>One possible allocation trades exact tracking against effort by minimising \(\|Gu-y_r\|^2+\lambda\|u\|^2\). The stationary normal equations are \((G^TG+\lambda I)u=G^Ty_r\); each inverse singular value is replaced by \(\sigma_j/(\sigma_j^2+\lambda)\). For \(\lambda=0.01\) and the differential target, that factor is \(0.1/(0.01+0.01)=5\). The resulting input is \((1,-1)\) and output \((0.1,-0.1)\). The allocation respects these particular bounds while openly accepting half the requested differential change. A penalty does not enforce an input limit for every possible target. If exact limit enforcement is required, solve the bounded allocation problem or constrain the admissible command directions explicitly.</p>
+<p>A simple perturbation test makes the weak direction visible in hardware. Command \(u=(0.1,0.1)\) in scaled units and predict \(y=(0.19,0.19)\). Reversing only the second command gives \(u=(0.1,-0.1)\) and outputs only \((0.01,-0.01)\). If each sensor has an uncertainty of ±0.01 output units, the first test has a comfortable signal level but the second barely resolves its predicted value. A poorly estimated differential gain may therefore vary considerably between identification records even though the common gain is repeatable. Increasing the differential test amplitude within operating bounds or averaging repeated experiments improves that estimate. A static inverse based on a single small pulse at each actuator may otherwise amplify calibration error precisely in the least observable output combination.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/control-engineering/problem-sheets/5/">Problem sheet 5 · Regulate a state and estimate it from data</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/control-engineering/chapters/12-predictive-control/">Chapter 12 · Finite-horizon control with real actuator constraints</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

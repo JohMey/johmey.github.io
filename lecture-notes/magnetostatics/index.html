@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When does the long-solenoid formula work? · OneSimulation</title>
+<meta name="description" content="Add the fields of current loops along a coil and estimate the centre-field error caused by its finite length.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/magnetostatics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When does the long-solenoid formula work? · OneSimulation">
+<meta property="og:description" content="Add the fields of current loops along a coil and estimate the centre-field error caused by its finite length.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/magnetostatics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/course/#fields">Electric and magnetic fields</a> / Magnetostatics</p><h1>When does the long-solenoid formula work?</h1><p class="lead">Add the fields of current loops along a coil and estimate the centre-field error caused by its finite length.</p><p class="prerequisites"><strong>Prerequisites</strong> Magnetic field of a current loop and integration.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Building a coil from current loops</a><a href="#boundary">What the two ends contribute</a><a href="#worked">Field at the centre of a short solenoid</a><a href="#tutorial">Tutorial · Testing a long-coil estimate</a><a href="#numerical">Numerical comparison · A coil with finite winding thickness</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Building a coil from current loops</h2>
+<p>The usual solenoid formula depends only on turns per metre and current. A short coil, however, can have a noticeably weaker field than that formula predicts. To see where the length enters, start with one circular loop of radius \(R\) carrying steady current \(I\) in air. On its axis, every wire element has a partner across the loop. Their radial field components cancel and their axial components add.</p>
+<p>At distance \(u\) from the plane of the loop, each element lies a distance \(\sqrt{R^2+u^2}\) from the observation point. The axial projection of the Biot–Savart law is \(dB_z=(\mu_0 I/4\pi)R\,d\ell/(R^2+u^2)^{3/2}\). Integrating \(d\ell\) around the circumference \(2\pi R\) gives</p>
+<div class="math display">\[B_{\rm loop}(u)=\frac{\mu_0 I R^2}{2(R^2+u^2)^{3/2}}.\]</div>
+</section>
+<section>
+<h2 id="boundary">What the two ends contribute</h2>
+<p>Let the coil occupy \(-L/2\leq z'\leq L/2\) and distribute \(N\) turns uniformly over its length. Assume a thin winding, no magnetic core and free space outside. A slice of width \(dz'\) contains \((N/L)\,dz'\) loops. At the centre, sum their fields using the loop result and the antiderivative \(z'/\sqrt{R^2+z'^2}\) for \(R^2/(R^2+z'^2)^{3/2}\). The two limits give</p>
+<div class="math display">\[B_{\rm centre}=\frac{\mu_0 NI}{2\sqrt{R^2+(L/2)^2}}=\frac{\mu_0(N/L)I}{\sqrt{1+(2R/L)^2}}.\]</div>
+<p>With the turn density \(N/L\) fixed and \(L/R\) large, the denominator approaches one. The familiar long-solenoid result applies deep inside such a coil. Holding \(N\) fixed and shortening the coil gives a different limit, the field \(\mu_0 NI/(2R)\) of \(N\) coincident loops.</p>
+<p class="source-note">Further study · <a href="https://openstax.org/books/university-physics-volume-2/pages/12-6-solenoids-and-toroids">Solenoids and Toroids</a> (OpenStax, University Physics II §12.6).</p>
+</section>
+<section>
+<h2 id="worked">Field at the centre of a short solenoid</h2>
+<p>A 200-turn winding has radius 25 mm, length 30 mm and current 1.0 A. The long-coil estimate is \(\mu_0(200/0.030)(1.0)=8.38\,\mathrm{mT}\), with \(\mu_0\approx4\pi\times10^{-7}\,\mathrm{H/m}\). Here \(2R/L=1.67\), so the finite-length factor is \(1/\sqrt{1+1.67^2}=0.514\). The centre field is 4.31 mT. Much of the field spreads around the ends of this short winding.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial · Testing a long-coil estimate</h2>
+<ol>
+<li><p>An engineer wants the long-solenoid formula to overestimate the actual centre field by at most 5% of the actual value. What minimum length is needed at \(R=25\) mm?</p>
+<details><summary>Worked solution</summary><p>The ratio of estimated to actual field is \(\sqrt{1+(2R/L)^2}\). Requiring it to be at most 1.05 gives \(L/R\geq 2/\sqrt{1.05^2-1}=6.25\). The threshold is 156.2 mm, so a whole-millimetre design needs at least 157 mm. This tests the single centre point. A requirement covering the ends would need the field at additional positions.</p></details></li>
+<li><p>Place the probe at one end of the original 30 mm coil. Integrate the contributions from loops at distances \(0\) to \(L\). What fraction of the centre field reaches the probe?</p>
+<details><summary>Worked solution</summary><p>Inserting the new limits into the same antiderivative gives \(B_{\rm end}=(\mu_0 NI/2L)L/\sqrt{R^2+L^2}=3.22\,\mathrm{mT}\). Its ratio to \(B_{\rm centre}\) is \(3.22/4.31=0.747\). For a very long coil the ratio tends to one half, since turns then extend far away on only one side of an end probe.</p></details></li>
+</ol>
+</section>
+<section>
+<h2 id="numerical">Numerical comparison · A coil with finite winding thickness</h2>
+<p>The OneSimulation case uses the worked example’s turn count, length and current with winding radii of 23.5 and 26.5 mm. Its three-dimensional mesh includes the winding and surrounding air. Compare the reported central \(B_z\) with 4.31 mT at the mean radius, then inspect the axial profile. The published case reports agreement within about 3%. Its plotted samples average the field over the axis point and a 6 mm probe ring, which matters when comparing a computed value with a point formula. <a href="/blog/solenoid_on_axis_field/">Inspect the finite-solenoid calculation</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/lecture-notes/electromagnetics/">How far does an alternating magnetic field penetrate a metal?</a></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

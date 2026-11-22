@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gauss–Newton and residual curvature · OneSimulation</title>
+<meta name="description" content="Derive Gauss–Newton from a local residual model and locate when omitted curvature or insufficient information changes the step.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/nonlinear-equations/chapters/11-nonlinear-least-squares/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gauss–Newton and residual curvature · OneSimulation">
+<meta property="og:description" content="Derive Gauss–Newton from a local residual model and locate when omitted curvature or insufficient information changes the step.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/nonlinear-equations/chapters/11-nonlinear-least-squares/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Gauss–Newton and residual curvature</h1><p class="lead">Derive Gauss–Newton from a local residual model and locate when omitted curvature or insufficient information changes the step.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#more-equations-than-unknowns">More equations than unknowns</a><a href="#fit-two-incompatible-observations">Fit two incompatible observations</a><a href="#regularise-the-step-model">Regularise the step model</a><a href="#changing-one-sensor-s-reliability-changes-the-fit">Changing one sensor&#x27;s reliability changes the fit</a><a href="#derive-a-bounded-influence-residual-fit">Derive a bounded-influence residual fit</a><a href="#trace-the-effect-of-a-contaminated-reading">Trace the effect of a contaminated reading</a></nav></aside><article class="prose reference"><section>
+<h2 id="more-equations-than-unknowns">More equations than unknowns</h2>
+<p>Repeated measurements generally leave a residual even at the best parameters. For \(r(x)\in\mathbb R^m\), minimise \(\Phi(x)=\|r(x)\|^2/2\). Differentiating gives \(\nabla\Phi=J^Tr\). At a stationary point the residual is perpendicular to every first-order change accessible by varying the parameters. It may remain large if the model cannot reproduce the observations. Different physical units require weights or a clear rescaling before squaring coordinates; otherwise a change of units silently changes what solution is optimal.</p>
+<p>Approximate \(r(x+s)\) by \(r+Js\) and minimise its squared norm. The least-squares condition is \(J^TJs=-J^Tr\). In practice a QR or singular-value factorisation of \(J\) avoids squaring its condition number. The exact Hessian is \(J^TJ+\sum_i r_i\nabla^2r_i\). Thus the neglected term vanishes at a zero-residual solution, but can matter for strongly curved residuals with a poor fit. A descent direction follows with full column rank whenever the gradient is nonzero: multiplying the normal equations by \(s^T\) gives \(s^T\nabla\Phi=-\|Js\|^2&lt;0\).</p>
+</section>
+<section>
+<h2 id="fit-two-incompatible-observations">Fit two incompatible observations</h2>
+<p>A parameter \(x\) predicts \(x\) for one sensor and \(x^2\) for another. Suppose their dimensionless observations are 1 and 2. Then \(r=(x-1,x^2-2)^T\). At \(x=1\) the residual is \((0,-1)^T\) and \(J=(1,2)^T\). The linear model chooses \(s=2/5=0.4\), moving to 1.4. The objective drops from 0.5 to \((0.4^2+0.04^2)/2=0.0808\). An exact fit is impossible because \(x=1\) would require the other observation to be one.</p>
+<p>At the original point the exact second derivative is \(5-2=3\), so a full scalar Newton step on the objective would be \(2/3\), quite different from the Gauss–Newton step. At 1.4 the gradient is \(0.4+2.8(-0.04)=0.288\). Another Gauss–Newton step is \(-0.288/(1+2.8^2)\approx-0.03258\). The iteration reverses direction as the two sensor discrepancies begin to balance. Monitoring only the second sensor would favour a different parameter.</p>
+</section>
+<section>
+<h2 id="regularise-the-step-model">Regularise the step model</h2>
+<p>Minimising \(\|r+Js\|^2+\lambda\|s\|^2\) gives \((J^TJ+\lambda I)s=-J^Tr\). A positive \(\lambda\) controls overly large steps along weakly observed directions. With \(\lambda=5\) at the original point the step becomes 0.2 and the true objective at 1.2 is 0.1768. This is a smaller first improvement but may be more reliable elsewhere. Compare the actual decrease with that predicted by the local model to adjust damping. This temporary penalty on the step differs physically from assuming in advance that the final parameter itself must be small.</p>
+</section>
+<section>
+<h2 id="changing-one-sensor-s-reliability-changes-the-fit">Changing one sensor&#x27;s reliability changes the fit</h2>
+<p>Suppose the squared residual of the second sensor receives weight one quarter because its standard deviation is twice that of the first. In the worked example at \(x=1\), the scalar normal-equation numerator becomes \(0+(1/4)\,2(-1)=-0.5\); its denominator becomes \(1+(1/4)\,2^2=2\). The step is now 0.25. The model has moved less far from the exactly matched first sensor because the second sensor's discrepancy now carries less statistical weight. Repeated observations with correlated errors would require a full covariance model to interpret this weighting as a statistical fit.</p>
+</section>
+<section>
+<h2 id="derive-a-bounded-influence-residual-fit">Derive a bounded-influence residual fit</h2>
+<p>Ordinary least squares makes a single residual's contribution to the gradient proportional to its magnitude. If rare gross errors are plausible, choose a loss that is quadratic for small discrepancies and linear for large ones. For the Huber loss with transition \(\delta&gt;0\), use \(\rho(r)=r^2/2\) for \(|r|\le\delta\) and \(\delta |r|-\delta^2/2\) otherwise. Matching value and derivative at both transition points ensures a continuously differentiable convex objective in a location parameter. Its score is \(\psi(r)=\max(-\delta,\min(r,\delta))\).</p>
+<p>For differentiable model residuals \(r_i(x)\) the stationarity equation becomes \(J^T\psi(r)=0\). Set \(w_i=\psi(r_i)/r_i\) for nonzero residuals and one at zero. The score is now a weighted residual and solving a succession of weighted least-squares problems supplies an iteratively reweighted method. The weights must be recomputed from each current fit. Treating them as externally measured inverse variances would misinterpret their statistical role. Convexity of \(\rho\) in \(r\) does not by itself guarantee convexity with respect to nonlinear parameters.</p>
+</section>
+<section>
+<h2 id="trace-the-effect-of-a-contaminated-reading">Trace the effect of a contaminated reading</h2>
+<p>Four sensors estimate the same scalar location and report 0, 1, 2 and 20 in common standardised units. Least squares fits their mean \(23/4=5.75\). Use \(\delta=1\) instead, with residuals \(x-b_i\). In the interval \([1,2]\) the first sensor contributes score \(+1\) and the last contributes \(-1\). The two central readings contribute \(x-1\) and \(x-2\). The sum is \(2x-3\), which vanishes at 1.5. Convexity makes this a global minimum. Increasing the last reading to 200 leaves its score at minus one throughout the same interval and does not change the fitted location.</p>
+<p>At \(x=1.5\) the four weights are \(2/3,1,1,1/18.5\). A weighted-average check confirms stationarity more transparently through the signed weighted residuals: \(+1,+0.5,-0.5,-1\) sum to zero. The final gross discrepancy is still 18.5 units. A robust fit limits how much that observation can move the fitted value; it does not explain why the instrument returned such a reading. Record it for investigation rather than replacing it silently by a reconstructed value.</p>
+<p>For a physical model with differently scaled sensors, first divide discrepancies by appropriate instrument uncertainty scales or choose distinct physically defensible transition values. A single threshold measured in raw units can suppress every reading from one instrument merely because its unit is larger. Conversely an overly large threshold reduces to ordinary least squares over the whole observed residual range. Compare fits under plausible thresholds and investigate whether the prediction of interest changes, especially when a group of related sensors shares the same fault.</p>
+<p>A gross error in an input coordinate is a further distinction. A calibration point at an extreme input can have large leverage through its Jacobian row even after its residual score has been capped. Thus the bounded score controls sensitivity to residual amplitude, while the geometry of the design still controls how much that bounded discrepancy can rotate or translate the final fit.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/nonlinear-equations/problem-sheets/5/">Problem sheet 5 · What an approximate Jacobian knows</a></span><span>Next<br><a href="/lecture-notes/numerics/nonlinear-equations/chapters/12-complementarity/">Chapter 12 · Inequalities and active constraints</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

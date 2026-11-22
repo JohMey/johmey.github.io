@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pole placement, gain and phase · OneSimulation</title>
+<meta name="description" content="Design a second-order transient, examine a hidden stability limit, and test a delay budget against a frequency response.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/problem-sheets/2/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pole placement, gain and phase · OneSimulation">
+<meta property="og:description" content="Design a second-order transient, examine a hidden stability limit, and test a delay budget against a frequency response.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Pole placement, gain and phase</h1><p class="lead">Design a second-order transient, examine a hidden stability limit, and test a delay budget against a frequency response.</p><p class="byline">Problem sheet 2 · Chapters 3 and 4</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#1-select-damping-from-a-peak">1. Select damping from a peak</a><a href="#2-three-time-constants-and-one-gain">2. Three time constants and one gain</a><a href="#3-delay-on-a-positioning-stage">3. Delay on a positioning stage</a></nav></aside><article class="prose reference"><section><h2 id="1-select-damping-from-a-peak">1. Select damping from a peak</h2>
+<p>A unity-static-gain second-order system has no zeros. Specify 10% overshoot and first peak at 1 s after a step. (a) Derive damping ratio and damped frequency. (b) Find the desired characteristic polynomial. (c) State which prediction fails if a numerator zero is added and the poles are held fixed.</p>
+<details><summary>Start with the logarithm of the overshoot</summary>
+<p>The positive logarithmic decrement to the first peak is \(-\ln(0.10)=2.303=\pi\zeta/\sqrt{1-\zeta^2}\), giving \(\zeta=0.591\). The damped frequency is \(\omega_d=\pi\) rad/s, and the exponential decay rate is \(2.303\) s⁻¹. The poles are \(-2.303\pm3.142i\), so the monic polynomial is \(s^2+4.605s+15.17\). A zero changes the residues and the step shape. The poles still give the natural frequencies and decay rates, but first-peak time and overshoot need recalculation.</p>
+</details>
+</section>
+<section><h2 id="2-three-time-constants-and-one-gain">2. Three time constants and one gain</h2>
+<p>For \(L=g/[s(s+1)(s+3)]\) under unity negative feedback, (a) derive the closed-loop characteristic polynomial, (b) find the positive gain range for stability and the crossing frequency, and (c) compare the pole result with the open-loop frequency response at the crossing.</p>
+<details><summary>Locate the imaginary-axis pair</summary>
+<p>The polynomial is \(s^3+4s^2+3s+g\). The first column of the Routh array is \(1,4,(12-g)/4,g\); all signs agree for \(0\lt g\lt12\). At \(g=12\) factor the polynomial as \((s+4)(s^2+3)\). The crossing frequency is \(\sqrt3\) rad/s, with the third pole still at \(-4\). Substituting \(s=i\sqrt3\) in the open-loop denominator gives \(-12\), so \(L=-1\) at the same gain and frequency.</p>
+</details>
+</section>
+<section><h2 id="3-delay-on-a-positioning-stage">3. Delay on a positioning stage</h2>
+<p>With \(L=2/[s(1+s/2)]\), (a) find the gain crossover, (b) estimate the delay that would use all phase margin, and (c) evaluate the remaining margin after including 0.10 s delay. Count angles consistently.</p>
+<details><summary>Convert delay to a phase at crossover</summary>
+<p>Writing \(x=\omega_c^2\) gives \(x(1+x/4)=4\), so \(\omega_c=\sqrt{-2+2\sqrt5}=1.572\) rad/s. The phase margin is \(90^\circ-\arctan(1.572/2)=51.8^\circ\), or 0.905 rad. A pure delay leaves the crossover magnitude fixed, so the first crossing occurs at about \(0.905/1.572=0.576\) s. A 0.10 s delay costs 0.157 rad or 9.0°, leaving approximately 42.8°. This calculation assumes the given loop is otherwise accurately modelled.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/control-engineering/chapters/04-frequency-response/">Chapter 4 · Frequency response, disturbance rejection and robustness</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/control-engineering/chapters/05-state-feedback/">Chapter 5 · States, reachability and estimation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frequency response and modes · OneSimulation</title>
+<meta name="description" content="Use complex dynamic stiffness and modal symmetry to predict what a force and a sensor can observe.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-dynamics/problem-sheets/2/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Frequency response and modes · OneSimulation">
+<meta property="og:description" content="Use complex dynamic stiffness and modal symmetry to predict what a force and a sensor can observe.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-dynamics/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Frequency response and modes</h1><p class="lead">Use complex dynamic stiffness and modal symmetry to predict what a force and a sensor can observe.</p><p class="byline">Problem sheet 2 · Chapters 3 and 4</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#sweep">1. Inspect a forced oscillator</a><a href="#pair">2. Invert measured modal frequencies</a><a href="#placement">3. Choose the force pattern</a></nav></aside><article class="prose reference"><section><h2 id="sweep">1. Inspect a forced oscillator</h2>
+<p>A 2.0 kg mass on a 200 N/m spring and 4.0 N·s/m damper is driven at 10 rad/s by a 1.0 N peak sinusoidal force. (a) Find the displacement amplitude and phase. (b) Find average power. (c) Repeat the amplitude calculation at 5 rad/s with the same force.</p>
+<details><summary>Solve the phasor balance</summary>
+<p>The natural angular frequency is 10 rad/s. At this speed the real dynamic stiffness vanishes, giving \(|X|=1/(4\cdot10)=0.0250\) m and 90° displacement lag. The velocity peak is 0.250 m/s and average input power is \(1(0.25)/2=0.125\) W. At 5 rad/s the dynamic stiffness is \(150+20i\) N/m, hence \(|X|=1/\sqrt{150^2+20^2}=6.61\) mm. Proximity to resonance has a larger effect than the static-force displacement alone suggests.</p>
+</details>
+</section>
+<section><h2 id="pair">2. Invert measured modal frequencies</h2>
+<p>Two identical 4.0 kg masses have equal ground springs and a shared coupling spring. Their measured angular frequencies are 10 rad/s in phase and 16 rad/s in opposition. (a) Infer both stiffnesses. (b) Apply displacements +3 mm and −1 mm. Decompose this state into the two modes. (c) Predict the average displacement over time after release from rest.</p>
+<details><summary>Separate symmetric and antisymmetric coordinates</summary>
+<p>The first mode gives \(k=m\omega_s^2=400\) N/m. The other gives \(k_c=(4(16)^2-400)/2=312\) N/m. The initial mean is 1 mm and the initial half-difference is 2 mm, corresponding to \(1(1,1)+2(1,-1)\) mm. With zero initial velocities both modes start as cosines. Averaging the two signals removes the antisymmetric term, leaving \(1\,\mathrm{mm}\cos(10t)\). A single average sensor would miss a mode that is actually populated.</p>
+</details>
+</section>
+<section><h2 id="placement">3. Choose the force pattern</h2>
+<p>Use the preceding system. Two actuators apply harmonic force amplitudes \(F\) and \(-F\) simultaneously. (a) Find the drive of the mean coordinate and half-difference coordinate. (b) Which frequency is resonant? (c) If one actuator fails, which resonances can now appear?</p>
+<details><summary>Project the load into each mode</summary>
+<p>Adding the two physical equations and dividing by two gives forcing \((F_1+F_2)/2\) for the mean, which is zero. Subtracting gives \((F_1-F_2)/2=F\) for the half-difference. Only the antisymmetric mode is driven, at 16 rad/s. With one actuator operating, the force pattern decomposes as \((F,0)=(F/2)(1,1)+(F/2)(1,-1)\), so both 10 and 16 rad/s can produce resonant responses. Real damping limits amplitudes in a steady sweep.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/machine-dynamics/chapters/04-coupled-modes/">Chapter 4 · Coupled oscillators and normal coordinates</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/machine-dynamics/chapters/05-vibration-isolation/">Chapter 5 · Base excitation and vibration isolation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

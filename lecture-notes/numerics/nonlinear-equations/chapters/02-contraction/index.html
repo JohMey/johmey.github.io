@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixed-point iteration and contraction · OneSimulation</title>
+<meta name="description" content="Select an iteration map for a nonlinear balance, prove convergence on an invariant interval and use an observed increment to bound the remaining error.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/nonlinear-equations/chapters/02-contraction/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fixed-point iteration and contraction · OneSimulation">
+<meta property="og:description" content="Select an iteration map for a nonlinear balance, prove convergence on an invariant interval and use an observed increment to bound the remaining error.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/nonlinear-equations/chapters/02-contraction/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Fixed-point iteration and contraction</h1><p class="lead">Select an iteration map for a nonlinear balance, prove convergence on an invariant interval and use an observed increment to bound the remaining error.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#an-equation-can-have-several-iteration-maps">An equation can have several iteration maps</a><a href="#estimate-what-remains-after-an-observed-update">Estimate what remains after an observed update</a><a href="#try-a-relaxed-update">Try a relaxed update</a><a href="#transfer-the-same-reasoning-to-two-coupled-states">Transfer the same reasoning to two coupled states</a><a href="#check-the-invariant-domain">Check the invariant domain</a><a href="#eliminate-a-geometric-error-using-three-iterates">Eliminate a geometric error using three iterates</a><a href="#quantify-both-the-gain-and-the-sensitivity">Quantify both the gain and the sensitivity</a><a href="#worked-plot">Choose a relaxation that contracts both modes</a></nav></aside><article class="prose reference"><section>
+<h2 id="an-equation-can-have-several-iteration-maps">An equation can have several iteration maps</h2>
+<p>A fixed point satisfies \(x=g(x)\), but the rearrangement chosen for \(g\) is an algorithmic decision. A temperature balance might be written as a source update, a loss inversion or a relaxed combination of both. Every rearrangement can represent the same root and yet produce a different sequence from the same initial measurement. To judge the proposed sequence, examine how perturbations are propagated before investing in detailed model evaluations.</p>
+<p>Let \(g\) map a closed interval \(I\) into itself, and suppose \(|g'(x)|\leq q&lt;1\) there. Then \(|g(x)-g(y)|\leq q|x-y|\) by the mean value theorem. Starting from \(x_0\in I\), all iterates stay in \(I\). Successive changes shrink at least geometrically: \(|x_{k+1}-x_k|\leq q^k|x_1-x_0|\). Summing the remaining geometric tail shows that the sequence is Cauchy. Its limit belongs to the closed interval, and continuity gives \(r=g(r)\). Two distinct fixed points would violate the strict contraction inequality, establishing uniqueness.</p>
+</section>
+<section>
+<h2 id="estimate-what-remains-after-an-observed-update">Estimate what remains after an observed update</h2>
+<p>The tail estimate gives \(|r-x_k|\leq |x_{k+1}-x_k|/(1-q)\). If only the last completed increment is available, \(|r-x_k|\leq q|x_k-x_{k-1}|/(1-q)\). This is an a posteriori bound from the actual run and a proved Lipschitz constant. If \(q\) is very near one, small increments provide weak information: the remaining sum of many small changes can still be large. Invariance and contraction over a range should be distinguished from a local derivative estimate at one guessed solution.</p>
+<p>For \(x^2+x-1=0\), take \(g(x)=1/(1+x)\) on \(I=[0.5,1]\). Its image \([0.5,2/3]\) lies within \(I\), and \(|g'|\leq4/9\). From \(x_0=1\), the sequence begins \(0.5,2/3,3/5,5/8\). The oscillation about the limit reflects the negative derivative. At \(x_4=0.625\), the last increment is 0.025, giving error at most \((4/9)/(5/9)\times0.025=0.020\). The exact root \((\sqrt5-1)/2\simeq0.61803\) confirms the guarantee is conservative.</p>
+</section>
+<section>
+<h2 id="try-a-relaxed-update">Try a relaxed update</h2>
+<p>The alternative arrangement \(g_2(x)=1-x^2\) has slope \(-2r\simeq-1.236\) at the same positive root. Arbitrarily small generic perturbations grow under this unrelaxed iteration. The equivalent equation alone cannot make it reliable. Form a relaxed map \(g_\omega(x)=(1-\omega)x+\omega g_2(x)\). Its local multiplier is \(1-\omega+\omega g'_2(r)\). Choosing \(\omega=1/2\) changes that multiplier to approximately \(-0.118\).</p>
+<p>In fact \(g_{1/2}'=0.5-x\) on \([0.5,1]\), so its magnitude is at most 0.5. The map sends the endpoints to 0.625 and 0.5, is decreasing on this interval, and remains inside it. This establishes global contraction on that range. Local cancellation could be made still stronger by tailoring \(\omega\) to an estimated derivative, but an inaccurate estimate can move the iteration outside the verified interval. A relaxation factor is a numerical parameter; changing it should alter convergence behaviour while leaving a converged physical state unchanged.</p>
+</section>
+<section>
+<h2 id="transfer-the-same-reasoning-to-two-coupled-states">Transfer the same reasoning to two coupled states</h2>
+<p>For a vector iteration, a matrix norm bound replaces the scalar derivative bound. Consider \(g(x,y)=(0.2x+0.3y+1,\ 0.1x+0.4y+2)\). In the infinity norm the largest absolute row sum is 0.5. Subtraction of two evaluations therefore shows \(\|g(z)-g(w)\|_\infty\leq0.5\|z-w\|_\infty\), so the map contracts on all of \(\mathbb R^2\). Starting from zero the first two iterates are \((1,2)\) and \((1.8,2.9)\). The completed second increment has norm 0.9, bounding the remaining error by \(0.5(0.9)/(1-0.5)=0.9\).</p>
+<p>Solving the two fixed-point equations gives \(x=8/3,\ y=34/9\), so the actual infinity-norm error after the second update is about 0.878. The bound is fairly sharp here. If the two state variables have different units, scale them before combining them into one maximum norm. The scale choice affects the usefulness of a contraction certificate while a converged balance still satisfies the same physical equations.</p>
+</section>
+<section>
+<h2 id="check-the-invariant-domain">Check the invariant domain</h2>
+<p>A map can have derivative smaller than one on a chosen interval yet send its iterates outside it. For example \(g(x)=x/2+2\) has derivative one half on \([0,1]\) but maps zero to two. The usual contraction proof on that interval cannot even form its second iterate there. The same map on the full real line is a contraction with fixed point four. Domain and norm are part of a convergence certificate.</p>
+</section>
+<section>
+<h2 id="eliminate-a-geometric-error-using-three-iterates">Eliminate a geometric error using three iterates</h2>
+<p>For a scalar iteration near a linearly attracting fixed point, successive errors often behave approximately as \(e_{k+1}=q e_k\). If the relation is exact with \(q\ne1\), three successive observations \(x_0,x_1,x_2\) determine both the geometric factor and the limiting state. The difference ratio \((x_2-x_1)/(x_1-x_0)\) equals \(q\). Summing the remaining geometric series, or eliminating \(q\) algebraically, gives the accelerated value \(x_0-(x_1-x_0)^2/(x_2-2x_1+x_0)\), provided the denominator is nonzero.</p>
+<p>This expression is Aitken's delta-squared transformation. For a smooth nonlinear fixed-point map, the exact geometric relation is replaced by a first-order Taylor approximation about a simple fixed point. Taking \(x_1=g(x_0)\), \(x_2=g(x_1)\) and restarting from the accelerated value produces Steffensen iteration. Its local quadratic behaviour requires sufficient smoothness and \(g'(r)\ne1\). Indeed the denominator is asymptotically \((g'(r)-1)^2(x_0-r)\). If that coefficient is tiny or if function evaluations are inaccurate, two successive differences can suffer more cancellation than the fixed-point step itself.</p>
+</section>
+<section>
+<h2 id="quantify-both-the-gain-and-the-sensitivity">Quantify both the gain and the sensitivity</h2>
+<p>A sensor calibration fixed point satisfies \(x=1+0.8x\). Starting at zero gives \(x_1=1\) and \(x_2=1.8\). The second difference is −0.2, so the accelerated value is \(0-1^2/(-0.2)=5\), exactly the fixed point. Ordinary iteration still has error \(5-1.8=3.2\) at this same two-evaluation budget. Here the gain is exact because the iteration contains a single geometric mode with the same factor at every distance from the root.</p>
+<p>Perturb only the reported second iterate from 1.8 to 1.81. The inferred limit rises to \(1/0.19\approx5.263\). A perturbation of 0.01 has moved the extrapolated estimate by 0.263. Differentiating the transformed estimate with respect to \(x_2\), holding the first two values fixed, gives magnitude \((x_1-x_0)^2/(x_2-2x_1+x_0)^2=25\) at the unperturbed readings. The predicted change of 0.25 is close to the actual result. The apparent speedup has been purchased with sensitivity to slight deviations from a geometric trend.</p>
+<p>A residual check distinguishes these two cases without knowing the exact solution. The exact extrapolated value satisfies \(g(5)-5=0\). At the perturbed estimate the residual is about −0.0526, much larger than machine precision. For a reliable contraction factor 0.8 this implies an absolute error bound about 0.263 by dividing by \(1-0.8\). In a vector problem different modes generally have different convergence factors. Applying this scalar extrapolation separately to raw components may be unreliable when those components mix modes or when a denominator crosses zero in just one coordinate.</p>
+<p>There is a second failure mode when the original map is nearly the identity. For \(g(x)=0.999x+0.001\), starting from zero gives 0.001 and 0.001999. The second difference is only \(-10^{-6}\). If observations are stored to three decimal places, the two reported values become 0.001 and 0.002 and the computed denominator vanishes. This behaviour is predictable from the accuracy of the acquisition and does not indicate that the underlying iteration lacks a fixed point.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Choose a relaxation that contracts both modes</h2>
+<p>Near a root let the Jacobian be symmetric with eigenvalues 0.5 and 2, and use \(x^+=x-\omega F(x)\). Its two independent error modes have factors \(1-\omega\lambda_i\). Minimise the larger magnitude, allowing a sign reversal in one mode.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/nonlinear-equations/02-contraction.png" alt="Choose a relaxation that contracts both modes. Horizontal axis: Relaxation parameter. Vertical axis: Absolute amplification per iteration. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At ω = 0.8 the two factors are +0.6 and −0.6. Making the fastest mode vanish at ω = 0.5 instead leaves the slow mode at 0.75. For ω greater than one the second mode grows even though the first still shrinks.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/nonlinear-equations/02-contraction.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Absolute amplification per iteration at selected values of Relaxation parameter.</caption><thead><tr><th scope="col">Relaxation parameter</th><th scope="col">Eigenvalue 0.5</th><th scope="col">Eigenvalue 2</th><th scope="col">Worst of both</th></tr></thead><tbody><tr><th scope="row">0.05</th><td>0.975</td><td>0.9</td><td>0.975</td></tr><tr><th scope="row">0.375</th><td>0.8125</td><td>0.25</td><td>0.8125</td></tr><tr><th scope="row">0.7</th><td>0.65</td><td>0.4</td><td>0.65</td></tr><tr><th scope="row">1.025</th><td>0.4875</td><td>1.05</td><td>1.05</td></tr><tr><th scope="row">1.35</th><td>0.325</td><td>1.7</td><td>1.7</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/nonlinear-equations/02-contraction.csv" download>Download all 261 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/nonlinear-equations/chapters/01-bracketing/">Chapter 1 · Existence, brackets and error certificates</a></span><span>Next<br><a href="/lecture-notes/numerics/nonlinear-equations/problem-sheets/1/">Problem sheet 1 · Isolating and iterating roots</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

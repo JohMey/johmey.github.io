@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Useful work and exergy destruction · OneSimulation</title>
+<meta name="description" content="Evaluate the useful-work potential of a steady stream and distinguish energy conservation from the destruction of useful-work potential.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-thermodynamics/chapters/09-exergy/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Useful work and exergy destruction · OneSimulation">
+<meta property="og:description" content="Evaluate the useful-work potential of a steady stream and distinguish energy conservation from the destruction of useful-work potential.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-thermodynamics/chapters/09-exergy/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>Useful work and exergy destruction</h1><p class="lead">Evaluate the useful-work potential of a steady stream and distinguish energy conservation from the destruction of useful-work potential.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#environment">Specify the surroundings before rating a resource</a><a href="#finite">Cool a liquid to the environment</a><a href="#transfer">Include heat crossing another temperature boundary</a><a href="#pressure">Include the work potential of pressure</a><a href="#minimum-input">Derive the least work needed to heat a finite stream</a><a href="#heat-pump-comparison">Compare a heat pump with a resistance heater</a></nav></aside><article class="prose reference"><section><h2 id="environment">Specify the surroundings before rating a resource</h2>
+<p>A warm stream contains energy relative to a chosen reference. The amount that could become useful work depends on the surroundings available to receive heat. If stream and environment reach mutual thermal and mechanical equilibrium, there is no further physical work potential associated with their difference. This equilibrium is the physical dead state at \(T_0,p_0\). Exclude chemical reactions here and consider a steady flow with constant composition.</p>
+<p>Imagine a reversible device that takes a stream from its current state to the dead state while interacting thermally only with the environment. The steady first law relates delivered work to changes in stream enthalpy, kinetic and potential energy, and heat. The reversible entropy balance gives heat received from the environment \(q_0=T_0(s_0-s)\). Eliminating that heat gives the specific flow exergy</p>
+<div class="math display">\[\psi=(h-h_0)-T_0(s-s_0)+V^2/2+g(z-z_0).\]</div>
+<p>Use consistent units for the kinetic and potential terms. The entropy contribution reduces the fraction of enthalpy that a reversible device can turn into useful work. At the dead state, with the same velocity and elevation as the reference, that work potential vanishes.</p>
+</section>
+<section><h2 id="finite">Cool a liquid to the environment</h2>
+<p>Take a stream of liquid water at approximately ambient pressure, 360 K, with negligible motion and elevation change. It flows at 0.20 kg/s towards a large environment at 300 K. Assume \(c_p=4.18\,\mathrm{kJ/(kg\,K)}\) constant. Integration gives \(h-h_0=c_p(T-T_0)\) and \(s-s_0=c_p\ln(T/T_0)\). The stream’s specific physical exergy is therefore \(4.18[60-300\ln(360/300)]=22.2\,\mathrm{kJ/kg}\). Its enthalpy difference is much larger, 250.8 kJ/kg.</p>
+<p>Cooling all the way to 300 K makes at most \(0.20(22.2)=4.44\,\mathrm{kW}\) of useful work available, even though the stream releases 50.16 kW of heat. Direct heat exchange with the environment delivers no shaft work. The environment entropy gain is \(50.16/300=0.1672\,\mathrm{kW/K}\), while the stream loses \(0.20(4.18)\ln(360/300)=0.1524\,\mathrm{kW/K}\). The difference, about 0.0148 kW/K, is the entropy production rate. Multiplication by \(T_0\) gives the lost 4.44 kW of work potential.</p>
+</section>
+<section><h2 id="transfer">Include heat crossing another temperature boundary</h2>
+<p>Heat \(Q\) supplied reversibly by a reservoir at a uniform boundary temperature \(T_b\) carries exergy \(Q(1-T_0/T_b)\). This follows by comparing its energy with the environmental heat required to discharge the associated entropy \(Q/T_b\). A heat input of 10 kW from a 600 K reservoir in a 300 K environment carries 5 kW of exergy. A transfer from a finite cooling stream has changing source temperature and requires integration, as in the water example. Irreversibility in the device destroys exergy at rate \(T_0\dot S_{\rm gen}\); directing heat to a useful secondary process can retain part of the exergy that direct cooling would destroy.</p>
+</section>
+<section><h2 id="pressure">Include the work potential of pressure</h2>
+<p>For an ideal gas already at \(T_0\), an elevated pressure still gives physical flow exergy \(RT_0\ln(p/p_0)\). Air at 300 K and twice environmental pressure has about \(0.287(300)\ln2=59.7\,\mathrm{kJ/kg}\) of pressure-related work potential although its ideal-gas enthalpy equals that at the dead state.</p>
+</section>
+<section><h2 id="minimum-input">Derive the least work needed to heat a finite stream</h2>
+<p>Heat pumps are commonly compared by heat delivered per unit of electrical work. A second-law comparison additionally accounts for the temperature at which heat is delivered. Consider a steady stream heated from \(T_i\) to \(T_o\) at nearly environmental pressure, with constant heat capacity rate \(C=\dot m c_p\). A reversible heat pump extracts heat from surroundings at \(T_0\) and delivers it through a temperature-matched sequence of infinitesimal condensers. For one increment \(dQ=C\,dT\) at stream temperature \(T\), the reversed Carnot relation gives \(dW_{\min}=dQ(1-T_0/T)\).</p>
+<p>Integrating over the stream yields \(W_{\min}=C[(T_o-T_i)-T_0\ln(T_o/T_i)]\). This is the increase of its physical flow exergy, and is smaller than evaluating the Carnot work factor at the final high temperature for the whole heat duty. A device that condenses at a single temperature above the warmest outlet generates entropy during delivery to the colder portions. The result assumes that the source of heat is the environment at \(T_0\); a colder source would introduce an additional resource requirement.</p>
+<p>For steady equipment receiving only electricity and environmental heat, with negligible parasitic flows, a meaningful second-law efficiency is the stream’s exergy increase divided by actual electrical input. Electric power is entirely work potential, whereas a kilowatt of heat near room temperature carries only a small fraction of a kilowatt of exergy.</p>
+</section>
+<section><h2 id="heat-pump-comparison">Compare a heat pump with a resistance heater</h2>
+<p>Water flows at 0.10 kg/s from 293 K to 333 K in a 293 K environment. With \(c_p=4.18\,\mathrm{kJ/(kg\,K)}\), heat duty is \(0.418(40)=16.72\,\mathrm{kW}\). The exergy increase is \(0.418[40-293\ln(333/293)]=1.05\,\mathrm{kW}\) approximately. This relatively small figure reflects the modest average temperature lift. A well-insulated heat pump drawing 4.20 kW from the electrical supply has heating COP \(16.72/4.20=3.98\) and exergy efficiency about 25%. Its surroundings provide 12.52 kW of heat under the stated energy balance.</p>
+<p>A resistance heater supplying the identical water service draws 16.72 kW when its losses to the room are negligible. It is nearly 100% efficient on the simple electrical-energy-to-heat basis, yet its exergy efficiency is only about 6.3%. For the heat pump the implied destruction of work potential is \(4.20-1.05=3.15\,\mathrm{kW}\); for resistance heating it is about 15.67 kW. Electricity used by a circulating pump, external heat leaks or a source below environmental temperature belongs in the appropriate device boundary before drawing a practical comparison. The heat-duty equality ensures that the machines are judged against the same delivered temperature service.</p>
+<p>For the resistance case the entropy balance can be checked without using the exergy formula. Electrical work carries no entropy across the control surface, and assume no heat leakage. The stream increases its entropy at \(0.418\ln(333/293)=0.0535\,\mathrm{kW/K}\). Multiplying by the 293 K environment gives 15.7 kW destroyed, consistent with the difference between input work and stream exergy gain. This agreement depends on keeping the heater and heated stream in the same chosen boundary.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/engineering-thermodynamics/problem-sheets/4/">Problem sheet 4 · Saturation and moist air</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/engineering-thermodynamics/chapters/10-steam-power/">Chapter 10 · Steam power cycles and turbine efficiency</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

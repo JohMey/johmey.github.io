@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uniform approximation and alternation · OneSimulation</title>
+<meta name="description" content="Certify a best uniform polynomial by finding alternating errors and compare its guarantee with interpolation at fixed nodes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/chapters/08-minimax/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Uniform approximation and alternation · OneSimulation">
+<meta property="og:description" content="Certify a best uniform polynomial by finding alternating errors and compare its guarantee with interpolation at fixed nodes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/chapters/08-minimax/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Uniform approximation and alternation</h1><p class="lead">Certify a best uniform polynomial by finding alternating errors and compare its guarantee with interpolation at fixed nodes.</p><p class="byline">Chapter 8 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#an-error-budget-that-applies-everywhere">An error budget that applies everywhere</a><a href="#find-the-best-line-by-hand">Find the best line by hand</a><a href="#exchange-trial-extrema">Exchange trial extrema</a><a href="#a-lower-bound-from-three-measurements">A lower bound from three measurements</a><a href="#exploit-symmetry-to-approximate-a-kink-by-a-quadratic">Exploit symmetry to approximate a kink by a quadratic</a><a href="#certify-the-optimum-and-compare-a-smoother-error-measure">Certify the optimum and compare a smoother error measure</a></nav></aside><article class="prose reference"><section>
+<h2 id="an-error-budget-that-applies-everywhere">An error budget that applies everywhere</h2>
+<p>A calibration curve may have a specification requiring its largest absolute deviation anywhere in an interval to stay below a threshold. Assign a polynomial \(p\) of degree at most \(m\) and consider \(E(p)=\max_{a\leq x\leq b}|f(x)-p(x)|\) for a continuous target. Interpolating selected measurement locations fixes the polynomial there. It need not allocate the remaining error efficiently. Shifting an interpolant by a constant sometimes halves its largest deviation at once.</p>
+<p>Suppose \(m+2\) ordered locations attain the same error magnitude with alternating signs. Any polynomial with strictly smaller maximum error must move up at each positive extreme and down at each negative extreme. Its difference from the candidate then has at least one zero between each consecutive pair. This requires \(m+1\) zeros in a polynomial of degree at most \(m\), a contradiction. Those extreme points thus certify optimality globally once the candidate's error is bounded over the entire interval.</p>
+</section>
+<section>
+<h2 id="find-the-best-line-by-hand">Find the best line by hand</h2>
+<p>Approximate \(x^2\) on \([-1,1]\) by \(a+bx\). Averaging that line with its reflection gives the constant \(a\). For each \(x\), the averaged error is the mean of the errors at \(x\) and \(-x\), so the uniform norm cannot increase. For constants the target covers the whole range from zero to one. The midpoint \(a=1/2\) balances its two extreme distances. At \(-1,0,1\), the errors are \(+1/2,-1/2,+1/2\). These three points certify the optimum among all lines, including nonsymmetric ones.</p>
+<p>The endpoint interpolant is the constant 1. Its error is zero at both ends and reaches magnitude 1 at zero. Lowering the line sacrifices exact agreement with the endpoints in exchange for a factor of two in the worst case. If the endpoint values encode compulsory boundary conditions, such a shift is inadmissible and the optimisation problem must include those constraints.</p>
+</section>
+<section>
+<h2 id="exchange-trial-extrema">Exchange trial extrema</h2>
+<p>For an unknown target, guess \(m+2\) extreme locations and solve the linear system \(f(x_i)-p(x_i)=(-1)^iE\) for the coefficients and \(E\). Search the full interval, including its boundaries, for the largest deviation. When it exceeds the trial level, exchange a support point while retaining sign alternation and repeat. For smooth targets, the zeros of \(f'-p'\) supply candidate interior extrema. A coarse plotting grid alone cannot certify the resulting maximum.</p>
+<p>For a constant approximation to \(e^x\) on \([0,1]\), monotonicity identifies the endpoints immediately. Equalising \(a-1=e-a\) gives \(a=(1+e)/2\) and error \((e-1)/2\), approximately 0.85914. Replacing the upper endpoint by a larger value raises both quantities. The constant optimum depends on the range, providing a simple independent check on an implementation of the exchange procedure.</p>
+</section>
+<section>
+<h2 id="a-lower-bound-from-three-measurements">A lower bound from three measurements</h2>
+<p>Suppose measurements at \(-1,0,1\) give the exact values \(1,0,1\) but the interior shape is otherwise unknown. Any line still has maximum error at least one half on those three measurements: averaging its two endpoint predictions recovers its value at zero, so it cannot be within less than one half of both endpoint targets and the central target. The lower bound survives with sparse data. The matching upper bound requires information between the measurements, supplied in the earlier example by the analytic formula \(x^2\).</p>
+</section>
+<section>
+<h2 id="exploit-symmetry-to-approximate-a-kink-by-a-quadratic">Exploit symmetry to approximate a kink by a quadratic</h2>
+<p>The absolute-value function on \([-1,1]\) has a derivative jump at zero. To fit it uniformly with a quadratic \(p\), average \(p(x)\) with \(p(-x)\). The maximum error cannot increase because the target is even and the error of the average is bounded by the average of the two original absolute errors. The optimisation can therefore start with an even polynomial \(a+bx^2\) and examine only \(0\le x\le1\). Its signed error is \(e(x)=x-a-bx^2\). A plausible minimax candidate has equal negative errors at both ends of this half interval and a positive interior maximum.</p>
+<p>Equal endpoint errors require \(-a=1-a-b\), hence \(b=1\). Differentiation then puts the positive maximum at \(x=1/2\), where the error is \(1/4-a\). Equalising its magnitude with the endpoint magnitude \(a\) gives \(a=1/8\). Directly completing the square gives \(e(x)=1/8-(x-1/2)^2\) on the half interval. Its entire range is \([-1/8,1/8]\), so this construction has established the upper error bound at every point, including locations between the supposed extrema.</p>
+</section>
+<section>
+<h2 id="certify-the-optimum-and-compare-a-smoother-error-measure">Certify the optimum and compare a smoother error measure</h2>
+<p>On the original interval the errors at \(-1,-1/2,0,1/2,1\) are \(-1/8,+1/8,-1/8,+1/8,-1/8\). If any quadratic had a strictly smaller uniform error, its difference from the constructed polynomial would have to alternate sign at those five locations. Continuity would require at least four distinct real zeros. A nonzero quadratic cannot have four real zeros, so the proposed approximation is globally optimal even among polynomials with a linear term. The unusually long alternation is a consequence of symmetry and the central kink; four alternating points would already suffice for degree two.</p>
+<p>For comparison, the quadratic interpolating the two ends and the central kink is \(x^2\). Its error on the positive half is \(x-x^2\), ranging from zero to \(1/4\). Shifting it upward by one eighth cuts the maximum error in half. Now suppose the instrument is used predominantly near the centre, where its true ideal value is zero. The minimax polynomial introduces a nonzero prediction of \(1/8\) there even though the original interpolant was exact. The preference for uniform accuracy amounts to a decision about the acceptable errors at those specific operating points.</p>
+<p>A differentiability-based search that checks only stationary points can also fail in this problem. The target has a corner at zero, where its left and right derivatives differ. The error maximum in absolute value there is determined by the one-sided behaviour. For piecewise-smooth targets, include breakpoints and endpoints along with the roots of the error derivative on every smooth segment. Omitting a kink can produce an apparent equioscillation pattern with an incorrect reported bound.</p>
+<p>For uniform approximation at a tolerance of one tenth, the optimum error of one eighth proves that no quadratic can meet the requirement on this interval. A failure by one fitted polynomial alone would not establish this. The alternation certificate tells an engineer when changing the polynomial class or splitting at the kink is mathematically necessary.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/approximation-and-quadrature/chapters/07-divided-differences/">Chapter 7 · Divided differences and derivative data</a></span><span>Next<br><a href="/lecture-notes/numerics/approximation-and-quadrature/problem-sheets/4/">Problem sheet 4 · Data and uniform error</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

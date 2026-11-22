@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Line searches and trust regions · OneSimulation</title>
+<meta name="description" content="Diagnose a cycling Newton sequence, compute a merit-function decrease and explain how damping and trust regions change the step while preserving the root.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/nonlinear-equations/chapters/05-globalisation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Line searches and trust regions · OneSimulation">
+<meta property="og:description" content="Diagnose a cycling Newton sequence, compute a merit-function decrease and explain how damping and trust regions change the step while preserving the root.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/nonlinear-equations/chapters/05-globalisation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Line searches and trust regions</h1><p class="lead">Diagnose a cycling Newton sequence, compute a merit-function decrease and explain how damping and trust regions change the step while preserving the root.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-locally-excellent-algorithm-can-cycle">A locally excellent algorithm can cycle</a><a href="#compute-an-accepted-step">Compute an accepted step</a><a href="#compare-a-regional-model-with-the-real-residual">Compare a regional model with the real residual</a><a href="#include-physical-bounds-in-a-step-decision">Include physical bounds in a step decision</a><a href="#derive-the-step-along-a-trust-region-boundary">Derive the step along a trust-region boundary</a><a href="#measure-what-a-restricted-model-predicted">Measure what a restricted model predicted</a><a href="#worked-plot">Measure how far a Newton model remains predictive</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-locally-excellent-algorithm-can-cycle">A locally excellent algorithm can cycle</h2>
+<p>Consider \(F(x)=x^3-2x+2\). Starting from zero gives \(F(0)=2,F'(0)=-2\), so Newton proposes \(x_1=1\). At one, \(F(1)=1,F'(1)=1\), and the next iterate returns to zero. The sequence will repeat indefinitely in exact arithmetic. A real root does exist between \(-2\) and \(-1\), where the function changes sign. The trouble lies in the update chosen from this starting point. It does not refute the local convergence result near a simple root.</p>
+<p>For coupled equations define the merit function \(\phi(x)=\|F(x)\|_2^2/2\). Its directional derivative along an exact Newton step \(s\) is \(\nabla\phi^Ts=F^TJs=-\|F\|^2\), strictly negative when \(F\ne0\). Thus a sufficiently short step in that direction decreases the squared mismatch. This identity assumes \(Js=-F\) is solved accurately. With a strongly truncated inner iteration, check the actual directional derivative before treating the step as a descent direction.</p>
+</section>
+<section>
+<h2 id="compute-an-accepted-step">Compute an accepted step</h2>
+<p>A backtracking line search starts at \(\alpha=1\) and reduces it until \(\phi(x+\alpha s)\leq\phi(x)+c\alpha\nabla\phi^Ts\) with \(0&lt;c&lt;1\). This sufficient-decrease condition compares actual progress with the local prediction. In the cycling example at \(x=1\) the Newton direction is \(s=-1\), the initial merit is 0.5 and its slope along \(s\) is \(-1\). With \(c=10^{-4}\), the full trial returns to zero and gives \(\phi=2\), which fails. A half-step gives \(F(0.5)=1.125\) and fails too. A quarter-step gives \(F(0.75)=0.921875\), so \(\phi\simeq0.425\), satisfying the condition.</p>
+<p>A smaller mismatch at this point does not certify a nearby root. This example has a positive local minimum of \(\phi\) near \(x=\sqrt{2/3}\), where \(F'\) vanishes but \(F\) stays nonzero. From a poor starting point, globalisation may lead near such a stationary point. Check the residual itself, use a bracket when available and try physically motivated alternative starts. A long sequence of tiny accepted steps should prompt inspection of local derivatives or constraints rather than being counted as successful convergence.</p>
+</section>
+<section>
+<h2 id="compare-a-regional-model-with-the-real-residual">Compare a regional model with the real residual</h2>
+<p>A trust-region method minimises the local model \(m(s)=\|F+Js\|^2/2\) subject to \(\|s\|\leq\Delta\). Its radius states how far the current linearisation is trusted in the chosen variable scales. After a trial, compute the ratio \(\rho=[\phi(x)-\phi(x+s)]/[m(0)-m(s)]\) when predicted reduction is positive. A negative ratio means the true merit increased. A ratio near one indicates accurate local prediction. One can shrink the radius after a poor trial or enlarge it when the model predicts progress well near the boundary.</p>
+<p>In the quarter-step above the linear model predicts residual \(1-0.25=0.75\) and merit \(0.28125\), a reduction of 0.21875. The actual reduction is about 0.075, giving \(\rho\approx0.34\). The trial moved in the intended direction but the predicted gain was optimistic. Using such comparisons is especially valuable when model coefficients change sharply with state. On a simple monotone thermal stage, damped and full Newton can converge to the same root. The resulting residual and a comparison at identical time step test this expectation. <a href="/lecture-notes/numerics/nonlinear-equations/#experiment">Compare two nonlinear cooling solves</a>.</p>
+</section>
+<section>
+<h2 id="include-physical-bounds-in-a-step-decision">Include physical bounds in a step decision</h2>
+<p>A variable representing a concentration cannot be negative. If a positive current value \(c\) receives a negative proposed correction \(s\), then \(c+\alpha s\geq0\) imposes \(\alpha\leq c/(-s)\). For a concentration of 0.04 and a direction of −0.10 in matching units, only factors up to 0.4 keep this component admissible. Starting a merit-function search at 0.36 leaves a small distance from the boundary. Across many components use the most restrictive bound before evaluating an expensive residual.</p>
+<p>Admissibility alone cannot guarantee progress: a physically acceptable state may have a larger balance mismatch than the old one. Conversely, clipping a negative candidate to zero changes the search direction and can alter conservation. A genuinely constrained equilibrium may require a complementarity or inequality formulation rather than repeated clipping. Record which condition limited each step when diagnosing persistent stagnation near a boundary.</p>
+</section>
+<section>
+<h2 id="derive-the-step-along-a-trust-region-boundary">Derive the step along a trust-region boundary</h2>
+<p>For a smooth squared-residual objective, a local quadratic model has change \(m(s)=g^Ts+s^TBs/2\), often with \(B=J^TJ\). A trust region limits this model to \(\|s\|_2\le\Delta\) in scaled coordinates. Suppose first that \(B\) is symmetric positive definite. If the unconstrained minimiser \(-B^{-1}g\) lies inside the ball it solves the constrained problem. Otherwise the minimiser lies on the sphere. The stationarity condition there is \((B+\lambda I)s=-g\), with \(\lambda&gt;0\) chosen so the length equals \(\Delta\).</p>
+<p>Diagonalising \(B=Q\operatorname{diag}(\beta_i)Q^T\) turns the length condition into \(\sum_i (q_i^Tg)^2/(\beta_i+\lambda)^2=\Delta^2\). For a nonzero gradient this left-hand side decreases continuously to zero with \(\lambda\), starting at the squared unconstrained-step length. Thus the boundary multiplier exists uniquely. A positive shift damps different curvature directions by different factors. The step is generally not a scalar fraction of the full unconstrained step. If \(B\) has negative eigenvalues, positive semidefiniteness of \(B+\lambda I\) and possible singular boundary cases require additional treatment.</p>
+</section>
+<section>
+<h2 id="measure-what-a-restricted-model-predicted">Measure what a restricted model predicted</h2>
+<p>Let \(B=\operatorname{diag}(1,4)\) and \(g=(-2,-5)^T\). The full minimiser is \((2,1.25)^T\), of norm about 2.36. Set the permitted radius to \(\sqrt2\). At \(\lambda=1\) the shifted equations give \(s=(2/2,5/5)^T=(1,1)^T\), with exactly the required length. The low-curvature component has been reduced to one half of its unconstrained value while the second retains four fifths. That orientation change follows from the different denominators; shortening the original step to the same norm would predict a different model decrease.</p>
+<p>The linear term at the accepted candidate is \(-7\). The quadratic term is \((1+4)/2=2.5\), so the predicted decrease is \(7-2.5=4.5\). Suppose the actual objective is this local model plus \(0.6s_1^4\), up to an irrelevant constant. The actual decrease at \((1,1)\) is 3.9 and the ratio of actual to predicted decrease is \(3.9/4.5\approx0.867\). The extra quartic term does not alter the gradient or Hessian at the base point, yet it changes the observed progress over a finite step.</p>
+<p>If that coefficient were 6 instead, the actual change would be an increase of 1.5 while the local quadratic still predicts a decrease of 4.5. Shrinking the radius diminishes the neglected term more rapidly than the leading linear improvement. Comparing achieved and predicted reductions supplies information about model accuracy that neither the multiplier nor the trust radius alone provides.</p>
+<p>The choice of norm defining the ball also influences the calculation. If one coordinate is measured in millimetres and the other in metres, changing only the unit of the first coordinate alters an unscaled Euclidean ball. Instead specify physically meaningful scales and constrain the length of the dimensionless step. Transform the gradient and curvature consistently with that scaling; otherwise the shifted equations describe a different model than the one used to evaluate the actual decrease.</p>
+<p>An equivalent specification is a weighted ellipsoid in the physical variables, with semiaxes equal to admissible changes in each parameter.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Measure how far a Newton model remains predictive</h2>
+<p>Apply Newton’s method to \(\arctan x=0\) from \(x=2\). The full step is \(-5\arctan(2)\). Evaluate the true merit along that line and compare with the model that predicts zero residual at its end.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/nonlinear-equations/05-globalisation.png" alt="Measure how far a Newton model remains predictive. Horizontal axis: Fraction of Newton step. Vertical axis: Half squared residual. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>The true root lies at about 36.1% of the proposed step. At a full step the actual merit is larger than at the start while the model predicts zero. Backtracking needs fresh residual evaluations to distinguish these cases.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/nonlinear-equations/05-globalisation.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Half squared residual at selected values of Fraction of Newton step.</caption><thead><tr><th scope="col">Fraction of Newton step</th><th scope="col">Re-evaluated merit</th><th scope="col">Linear residual prediction</th></tr></thead><tbody><tr><th scope="row">0</th><td>0.61289</td><td>0.61289</td></tr><tr><th scope="row">0.29</th><td>0.07064</td><td>0.30896</td></tr><tr><th scope="row">0.575</th><td>0.37763</td><td>0.1107</td></tr><tr><th scope="row">0.86</th><td>0.7482</td><td>0.012013</td></tr><tr><th scope="row">1.15</th><td>0.90538</td><td>0.01379</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/nonlinear-equations/05-globalisation.csv" download>Download all 231 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/nonlinear-equations/problem-sheets/2/">Problem sheet 2 · Tangents and Jacobians</a></span><span>Next<br><a href="/lecture-notes/numerics/nonlinear-equations/chapters/06-continuation/">Chapter 6 · Continuation and folds</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

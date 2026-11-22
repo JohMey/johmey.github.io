@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a grating separates wavelengths · OneSimulation</title>
+<meta name="description" content="Derive the angular dispersion and resolving power of a finite grating and diagnose an order overlap.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/physics/waves-optics/chapters/10-grating-spectrometers/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a grating separates wavelengths · OneSimulation">
+<meta property="og:description" content="Derive the angular dispersion and resolving power of a finite grating and diagnose an order overlap.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/physics/waves-optics/chapters/10-grating-spectrometers/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/physics/">Physics</a> / <a href="/lecture-notes/physics/waves-optics/">Waves and optics</a></p><h1>How a grating separates wavelengths</h1><p class="lead">Derive the angular dispersion and resolving power of a finite grating and diagnose an order overlap.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#interference-across-equally-spaced-openings">Interference across equally spaced openings</a><a href="#dispersion-and-finite-width">Dispersion and finite width</a><a href="#a-small-spectrometer">A small spectrometer</a><a href="#map-overlapping-orders-in-a-high-order-spectrometer">Map overlapping orders in a high-order spectrometer</a><a href="#design-the-spectral-window-at-one-detector-position">Design the spectral window at one detector position</a><a href="#worked-plot">Separate groove count from grating period</a></nav></aside><article class="prose reference"><section><h2 id="interference-across-equally-spaced-openings">Interference across equally spaced openings</h2>
+<p>Illuminate \(N\) identical narrow slits separated by distance \(d\) with normally incident monochromatic light. In the far field every slit produces the same single-slit envelope. At observation angle \(\theta\) adjacent contributions differ in optical path by \(d\sin\theta\), so their phases differ by \(\phi=2\pi d\sin\theta/\lambda\). The array field equals the single-slit field multiplied by a sum of \(N\) unit phasors. Taking its geometric sum and squared magnitude gives the array intensity factor</p>
+<div class="math display">\[G(\phi)=\left[\frac{\sin(N\phi/2)}{\sin(\phi/2)}\right]^2 .\]</div>
+<p>At \(\phi=2\pi m\) the expression has a removable limit \(N^2\). Those directions satisfy the grating equation \(d\sin\theta_m=m\lambda\). Each peak collects contributions from all illuminated slits in phase. Some orders can nevertheless be faint or missing if the single-slit envelope is small or zero there. Transmission efficiency into a selected order thus depends on the groove or opening profile in addition to the grating period.</p>
+</section>
+<section><h2 id="dispersion-and-finite-width">Dispersion and finite width</h2>
+<p>At fixed order different wavelengths peak at different angles. Differentiate the grating equation to obtain \(d\theta_m/d\lambda=m/(d\cos\theta_m)\). A large angular dispersion aids spatial separation at the detector. To assess resolution, also compute the width of each peak. The adjacent zeros of the numerator lie one phase increment \(2\pi/N\) either side of the maximum. Converting the increment back to angle gives a one-sided width \(\lambda/(Nd\cos\theta_m)\).</p>
+<p>Choose the conventional criterion that one wavelength's peak falls on the neighbour's first zero. Equate the angular separation due to \(\Delta\lambda\) to this one-sided width and obtain \(\lambda/\Delta\lambda=|m|N\). Broad illumination of a grating therefore improves the ideal resolving power even with unchanged dispersion. The derivation assumes uniform coherent illumination, collimation, adequate detector sampling, and an entrance slit narrow enough to preserve this diffraction-limited width.</p>
+</section>
+<section><h2 id="a-small-spectrometer">A small spectrometer</h2>
+<p>A 600-lines/mm grating has \(d=1.667\) μm. A collimated 10.0 mm beam illuminates 6000 lines. At \(\lambda=600\) nm first order occurs at \(\arcsin(0.360)=21.1^\circ\). The ideal smallest separation is \(600/6000=0.100\) nm. The angular dispersion is \(6.43\times10^{-4}\) rad/nm. A camera of focal length 200 mm centred on that order maps a 0.100 nm change to about \(12.9\) μm near its axis. Detector pixels that are large compared with this separation reduce the measurable resolution.</p>
+<p>At that same angle, 300 nm light in second order has the same value of \(m\lambda\). Increasing the beam width narrows both peaks without separating their centres. An order-selecting filter can restrict the allowed band before measurement. A second grating or prism dispersing perpendicular to the first can instead separate overlapping orders into different traces. This illustrates why calibration with only one visible line cannot certify the identity of every line in a wide-band spectrum.</p>
+<p>Test the finite-array argument with the <a href="/lecture-notes/physics/waves-optics/#experiment">two-slit acoustic field</a>. For two equally excited slits the array factor has its second positive-angle zero at \(d\sin\theta=3\lambda/2\). With \(d/\lambda=3\), predict \(30.0^\circ\) and compare with the sampled \(30.50^\circ\) at receiver radius 0.90 m. At \(d/\lambda=2\) predict \(48.59^\circ\). Compare the measured angle at both receiver radii to see how the finite observation distance affects the far-field limit.</p>
+</section>
+<section><h2 id="map-overlapping-orders-in-a-high-order-spectrometer">Map overlapping orders in a high-order spectrometer</h2>
+<p>Using high diffraction order increases the ideal resolving power for a fixed number of illuminated grooves. It also reduces how much spectrum belongs unambiguously to a single order. Consider a reflection grating in a geometry where incidence and diffraction are on the same side of the normal in the usual grating-angle convention. The path difference between neighbouring grooves is \(d(\sin\alpha+\sin\beta)\), so peaks obey \(m\lambda=d(\sin\alpha+\sin\beta)\). In a Littrow setting the selected diffracted beam retraces the incident direction and \(\alpha=\beta=\theta\).</p>
+<p>At fixed angle two wavelengths overlap exactly if \(m\lambda_m=(m+1)\lambda_{m+1}\). Solving for their separation gives \(\lambda_m-\lambda_{m+1}=\lambda_m/(m+1)\), approximately \(\lambda_m/m\) at high order. This is the scale of a free spectral range in wavelength. Combined with resolving power \(mN\) for \(N\) uniformly illuminated grooves, the number of independently resolved spectral elements per order is approximately \(N\). Higher order makes each element narrower while proportionately reducing the unambiguous range at a fixed spatial coordinate.</p>
+<p>Real echelle gratings use inclined groove facets to redirect much of the reflected power into the chosen high orders. The groove spacing sets peak positions and order overlap; the groove profile sets an efficiency envelope. A second dispersive element ordinarily separates the superposed orders along another detector coordinate. Its angular dispersion can be lower than the primary grating's because it only needs to separate different orders, not resolve the closest spectral lines within one.</p>
+</section>
+<section><h2 id="design-the-spectral-window-at-one-detector-position">Design the spectral window at one detector position</h2>
+<p>Take groove spacing \(d=31.6\) μm, order \(m=100\) and central wavelength 550 nm. The Littrow relation requires \(\sin\theta=m\lambda/(2d)=55.0/63.2=0.870\), hence \(\theta=60.5^\circ\). Illuminating 1000 grooves gives ideal wavelength resolution \(550/(100\times1000)=0.00550\) nm. The wavelength in order 101 landing at the same position is \(550(100/101)=544.55\) nm. Thus the separation between these coincident-order wavelengths is 5.45 nm, about 990 resolution intervals.</p>
+<p>A narrow-band filter passing 548 to 552 nm would reject that particular neighbouring order at the central position while retaining many resolvable lines near 550 nm. An instrument meant to record hundreds of nanometres at once needs cross-dispersion or several separate exposures. As incidence approaches grazing, simple angular-dispersion estimates can become very large, but finite beam footprint, usable groove count, diffraction efficiency and detector size limit the physical gain. Accounting for order separation, illuminated footprint and sampling is necessary before describing two nearby spectral features as resolvable in the laboratory.</p>
+<p>A rough detector-format estimate follows directly from this example. If each independent spectral resolution interval requires at least two samples, one full free spectral range near the chosen order needs about two thousand useful pixels along the high-dispersion direction. That count ignores additional margins, optical distortion and the need to sample the entrance-slit profile adequately. The perpendicular axis must also have room for the traces of neighbouring orders and for a background estimate between them. Resolution, spectral coverage and detector format therefore impose independent constraints on what a single exposure can realistically measure.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Separate groove count from grating period</h2>
+<p>Keep the grating period and incident wavelength fixed. Adding \(N\) equal amplitudes as a geometric series gives a central peak whose first zeros occur at phase mismatch \(\pm 1/N\) in turns. Each plotted peak is normalised to its own height.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/waves-optics/10-grating-spectrometers.png" alt="Separate groove count from grating period. Horizontal axis: Phase mismatch per groove (turns). Vertical axis: Intensity / principal maximum. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Doubling illuminated groove count halves the first-zero width without moving the principal order. Normalising hides the N² increase in peak intensity for fixed incident field per groove; spectral width and absolute throughput answer different questions.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/waves-optics/10-grating-spectrometers.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Intensity / principal maximum at selected values of Phase mismatch per groove (turns).</caption><thead><tr><th scope="col">Phase mismatch per groove (turns)</th><th scope="col">6 illuminated grooves</th><th scope="col">12 illuminated grooves</th><th scope="col">24 illuminated grooves</th></tr></thead><tbody><tr><th scope="row">−0.22</th><td>0.048737</td><td>0.013993</td><td>0.0025368</td></tr><tr><th scope="row">−0.11</th><td>0.1859</td><td>0.043145</td><td>0.012387</td></tr><tr><th scope="row">0</th><td>1</td><td>1</td><td>1</td></tr><tr><th scope="row">0.11</th><td>0.1859</td><td>0.043145</td><td>0.012387</td></tr><tr><th scope="row">0.22</th><td>0.048737</td><td>0.013993</td><td>0.0025368</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/waves-optics/10-grating-spectrometers.csv" download>Download all 441 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/physics/waves-optics/chapters/09-multiple-beam-interference/">Chapter 9 · Multiple-beam interference in a cavity</a></span><span>Next<br><a href="/lecture-notes/physics/waves-optics/problem-sheets/5/">Problem sheet 5 · Orders, linewidths and spectral identity</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

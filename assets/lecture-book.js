@@ -1,5 +1,5 @@
 const controls = document.querySelector(".book-tools");
-const solutions = Array.from(document.querySelectorAll(".book-part details"));
+const solutions = Array.from(document.querySelectorAll(".book-part details:not(.plot-data)"));
 const toggle = controls.querySelector("[data-solutions]");
 function updateLabel() {
   toggle.textContent = solutions.every(solution => solution.open)

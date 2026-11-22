@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why does a freely spinning handle flip? · OneSimulation</title>
+<meta name="description" content="Use angular momentum to distinguish stable and unstable rotation about the principal axes of a rigid body.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/multibody/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why does a freely spinning handle flip? · OneSimulation">
+<meta property="og:description" content="Use angular momentum to distinguish stable and unstable rotation about the principal axes of a rigid body.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/multibody/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/course/#mechanics">Forces and motion</a> / Rigid-body dynamics</p><h1>Why does a freely spinning handle flip?</h1><p class="lead">Use angular momentum to distinguish stable and unstable rotation about the principal axes of a rigid body.</p><p class="prerequisites"><strong>Prerequisites</strong> Angular momentum and linear second-order differential equations.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">A constant angular momentum in a rotating frame</a><a href="#boundary">Perturb the middle-axis spin</a><a href="#worked">Estimate how quickly a wobble grows</a><a href="#tutorial">Tutorial on spin stability</a><a href="#numerical">Optional numerical comparison</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">A constant angular momentum in a rotating frame</h2>
+<p>Toss a rigid handle with a slight wobble. A spin about one of its axes can lead to a dramatic tumble even after it leaves your hand. Where does the change in rotation come from when there is no torque about the centre of mass?</p>
+<p>Describe the spin using the body's three principal axes through its centre of mass. On those axes, angular momentum has components \(L_i=I_i\omega_i\). In an inertial frame \(\mathbf L\) is constant. A body-fixed observer sees the axes rotate, so the derivative rule gives \((d\mathbf L/dt)_{\rm body}=-\boldsymbol\omega\times\mathbf L\). Its first component and the two cyclic permutations are Euler’s equations</p>
+<div class="math display">\[I_1\dot\omega_1=(I_2-I_3)\omega_2\omega_3,\quad
+I_2\dot\omega_2=(I_3-I_1)\omega_3\omega_1,\quad
+I_3\dot\omega_3=(I_1-I_2)\omega_1\omega_2.\]</div>
+<p>Assume a rigid body with three distinct moments \(I_1&lt;I_2&lt;I_3\), negligible drag and no applied torque. Exact spin about any single principal axis is a solution. Stability asks what happens after a small error in the launch.</p>
+</section>
+<section>
+<h2 id="boundary">Perturb the middle-axis spin</h2>
+<p>Start near \((0,\Omega,0)\). Write \(\omega_1=a\), \(\omega_3=b\). The change in \(\omega_2\) is proportional to the product \(ab\), so to first order \(\omega_2=\Omega\). The other equations then read \(\dot a=-(I_3-I_2)\Omega b/I_1\) and \(\dot b=-(I_2-I_1)\Omega a/I_3\). Differentiating the first gives</p>
+<div class="math display">\[\ddot a=\lambda^2 a,\qquad \lambda^2=\Omega^2\frac{(I_3-I_2)(I_2-I_1)}{I_1 I_3}.\]</div>
+<p>The positive coefficient permits a growing exponential. A generic launch error contains this growing component. The approximation describes the onset of tumbling. Once the transverse components are comparable with \(\Omega\), the full equations determine the flip.</p>
+</section>
+<section>
+<h2 id="worked">Estimate how quickly a wobble grows</h2>
+<p>Consider a rotor with principal moments \(2,3,4\) kg·m² spinning at \(6\) rad/s about axis 2. Its growth rate is \(6\sqrt{(4-3)(3-2)/(2\times4)}=2.12\) s⁻¹. A disturbance in the growing mode takes \(\ln 2/\lambda=0.327\) s to double from 0.03 to 0.06 rad/s. Both are small compared with the spin rate. This doubling time measures instability during the initial motion.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial on spin stability</h2>
+<h3>1. Launch the rotor about its largest moment</h3>
+<p>Keep the same rotor and spin rate, but give axis 3 the large spin component. Find the equation for a small \(\omega_1\) and predict what a body-mounted sensor would see.</p>
+<details><summary>Solution to the stability calculation</summary><p>With \(\omega_3=\Omega\), the first two Euler equations give \(\dot\omega_1=-(I_3-I_2)\Omega\omega_2/I_1\) and \(\dot\omega_2=(I_3-I_1)\Omega\omega_1/I_2\). Now \(\ddot\omega_1=-\Omega^2(I_3-I_2)(I_3-I_1)\omega_1/(I_1 I_2)\). The sensor sees a bounded oscillation of angular frequency \(6\sqrt{2/6}=3.46\) rad/s. One sign change in this feedback accounts for the difference in stability.</p></details>
+<h3>2. Can a flip consume rotational energy?</h3>
+<p>Multiply each Euler equation by its own \(\omega_i\) and add. Decide whether a measured decrease in one angular velocity component is evidence that energy has been dissipated.</p>
+<details><summary>Solution to the energy balance</summary><p>The left-hand side is the derivative of \(E=\tfrac12\sum_i I_i\omega_i^2\). On the right, the coefficient of \(\omega_1\omega_2\omega_3\) is \((I_2-I_3)+(I_3-I_1)+(I_1-I_2)=0\). Energy is constant. Its contributions along the three moving axes can change during the flip, and a single component can even reverse sign.</p></details>
+</section>
+<section>
+<h2 id="numerical">Optional numerical comparison</h2>
+<p>The T-handle study uses the moments of a specific CAD body. Compare its three perturbed launches. Check that only the middle-axis launch repeatedly reverses its dominant body-frame spin component, and compare the full period between same-direction zero crossings with the case reference of 1.23810 s. <a href="/blog/dzhanibekov_t_handle/">OneSimulation example of the flipping T-handle</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying"><a href="/lecture-notes/exercises/">Continue to the problem classes</a></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

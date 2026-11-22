@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time-dependent diffusion · OneSimulation</title>
+<meta name="description" content="Derive the diffusion time-step restriction from two independent arguments and compare explicit and implicit decay of spatial modes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/04-parabolic-equations/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Time-dependent diffusion · OneSimulation">
+<meta property="og:description" content="Derive the diffusion time-step restriction from two independent arguments and compare explicit and implicit decay of spatial modes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/04-parabolic-equations/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Time-dependent diffusion</h1><p class="lead">Derive the diffusion time-step restriction from two independent arguments and compare explicit and implicit decay of spatial modes.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#discretise-space-and-time-separately">Discretise space and time separately</a><a href="#identify-the-spatial-modes-that-set-the-limit">Identify the spatial modes that set the limit</a><a href="#compare-backward-euler-and-crank-nicolson">Compare backward Euler and Crank–Nicolson</a><a href="#apply-a-prescribed-heat-input-without-confusing-it-with-temperature">Apply a prescribed heat input without confusing it with temperature</a><a href="#prove-decay-of-a-discrete-thermal-energy">Prove decay of a discrete thermal energy</a><a href="#audit-two-cells-with-different-heat-capacities">Audit two cells with different heat capacities</a><a href="#worked-plot">What happens to a grid-scale temperature ripple?</a></nav></aside><article class="prose reference"><section>
+<h2 id="discretise-space-and-time-separately">Discretise space and time separately</h2>
+<p>A heat pulse in a thin insulated rod smooths over time according to \(u_t=D u_{xx}\) for constant positive diffusivity \(D\). Use a uniform grid of spacing \(h\), and initially examine interior points or periodic boundaries so the stencil is unchanged everywhere. Replacing the second derivative by a centred difference gives a system of ordinary differential equations for the nodal temperatures. The time method still has to resolve the fastest rate that this spatial operator can generate.</p>
+<p>An explicit Euler step yields \(u_i^{n+1}=r u_{i-1}^n+(1-2r)u_i^n+r u_{i+1}^n\) with \(r=D\Delta t/h^2\). If \(0\leq r\leq1/2\), the update is a convex combination of three temperatures. The maximum cannot rise and the minimum cannot fall in a source-free interior step. Starting with one hot node at 1 and neighbours at zero, \(r=0.4\) gives a centre value 0.2 and neighbours 0.4 after a single step. At \(r=0.6\) the centre would become negative although the continuum heat equation preserves nonnegativity.</p>
+</section>
+<section>
+<h2 id="identify-the-spatial-modes-that-set-the-limit">Identify the spatial modes that set the limit</h2>
+<p>Insert \(u_j^n=g^n e^{\mathrm{i}j\theta}\), where \(\mathrm{i}\) is the imaginary unit and \(j\) indexes the grid. The two neighbouring values contribute factors \(e^{\pm\mathrm{i}\theta}\), yielding \(g=1-4r\sin^2(\theta/2)\). Long waves have \(\sin^2(\theta/2)\simeq\theta^2/4\), so their decay approaches the continuum rate as the mesh is refined. The alternating grid mode \(\theta=\pi\) has the most negative amplification and enforces \(r\leq1/2\) for bounded magnitude.</p>
+<p>At the limiting value \(r=1/2\) the alternating mode flips sign without losing amplitude. A strict margin damps it. For \(D=10^{-4}\) m²/s and \(h=2\) mm, the maximum explicit step is \(h^2/(2D)=0.020\) s. Refining to 1 mm reduces that limit to 0.005 s. The mesh gives a sharper temperature profile yet can cost four times more steps over the same physical interval, besides the increased number of spatial degrees of freedom.</p>
+</section>
+<section>
+<h2 id="compare-backward-euler-and-crank-nicolson">Compare backward Euler and Crank–Nicolson</h2>
+<p>Writing the semidiscrete system as \(u'=-A_hu\), backward Euler solves \((I+\Delta t A_h)u^{n+1}=u^n\). Crank–Nicolson averages the old and new diffusive fluxes, giving \((I+\Delta t A_h/2)u^{n+1}=(I-\Delta t A_h/2)u^n\). For a Fourier mode put \(s=4r\sin^2(\theta/2)\). Their factors are \(1/(1+s)\) and \((1-s/2)/(1+s/2)\), respectively. Both remain bounded at arbitrarily large \(s\), but Crank–Nicolson may alternate for under-resolved sharp features.</p>
+<p>With \(s=20\), backward Euler retains only \(1/21\) per step. Crank–Nicolson yields \(-9/11\), retaining much more of the fast component and reversing its sign. For a smooth low-frequency mode Crank–Nicolson generally gives more accurate temporal decay because it is second order. Decide whether early sharp transients or later smooth behaviour is the relevant physical quantity. To identify spatial and temporal error separately, refine \(\Delta t\) first on a fixed mesh, then refine space with time error kept well below spatial error. Merely halving both at once cannot reveal which term dominated the original discrepancy.</p>
+</section>
+<section>
+<h2 id="apply-a-prescribed-heat-input-without-confusing-it-with-temperature">Apply a prescribed heat input without confusing it with temperature</h2>
+<p>An insulated periodic rod with uniform heating rate \(s\) measured in K/s has an average temperature that must rise by \(s\Delta t\) each step. Sum the centred second differences over the periodic indices: each nodal value appears with coefficients \(1,-2,1\), which cancel. The source alone changes the mean. For \(s=3\) K/s and a step of 0.02 s the numerical average must increase by 0.06 K, independently of the diffusivity and initial profile.</p>
+<p>A code can pass this global test while still mishandling short-wave damping, since an alternating error has zero spatial mean. Pair a mean-temperature test with a nonconstant mode-decay test. Use a homogeneous periodic run for isolates of diffusion, and a uniform temperature with prescribed source for the storage term. A failure in one test then identifies a different part of the mathematical balance than a failure in the other.</p>
+</section>
+<section>
+<h2 id="prove-decay-of-a-discrete-thermal-energy">Prove decay of a discrete thermal energy</h2>
+<p>Let a closed semidiscrete diffusion model be \(M\dot u+Ku=0\), with \(M\) symmetric positive definite and \(K\) symmetric positive semidefinite. Assume \(K{\bf1}=0\), expressing zero flux for a uniform temperature. Backward Euler satisfies \(M(u^{n+1}-u^n)+\Delta t Ku^{n+1}=0\). Multiplying by the constant vector and using symmetry gives \({\bf1}^TMu^{n+1}={\bf1}^TMu^n\). Thus the capacity-weighted sum, proportional to stored sensible heat for constant capacities and a fixed reference, is conserved for any step size.</p>
+<p>Now multiply by \(u^{n+1}\). The identity \(a^TM(a-b)=[\|a\|_M^2-\|b\|_M^2+\|a-b\|_M^2]/2\) yields the exact balance</p>
+<div class="math display">\[\tfrac12\|u^n\|_M^2-\tfrac12\|u^{n+1}\|_M^2=\Delta t\,(u^{n+1})^TKu^{n+1}+\tfrac12\|u^{n+1}-u^n\|_M^2 .\]</div>
+<p>Both terms are nonnegative. The quadratic quantity therefore decays although total sensible heat is conserved. Subtracting the conserved mean first yields the same decay statement for temperature variation around equilibrium. The first term represents spatial smoothing measured at the new time, and the second reflects the numerical time update. This derivation gives a stability certificate on nonuniform grids without assuming Fourier modes.</p>
+</section>
+<section>
+<h2 id="audit-two-cells-with-different-heat-capacities">Audit two cells with different heat capacities</h2>
+<p>Choose capacities 1 and 3 J/K, conductance 2 W/K, and initial temperature deviations \((4,0)^T\) K. The conserved sensible heat is 4 J, so the final equilibrium in a closed system must be one kelvin above reference. At \(\Delta t=0.5\) s the matrix \(M+\Delta tK\) has rows \((2,-1)\) and \((-1,4)\), and the right-hand side is \((4,0)^T\). The new temperatures are \((16/7,4/7)^T\). Checking their weighted sum gives \(16/7+3(4/7)=4\), as required. The unweighted average changes, which is physically appropriate for unequal capacities.</p>
+<p>The quadratic quantity at the start is \(4^2/2=8\). After the step it is \([(16/7)^2+3(4/7)^2]/2=152/49\). Its drop is \(240/49\). The conductive contribution is \((0.5)(2)(12/7)^2=144/49\); the time-update contribution is \([(-12/7)^2+3(4/7)^2]/2=96/49\). Their sum recovers the measured drop exactly. Neither contribution equals a loss of the 4 J of sensible heat. The quadratic measure depends on squared temperatures and has different physical units.</p>
+<p>A positive heat supply or a prescribed exterior temperature introduces a boundary or source work term into these identities. Applying the closed-system decay test to an externally heated experiment would therefore diagnose the wrong physical model. Verify which conserved or dissipated quantity is actually implied by the capacity matrix, boundary conditions and source terms before comparing numerical integrators.</p>
+<p>The conserved mean suggests another check after many large steps. The steady state must have zero conductance dissipation, which for two connected cells requires equal temperatures. Together with the weighted heat total this fixes both temperatures at one kelvin above reference. A scheme that instead approaches the unweighted initial average of two would be converging to the wrong conserved quantity despite producing a visually smooth, uniform endpoint. The measured quadratic variation about the correct mean tends to zero; the uncentred squared quantity tends to a positive constant because the remaining uniform state still has temperature above the chosen reference.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">What happens to a grid-scale temperature ripple?</h2>
+<p>The alternating spatial mode on a uniform heat grid has discrete Laplacian eigenvalue \(-4/\Delta x^2\). Substitute this mode into each method and compare the amplitude after one step. The plot isolates the shortest resolvable pattern.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/partial-differential-equations/04-parabolic-equations.png" alt="What happens to a grid-scale temperature ripple?. Horizontal axis: Diffusion number αΔt/Δx². Vertical axis: Signed amplitude after one time step. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Forward Euler reverses the mode above 1/4 and becomes unstable above 1/2. Crank–Nicolson stays bounded for every plotted step but also reverses the mode above 1/2. Smooth initial data can hide this high-frequency diagnostic.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/partial-differential-equations/04-parabolic-equations.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Signed amplitude after one time step at selected values of Diffusion number αΔt/Δx².</caption><thead><tr><th scope="col">Diffusion number αΔt/Δx²</th><th scope="col">Forward Euler</th><th scope="col">Backward Euler</th><th scope="col">Crank–Nicolson</th></tr></thead><tbody><tr><th scope="row">0</th><td>1</td><td>1</td><td>1</td></tr><tr><th scope="row">0.275</th><td>−0.1</td><td>0.47619</td><td>0.29032</td></tr><tr><th scope="row">0.55</th><td>−1.2</td><td>0.3125</td><td>−0.047619</td></tr><tr><th scope="row">0.825</th><td>−2.3</td><td>0.23256</td><td>−0.24528</td></tr><tr><th scope="row">1.1</th><td>−3.4</td><td>0.18519</td><td>−0.375</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/partial-differential-equations/04-parabolic-equations.csv" download>Download all 221 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/03-conservation/">Chapter 3 · Finite volumes and moving fronts</a></span><span>Next<br><a href="/lecture-notes/numerics/partial-differential-equations/problem-sheets/2/">Problem sheet 2 · Fronts and diffusive modes</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

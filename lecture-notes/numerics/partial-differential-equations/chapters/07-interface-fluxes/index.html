@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interfaces, contact resistance and Robin data · OneSimulation</title>
+<meta name="description" content="Derive a face flux that transports the same heat through two different materials and through a convective boundary.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/07-interface-fluxes/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Interfaces, contact resistance and Robin data · OneSimulation">
+<meta property="og:description" content="Derive a face flux that transports the same heat through two different materials and through a convective boundary.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/07-interface-fluxes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Interfaces, contact resistance and Robin data</h1><p class="lead">Derive a face flux that transports the same heat through two different materials and through a convective boundary.</p><p class="byline">Chapter 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#one-flux-through-resistances-in-series">One flux through resistances in series</a><a href="#measure-the-temperature-drop">Measure the temperature drop</a><a href="#apply-a-convective-boundary">Apply a convective boundary</a><a href="#a-jump-located-inside-a-cell">A jump located inside a cell</a><a href="#derive-effective-transport-parallel-and-normal-to-layers">Derive effective transport parallel and normal to layers</a><a href="#predict-two-experiments-on-the-same-material-sample">Predict two experiments on the same material sample</a><a href="#worked-plot">Separate the temperature jump from the bulk gradient</a></nav></aside><article class="prose reference"><section>
+<h2 id="one-flux-through-resistances-in-series">One flux through resistances in series</h2>
+<p>Let \(q=-kT'\) be heat flux in the positive coordinate direction, with unit cross-sectional area and no internal source. Between two cell centres separated by an interface, let the left and right centre-to-interface distances be \(d_L,d_R\). Piecewise constant conductivities \(k_L,k_R&gt;0\) make the equilibrium temperature linear in each segment. If the interface has perfect contact, its temperature \(T_f\) is continuous. Integrating Fourier's law on each side gives \(T_L-T_f=q\,d_L/k_L\) and \(T_f-T_R=q\,d_R/k_R\). Adding eliminates the unknown interface temperature.</p>
+<div class="math display">\[q=\frac{T_L-T_R}{d_L/k_L+d_R/k_R}.\]</div>
+<p>For equal distances this amounts to using the harmonic mean conductivity over the full centre spacing. Inserting the same signed \(q\) as the outflow of the left cell and the inflow of the right cell produces cancellation when their balances are added. If a material interface stores energy or supplies heat independently, a flux jump belongs in the balance and this steady series calculation must be modified.</p>
+</section>
+<section>
+<h2 id="measure-the-temperature-drop">Measure the temperature drop</h2>
+<p>Take \(d_L=d_R=0.01\) m, \(k_L=2,\ k_R=10\) W/(m K) and \(T_L=30,\ T_R=18\) °C. The series resistance per unit area is \(0.005+0.001=0.006\) m²K/W. The flux is \(2000\) W/m² and the interface temperature is \(30-2000(0.005)=20\) °C. The lower conductivity carries the larger temperature drop despite carrying the same flux. Using the arithmetic mean 6 with the centre difference over 0.02 m instead predicts \(3600\) W/m².</p>
+<p>Introduce a contact resistance \(R_c=0.002\) m²K/W. Its temperature jump is \(qR_c\); the total resistance rises to 0.008, reducing the heat flux to 1500 W/m². The two sides of the contact now have temperatures 22.5 and 19.5 °C. Imposing a single interface temperature on this model would remove the physically measured 3 K jump.</p>
+</section>
+<section>
+<h2 id="apply-a-convective-boundary">Apply a convective boundary</h2>
+<p>At an exterior face the outward heat flux obeys \(q=h_c(T_s-T_\infty)\), a Robin condition. Eliminate the unknown surface temperature as above to obtain \(q=(T_P-T_\infty)/(d/k+1/h_c)\). If \(h_c\) tends to zero, the boundary becomes insulating. With very large \(h_c\), the surface approaches ambient temperature while the finite centre-to-face resistance remains. For \(d=0.01\) m, \(k=2\), \(h_c=100\) W/(m² K), \(T_P-T_\infty=15\) K, the predicted flux is 1000 W/m² and the surface is 10 K above ambient. Multiplying by face area converts this flux to the power used in a cell energy balance. Mixing up these two quantities makes the result depend incorrectly on mesh area.</p>
+</section>
+<section>
+<h2 id="a-jump-located-inside-a-cell">A jump located inside a cell</h2>
+<p>If the materials change at a known position inside a segment, the fractions of that segment matter. Moving the interface so that 75 percent of the length has conductivity 2 and 25 percent has conductivity 10 produces effective conductivity \(1/(0.75/2+0.25/10)=2.5\) W/(m K). Giving each material half the segment instead would give \(10/3\) W/(m K). The harmonic rule depends on actual layer thicknesses. A mesh-refinement study that snaps the interface to different positions at every refinement can mix geometric representation error with flux-discretisation error.</p>
+</section>
+<section>
+<h2 id="derive-effective-transport-parallel-and-normal-to-layers">Derive effective transport parallel and normal to layers</h2>
+<p>A fine laminate of isotropic materials can have a direction-dependent macroscopic conductivity. Consider two perfectly bonded planar layers occupying thickness fractions \(\theta\) and \(1-\theta\), with conductivities \(k_1,k_2\). Assume steady conduction, no internal sources, and boundary conditions that permit a one-dimensional field for the loading orientation being tested. For transport normal to the layers, continuity forces equal flux. Adding their temperature drops across a total thickness \(L\) gives \(k_\perp=[\theta/k_1+(1-\theta)/k_2]^{-1}\). For transport parallel to the layers the imposed longitudinal gradient is common and the area-weighted fluxes add, giving \(k_\parallel=\theta k_1+(1-\theta)k_2\).</p>
+<p>The arithmetic and harmonic expressions are thus both correct, but apply to different geometries of imposed transport. Their ordering follows without a conductivity table: multiplying the two positive weighted sums \(\theta k_1+(1-\theta)k_2\) and \(\theta/k_1+(1-\theta)/k_2\) gives \(1+\theta(1-\theta)(k_1-k_2)^2/(k_1k_2)\ge1\). Equality requires identical conductivities or a missing layer. Spatial averaging performed before identifying the flux direction would erase precisely the distinction that determines the coarse physics.</p>
+</section>
+<section>
+<h2 id="predict-two-experiments-on-the-same-material-sample">Predict two experiments on the same material sample</h2>
+<p>Suppose a repeated laminate consists of 40 percent material with conductivity 1 and 60 percent with conductivity 10 W/(m K). Then \(k_\parallel=0.4+6=6.4\) W/(m K) and \(k_\perp=1/(0.4+0.06)=50/23\approx2.174\) W/(m K). A temperature drop of 4 K over 0.02 m imposes gradient magnitude 200 K/m. Perfectly normal loading produces flux magnitude about 434.8 W/m², whereas the same gradient parallel to the layers yields 1280 W/m². The larger flux is consistent with the fast material providing a continuous path in the latter orientation.</p>
+<p>For the normal experiment the low-conductivity phase occupies 0.008 m and accounts for a drop \(434.8(0.008)/1\approx3.478\) K. The high-conductivity phase occupies 0.012 m and drops only \(434.8(0.012)/10\approx0.522\) K. Adding recovers the imposed four kelvin. For the parallel experiment individual flux densities are 200 and 2000 W/m². Averaging by their area fractions gives \(0.4(200)+0.6(2000)=1280\) W/m². These local checks use the same two material properties and explain the difference in the observed coarse responses.</p>
+<p>Using the effective tensor assumes the observation scale spans representative layers. A sensor within one layer may respond to its local temperature slope instead. Finite contact resistance adds a temperature jump in the normal direction; if the number of interfaces per macroscopic length changes, the effective normal resistance changes even at identical material fractions. Measuring both orientations can distinguish geometric or contact effects that a single scalar fitted conductivity would conceal.</p>
+<p>Rotating a laminate specimen through ninety degrees interchanges the roles of these two effective values without changing its volume fractions. This makes an orientation experiment particularly discriminating: a fit that happened to reproduce the first orientation by adjusting a scalar conductivity predicts the same flux for the rotated specimen, whereas the fine-layer balance predicts a factor of about \(6.4/(50/23)=2.94\) between them.</p>
+<p>Repeating the test over multiple layer spacings also probes the assumption of negligible contact resistance.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Separate the temperature jump from the bulk gradient</h2>
+<p>A steady one-dimensional stack has two positive bulk conduction resistances in series with a contact resistance \(R_c\). Flux is common to all three. Scale \(R_c\) by the sum of bulk resistances and predict where probes would measure the imposed end-to-end temperature difference.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/partial-differential-equations/07-interface-fluxes.png" alt="Separate the temperature jump from the bulk gradient. Horizontal axis: Contact resistance / combined bulk resistance. Vertical axis: Fraction of total temperature drop. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>When contact resistance equals the bulk sum, half the end-to-end drop occurs at a geometrically thin interface. A numerical scheme that enforces temperature continuity there can converge smoothly to the wrong interface model.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/partial-differential-equations/07-interface-fluxes.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Fraction of total temperature drop at selected values of Contact resistance / combined bulk resistance.</caption><thead><tr><th scope="col">Contact resistance / combined bulk resistance</th><th scope="col">At interface</th><th scope="col">Within the two layers</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>1</td></tr><tr><th scope="row">1.25</th><td>0.55556</td><td>0.44444</td></tr><tr><th scope="row">2.5</th><td>0.71429</td><td>0.28571</td></tr><tr><th scope="row">3.75</th><td>0.78947</td><td>0.21053</td></tr><tr><th scope="row">5</th><td>0.83333</td><td>0.16667</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/partial-differential-equations/07-interface-fluxes.csv" download>Download all 241 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/partial-differential-equations/problem-sheets/3/">Problem sheet 3 · Wave resolution and verification</a></span><span>Next<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/08-anisotropy/">Chapter 8 · Anisotropic diffusion and mesh alignment</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

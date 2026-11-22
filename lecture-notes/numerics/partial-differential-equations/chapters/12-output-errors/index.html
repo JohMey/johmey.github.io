@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adjoints and errors in a chosen output · OneSimulation</title>
+<meta name="description" content="Weight equation residuals by the response of a chosen observation and distinguish algebraic error from mesh error.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/12-output-errors/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adjoints and errors in a chosen output · OneSimulation">
+<meta property="og:description" content="Weight equation residuals by the response of a chosen observation and distinguish algebraic error from mesh error.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/12-output-errors/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Adjoints and errors in a chosen output</h1><p class="lead">Weight equation residuals by the response of a chosen observation and distinguish algebraic error from mesh error.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-residual-has-a-direction">A residual has a direction</a><a href="#compute-the-weight-of-each-row">Compute the weight of each row</a><a href="#move-from-an-algebraic-error-to-a-mesh-error">Move from an algebraic error to a mesh error</a><a href="#compare-a-point-observation-with-an-average">Compare a point observation with an average</a><a href="#turn-primal-and-dual-approximation-errors-into-an-output-bound">Turn primal and dual approximation errors into an output bound</a><a href="#a-case-where-the-product-bound-is-exact">A case where the product bound is exact</a><a href="#bound-the-uncertainty-of-an-approximate-dual-correction">Bound the uncertainty of an approximate dual correction</a><a href="#worked-plot">Which source errors matter to a point measurement?</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-residual-has-a-direction">A residual has a direction</h2>
+<p>Let \(Au=b\) be an invertible linear discrete model and let \(Q(u)=c^Tu\) report a scalar output, for example a weighted mean temperature. For a computed approximation \(\tilde u\), set \(r=b-A\tilde u\). The error is \(A^{-1}r\), and hence \(Q(u)-Q(\tilde u)=c^TA^{-1}r\). Define the adjoint or dual solution by \(A^Tz=c\). Then the exact output identity is</p>
+<div class="math display">\[Q(u)-Q(\tilde u)=z^Tr.\]</div>
+<p>A single adjoint gives the output effect of many possible residuals. A large residual where the observation has low sensitivity can contribute less than a small residual elsewhere. Opposite contributions can cancel in this particular output, even though they represent substantial state errors.</p>
+</section>
+<section>
+<h2 id="compute-the-weight-of-each-row">Compute the weight of each row</h2>
+<p>Take \(A=\left(\begin{smallmatrix}2&amp;-1\\-1&amp;2\end{smallmatrix}\right)\), \(b=(1,0)^T\), and observe the second unknown with \(c=(0,1)^T\). Then \(u=(2/3,1/3)^T\) and \(z=(1/3,2/3)^T\). For \(\tilde u=(0.6,0.3)^T\), the residual is \((0.1,0)^T\). Its weighted sum is \(1/30\), exactly the missing part \(1/3-0.3\). If a solve produced residual \((0,0.1)^T\) instead, the same residual norm would double the output error. This output cares twice as much about the second row as about the first.</p>
+<p>For residual \((0.2,-0.1)^T\), the signed estimate is exactly zero. The sum of absolute contributions is \(2/15\), an upper bound insensitive to cancellation. An analyst interested only in the selected output can accept a calculation whose state vector another observer would reject. Specify the observation before choosing stopping and refinement criteria.</p>
+</section>
+<section>
+<h2 id="move-from-an-algebraic-error-to-a-mesh-error">Move from an algebraic error to a mesh error</h2>
+<p>An accurately solved finite-element system has almost zero algebraic residual in its own discrete test space. It can still differ from the continuum solution. Let \(a(u,v)=\ell(v)\) be the continuum weak equation and define \(R(v)=\ell(v)-a(u_h,v)\). For a linear observation the continuum dual satisfies \(a(v,z)=Q(v)\), giving \(Q(u)-Q(u_h)=R(z)\). Galerkin orthogonality means \(R(z_h)=0\) for every test function on the same mesh, hence \(R(z)=R(z-z_h)\).</p>
+<p>Estimating this term requires a dual approximation richer than the test space used for the primal solve, or an independent reconstruction. Integrating element residuals by parts can expose both cell defects and jumps in normal flux. Weight these local contributions by the unresolved dual variation to discover which regions can affect the output strongly. Check an estimated correction against actual output changes on a refined mesh; a poor dual approximation can misidentify important regions even when the primal residuals have been evaluated exactly.</p>
+</section>
+<section>
+<h2 id="compare-a-point-observation-with-an-average">Compare a point observation with an average</h2>
+<p>In the two-unknown example, replace the second-node observation by the mean \(c=(1/2,1/2)^T\). The constant vector is an eigenvector of \(A\) with eigenvalue one, so the adjoint becomes \(z=c\). A purely antisymmetric residual \((0.1,-0.1)^T\) makes the mean output error zero. For the earlier second-node output the same residual gives \(-1/30\). A mesh designed to resolve an average can therefore allocate effort differently from one designed for a single sensor. Whenever a reported error changes markedly between observables, inspect the dual weights before attributing the change to a flaw in the physical simulation.</p>
+</section>
+<section>
+<h2 id="turn-primal-and-dual-approximation-errors-into-an-output-bound">Turn primal and dual approximation errors into an output bound</h2>
+<p>For a symmetric coercive bilinear form \(a\), let the exact state \(u\) satisfy \(a(u,v)=\ell(v)\), and the exact dual \(z\) satisfy \(a(v,z)=Q(v)\) for a linear output \(Q\). With conforming Galerkin approximations on the same trial space, \(a(u-u_h,v_h)=0\) for every discrete test. Consequently \(Q(u)-Q(u_h)=a(u-u_h,z-z_h)\). Cauchy–Schwarz in the energy inner product gives an absolute bound by \(\|u-u_h\|_a\|z-z_h\|_a\). Accuracy of either the state or the observation sensitivity can separately make the output error small.</p>
+<p>When the primal and dual energy errors both decrease proportionally to \(h\), their product guarantees an \(O(h^2)\) output error under these assumptions. It does not guarantee second order for every possible observation. A point evaluation in a higher-dimensional continuum problem may be unbounded on the energy space or yield a dual solution with a strong singularity. Then the dual error may converge much more slowly. Likewise nonconforming approximation, inexact integration or inconsistent boundary terms introduce additional residual terms that are absent from the simple Galerkin cancellation.</p>
+</section>
+<section>
+<h2 id="a-case-where-the-product-bound-is-exact">A case where the product bound is exact</h2>
+<p>Let \(a(v,w)=v^TAw\) with \(A=\operatorname{diag}(2,8)\), exact state \(u=(1,2)^T\), and reduced approximation space spanned by \(s=(1,1)^T\). The Galerkin coefficient is \((s^TAu)/(s^TAs)=(2+16)/10=1.8\). Choose output \(Q(v)=(6,8)v\); its exact dual is \(z=(3,1)^T\) since \(Az=(6,8)^T\). Projecting that dual onto the same space gives coefficient \((6+8)/10=1.4\). The primal and dual errors are therefore \((-0.8,0.2)^T\) and \((1.6,-0.4)^T\).</p>
+<p>Their energy inner product is \(2(-0.8)(1.6)+8(0.2)(-0.4)=-3.2\). Direct evaluation gives \(Q(u)=22\) and \(Q(u_h)=25.2\), confirming the signed error exactly. Squared energy errors are \(2(0.8)^2+8(0.2)^2=1.6\) and \(2(1.6)^2+8(0.4)^2=6.4\). Their square-root product is 3.2, attaining the absolute bound because the two error vectors are antiparallel. The bound cannot determine the sign; the signed dual residual can.</p>
+<p>Replace the observation by \(Q_2(v)=(2,8)v\). Its exact dual is \(s\), already representable, so \(z-z_h=0\) and the output error vanishes even though the state error is unchanged. Indeed \(Q_2(u)=18=Q_2(u_h)\). A mesh judged solely by that particular observable could look exact. A different sensor weighing the same simulation states produces a demonstrably nonzero output error, which is why adaptive refinement objectives should name their actual observations.</p>
+<p>If the approximate dual used the same one-dimensional space and one simply evaluated the primal residual on it, the reported correction would be exactly zero for either output. The first observation shows that such a number can be badly misleading. An enriched dual must include a direction outside the primal test space; in this two-coordinate example, adding either coordinate direction gives the full space and recovers the signed error exactly. On a fine physical mesh full enrichment may be too expensive, making local higher-order reconstruction or an independently refined dual mesh attractive. The product bound then clarifies which additional error in the dual approximation needs to be controlled.</p>
+<p>It also identifies the observation for which refining the primal mesh alone is unnecessary.</p>
+</section>
+<section>
+<h2 id="bound-the-uncertainty-of-an-approximate-dual-correction">Bound the uncertainty of an approximate dual correction</h2>
+<p>A practical enriched dual \(\tilde z\) may itself have numerical error. In the symmetric positive definite algebraic setting the difference between true output error and its estimated correction is \((z-\tilde z)^Tr\), where \(r=b-Au_h\). With dual residual \(r_z=c-A\tilde z\), this equals \(r_z^TA^{-1}r\). Cauchy–Schwarz bounds its magnitude by \(\|r_z\|_{A^{-1}}\|r\|_{A^{-1}}\). This identity explains why a small ordinary residual norm can be insufficient for either the primal or dual solve: directions associated with small eigenvalues receive greater weight in the inverse-energy norm.</p>
+<p>In the preceding example choose \(\tilde z=(2.5,1)^T\). The primal residual is \((-1.6,1.6)^T\); the approximate correction is therefore \(-4+1.6=-2.4\), moving the coarse output 25.2 to 22.8. The actual output is 22, leaving error −0.8 after correction. The dual residual is \((1,0)^T\), with squared inverse-energy norm \(1/2\). The squared primal residual norm in the same metric is 1.6. Their product of norms is \(\sqrt{0.8}\approx0.8944\), containing the observed remaining discrepancy. For larger problems, estimating these norms can itself require a separate bound or preconditioner. Reporting only the corrected value without assessing the accuracy of the dual can make a visually improved output appear more certain than the calculation warrants.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Which source errors matter to a point measurement?</h2>
+<p>For \(-u&#x27;&#x27;=f\) with zero values at both ends of the unit interval, seek the sensitivity of \(u(a)\) to a point load. The adjoint is piecewise linear, vanishes at the endpoints, is continuous at \(a\) and has derivative jump minus one.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/partial-differential-equations/12-output-errors.png" alt="Which source errors matter to a point measurement?. Horizontal axis: Source location. Vertical axis: Change in measured u per unit point source. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>For a sensor at 0.25, an equal positive source error at 0.25 has three times the effect of one at 0.75. Opposite-signed local residuals may cancel in the target output, even when their unweighted norm is appreciable.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/partial-differential-equations/12-output-errors.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Change in measured u per unit point source at selected values of Source location.</caption><thead><tr><th scope="col">Source location</th><th scope="col">Sensor at 0.25</th><th scope="col">Sensor at 0.5</th><th scope="col">Sensor at 0.8</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>0</td><td>0</td></tr><tr><th scope="row">0.25</th><td>0.1875</td><td>0.125</td><td>0.05</td></tr><tr><th scope="row">0.5</th><td>0.125</td><td>0.25</td><td>0.1</td></tr><tr><th scope="row">0.75</th><td>0.0625</td><td>0.125</td><td>0.15</td></tr><tr><th scope="row">1</th><td>0</td><td>0</td><td>0</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/partial-differential-equations/12-output-errors.csv" download>Download all 301 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/11-multigrid/">Chapter 11 · Multigrid and coarse-grid correction</a></span><span>Next<br><a href="/lecture-notes/numerics/partial-differential-equations/problem-sheets/6/">Problem sheet 6 · Transfers and observation error</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

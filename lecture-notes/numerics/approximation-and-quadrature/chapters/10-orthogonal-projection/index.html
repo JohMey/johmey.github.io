@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weighted projections and Legendre polynomials · OneSimulation</title>
+<meta name="description" content="Derive a best mean-square polynomial and determine how a change of weight changes what that polynomial predicts.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/chapters/10-orthogonal-projection/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Weighted projections and Legendre polynomials · OneSimulation">
+<meta property="og:description" content="Derive a best mean-square polynomial and determine how a change of weight changes what that polynomial predicts.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/chapters/10-orthogonal-projection/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Weighted projections and Legendre polynomials</h1><p class="lead">Derive a best mean-square polynomial and determine how a change of weight changes what that polynomial predicts.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#distance-depends-on-the-observation">Distance depends on the observation</a><a href="#construct-a-basis-on-a-symmetric-interval">Construct a basis on a symmetric interval</a><a href="#move-the-weight-toward-one-endpoint">Move the weight toward one endpoint</a><a href="#a-discrete-inner-product-can-give-a-different-optimum">A discrete inner product can give a different optimum</a><a href="#represent-multiplication-by-the-independent-variable">Represent multiplication by the independent variable</a><a href="#derive-two-point-gaussian-quadrature-from-a-small-matrix">Derive two-point Gaussian quadrature from a small matrix</a></nav></aside><article class="prose reference"><section>
+<h2 id="distance-depends-on-the-observation">Distance depends on the observation</h2>
+<p>A large error over a small part of an interval may be acceptable when an instrument averages over the interval. With a positive integrable weight \(w\), minimise \(J(p)=\int_a^b w(x)|f(x)-p(x)|^2\,dx\) over polynomials of degree at most \(m\). The first variation in an arbitrary allowed direction \(q\) gives \(\int w(f-p)q=0\). Conversely this orthogonality implies \(J(p+q)=J(p)+\int wq^2\). This Pythagorean identity proves uniqueness and explains why a residual with large local extrema can still be optimal in the chosen metric.</p>
+<p>In a monomial basis these conditions couple every coefficient to every other. Choose polynomials \(\phi_j\) orthogonal for the same weight instead. Then \(p=\sum c_j\phi_j\) with \(c_j=\int wf\phi_j/\int w\phi_j^2\). Increasing the degree preserves every coefficient already computed. Using quadrature to estimate these integrals introduces another approximation. A rule that samples too sparsely can make two distinct basis vectors look identical under the discrete inner product.</p>
+</section>
+<section>
+<h2 id="construct-a-basis-on-a-symmetric-interval">Construct a basis on a symmetric interval</h2>
+<p>For unit weight on \([-1,1]\), start with \(1,x,x^2\). Odd integrands integrate to zero, so the first two are orthogonal already. Subtract the projection of \(x^2\) onto the constant, namely \(1/3\), and retain \(x^2-1/3\). Scaling this polynomial to take value one at the right endpoint gives \(P_2=(3x^2-1)/2\), the second Legendre polynomial. Its squared integral is \(2/5\), obtained by integrating its expanded fourth-degree square.</p>
+<p>Approximating \(x^2\) by a line retains just \(1/3\). Squaring the residual and integrating gives \(2/5-4/9+2/9=8/45\). The mean-square error is half that number and its square root is about 0.29814. The worst local error occurs at the endpoints and equals \(2/3\). The constant \(1/2\) has smaller uniform error but a larger squared integral of \(7/30\). The objective function explains the difference without appealing to how a fitted curve looks.</p>
+</section>
+<section>
+<h2 id="move-the-weight-toward-one-endpoint">Move the weight toward one endpoint</h2>
+<p>On \([0,1]\) choose density \(w(x)=2x\), normalised to integrate to one. Fitting a constant to \(f(x)=x\) now gives its weighted mean \(2\int_0^1 x^2\,dx=2/3\). The weighted mean-square error is \(2\int x^3\,dx-(2/3)^2=1/18\). Equal weighting would instead place the constant at \(1/2\). Selecting a weight thus amounts to specifying the region over which a loss should be economical. When interpreting coefficients state the interval, basis normalisation and weight together; otherwise two reported coefficients can be different descriptions of the same fitted polynomial.</p>
+</section>
+<section>
+<h2 id="a-discrete-inner-product-can-give-a-different-optimum">A discrete inner product can give a different optimum</h2>
+<p>If only the endpoints of \([-1,1]\) are sampled with equal weight, then \(x^2\) takes value one at every observation and the best discrete constant is one. Adding the midpoint with the same weight changes it to \(2/3\). Simpson weights on those three samples instead give \((1+4\cdot0+1)/6=1/3\), the exact continuous coefficient, because that particular integral is quadratic. A mismatch between a discrete fit and a continuous projection can thus arise entirely from the observation design, even with error-free measurements.</p>
+</section>
+<section>
+<h2 id="represent-multiplication-by-the-independent-variable">Represent multiplication by the independent variable</h2>
+<p>Orthogonal polynomials supply a bridge from projection to quadrature. Choose an orthonormal family \(\phi_0,\phi_1,\ldots\) on an interval with positive weight \(w\). Multiplication of \(\phi_j\) by \(x\) raises its degree by one. Its inner product with \(\phi_i\) for \(i&lt;j-1\) vanishes, because \(\langle x\phi_j,\phi_i\rangle=\langle\phi_j,x\phi_i\rangle\) and \(x\phi_i\) has degree below \(j\). Consequently \(x\phi_j\) is a linear combination of just \(\phi_{j-1},\phi_j,\phi_{j+1}\). Choosing positive leading coefficients makes the outer recurrence coefficients positive.</p>
+<p>Truncating this multiplication map to the first \(n\) basis functions gives a symmetric tridiagonal matrix. At a root \(\xi\) of \(\phi_n\) the omitted last recurrence term vanishes. The column \((\phi_0(\xi),\ldots,\phi_{n-1}(\xi))^T\) is then an eigenvector of the truncated matrix with eigenvalue \(\xi\). Thus a polynomial root-finding task for Gaussian quadrature nodes becomes a symmetric eigenvalue problem. This correspondence uses the same positive weight throughout. If projection coefficients were assembled with a different effective inner product from the quadrature moments, the nodes would describe a different measure.</p>
+</section>
+<section>
+<h2 id="derive-two-point-gaussian-quadrature-from-a-small-matrix">Derive two-point Gaussian quadrature from a small matrix</h2>
+<p>On \([-1,1]\) with unit weight, use \(\phi_0=1/\sqrt2\) and \(\phi_1=\sqrt{3/2}\,x\). Both diagonal entries \(\int x\phi_i^2dx\) vanish by oddness. The off-diagonal entry is \((\sqrt3/2)\int_{-1}^1x^2dx=1/\sqrt3\). The truncated multiplication matrix has zeros on the diagonal and \(1/\sqrt3\) off it, so its eigenvalues are \(\pm1/\sqrt3\). The two normalised eigenvectors have first-coordinate magnitude \(1/\sqrt2\). Symmetry makes the quadrature weights equal and their sum must be the mass of the interval, two; hence the two weights are both one.</p>
+<p>A further spectral check reconstructs low moments without an integration table. Write the matrix as \(J\). Since \(J^2=I/3\), the quadrature estimate of the second moment is \(2e_1^TJ^2e_1=2/3\), whereas odd moments through three vanish. The rule therefore integrates every cubic exactly by linearity. At degree four the same formula predicts \(2/9\), while the true fourth moment is \(2/5\). Multiplication by \(x\) repeatedly can produce a component outside the retained basis that returns later to affect the observed moment; truncation eventually loses that information.</p>
+<p>For nonsymmetric weights the recurrence diagonal is usually nonzero and the quadrature nodes need no longer occur in opposite pairs. A practical diagnostic remains available: all weights must be positive and their sum must equal the integral of the constant. Passing these checks is necessary but does not certify the node positions. Testing further independently known moments can expose a normalisation or indexing error that the constant check alone would miss.</p>
+<p>For instance adding the same spurious offset to both computed quadrature nodes leaves the weights positive and unchanged. The integral of the constant still passes exactly, while the first moment becomes twice that offset instead of zero. On an interval invariant under reflection, testing one odd and one even moment quickly distinguishes centring errors from errors in the spacing or overall weight normalisation.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/approximation-and-quadrature/chapters/09-fourier/">Chapter 9 · Fourier projection and sampled frequencies</a></span><span>Next<br><a href="/lecture-notes/numerics/approximation-and-quadrature/problem-sheets/5/">Problem sheet 5 · Spectral measures of error</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graph structure and fill-in · OneSimulation</title>
+<meta name="description" content="Predict which entries appear when an unknown is eliminated and use graph ordering to compare storage for two equivalent factorisations.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/chapters/09-sparsity/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Graph structure and fill-in · OneSimulation">
+<meta property="og:description" content="Predict which entries appear when an unknown is eliminated and use graph ordering to compare storage for two equivalent factorisations.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/chapters/09-sparsity/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Graph structure and fill-in</h1><p class="lead">Predict which entries appear when an unknown is eliminated and use graph ordering to compare storage for two equivalent factorisations.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#interpret-matrix-entries-as-connections">Interpret matrix entries as connections</a><a href="#compare-two-orders-on-a-star">Compare two orders on a star</a><a href="#use-separators-on-a-mesh">Use separators on a mesh</a><a href="#count-the-work-created-by-a-mesh-separator">Count the work created by a mesh separator</a><a href="#compare-memory-growth-on-a-sequence-of-grids">Compare memory growth on a sequence of grids</a><a href="#predict-the-cost-of-moving-from-a-sheet-to-a-solid">Predict the cost of moving from a sheet to a solid</a></nav></aside><article class="prose reference"><section>
+<h2 id="interpret-matrix-entries-as-connections">Interpret matrix entries as connections</h2>
+<p>For a symmetric sparse stiffness matrix, put one graph vertex at each unknown and an edge between distinct vertices whose corresponding entry is nonzero. A spring, diffusion face or shared element typically couples nearby unknowns, so the assembled matrix has far fewer entries than a dense array. Gaussian elimination changes this graph. Partition a pivot \(a\), its column below the pivot \(v\) and the trailing block \(B\). Eliminating the pivot replaces \(B\) by the Schur complement \(B-vv^T/a\). For every pair of nonzero entries of \(v\), the outer product can create a coupling between their vertices.</p>
+<p>Thus the remaining neighbours of the eliminated vertex can become a clique. These added entries are called fill. Some may cancel for particular coefficients, but symbolic analysis usually retains every position that can be nonzero. It predicts a storage pattern before numerical values are known and can often be reused when material properties or loads change on the same mesh.</p>
+</section>
+<section>
+<h2 id="compare-two-orders-on-a-star">Compare two orders on a star</h2>
+<p>Take four unknowns arranged as a centre joined to three leaves, with no direct leaf-to-leaf connections. Give each diagonal value 4 and each centre-to-leaf coupling −1. Eliminating the centre first subtracts \(1/4\) from every leaf diagonal and creates three off-diagonals of \(-1/4\) connecting the three pairs of leaves. Although those leaves were initially independent when the centre was specified, eliminating it lets a disturbance at one leaf affect every other.</p>
+<p>Instead eliminate one leaf at a time. Each has only one remaining neighbour, so its elimination modifies only the central diagonal and creates no off-diagonal fill. Three eliminations lower the central diagonal from 4 to \(4-3/4=3.25\). The two factorizations give the same physical answer in exact arithmetic, but their intermediate matrices require different storage and work. Relabelling the equations and unknowns together preserves symmetry and changes which order the eliminator encounters.</p>
+</section>
+<section>
+<h2 id="use-separators-on-a-mesh">Use separators on a mesh</h2>
+<p>A one-dimensional chain eliminated from an end retains its narrow bandwidth. Eliminating interior vertices in an inconvenient order can create distant couplings relative to the original numbering. In a two-dimensional mesh even a careful sweep can leave a long front of mutually coupled vertices. Nested dissection separates the graph into smaller disconnected regions by setting aside a separator, factors the interiors independently and processes that separator later.</p>
+<p>There is a practical trade between the cost of constructing an ordering and the savings in repeated factorisations. For a fixed matrix shape with many load cases this overhead can be amortised. For unsymmetric or indefinite systems numerical pivoting may alter the predicted pattern to maintain accuracy. Record both the number of nonzeros in the original operator and the number stored in the factors. Quoting the former alone can severely underestimate memory requirements, particularly for a three-dimensional mesh whose separators contain many more nodes than a one-dimensional chain.</p>
+</section>
+<section>
+<h2 id="count-the-work-created-by-a-mesh-separator">Count the work created by a mesh separator</h2>
+<p>Ordering influences more than the final number of nonzeros. In a two-dimensional \(m\)-by-\(m\) grid with nearest-neighbour couplings, remove a cross of order \(m\) unknowns and factor the resulting quadrants before the cross. Eliminating each interior communicates among the adjacent separator variables. In a generic factorisation their remaining block is dense: eliminating a separator of size proportional to \(m\) then costs order \(m^3\) arithmetic operations and stores order \(m^2\) factor entries. The cost of finding the ordering is separate from this symbolic estimate.</p>
+<p>Repeat the argument recursively on the four quadrants of side approximately \(m/2\). At level \(j\) there are about \(4^j\) independent subdomains with separator side \(m/2^j\). Total dense-block storage for this level is proportional to \(4^j(m/2^j)^2=m^2\). There are order \(\log m\) levels, yielding storage \(O(m^2\log m)\). Arithmetic at that level is proportional to \(4^j(m/2^j)^3=m^3/2^j\); summing a geometric series gives \(O(m^3)\). In terms of the total unknown count \(N\simeq m^2\), these are \(O(N\log N)\) storage and \(O(N^{3/2})\) arithmetic.</p>
+</section>
+<section>
+<h2 id="compare-memory-growth-on-a-sequence-of-grids">Compare memory growth on a sequence of grids</h2>
+<p>To see why the two resource estimates differ, use an idealised separator count with top separator length 64 and seven levels through length one. Ignore constants and store the square of each separator length. The root contributes \(64^2=4096\) units; the four children of length 32 contribute \(4\cdot32^2=4096\) as well. Seven levels therefore contribute 28,672 units. For work counted as the cube of each length, the root contributes 262,144 units and its children 131,072. Summing all seven contributions gives \(262144(1+1/2+\cdots+1/64)=520192\).</p>
+<p>Refining each spatial direction by a factor of two produces top length 128 and eight levels. Storage becomes \(8\cdot128^2=131072\), about 4.57 times as much. Work becomes \(128^3(2-1/128)=4177920\), about 8.03 times as much. The unknown count grew by four. A budget estimate assuming linear growth in both memory and factorisation time would miss the dominant cost early in this idealised sequence. The constants are structural units, not predictions in bytes or seconds.</p>
+<p>These estimates assume balanced geometric partitions, bounded local connectivity and a factorisation that does not introduce unexpected pivot exchanges. Strong global couplings can destroy small separators; in three dimensions the separator of an \(m^3\) grid is a surface of order \(m^2\) unknowns. Substituting surface size into the same argument immediately predicts much heavier top-level work. Before extrapolating timings, inspect actual separator sizes and factor nonzeros for the physical mesh family at hand.</p>
+<p>The same symbolic factorisation can often serve many load cases on an unchanged mesh. After numerical factors have been computed, each new pair of triangular substitutions has work proportional to the stored factor entries rather than the cubic separator work. A memory increase can therefore affect every repeated solve even when the one-time factorisation cost is amortised over many sources.</p>
+</section>
+<section>
+<h2 id="predict-the-cost-of-moving-from-a-sheet-to-a-solid">Predict the cost of moving from a sheet to a solid</h2>
+<p>For a three-dimensional \(m\)-by-\(m\)-by-\(m\) grid, divide a cube into eight smaller cubes separated by coordinate planes. An idealised top separator has order \(m^2\) unknowns rather than order \(m\). At level \(j\) the separator storage is proportional to \(8^j(m/2^j)^4=m^4/2^j\), and separator arithmetic to \(8^j(m/2^j)^6=m^6/8^j\). Both level sums are geometrically dominated by the largest separators. In terms of \(N=m^3\) unknowns the resulting estimates are \(O(N^{4/3})\) storage and \(O(N^2)\) factorisation work. The logarithmic storage factor of the two-dimensional sheet has given way to a different power of system size.</p>
+<p>Doubling resolution along each axis multiplies \(N\) by eight, asymptotic factor storage by roughly sixteen, and factor arithmetic by roughly sixty-four. Suppose the factors of a current three-dimensional problem occupy 3 GB and take 90 seconds to compute. Applying these scalings gives about 48 GB and 96 minutes after such refinement, subject to ordering and machine efficiency. By contrast, applying the existing factors to each extra load scales primarily with factor entries. If memory is limited, the predicted top separator may rule out the planned direct factorisation before the nominal total number of input matrix entries does. An iterative alternative should then be compared at the actual required tolerance and with the cost of its preconditioner included.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/linear-algebra/problem-sheets/4/">Problem sheet 4 · Orthogonal factorizations</a></span><span>Next<br><a href="/lecture-notes/numerics/linear-algebra/chapters/10-arnoldi/">Chapter 10 · Arnoldi iteration and GMRES</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

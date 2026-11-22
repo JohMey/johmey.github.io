@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tolerances, interference and torque transmission · OneSimulation</title>
+<meta name="description" content="Turn shaft and hub limits into a range of contact pressures and check whether a cylindrical interference fit can transmit torque.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-elements/chapters/06-fits-and-interfaces/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tolerances, interference and torque transmission · OneSimulation">
+<meta property="og:description" content="Turn shaft and hub limits into a range of contact pressures and check whether a cylindrical interference fit can transmit torque.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-elements/chapters/06-fits-and-interfaces/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Tolerances, interference and torque transmission</h1><p class="lead">Turn shaft and hub limits into a range of contact pressures and check whether a cylindrical interference fit can transmit torque.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#limits">Convert manufacturing limits into assembly conditions</a><a href="#pressure">Relate geometric mismatch to elastic deformation</a><a href="#torque">Integrate friction over the contact surface</a><a href="#assembly">Provide thermal clearance and account for combined service loads</a><a href="#lame">Derive interference pressure from thick-cylinder compliance</a><a href="#hub-wall">Compare thick and thin hubs at the same interference</a></nav></aside><article class="prose reference"><section><h2 id="limits">Convert manufacturing limits into assembly conditions</h2>
+<p>A shaft and a hub can share a nominal diameter while their manufactured diameters differ by several tens of micrometres. Name the diameters explicitly before subtracting them. For the present joint use positive diametral interference \(I=d_s-d_h\), where \(d_s\) is the free shaft diameter and \(d_h\) the free bore. Assemble the smallest shaft with the largest hole to obtain the minimum interference. The opposite pair gives the maximum. Worst-case limits do not require a probability distribution for the production process.</p>
+<p>Consider a 40 mm connection with shaft limits 40.030 to 40.045 mm and bore limits 40.000 to 40.015 mm. The minimum difference is 0.015 mm and the maximum 0.045 mm. Every permitted pair interferes. The radial mismatch is half the diametral interference because the radius changes on both sides of a diameter. Confusing these conventions introduces a factor of two in the inferred pressure and torque.</p>
+</section>
+<section><h2 id="pressure">Relate geometric mismatch to elastic deformation</h2>
+<p>When the parts return to their common assembly temperature, contact pressure compresses the shaft and expands the bore. Assume cylindrical surfaces, a short open-ended elastic hub with negligible axial stress, a solid elastic shaft and approximately uniform pressure away from the ends. Define the radial compliance \(c_r\) as the sum of the inward shaft and outward hub displacements per unit interface pressure. Compatibility across the common radius then reads</p>
+<div class="math display">\[\delta_r=I/2=|u_s|+u_h=p\,c_r,\qquad p=\frac{I}{2c_r}.\]</div>
+<p>The combined compliance can be found from an elastic cylinder calculation or a verified test of geometrically identical parts. Providing it separately permits a torque calculation without assuming an infinitely stiff hub. A thinner hub generally expands further at the same pressure. Its larger compliance reduces the pressure developed by a given interference. Surface roughness that flattens during assembly can also reduce the effective interference relative to a measurement over the original asperities.</p>
+</section>
+<section><h2 id="torque">Integrate friction over the contact surface</h2>
+<p>A narrow surface patch of area \(dA\) can support a tangential friction force up to \(\mu p\,dA\). All such forces act at radius \(r=d/2\) and oppose impending rotation. Under uniform contact pressure and fully mobilised Coulomb friction, integrating around the circumference and along the overlap length \(L\) gives the limiting torque. For a purely axial pull the same friction forces act along the axis and their direct sum gives the limiting pull-out force.</p>
+<div class="math display">\[T_{\lim}=\int r\mu p\,dA=\frac{\pi}{2}\mu pLd^2,\qquad F_{\lim}=\mu p\pi dL .\]</div>
+<p>Take \(L=35\,\mathrm{mm}\), \(\mu=0.12\), and \(c_r=0.50\,\mathrm{\mu m/MPa}\) in the 40 mm joint. The radial mismatches range from 7.5 to 22.5 micrometres, so calculated pressures range from 15 to 45 MPa. At the lower limit the tangential force capacity is \(0.12(15)\pi(40)(35)=7917\,\mathrm N\), and the torque capacity is \(7917(0.020)=158\,\mathrm{N\,m}\). At the upper limit pressure and capacity are three times larger. Use the lowest pressure to test transmission and the highest to evaluate hub stress.</p>
+</section>
+<section><h2 id="assembly">Provide thermal clearance and account for combined service loads</h2>
+<p>Suppose only the hub is heated, so its bore grows approximately by \(\alpha d\Delta T\). To slip the worst-case pair together with a further 0.020 mm of diametral assembly clearance, the bore must grow by \(0.045+0.020=0.065\,\mathrm{mm}\). With \(\alpha=12\times10^{-6}\,\mathrm{K^{-1}}\) a uniform temperature rise of \(0.065/[40(12\times10^{-6})]=135\,\mathrm K\) is required in this ideal expansion calculation. Heat loss during transfer changes the actual temperature at insertion.</p>
+<p>A shaft may also carry a sustained axial pull while delivering torque. Under the uniform-traction model the axial and circumferential components of the surface friction force share one bound. At the lower interference with a 4.0 kN pull the remaining circumferential capacity is \(\sqrt{7917^2-4000^2}=6832\,\mathrm N\), or about 137 N m. Checking the separate pure-load capacities would miss this interaction. If repeated microslip, an uncertain friction coefficient or stiffness near the hub edges is important, measurements of the actual assembly can determine which assumptions need closer investigation.</p>
+</section>
+<section><h2 id="lame">Derive interference pressure from thick-cylinder compliance</h2>
+<p>The radial compliance used above can be related to actual dimensions and materials. Consider a long enough cylindrical fit for a uniform central contact region, with free axial expansion so a plane-stress approximation is used for each cross-section. Let the common nominal radius be \(a\), outer hub radius \(b\), and positive pressure \(p\). The solid shaft experiences uniform in-plane compression \(\sigma_r=\sigma_\theta=-p\). Consequently its surface circumferential strain is \(-p(1-\nu_s)/E_s\), giving radial shrinkage magnitude \(pa(1-\nu_s)/E_s\).</p>
+<p>For an elastic hub with free outside, radial equilibrium \(d\sigma_r/dr+(\sigma_r-\sigma_\theta)/r=0\) and axisymmetric compatibility give Lamé fields \(\sigma_r=A-B/r^2,\ \sigma_\theta=A+B/r^2\). Setting \(\sigma_r(a)=-p,\ \sigma_r(b)=0\) gives bore hoop stress \(\sigma_\theta(a)=p(b^2+a^2)/(b^2-a^2)\). Use \(\epsilon_\theta(a)=[\sigma_\theta(a)-\nu_h\sigma_r(a)]/E_h=u_h(a)/a\). Adding hub expansion and shaft contraction leads to</p>
+<div class="math display">\[I/2=pa\left[\frac{1-\nu_s}{E_s}+\frac{(b^2+a^2)/(b^2-a^2)+\nu_h}{E_h}\right],\]</div>
+<p>where \(I\) is the free diametral interference. The factor of two and the sign of radial pressure both affect the result. Significant axial restraint, plastic deformation, a hollow shaft or edge-pressure peaks require a different compliance model.</p>
+</section>
+<section><h2 id="hub-wall">Compare thick and thin hubs at the same interference</h2>
+<p>A steel shaft and hub both have \(E=210\,\mathrm{GPa}\), \(\nu=0.30\). Their contact radius is 20 mm, hub outer radius 40 mm and measured diametral interference 30 micrometres. In mm–MPa units the combined radial compliance is \(20[0.70+(40^2+20^2)/(40^2-20^2)+0.30]/210000=0.000254\,\mathrm{mm/MPa}\). Pressure is \(0.015/0.000254=59.1\,\mathrm{MPa}\). The tensile hoop stress at the hub bore is \(59.1(5/3)=98.5\,\mathrm{MPa}\). For engagement length 25 mm and \(\mu=0.12\), torque capacity is \(2\pi\mu p a^2L=446\,\mathrm{N\,m}\) approximately.</p>
+<p>Now reduce the outer radius to 26 mm with the same parts at the fit surface. The hub geometry factor becomes \((26^2+20^2)/(26^2-20^2)=3.90\), giving combined radial compliance \(20(1+3.90)/210000=0.000467\,\mathrm{mm/MPa}\). Pressure falls to 32.2 MPa and torque capacity falls to about 243 N m. Yet bore hoop stress rises to \(32.2(3.90)=126\,\mathrm{MPa}\) because the thinner hub amplifies hoop demand more strongly. Reducing contact pressure alone is not evidence that the hub becomes safer. The same dimensional change can reduce torque capacity and increase peak elastic stress, so both checks should use the geometry of the actual mating parts.</p>
+<p>For ductile elastic parts, the hub bore should also be assessed in its multiaxial state. In the thicker example its principal stresses are approximately \(+98.5,0,-59.1\) MPa under plane stress. The von Mises value is \(\sqrt{98.5^2+59.1^2+98.5(59.1)}=138\,\mathrm{MPa}\), above the tensile hoop stress by itself. For the thinner hub, using \(+126,0,-32.2\) MPa gives approximately 145 MPa. A comparison with an allowable uniaxial stress must therefore state the criterion applied. Once significant yielding occurs the linear compliance used to determine pressure is itself affected, and enlarging the nominal interference will no longer guarantee a proportional increase in transmitted torque. A pull-out or torque-to-slip test on representative surfaces checks the independent assumption about friction.</p>
+<p>For an interference test, measuring the outside hub diameter change offers an additional observable. At the outer surface radial stress vanishes, so its hoop strain depends directly on the local tensile hoop stress.</p>
+<p>In fact the hub’s outside hoop stress from the same Lamé field is \(2pa^2/(b^2-a^2)\). For the 40 mm outer radius it is \(2(59.1)(400)/(1600-400)=39.4\,\mathrm{MPa}\), so the predicted 80 mm outside diameter increases by \(80(39.4)/210000=0.0150\,\mathrm{mm}\). For the thinner hub it is \(2(32.2)(400)/(676-400)=93.3\,\mathrm{MPa}\), giving an outside diameter increase \(52(93.3)/210000=0.0231\,\mathrm{mm}\). The thinner outer wall moves more under a smaller interface pressure. Observing this change together with transmitted torque can separate an incorrect elastic pressure estimate from an incorrect friction coefficient.</p>
+<p>For example, if the thick hub expands by the predicted 15 micrometres but slips at 330 N m under otherwise matching conditions, the implied mean friction coefficient is \(0.12(330/446)=0.089\). If the measured expansion were instead much smaller, an undersized effective interference, partial contact or a nonuniform fit would deserve investigation before calibrating friction. The micrometer reading is itself temperature sensitive: a uniform temperature difference of 10 K changes an 80 mm steel diameter by about 9.6 micrometres at \(12\times10^{-6}\,\mathrm{K^{-1}}\). Stabilise the temperatures before comparing the calculated elastic expansion with metrology.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/machine-elements/chapters/05-gears/">Chapter 5 · Spur gear kinematics and tooth loads</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/machine-elements/problem-sheets/3/">Problem sheet 3 · Gear meshes and assembled fits</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

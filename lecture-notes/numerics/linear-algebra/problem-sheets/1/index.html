@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measurements and elimination · OneSimulation</title>
+<meta name="description" content="Use explicit perturbations, row exchanges and reusable factors to diagnose errors in small linear balances.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/problem-sheets/1/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measurements and elimination · OneSimulation">
+<meta property="og:description" content="Use explicit perturbations, row exchanges and reusable factors to diagnose errors in small linear balances.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/problem-sheets/1/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Measurements and elimination</h1><p class="lead">Use explicit perturbations, row exchanges and reusable factors to diagnose errors in small linear balances.</p><p class="byline">Problem sheet 1 · Chapters 1 and 2</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#two-scales-in-a-force-measurement">Two scales in a force measurement</a><a href="#compare-a-componentwise-and-a-global-test">Compare a componentwise and a global test</a><a href="#pivot-and-reuse">Pivot and reuse</a></nav></aside><article class="prose reference"><section>
+<h2 id="two-scales-in-a-force-measurement">Two scales in a force measurement</h2>
+<p>A sensor system has \(A=\operatorname{diag}(2,0.02)\) and reports \(b=(2,0.02)^T\). Find the exact unknowns and \(\kappa_2(A)\). Compare two additive disturbances of magnitude 0.002, one entirely in the first measurement and one entirely in the second. Finally, explain which sensor needs the tighter absolute calibration.</p>
+<details><summary>Worked solution</summary>
+<p>Division by each diagonal entry gives \(x=(1,1)^T\). The singular values are 2 and 0.02, so \(\kappa_2=100\). The first disturbance changes the solution by \((0.001,0)^T\), whereas the second gives \((0,0.1)^T\). The second direction therefore produces a hundred times more absolute force error for the same measurement error.</p>
+<p>For equal admissible absolute errors in the two forces, the second measurement needs a hundred times smaller absolute uncertainty. Rescaling its output by a factor of 100 makes the two matrix rows comparable but also rescales its uncertainty by 100. It cannot turn the original sensor into a more precise one.</p>
+</details>
+</section>
+<section>
+<h2 id="compare-a-componentwise-and-a-global-test">Compare a componentwise and a global test</h2>
+<p>Take \(A=\operatorname{diag}(1000,1)\), \(b=(1000,1)^T\) and \(\hat x=(1,0.98)^T\). Compute the infinity-norm relative residual and the componentwise relative residual in each equation. If the instrumentation specification allows 0.5% relative error separately in each reading, does the approximation meet it?</p>
+<details><summary>Worked solution</summary>
+<p>The predicted measurements are \((1000,0.98)^T\), giving residual \((0,0.02)^T\). The global infinity-norm ratio is \(0.02/1000=2\times10^{-5}\). In the separate equations the ratios are zero and \(0.02/1=0.02\).</p>
+<p>The second equation misses its 0.5% specification by a factor of four. Global normalisation uses the much larger first equation to set the denominator. One remedy is to divide each equation by its nonzero measurement uncertainty and judge the largest resulting scaled residual.</p>
+</details>
+</section>
+<section>
+<h2 id="pivot-and-reuse">Pivot and reuse</h2>
+<p>Factor \(A=\left(\begin{smallmatrix}0&amp;2\\3&amp;1\end{smallmatrix}\right)\) with a row permutation. Solve for \(b=(4,5)^T\) and for \(c=(2,1)^T\) using that factorisation. Why does the zero leading entry indicate neither singularity nor lack of a unique solution?</p>
+<details><summary>Worked solution</summary>
+<p>Exchange rows with \(P=\left(\begin{smallmatrix}0&amp;1\\1&amp;0\end{smallmatrix}\right)\). The permuted matrix is already upper triangular, so \(L=I\) and \(U=\left(\begin{smallmatrix}3&amp;1\\0&amp;2\end{smallmatrix}\right)\). For \(Pb=(5,4)^T\), back substitution gives \(x_2=2\), \(x_1=1\). For \(Pc=(1,2)^T\), it gives \(x_2=1\), \(x_1=0\).</p>
+<p>The determinant is \(-6\), so the matrix is nonsingular. A zero at one candidate pivot location merely prevents that ordering of elimination. Applying the row permutation to both the matrix and every new load preserves the original problem.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/linear-algebra/chapters/02-elimination/">Chapter 2 · Elimination, pivoting and factorisation</a></span><span>Next<br><a href="/lecture-notes/numerics/linear-algebra/chapters/03-least-squares/">Chapter 3 · Least squares and orthogonal factorisation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

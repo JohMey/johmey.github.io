@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viscous stresses, duct resistance and wall-driven flow · OneSimulation</title>
+<meta name="description" content="Derive a developed velocity profile from momentum balance and distinguish a moving-wall contribution from a pressure-driven contribution.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/05-viscous-ducts/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Viscous stresses, duct resistance and wall-driven flow · OneSimulation">
+<meta property="og:description" content="Derive a developed velocity profile from momentum balance and distinguish a moving-wall contribution from a pressure-driven contribution.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/05-viscous-ducts/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Viscous stresses, duct resistance and wall-driven flow</h1><p class="lead">Derive a developed velocity profile from momentum balance and distinguish a moving-wall contribution from a pressure-driven contribution.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#stress">Transport momentum between neighbouring layers</a><a href="#profile">Impose the two wall velocities</a><a href="#example">Predict the pressure a moving surface can hold</a><a href="#resistance">Connect a local solution to a network</a><a href="#friction">Express pipe resistance as a friction factor</a><a href="#rheology">Derive the profile of a shear-thinning liquid in a pipe</a><a href="#resin-line">Infer a pressure demand from wall shear</a></nav></aside><article class="prose reference"><section><h2 id="stress">Transport momentum between neighbouring layers</h2>
+<p>Push two parallel plates past one another with liquid in the gap. Even at constant velocity the moving plate requires force. In a Newtonian fluid the tangential shear stress on a plane parallel to the motion is \(\tau_{xy}=\mu\,du/dy\). Dynamic viscosity \(\mu\) has units Pa·s. Divide it by density to obtain kinematic viscosity \(\nu\), an indicator of how rapidly momentum spreads through the fluid. Viscous resistance depends on a velocity gradient; uniform translation of the entire fluid would not create such stress.</p>
+<p>Take two long horizontal plates separated by \(H\). Far from inlet and side walls assume constant density, constant viscosity and steady fully developed laminar motion \(u=u(y)\). The lower plate is fixed and the upper moves at speed \(U\). Represent the constant driving pressure gradient by \(G=-dp/dx\), positive for pressure falling downstream. A differential slab balances the downstream pressure force with the change in shear, giving \(0=G+d\tau_{xy}/dy=G+\mu u''\).</p>
+</section>
+<section><h2 id="profile">Impose the two wall velocities</h2>
+<p>The first integration gives \(\mu u'=-Gy+C_1\). Integrating again and imposing no slip \(u(0)=0,\ u(H)=U\) determines the constants. The result is the sum of a straight wall-driven profile and a parabolic pressure-driven one:</p>
+<div class="math display">\[u(y)=U\frac{y}{H}+\frac{G}{2\mu}y(H-y),\qquad \frac{Q}{b}=\int_0^H u\,dy=\frac{UH}{2}+\frac{GH^3}{12\mu}.\]</div>
+<p>Superposition here follows because the reduced equation and boundary conditions are linear in these inputs. It is not a universal property of the full nonlinear fluid equations. A negative \(G\) represents an adverse pressure rise and can produce a reverse-flow layer close to the stationary wall even when the moving wall drags fluid forward elsewhere.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/viscous-channel.png" width="1264" height="720" loading="lazy" alt="The linear wall-driven channel profile bends upwards under a favourable pressure gradient and shows reversed flow near the fixed plate under a strongly adverse gradient."><figcaption>The moving upper plate has the same speed in all three cases. The dimensionless pressure-gradient term multiplying (y/H)(1−y/H) is +4, 0 or −4.</figcaption></figure>
+</section>
+<section><h2 id="example">Predict the pressure a moving surface can hold</h2>
+<p>An oil film has \(\mu=0.050\) Pa·s, \(H=1.0\) mm and \(U=0.20\) m/s. The wall-driven flux per unit width is \(UH/2=1.0\times10^{-4}\) m²/s. An adverse pressure gradient sufficient to reduce net flux to zero must satisfy \(G=-6\mu U/H^2=-60\,000\) Pa/m. Over 50 mm, pressure rises by 3.0 kPa. Zero net transport does not make the oil stationary.</p>
+<p>Set \(s=y/H\) and insert the zero-flux gradient. The velocity is \(u/U=3s^2-2s\), which changes sign at \(s=2/3\) inside the film. The velocity gradient at the upper moving wall is \(4U/H=800\,\mathrm{s^{-1}}\), so the wall supplies shear of magnitude 40 Pa. Even though the pressure-driven and wall-driven volume rates cancel, the moving surface still performs work, dissipated through the internal shear field.</p>
+</section>
+<section><h2 id="resistance">Connect a local solution to a network</h2>
+<p>In a horizontal circular tube with fixed wall, axisymmetry changes the area that carries shear. Balancing forces on a cylinder of radius \(r\) gives \(|\tau|=Gr/2\). Integrating the velocity gradient with no slip yields \(u=G(R^2-r^2)/(4\mu)\) and \(Q=\pi R^4\Delta p/(8\mu L)\). Thus a straight developed pipe behaves as a hydraulic resistance \(8\mu L/(\pi R^4)\) in Pa·s/m³. Series resistances carry the same \(Q\) and their pressure drops add. Parallel branches share pressure drop and their flows add. The analogy requires consistent units and a laminar regime; short entrance sections and strongly accelerating junctions may add losses outside the fully developed solution.</p>
+</section>
+<section><h2 id="friction">Express pipe resistance as a friction factor</h2>
+<p>For a circular pipe of diameter \(D=2R\), the developed laminar solution gives \(\Delta p=32\mu L\bar u/D^2\). Define the Darcy friction factor by \(\Delta p=f_D(L/D)\rho\bar u^2/2\). Equating these expressions produces \(f_D=64/\mathrm{Re}_D\). For 2 m of 10 mm pipe with mean speed 0.10 m/s, water viscosity 0.001 Pa s and density 1000 kg/m³, the Reynolds number is 1000 and the pressure drop is 64 Pa. A friction factor listed in the Fanning convention is one quarter of the Darcy value, so identify the convention before substituting a tabulated number into a loss calculation.</p>
+</section>
+<section><h2 id="rheology">Derive the profile of a shear-thinning liquid in a pipe</h2>
+<p>A Newtonian viscosity inferred in one duct may give poor predictions for a suspension or polymer solution at another rate. In a simple power-law model the shear stress magnitude is \(\tau=K|\dot\gamma|^n\), with consistency \(K\) in Pa sⁿ and index \(n\). A liquid with \(n&lt;1\) has apparent viscosity decreasing with shear rate. Assume this law is supported over the shear range being sampled, flow is steady, axisymmetric, laminar and fully developed, and the circular pipe has no wall slip. The axial force balance is independent of rheology: at radius \(r\), \(\tau=Gr/2\) for driving gradient \(G=-dp/dx&gt;0\).</p>
+<p>Since the positive downstream velocity decreases towards the wall, write \(-du/dr=(Gr/2K)^{1/n}\). Integrate from radius \(r\) to the stationary wall at \(R\), then integrate the result over the circular cross-section to obtain</p>
+<div class="math display">\[u(r)=\frac{n}{n+1}(G/2K)^{1/n}(R^{1+1/n}-r^{1+1/n}),\qquad Q=\frac{\pi n}{3n+1}(G/2K)^{1/n}R^{3+1/n}.\]</div>
+<p>Setting \(n=1,\ K=\mu\) gives the parabolic profile and \(Q=\pi GR^4/(8\mu)\). For \(n&lt;1\) the velocity is flatter towards the centre and the relationship between pressure gradient and flow rate is nonlinear. The ideal power law can imply unrealistic apparent viscosity near zero shear at the axis; a fitted model with finite limiting viscosities is preferable when measurements resolve those regimes.</p>
+</section>
+<section><h2 id="resin-line">Infer a pressure demand from wall shear</h2>
+<p>A model resin follows \(n=0.50,\ K=0.80\,\mathrm{Pa\,s^{0.5}}\) in the operating range. A 2.0 m pipe of radius 5.0 mm experiences a pressure drop of 8.0 kPa, giving \(G=4000\,\mathrm{Pa/m}\) and wall shear \(\tau_w=GR/2=10.0\,\mathrm{Pa}\). The wall shear rate is \((10/0.80)^2=156.25\,\mathrm{s^{-1}}\). Writing the mean speed in terms of this wall value gives \(\bar u=nR|\dot\gamma_w|/(3n+1)=0.15625\,\mathrm{m/s}\). The corresponding flow is \(\pi(0.005)^2(0.15625)=1.227\times10^{-5}\,\mathrm{m^3/s}\), about 0.736 L/min.</p>
+<p>To double flow in this same pipe, the power-law relation requires the gradient to rise by \(2^n=\sqrt2\). The new pressure drop is 11.3 kPa, and wall shear rate doubles to 312.5 s⁻¹. A linear resistance model extrapolated from the original measurement would predict 16 kPa. Conversely at fixed gradient a 10% radius increase multiplies rate by \(1.1^{3+1/n}=1.61\), a stronger dependence than the Newtonian fourth power. Verify the resulting shear rate still falls in the tested rheological range, and check entrance length and temperature. Temperature changes produced by viscous dissipation can otherwise mimic a shear-dependent viscosity.</p>
+<p>Two well-spaced steady pressure tests can independently infer the unknown exponent. At fixed pipe geometry, \(\ln Q=(1/n)\ln\Delta p+\text{constant}\). If pressure drop rises from 8.0 to 12.0 kPa while flow rises from 0.736 to 1.66 L/min, the log slope is \(\ln(1.66/0.736)/\ln(12/8)\simeq2.00\), giving \(n\simeq0.50\). Repeating the higher-pressure point after cooling checks whether heating caused hysteresis between runs. Using an inlet pressure transducer alone would also include a changing downstream pressure; both end pressures or a differential gauge are needed to identify the flow law from this experiment.</p>
+<p>The pressure taps should bracket the same developed length at every setting because entrance losses may change differently with flow.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/fluid-mechanics/problem-sheets/2/">Problem sheet 2 · Forces, flow work and losses</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/06-similarity/">Chapter 6 · Dynamic similarity, boundary layers and model tests</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elimination, pivoting and factorisation · OneSimulation</title>
+<meta name="description" content="Build an LU factorisation by hand, reuse it for a second load and identify when an innocent-looking elimination step loses useful digits.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/chapters/02-elimination/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elimination, pivoting and factorisation · OneSimulation">
+<meta property="og:description" content="Build an LU factorisation by hand, reuse it for a second load and identify when an innocent-looking elimination step loses useful digits.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/chapters/02-elimination/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Elimination, pivoting and factorisation</h1><p class="lead">Build an LU factorisation by hand, reuse it for a second load and identify when an innocent-looking elimination step loses useful digits.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#eliminate-an-unknown-without-changing-the-solution">Eliminate an unknown without changing the solution</a><a href="#factor-once-and-load-twice">Factor once and load twice</a><a href="#why-exchange-rows">Why exchange rows?</a><a href="#use-symmetry-when-the-physics-supplies-it">Use symmetry when the physics supplies it</a><a href="#trace-element-growth-during-pivoted-elimination">Trace element growth during pivoted elimination</a><a href="#construct-a-matrix-where-the-final-column-doubles">Construct a matrix where the final column doubles</a><a href="#worked-plot">How large can intermediate elimination entries become?</a></nav></aside><article class="prose reference"><section>
+<h2 id="eliminate-an-unknown-without-changing-the-solution">Eliminate an unknown without changing the solution</h2>
+<p>Gaussian elimination replaces one equation by itself minus a multiple of another. In exact arithmetic this is reversible: add the same multiple back. In the first column choose a nonzero pivot \(a_{11}\) and form multipliers \(l_{i1}=a_{i1}/a_{11}\) for the rows below it. Subtract \(l_{i1}\) times row one from row \(i\). All lower entries in column one vanish, and the remaining unknowns satisfy a smaller system. Applying the same operations in the same order to the load vector is essential.</p>
+<p>Repeating the argument produces an upper triangular matrix \(U\). The inverse row additions can be collected into a unit lower triangular matrix \(L\) containing the multipliers. If rows have been permuted, the relation is \(PA=LU\), where \(P\) records those exchanges. To solve for a new right-hand side, first solve \(Ly=Pb\) by forward substitution, then \(Ux=y\) by backward substitution. The factorisation depends on the matrix alone. This is valuable in static analysis when the material and supports stay fixed and only the applied loads change.</p>
+</section>
+<section>
+<h2 id="factor-once-and-load-twice">Factor once and load twice</h2>
+<p>Consider \(A=\left(\begin{smallmatrix}2&amp;1&amp;0\\1&amp;3&amp;1\\0&amp;1&amp;2\end{smallmatrix}\right)\). Subtract half the first row from the second to get \((0,2.5,1)\). Subtract 0.4 times the new second row from the third to get \((0,0,1.6)\). Thus \(U\) has diagonal \(2,2.5,1.6\) with ones immediately above, and \(L\) has multipliers 0.5 and 0.4 immediately below its unit diagonal. This matrix needs no pivot exchange. Multiplying the two factors recovers the original entries and gives a quick arithmetic check.</p>
+<p>For the load \(b=(1,2,3)^T\), forward substitution yields \(y=(1,1.5,2.4)^T\). Back substitution starts with \(x_3=2.4/1.6=1.5\), then gives \(x_2=(1.5-1.5)/2.5=0\) and \(x_1=(1-0)/2=0.5\). A second load \(b=(0,1,0)^T\) gives \(y=(0,1,-0.4)^T\) and \(x=(-0.25,0.5,-0.25)^T\). Both calculations are short once the triangular factors are available.</p>
+</section>
+<section>
+<h2 id="why-exchange-rows">Why exchange rows?</h2>
+<p>Consider \(10^{-5}x+y=1\) and \(x+y=2\). The exact solution is \(x=1/(1-10^{-5})\), \(y=2-x\). Eliminating with the first coefficient gives multiplier \(10^5\). The reduced equation contains the difference between numbers of size \(10^5\). In arithmetic rounded to three significant digits, both the new coefficient and right-hand side round to \(-1.00\times10^5\). Back substitution gives \(y=1\), then \(x=0\). Substitution in the second original equation exposes a residual of one.</p>
+<p>Swap the rows first. The multiplier is now \(10^{-5}\), and the reduced equation rounds to \(y=1.00\). Back substitution in the first pivot equation gives \(x=1.00\), close to the exact answer. Partial pivoting chooses the largest absolute available coefficient in the pivot column, bounding the magnitudes of the multipliers by one. It usually limits numerical growth, though it cannot remove sensitivity already present in the original matrix.</p>
+<p>For a dense matrix of size \(n\), the triangular factorisation takes order \(n^3\) arithmetic operations and substitutions take order \(n^2\) per load. Sparse discretisations can be much cheaper, but eliminating an unknown may create new nonzero entries between its neighbours. This fill depends on ordering. Ordering for small fill and pivoting for accuracy answer different questions, and production solvers may need both.</p>
+</section>
+<section>
+<h2 id="use-symmetry-when-the-physics-supplies-it">Use symmetry when the physics supplies it</h2>
+<p>For a symmetric positive definite stiffness matrix, Cholesky factorisation represents \(A=CC^T\) with a lower triangular \(C\) and positive real diagonal. The first diagonal entry is \(\sqrt{a_{11}}\). Entries below it are fixed by the first column of the product, and subtracting that column’s outer product leaves a smaller positive definite Schur complement. Positivity follows by minimising the full quadratic energy over the eliminated variable for every fixed nonzero remaining vector.</p>
+<p>For \(A=\left(\begin{smallmatrix}4&amp;2\\2&amp;5\end{smallmatrix}\right)\), the first column of \(C\) is \((2,1)^T\). The remaining diagonal is \(\sqrt{5-1^2}=2\). A zero or negative candidate under the square root signals that the positive definite assumption or numerical precision needs inspection. Unrestrained mechanical assemblies can have rigid modes of zero energy. Supplying appropriate physical constraints addresses that singularity directly instead of treating it as a pivot-ordering problem.</p>
+</section>
+<section>
+<h2 id="trace-element-growth-during-pivoted-elimination">Trace element growth during pivoted elimination</h2>
+<p>Partial pivoting chooses the largest available entry in magnitude within the active column. Each multiplier then has magnitude at most one, an important control on an individual elimination step. It does not bound the size of all updated entries by their original size. The trailing update subtracts a multiplier times the pivot row from another row, and two terms of similar magnitude may add. Repeated reinforcement can build large intermediate entries even when each column choice satisfies the pivot rule.</p>
+<p>Measure this effect by the growth factor, the largest magnitude encountered during elimination divided by the largest initial matrix entry. Roundoff in a factorisation is tied to the magnitude of the computed factors, so a large growth factor can weaken a backward-error guarantee. The factor describes a potential loss mechanism. A particular solve can still be exact when every operation happens to be exactly representable, and a large forward error can arise for quite different reasons if the underlying problem is ill-conditioned. These distinctions matter when interpreting numerical experiments designed to stress an algorithm.</p>
+</section>
+<section>
+<h2 id="construct-a-matrix-where-the-final-column-doubles">Construct a matrix where the final column doubles</h2>
+<p>Use the four rows \((1,0,0,1)\), \((-1,1,0,1)\), \((-1,-1,1,1)\), and \((-1,-1,-1,1)\). Every initial entry has magnitude at most one. Choose the first available row on tied pivots. Eliminating the first column adds row one to all three lower rows, so their final entries become 2. Eliminating column two adds the second active row to the next two rows, changing their final entries to 4. Eliminating column three adds the third pivot row to the last, producing the final pivot 8. No multiplier exceeded one. The triangular factor has last column \((1,2,4,8)^T\) and the observed growth factor is eight.</p>
+<p>The construction extends directly to size \(n\), with an all-ones last column, unit diagonal before that column, and minus ones below the diagonal. After \(j\) stages each remaining row has last entry \(2^j\), as follows inductively by adding two equal entries during the next elimination. The resulting growth factor is \(2^{n-1}\) for this tie rule. Thus even a rule that prevents division by a small pivot relative to its column admits exponential worst-case growth. Selecting a different row on a tie can change the numerical path without changing the physical system.</p>
+<p>For a concrete back-substitution test select exact state \({\bf1}\). Multiplication gives load \((2,1,0,-2)^T\). Applying the same row operations transforms it to \((2,3,5,8)^T\). Back substitution gives \(x_4=1\), \(x_3=5-4=1\), \(x_2=3-2=1\) and \(x_1=2-1=1\). Binary arithmetic represents these small integers exactly. A residual check therefore need not reveal anything unusual in this case even while the monitored growth factor exposes an unfavourable factorisation path.</p>
+<p>The comparison with no growth is especially clear for a diagonal matrix with entries \((1,1,1,8)\). Its last pivot is also eight, but its largest original entry was already eight and its growth factor is one. A large absolute pivot alone cannot identify element growth; the ratio must refer to the size of the input.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">How large can intermediate elimination entries become?</h2>
+<p>Apply partial pivoting, keeping the first candidate in a tie. The test matrix has ones on the diagonal and final column, minus ones below the diagonal, and zero elsewhere. Record the largest absolute intermediate entry divided by the largest original entry.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/linear-algebra/02-elimination.png" alt="How large can intermediate elimination entries become?. Horizontal axis: Matrix dimension. Vertical axis: Element growth factor. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Elimination doubles successive last-column entries in the first family. At dimension twelve the growth factor is 2048, versus one for the Poisson example. The graph measures element growth; it does not claim the same factor for the observed solution error.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/linear-algebra/02-elimination.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Element growth factor at selected values of Matrix dimension.</caption><thead><tr><th scope="col">Matrix dimension</th><th scope="col">Wilkinson example</th><th scope="col">1D Poisson tridiagonal</th></tr></thead><tbody><tr><th scope="row">2</th><td>2</td><td>1</td></tr><tr><th scope="row">5</th><td>16</td><td>1</td></tr><tr><th scope="row">8</th><td>128</td><td>1</td></tr><tr><th scope="row">12</th><td>2048</td><td>1</td></tr><tr><th scope="row">15</th><td>16384</td><td>1</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/linear-algebra/02-elimination.csv" download>Download all 14 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/linear-algebra/chapters/01-conditioning/">Chapter 1 · Conditioning and backward error</a></span><span>Next<br><a href="/lecture-notes/numerics/linear-algebra/problem-sheets/1/">Problem sheet 1 · Measurements and elimination</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heat-exchanger effectiveness and finite capacity rates · OneSimulation</title>
+<meta name="description" content="Derive the counterflow effectiveness relation and determine outlet temperatures when neither stream temperature is fixed.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-thermodynamics/chapters/11-heat-exchangers/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Heat-exchanger effectiveness and finite capacity rates · OneSimulation">
+<meta property="og:description" content="Derive the counterflow effectiveness relation and determine outlet temperatures when neither stream temperature is fixed.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-thermodynamics/chapters/11-heat-exchangers/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>Heat-exchanger effectiveness and finite capacity rates</h1><p class="lead">Derive the counterflow effectiveness relation and determine outlet temperatures when neither stream temperature is fixed.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#capacity">Set the maximum possible heat rate</a><a href="#differential">Apply a balance to an area element</a><a href="#cooler">Predict both outlet temperatures</a><a href="#capacity-change">Predict the counterflow experiment</a><a href="#measured-ua">Identify which side controls an exchanger’s conductance</a><a href="#cleaning">Use a flow sweep to distinguish fouling from film resistance</a><a href="#worked-plot">Determine whether a specified exchanger effectiveness is attainable</a></nav></aside><article class="prose reference"><section><h2 id="capacity">Set the maximum possible heat rate</h2>
+<p>In a two-stream heat exchanger, the hot temperature falls as the cold temperature rises. Treat each stream as single phase with constant heat capacity rate \(C=\dot m c_p\) in watts per kelvin. Neglect heat leakage, axial conduction and changes in kinetic energy. A steady overall balance gives \(Q=C_h(T_{hi}-T_{ho})=C_c(T_{co}-T_{ci})\). Performing this balance alone leaves both outlet temperatures and the transferred heat rate unknown.</p>
+<p>The stream with smaller capacity rate would undergo the larger temperature change for a given heat rate. Even in an ideal counterflow exchanger it cannot pass the inlet temperature of the other stream at its nearest end. Thus \(Q_{\max}=C_{\min}(T_{hi}-T_{ci})\). Effectiveness is \(\varepsilon=Q/Q_{\max}\), which immediately gives both outlet temperatures once the heat transfer law fixes \(\varepsilon\).</p>
+</section>
+<section><h2 id="differential">Apply a balance to an area element</h2>
+<p>Let \(A\) increase along the hot stream and write the local temperature difference \(\Delta=T_h-T_c\). An element transfers \(dQ=U\Delta\,dA\). In counterflow both temperature profiles decrease when followed in the hot-stream direction, giving \(dT_h=-dQ/C_h\), \(dT_c=-dQ/C_c\). Hence \(d\ln\Delta/dA=U(1/C_c-1/C_h)\). Integrate over area and express each end difference in terms of inlet temperatures and total heat rate using the stream balances.</p>
+<div class="math display">\[NTU=UA/C_{\min},\quad C_r=C_{\min}/C_{\max},\quad \varepsilon=\frac{1-\exp[-NTU(1-C_r)]}{1-C_r\exp[-NTU(1-C_r)]}.\]</div>
+<p>The sign in the differential balance follows from the chosen spatial direction. In parallel flow the cold stream warms along that coordinate and the local temperature difference decays more rapidly. For equal capacity rates the counterflow formula has a removable zero over zero. Its limit is \(NTU/(1+NTU)\), which can also be obtained from the constant temperature difference in that special case.</p>
+</section>
+<section><h2 id="cooler">Predict both outlet temperatures</h2>
+<p>A counterflow cooler receives a hot stream at 90 °C with \(C_h=2.0\,\mathrm{kW/K}\) and a cold stream at 20 °C with \(C_c=1.0\,\mathrm{kW/K}\). Its conductance \(UA\) is 1.50 kW/K. Thus \(C_r=0.5\), \(NTU=1.5\), and the exponential is \(e^{-0.75}=0.4724\). Effectiveness is 0.6908. Consequently \(Q=0.6908(1.0)(90-20)=48.4\,\mathrm{kW}\), \(T_{ho}=90-48.4/2=65.8^\circ\mathrm C\) and \(T_{co}=20+48.4=68.4^\circ\mathrm C\).</p>
+<p>The cold outlet is warmer than the hot outlet. They are at opposite physical ends, so this does not imply a local reversal of heat flow. The end differences are \(90-68.4=21.6\) K and \(65.8-20=45.8\) K, both positive. Their logarithmic mean is approximately \((45.8-21.6)/\ln(45.8/21.6)=32.2\,\mathrm K\), independently recovering \(Q=UA\Delta T_{\rm lm}\simeq48.3\,\mathrm{kW}\). This local check catches errors caused by swapping the terminal temperatures of a counterflow exchanger.</p>
+</section>
+<section><h2 id="capacity-change">Predict the counterflow experiment</h2>
+<p>A smaller stream capacity rate raises NTU when the exchanger conductance is held fixed, yet it can reduce heat transfer in watts because less thermal capacity passes each second. For inlet temperatures 350 and 290 K and \(C_r=0.60\), use the counterflow expression to predict the effectiveness at NTU 1.5 and 3.0. Then halve both capacity rates, as the model does to obtain the second NTU, and predict the ratio of heat rates. Check both outlet temperatures and the hot-stream heat rate, paying attention to which stream has the smaller capacity. <a href="/lecture-notes/mechanical-engineering/engineering-thermodynamics/#experiment">Open the heat-exchanger experiment</a>.</p>
+</section>
+<section><h2 id="measured-ua">Identify which side controls an exchanger’s conductance</h2>
+<p>The effectiveness relation uses a single conductance \(UA\), but a designer may need to determine whether the hot film, cold film or fouling dominates it. Write the total thermal resistance in K/W as \(R_{\rm tot}=1/(h_hA_h)+R_w+R_f+1/(h_cA_c)\). Areas must be kept explicit if the two sides use different reference areas. Suppose a test can vary hot-side flow while holding cold-side flow, wall resistance and deposit condition fixed. Let a supported correlation in the tested region imply \(h_h\propto\dot m_h^{\,n}\). With \(m_r=\dot m_h/\dot m_{\rm ref}\), the relation takes the linear form</p>
+<div class="math display">\[(UA)^{-1}=R_{\rm fixed}+R_{h,\rm ref}\,m_r^{-n}.\]</div>
+<p>This is the basis of a Wilson-plot style separation. Each measured \(UA\) can be obtained from balanced heat duty and the correct logarithmic mean temperature difference. The intercept estimates the combined fixed resistance; the slope estimates the hot-film resistance at reference flow. One set of measurements alone does not separate cold film from wall and deposits individually. Temperature-dependent material properties and changes in the opposite stream can spoil the assumed linear relation.</p>
+<p>Treating \(UA\) as proportional to flow whenever convection rises would ignore the series resistances left in its path. As \(m_r\) becomes large the hot-film term tends to zero, leaving an asymptote \(1/R_{\rm fixed}\) rather than unbounded conductance. Pumping power typically rises over this same change of flow.</p>
+</section>
+<section><h2 id="cleaning">Use a flow sweep to distinguish fouling from film resistance</h2>
+<p>A clean counterflow rig at reference hot-side mass flow has \(UA=500\,\mathrm{W/K}\), giving total resistance \(0.00200\,\mathrm{K/W}\). At twice the flow it has \(UA=600\,\mathrm{W/K}\), or \(0.001667\,\mathrm{K/W}\). Over this interval use measured exponent \(n=0.80\), so \(2^{-0.8}=0.5743\). Subtracting the two equations gives \(R_{h,\rm ref}=(0.00200-0.001667)/(1-0.5743)=0.000783\,\mathrm{K/W}\). The combined fixed resistance is \(0.001217\,\mathrm{K/W}\). Even an ideal hot film could raise conductance only to about 822 W/K under the unchanged fixed-side assumptions.</p>
+<p>A later test at reference flow gives \(UA=400\,\mathrm{W/K}\), so total resistance has grown to 0.00250 K/W. If a second flow sweep confirms the same hot-film slope, the added fixed resistance is 0.00050 K/W. For a heat-transfer area of 2.0 m² on the chosen basis this corresponds to fouling resistance \(R_f''=0.0010\,\mathrm{m^2K/W}\). If instead the slope has changed, assigning the entire difference to deposits is unwarranted; changed flow distribution or fluid properties may contribute. Temperature measurement also matters strongly when the two terminal differences are close to sensor uncertainty. Compare the hot and cold enthalpy duties before fitting the conductance and retain the residual across all measured flow settings.</p>
+<p>A third clean test can challenge the fitted exponent. At four times reference hot flow, the predicted resistance is \(0.001217+0.000783(4^{-0.8})=0.001475\,\mathrm{K/W}\), or \(UA\simeq678\,\mathrm{W/K}\). A systematic departure that grows at high flow could reflect changing cold-side properties, thermocouple bias or failure of the hot-film correlation. Two calibration points always fit a two-parameter straight line; the independent third point actually tests the assumed dependence.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Determine whether a specified exchanger effectiveness is attainable</h2>
+<p>Fix both inlet temperatures and \(C_{\min}\). Changing area changes NTU. For constant properties and no losses the effectiveness divides actual heat rate by \(C_{\min}(T_{h,i}-T_{c,i})\). Compare two flow arrangements and the isothermal-stream limit.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/engineering-thermodynamics/11-heat-exchangers.png" alt="Determine whether a specified exchanger effectiveness is attainable. Horizontal axis: Number of transfer units, UA/Cmin. Vertical axis: Heat-exchanger effectiveness. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>With capacity ratio 0.6, parallel flow approaches only 1/1.6 = 0.625 however large the area. Counterflow can exceed 0.8. An area calculation that ignores the arrangement can return a target that the selected exchanger cannot reach.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/engineering-thermodynamics/11-heat-exchangers.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Heat-exchanger effectiveness at selected values of Number of transfer units, UA/Cmin.</caption><thead><tr><th scope="col">Number of transfer units, UA/Cmin</th><th scope="col">Counterflow, Cr = 0.6</th><th scope="col">Parallel flow, Cr = 0.6</th><th scope="col">Phase-changing stream, Cr = 0</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>0</td><td>0</td></tr><tr><th scope="row">1.24</th><td>0.61617</td><td>0.53905</td><td>0.71062</td></tr><tr><th scope="row">2.5</th><td>0.81117</td><td>0.61355</td><td>0.91792</td></tr><tr><th scope="row">3.76</th><td>0.89743</td><td>0.62348</td><td>0.97672</td></tr><tr><th scope="row">5</th><td>0.94108</td><td>0.62479</td><td>0.99326</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/engineering-thermodynamics/11-heat-exchangers.csv" download>Download all 251 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/engineering-thermodynamics/problem-sheets/5/">Problem sheet 5 · Exergy and steam-cycle performance</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/engineering-thermodynamics/chapters/12-radiation/">Chapter 12 · Thermal radiation and enclosure exchange</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

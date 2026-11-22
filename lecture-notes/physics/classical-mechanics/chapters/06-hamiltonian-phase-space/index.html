@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hamiltonian motion in phase space · OneSimulation</title>
+<meta name="description" content="Construct a Hamiltonian, read a phase portrait and distinguish bounded motion from rotation at a separatrix.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/physics/classical-mechanics/chapters/06-hamiltonian-phase-space/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hamiltonian motion in phase space · OneSimulation">
+<meta property="og:description" content="Construct a Hamiltonian, read a phase portrait and distinguish bounded motion from rotation at a separatrix.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/physics/classical-mechanics/chapters/06-hamiltonian-phase-space/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/physics/">Physics</a> / <a href="/lecture-notes/physics/classical-mechanics/">Classical mechanics</a></p><h1>Hamiltonian motion in phase space</h1><p class="lead">Construct a Hamiltonian, read a phase portrait and distinguish bounded motion from rotation at a separatrix.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#position-needs-a-conjugate-momentum">Position needs a conjugate momentum</a><a href="#draw-energy-contours-before-integrating">Draw energy contours before integrating</a><a href="#compare-thresholds-and-phase-velocities">Compare thresholds and phase velocities</a><a href="#check-a-numerical-phase-portrait">Check a numerical phase portrait</a><a href="#a-slowly-changing-spring-transports-a-phase-space-area">A slowly changing spring transports a phase-space area</a><a href="#compare-a-slow-compression-with-a-sudden-change">Compare a slow compression with a sudden change</a></nav></aside><article class="prose reference"><section><h2 id="position-needs-a-conjugate-momentum">Position needs a conjugate momentum</h2>
+<p>The position of a pendulum at one instant does not say which way it will swing. A state needs both a configuration coordinate and a momentum. In Lagrangian mechanics define the canonical momentum by \(p=\partial\mathcal L/\partial\dot q\). It can have different physical dimensions depending on the coordinate. For a particle on a line it has units of linear momentum. For a pendulum angle it has units of angular momentum. The pair \((q,p)\) forms a two-dimensional phase space for one degree of freedom.</p>
+<p>Provided the relation between \(p\) and \(\dot q\) can be inverted, define \(H(q,p,t)=p\dot q-\mathcal L(q,\dot q,t)\) with the velocity expressed in terms of \(q,p\). Take a differential. The terms proportional to \(d\dot q\) cancel by the definition of \(p\). Using Lagrange’s equation \(\partial_q\mathcal L=\dot p\) gives \(dH=\dot q\,dp-\dot p\,dq-\partial_t\mathcal L\,dt\). Matching the coefficients produces Hamilton’s equations</p>
+<div class="math display">\[\dot q=\partial_p H,\qquad \dot p=-\partial_q H.\]</div>
+<p>For a system with ordinary quadratic kinetic energy, a velocity-independent potential and fixed constraints, \(H=K+U\). Its change along a solution is \(dH/dt=\partial_tH\) because the two terms containing the derivatives with respect to \(q,p\) cancel. A time-independent Hamiltonian confines the trajectory to a level set.</p>
+</section>
+<section><h2 id="draw-energy-contours-before-integrating">Draw energy contours before integrating</h2>
+<p>A rigid pendulum of mass \(m\) and length \(\ell\) has \(p=m\ell^2\dot q\) and \(H=p^2/(2m\ell^2)+mg\ell(1-\cos q)\). At the bottom \(q=0,p=0\) is a stable equilibrium. Low-energy contours are ellipses to leading order because the cosine potential is quadratic there. Each closed contour returns to its original phase point after one full oscillation. Points of greatest \(|p|\) are fastest and occur at the bottom.</p>
+<p>The top \(q=\pi,p=0\) has energy \(2mg\ell\). Its contour separates swinging trajectories from trajectories that keep rotating in one direction. This separating curve is the separatrix. Since angles differing by \(2\pi\) label the same physical position, the full portrait lives on a cylinder. A rotation winds around that cylinder. As a trajectory approaches the separatrix, it spends a long time near the unstable top, so the small-angle period no longer estimates its return time accurately.</p>
+</section>
+<section><h2 id="compare-thresholds-and-phase-velocities">Compare thresholds and phase velocities</h2>
+<p>For \(m=0.50\) kg, \(\ell=0.80\) m and \(g=9.81\) m/s², the potential barrier is 7.85 J. A start from the bottom at 5.0 rad/s supplies kinetic energy \(0.5(0.50)(0.80)^2(5.0)^2=4.00\) J. At the turning point \(\cos q=1-4.00/(0.50\times9.81\times0.80)=-0.0194\). The maximum angle is about 91.1°. Energy classifies this as a swing even though a small-angle expansion would be inaccurate at the turning point.</p>
+<p>Continuous rotation requires bottom speed above \(\sqrt{4g/\ell}=7.00\) rad/s for this ideal pendulum. At precisely that value the system approaches the upper equilibrium asymptotically. This statement assumes a rigid link that can sustain compression. A pendulum made from a flexible string may lose tension before reaching the top, in which case the assumed circular constraint fails.</p>
+</section>
+<section><h2 id="check-a-numerical-phase-portrait">Check a numerical phase portrait</h2>
+<p>For any smooth one-degree Hamiltonian the divergence of the phase velocity is \(\partial_q\dot q+\partial_p\dot p=H_{pq}-H_{qp}=0\). A small patch of initial states can shear and stretch while preserving its phase-space area. Viscous damping would instead contract the patch. Numerical time integration can also produce apparent contraction or growth, so refining the step is essential before interpreting a spiral as evidence of friction.</p>
+<p>For the harmonic oscillator, ordinary forward Euler gives \(q'=q+\Delta t\,p/m\) and \(p'=p-\Delta t\,kq\). The determinant of this linear update is \(1+\Delta t^2 k/m\), larger than one at every step. The spurious outward spiral follows from the numerical map alone. Updating momentum first and then using the new momentum for the position gives determinant one. That area property preserves the geometric structure, though it does not by itself guarantee accurate phase for a coarse step. Keep both geometry and timing in view when judging numerical trajectories.</p>
+<p>The area inside a closed harmonic-oscillator contour provides another numerical test. Its semiaxes are \(\sqrt{2E/k}\) in position and \(\sqrt{2mE}\) in momentum. Their product times \(\pi\) gives \(2\pi E/\omega\). Increasing oscillator energy therefore expands the area in direct proportion. A phase portrait plotted using velocity replaces every momentum value by its value divided by mass, changing numerical areas and their units. Specify the vertical coordinate before comparing this diagnostic between models with different masses.</p>
+</section>
+<section><h2 id="a-slowly-changing-spring-transports-a-phase-space-area">A slowly changing spring transports a phase-space area</h2>
+<p>Suppose an oscillator's spring stiffness can be varied externally during the motion. Its Hamiltonian \(H=p^2/(2m)+m\omega(t)^2q^2/2\) now depends explicitly on time, so ordinary energy conservation does not apply. At an instantaneous point on a trajectory Hamilton's equations make the terms involving \(\dot p\) and \(\dot q\) cancel in \(dH/dt\). The remaining change is \(dE/dt=\partial H/\partial t=m\omega\dot\omega q^2\). Energy is supplied when the imposed parameter raises the potential at the current displacement.</p>
+<p>Take \(|\dot\omega|\ll\omega^2\) so that many cycles occur while the frequency changes by an appreciable fraction. Over one cycle \(\omega\) and \(E\) may then be treated as nearly fixed. Because average potential and kinetic energies of a harmonic oscillator are equal, \(\langle q^2\rangle=E/(m\omega^2)\). Inserting this mean into the work rate gives the averaged relation</p>
+<div class="math display">\[\frac{dE}{dt}\simeq\frac{E}{\omega}\dot\omega,\qquad \frac{d}{dt}\left(\frac E\omega\right)\simeq0 .\]</div>
+<p>The quantity \(J=E/\omega\) is the area enclosed by the instantaneous constant-energy ellipse divided by \(2\pi\). Calling it an adiabatic invariant states both the approximation and the observable. A slowly changing system migrates between contours of different energies in a way that preserves this action to leading order. This mechanical meaning of adiabatic concerns a timescale ratio. The derivation does not assume heat exchange, dissipation or a thermodynamic temperature.</p>
+</section>
+<section><h2 id="compare-a-slow-compression-with-a-sudden-change">Compare a slow compression with a sudden change</h2>
+<p>A \(0.500\) kg oscillator has initial angular frequency \(20.0\) rad/s and amplitude \(0.0400\) m. Its energy is \(m\omega_i^2 A_i^2/2=0.160\) J and initial action is \(0.00800\) J s. Raise the frequency smoothly to \(40.0\) rad/s over many periods. Action conservation predicts \(E_f=0.320\) J and final amplitude \(\sqrt{2E_f/(m\omega_f^2)}=0.0283\) m. The external control supplies work even as the maximum displacement decreases.</p>
+<p>For comparison, change the stiffness instantaneously at a turning point, retaining the same initial and final frequencies. Position and momentum are continuous, but the potential energy at that position quadruples immediately. The new energy is \(0.640\) J and the amplitude remains \(0.0400\) m. Make the same switch at the zero crossing instead and the energy initially remains \(0.160\) J because the potential vanishes there. These two outcomes distinguish a rapid change tied to an oscillator phase from the nearly phase-independent slow ramp. Recording both position and velocity after the ramp allows energy, action and phase to be assessed separately.</p>
+<p>A time-dependent Hamiltonian still carries each small phase-space area element into one of equal area, even during a sudden change of curvature. This exact conservation for an ensemble is distinct from slow conservation of the contour area assigned to a single orbit. A group of uniformly distributed initial phases illustrates the difference: immediately after a sudden spring switch all points occupy the same locations and enclose their original region, but their new energies depend on phase. The switch maps the original single-energy contour onto points that subsequently occupy many different energy contours of the new Hamiltonian.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/physics/classical-mechanics/chapters/05-moving-reference-frames/">Chapter 5 · Rotating frames and the Coriolis effect</a></span><span>Next<br><a href="/lecture-notes/physics/classical-mechanics/problem-sheets/3/">Problem sheet 3 · Moving frames and phase portraits</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counting states and defining temperature · OneSimulation</title>
+<meta name="description" content="Use a model of discrete energy sharing to derive thermodynamic temperature and distinguish a most probable configuration from one microscopic state.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/physics/thermodynamics-statistical-physics/chapters/04-multiplicity-and-temperature/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Counting states and defining temperature · OneSimulation">
+<meta property="og:description" content="Use a model of discrete energy sharing to derive thermodynamic temperature and distinguish a most probable configuration from one microscopic state.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/physics/thermodynamics-statistical-physics/chapters/04-multiplicity-and-temperature/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/physics/">Physics</a> / <a href="/lecture-notes/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Counting states and defining temperature</h1><p class="lead">Use a model of discrete energy sharing to derive thermodynamic temperature and distinguish a most probable configuration from one microscopic state.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#state-exactly-what-is-counted">State exactly what is counted</a><a href="#allow-subsystems-to-exchange-energy">Allow subsystems to exchange energy</a><a href="#obtain-temperature-from-an-entropy-slope">Obtain temperature from an entropy slope</a><a href="#connect-the-count-with-a-thermometer">Connect the count with a thermometer</a><a href="#a-bounded-energy-spectrum-reverses-the-entropy-slope">A bounded energy spectrum reverses the entropy slope</a><a href="#predict-the-direction-of-exchange">Predict the direction of exchange</a><a href="#worked-plot">Why is a shared-energy macrostate overwhelmingly likely?</a></nav></aside><article class="prose reference"><section><h2 id="state-exactly-what-is-counted">State exactly what is counted</h2>
+<p>Consider \(N\) independent distinguishable vibrational modes, all of angular frequency \(\omega\), with a common energy quantum \(\varepsilon=\hbar\omega\). Suppose they contain \(q\) excitation quanta in total. A microstate is an ordered list of occupation numbers \((q_1,\ldots,q_N)\) with nonnegative integers adding to \(q\). Giving two quanta to mode 1 differs from giving the same two quanta to mode 2, while exchanging two identical quanta within one mode creates no new microstate. An additive ground-state energy plays no role in the counting below.</p>
+<p>Represent a distribution by writing \(q\) dots and separating the modes with \(N-1\) dividers. The locations of the dividers among all \(q+N-1\) symbols determine the occupations, including a zero when two dividers coincide in succession. The multiplicity is therefore \(\Omega(N,q)=\binom{q+N-1}{q}\). It counts the microscopic realisations of a specified macroscopic energy, not different possible values of that energy.</p>
+</section>
+<section><h2 id="allow-subsystems-to-exchange-energy">Allow subsystems to exchange energy</h2>
+<p>Put two such solids into weak thermal contact but isolate the pair from the environment. For a fixed division \(q_A\) and \(q_B=q-q_A\), weak coupling makes the joint multiplicity the product \(\Omega_A(q_A)\Omega_B(q_B)\). Under the microcanonical hypothesis of equal probabilities for accessible microstates of the pair, this product sets the probability weight for an observed division. The most probable division maximises the product, though for finite systems other divisions retain nonzero probability.</p>
+<p>As a concrete small system take \(N_A=N_B=2\) and \(q=4\). Each solid has multiplicity \(q_i+1\). The weights for \(q_A=0,1,2,3,4\) are \(5,8,9,8,5\) with sum 35. Equal sharing is the most probable single division, yet it occurs only \(9/35=0.257\) of the time. Any one specific occupation list still has probability \(1/35\). The distinction between a microstate and a macrostate resolves the apparent tension between equal probabilities and a preferred energy division.</p>
+</section>
+<section><h2 id="obtain-temperature-from-an-entropy-slope">Obtain temperature from an entropy slope</h2>
+<p>Introduce \(S=k_B\ln\Omega\) so that independent multiplicities produce additive entropy. For macroscopic \(N\) and \(q\), use Stirling’s approximation \(\ln n!\simeq n\ln n-n\) and drop corrections small relative to \(N\). Writing \(U=q\varepsilon\) and holding \(N\) fixed gives</p>
+<div class="math display">\[S/k_B\simeq(q+N)\ln(q+N)-q\ln q-N\ln N,\qquad \frac1T=\frac{k_B}{\varepsilon}\ln(1+N/q).\]</div>
+<p>This derivative defines an equilibrium temperature from how quickly the number of ways to store energy grows. The entropy maximum of two systems in contact then requires equal inverse temperatures, even if the systems have different numbers of modes. Heat flows towards the subsystem gaining more entropy per added energy. The equilibrium criterion concerns equality of slopes; the two subsystems need not contain the same total energy.</p>
+<p>Solving the derivative for energy per mode yields \(U/N=\varepsilon/[\exp(\varepsilon/k_BT)-1]\). At high temperature the exponential in the denominator expands to first order, giving energy near \(k_BT\) for one harmonic mode. At low temperature only a small fraction of modes carry excitations. The energy and heat capacity above their ground values are then strongly suppressed.</p>
+</section>
+<section><h2 id="connect-the-count-with-a-thermometer">Connect the count with a thermometer</h2>
+<p>For a set of modes with \(\varepsilon/k_B=240\) K, an observed mean occupation \(q/N=0.50\) gives \(T=240/\ln 3=218\) K. Packing the same excitations into twice as many identical modes changes \(q/N\) to 0.25 and gives \(T=240/\ln5=149\) K. Equal quantities of excitation energy therefore need not indicate equal temperatures. The reservoir of available modes matters.</p>
+<p>These estimates assume the modes have a common frequency and have explored accessible distributions sufficiently for the statistical description to apply. A newly driven single mode could contain nearly all the energy while a thermometer responds differently from the occupation-based estimate. As the sample size increases the spread of typical energy per mode narrows, but finite-time preparation and weak internal relaxation still determine whether equilibrium counting is an appropriate description of a measurement.</p>
+<p>The entropy curvature also determines whether sharing energy is stable. Near the maximum, expand the combined entropy to second order in a small transfer between subsystems. A negative summed curvature makes the probability fall on either side of the most likely energy. For ordinary positive heat capacities, each entropy curvature is negative, so the two bodies return statistically towards equal temperature after a small redistribution.</p>
+</section>
+<section><h2 id="a-bounded-energy-spectrum-reverses-the-entropy-slope">A bounded energy spectrum reverses the entropy slope</h2>
+<p>An assembly of independent localized two-state units supplies a finite system in which the sign of temperature can be read directly from multiplicity. Take \(N\) units with low energy zero and high energy \(\varepsilon\). If \(n\) are excited, total energy is \(n\varepsilon\) and the multiplicity of that sharp-energy macrostate is \(\binom Nn\). It grows up to half occupancy and decreases when nearly all units are forced into the high state. This assumes the ensemble is internally equilibrated over the available states near its specified energy.</p>
+<p>Use the entropy of a narrow energy shell \(S=k_B\ln\Omega\). Adding one excitation changes its entropy by \(k_B\ln[(N-n)/(n+1)]\). Dividing by the associated energy increment defines a finite-difference inverse temperature. For large \(N\) with neither level nearly empty, replacing \(n+1\) by \(n\) gives</p>
+<div class="math display">\[\frac1T\simeq\frac{k_B}{\varepsilon}\ln\frac{N-n}{n},\qquad \frac nN=\frac{1}{1+e^{\varepsilon/(k_BT)}} .\]</div>
+<p>Ordinary positive temperatures have more units in the lower state. Approaching equal populations from below sends inverse temperature toward zero. Above half occupancy the entropy falls as energy increases, giving a negative shell temperature. Such an internally equilibrated population inversion requires a bounded spectrum and isolation from unbounded energy reservoirs on the observation timescale. It cannot describe an unrestricted equilibrium ideal gas with arbitrarily high translational energies.</p>
+</section>
+<section><h2 id="predict-the-direction-of-exchange">Predict the direction of exchange</h2>
+<p>Consider \(N=10,000\) units with \(\varepsilon/k_B=120\) K. A preparation with 2500 excited units has \(T\simeq120/\ln3=109\) K. A preparation with 7500 excited units has \(T\simeq120/\ln(1/3)=-109\) K. Join the inverted system through weak energy exchange to a large positive-temperature reservoir at 300 K. If the system loses positive energy \(\delta E\) to the reservoir, the combined entropy change is \(\delta E(1/300-1/(-109))&gt;0\). Net energy therefore leaves the inverted sample even though comparing the signed temperature numbers as ordinary magnitudes would suggest otherwise.</p>
+<p>For \(\delta E=1.00\times10^{-20}\) J, the first-order change is about \(1.25\times10^{-22}\) J/K, or nine Boltzmann constants. This uses an exchange small relative to the original ensemble energy so that the temperature slopes stay nearly constant. At exactly half occupancy the inverse temperature is zero in the large-system limit. Pumping a system into an inverted population and allowing it to equilibrate internally are separate experimental steps. A measured majority of excited units alone is evidence for inversion; additional checks on internal energy exchange are needed before assigning a thermodynamic temperature to that preparation.</p>
+<p>The preparation also shows why inverse temperature is often more convenient than temperature itself. Moving the upper-state fraction continuously from slightly less than one half to slightly more than one half sends temperature through positive and negative infinity, while inverse temperature crosses zero smoothly. A weak probe with the same small level spacing can test the slope through the relative probabilities of up and down transitions when equilibrated with the sample. A probe with unrestricted kinetic energy, in contrast, can drain the inversion before it becomes a useful thermometer. The compatibility of thermometer and sample therefore matters near a bounded-spectrum population inversion.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Why is a shared-energy macrostate overwhelmingly likely?</h2>
+<p>Twenty distinguishable sites each have two possible energies. For independent excitation probability \(p\), the macrostate probability includes both its multiplicity \(\binom{20}{n}\) and the probability of one such arrangement. Compare changing the energetic bias with changing the counting rule.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/thermodynamics-statistical-physics/04-multiplicity-and-temperature.png" alt="Why is a shared-energy macrostate overwhelmingly likely?. Horizontal axis: Number of excited independent sites. Vertical axis: Probability. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At p = 1/2 the central probability is about 0.176, whereas the all-excited state has probability less than one in a million. Each individual configuration remains equally probable at this p; it is the number of configurations that differs.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/thermodynamics-statistical-physics/04-multiplicity-and-temperature.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Probability at selected values of Number of excited independent sites.</caption><thead><tr><th scope="col">Number of excited independent sites</th><th scope="col">Excitation probability 0.25</th><th scope="col">Excitation probability 0.5</th><th scope="col">Excitation probability 0.75</th></tr></thead><tbody><tr><th scope="row">0</th><td>0.0031712</td><td>9.5367e−7</td><td>9.0949e−13</td></tr><tr><th scope="row">5</th><td>0.20233</td><td>0.014786</td><td>3.4265e−6</td></tr><tr><th scope="row">10</th><td>0.0099223</td><td>0.1762</td><td>0.0099223</td></tr><tr><th scope="row">15</th><td>3.4265e−6</td><td>0.014786</td><td>0.20233</td></tr><tr><th scope="row">20</th><td>9.0949e−13</td><td>9.5367e−7</td><td>0.0031712</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/thermodynamics-statistical-physics/04-multiplicity-and-temperature.csv" download>Download all 21 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/physics/thermodynamics-statistical-physics/chapters/03-potentials-and-phase-equilibrium/">Chapter 3 · Thermodynamic potentials and phase boundaries</a></span><span>Next<br><a href="/lecture-notes/physics/thermodynamics-statistical-physics/problem-sheets/2/">Problem sheet 2 · Potentials, phase lines and counting</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

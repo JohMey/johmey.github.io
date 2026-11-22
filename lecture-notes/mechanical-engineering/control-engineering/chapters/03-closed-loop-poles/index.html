@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Closed-loop poles, damping and performance · OneSimulation</title>
+<meta name="description" content="Translate a time-domain requirement into acceptable poles and find when additional gain destabilises a higher-order plant.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/03-closed-loop-poles/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Closed-loop poles, damping and performance · OneSimulation">
+<meta property="og:description" content="Translate a time-domain requirement into acceptable poles and find when additional gain destabilises a higher-order plant.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/control-engineering/chapters/03-closed-loop-poles/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Closed-loop poles, damping and performance</h1><p class="lead">Translate a time-domain requirement into acceptable poles and find when additional gain destabilises a higher-order plant.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#relate-polynomial-coefficients-to-observed-motion">Relate polynomial coefficients to observed motion</a><a href="#design-for-a-specified-peak">Design for a specified peak</a><a href="#follow-a-gain-change-on-a-third-order-plant">Follow a gain change on a third-order plant</a><a href="#zeros-and-poles">Find the effect of a finite closed-loop zero</a><a href="#inverse-response">Time the undershoot of two competing actuator paths</a><a href="#worked-plot">Settle a tracking step without hiding its peak</a></nav></aside><article class="prose reference"><section><h2 id="relate-polynomial-coefficients-to-observed-motion">Relate polynomial coefficients to observed motion</h2>
+<p>For a normalised second-order system, the free response satisfies \(\ddot y+2\zeta\omega_n\dot y+\omega_n^2y=0\). Substitution of \(e^{st}\) gives \(s=-\zeta\omega_n\pm\omega_n\sqrt{\zeta^2-1}\). The real part sets the decay rate. For \(0&lt;\zeta&lt;1\), the imaginary part \(\omega_d=\omega_n\sqrt{1-\zeta^2}\) sets the time between successive extrema. Doubling \(\omega_n\) at fixed \(\zeta\) halves all characteristic times but leaves the fraction of overshoot unchanged.</p>
+<p>Assume a unit DC gain, a constant numerator and zero initial displacement and velocity. The step response is \(y=1-e^{-\zeta\omega_n t}[\cos(\omega_dt)+(\zeta\omega_n/\omega_d)\sin(\omega_dt)]\). Differentiate the bracket together with its envelope. The cosine terms cancel and the remaining derivative is proportional to \(e^{-\zeta\omega_n t}\sin(\omega_dt)\). The first peak occurs at \(t_p=\pi/\omega_d\). Substituting that time gives the fractional overshoot</p>
+<div class="math display">\[M_p=\exp\!\left(-\frac{\pi\zeta}{\sqrt{1-\zeta^2}}\right).\]</div>
+</section>
+<section><h2 id="design-for-a-specified-peak">Design for a specified peak</h2>
+<p>Suppose a positioning axis may overshoot a 10 mm command by at most 1 mm. Solving the previous expression for the limiting damping ratio gives \(\zeta=-\ln M_p/\sqrt{\pi^2+(\ln M_p)^2}=0.591\). At \(\omega_n=5\) rad/s the corresponding poles are approximately \(-2.96\pm4.03i\) per second and the first peak occurs at 0.779 s. A nominal oscillatory second-order system with this damping just meets the 1 mm bound. A zero near the dominant poles, a saturated drive or another slow pole changes the transient, so the result should be checked against the full model after the poles are chosen.</p>
+<p>A settling specification differs from a peak specification. The absolute normalised error stays below the envelope \(e^{-\zeta\omega_n t}/\sqrt{1-\zeta^2}\). To guarantee a 2% settling band using this bound, solve \(t\ge-\ln[0.02\sqrt{1-\zeta^2}]/(\zeta\omega_n)\). This conservative time for the example is about 1.40 s. The commonly used \(4/(\zeta\omega_n)\) is a convenient estimate. The envelope bound spells out both the tolerance and its assumptions.</p>
+</section>
+<section><h2 id="follow-a-gain-change-on-a-third-order-plant">Follow a gain change on a third-order plant</h2>
+<p>A plant with two lags and an integrator has open-loop transfer \(K/[s(s+1)(s+2)]\) in units normalised to a common time base. Close unity negative feedback. The characteristic polynomial is \(s^3+3s^2+2s+K\). Its coefficients are all positive for \(K&gt;0\), which rules out positive real roots but allows an unstable complex pair. Form the first column of the Routh array: \(1,\ 3,\ (6-K)/3,\ K\). All entries must have the same sign for strict stability. Thus \(0&lt;K&lt;6\).</p>
+<p>At \(K=6\) the polynomial factors as \((s+3)(s^2+2)\). The step excites an undamped pair at angular frequency \(\sqrt2\), alongside a decaying component. At \(K=7\) the first-column signs change twice, so two roots have crossed into the right half-plane. The input-output gain alone did not reveal this upper bound. Additional lags allow feedback to arrive out of phase with motion. Chapter 4 reaches the same type of conclusion by examining sine-wave responses, which can often be measured even when coefficients of a polynomial are poorly known.</p>
+</section>
+<section><h2 id="zeros-and-poles">Find the effect of a finite closed-loop zero</h2>
+<p>Pole locations specify the available exponential terms of a causal linear response. Their coefficients depend on the numerator and initial condition. To isolate this distinction, choose two positive times \(\tau_1\ne\tau_2\) and a transfer function \(G(s)=(1+T_zs)/[(1+\tau_1s)(1+\tau_2s)]\). It has unit static gain for every \(T_z\), so changing the numerator neither moves the poles nor changes the final unit-step response. For zero initial state and a unit step \(Y(s)=G(s)/s\). Write \(Y=1/s+A/(s+1/\tau_1)+B/(s+1/\tau_2)\).</p>
+<p>The initial value \(y(0^+)=0\) gives \(A+B=-1\). The initial-slope theorem gives \(\dot y(0^+)=\lim_{s\to\infty}sG(s)=T_z/(\tau_1\tau_2)\); equivalently \(-A/\tau_1-B/\tau_2=T_z/(\tau_1\tau_2)\). Solving and transforming back gives</p>
+<div class="math display">\[y(t)=1-\frac{\tau_1-T_z}{\tau_1-\tau_2}e^{-t/\tau_1}+\frac{\tau_2-T_z}{\tau_1-\tau_2}e^{-t/\tau_2}.\]</div>
+<p>For \(T_z=\tau_1\) one mode has zero coefficient in this particular input–output map. A physical internal state with that mode can still respond to a nonzero initial condition or another input. With \(T_z&lt;0\) the zero lies in the right half-plane and the initial output slope opposes the eventual response. That inverse response can be a serious limitation when interpreting an early excursion as a sign error in the actuator.</p>
+</section>
+<section><h2 id="inverse-response">Time the undershoot of two competing actuator paths</h2>
+<p>Consider an actuator that changes a measured quantity through a slow positive effect and an immediate faster opposing effect. Let \(\tau_1=4\) s, \(\tau_2=1\) s and \(T_z=-2\) s. The poles are both stable, and the output approaches one under a unit command. Yet the response is \(y=1-2e^{-t/4}+e^{-t}\), with initial slope \(-0.50\,\mathrm{s^{-1}}\). Set \(\dot y=0.5e^{-t/4}-e^{-t}=0\). It follows that \(e^{-3t/4}=0.5\), so the minimum occurs after \(t=4\ln2/3=0.924\,\mathrm s\). Its value is \(1-2(0.794)+0.397=-0.191\).</p>
+<p>For a 10 mm final position change this model briefly produces about 1.91 mm motion in the wrong direction. A physical travel limit 1.0 mm behind the starting point would therefore be violated even though the real parts of both poles meet a settling-time target. Compare instead \(T_z=0\) with identical poles and DC gain: the initial slope vanishes and the response rises monotonically. Before changing controller gain to correct an observed undershoot, measure which pathway acts first. Inverting the right-half-plane zero with a causal stable feedforward filter is impossible, since exact inversion would introduce an unstable pole.</p>
+<p>For this response the first crossing back through the initial position is later than the minimum. Let \(u=e^{-t/4}\); solving \(1-2u+u^4=0\) gives the trivial root \(u=1\) at release and a further root near 0.544. Thus the measured position remains on the wrong side for about \(-4\ln(0.544)=2.44\) s. A simple diagnostic that samples only once after two seconds would label the overall gain as negative. At one minute the same test reads nearly the full positive change. Recording the full waveform distinguishes an initial inverse response from an overall sensor polarity error. A disturbance entering the two paths at a different location can exhibit yet another zero, which is why a zero should always be quoted for a specified input and output.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Settle a tracking step without hiding its peak</h2>
+<p>Apply a unit step to a unity-DC second-order transfer function with no zeros. Keep natural frequency fixed. The first maximum occurs when \(\omega_d t=\pi\); use the waveform both to check the overshoot formula and to see how late oscillations affect a settling band.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/control-engineering/03-closed-loop-poles.png" alt="Settle a tracking step without hiding its peak. Horizontal axis: Time × natural frequency. Vertical axis: Output / command. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At ζ = 0.55 the first overshoot is about 12.6%. A design with a smaller damping ratio may cross the command sooner while taking much longer to stay within a narrow tolerance.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/control-engineering/03-closed-loop-poles.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Output / command at selected values of Time × natural frequency.</caption><thead><tr><th scope="col">Time × natural frequency</th><th scope="col">Damping ratio 0.25</th><th scope="col">Damping ratio 0.55</th><th scope="col">Damping ratio 0.8</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>0</td><td>0</td></tr><tr><th scope="row">3</th><td>1.4306</td><td>1.0794</td><td>0.90282</td></tr><tr><th scope="row">6</th><td>0.82772</td><td>1.0124</td><td>1.0122</td></tr><tr><th scope="row">9</th><td>1.0621</td><td>0.99325</td><td>1.0003</td></tr><tr><th scope="row">12</th><td>0.98137</td><td>1.0016</td><td>0.99989</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/control-engineering/03-closed-loop-poles.csv" download>Download all 361 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/control-engineering/problem-sheets/1/">Problem sheet 1 · Modelling a plant and interpreting its signals</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/control-engineering/chapters/04-frequency-response/">Chapter 4 · Frequency response, disturbance rejection and robustness</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

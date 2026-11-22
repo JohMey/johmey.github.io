@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eccentrically loaded weld groups · OneSimulation</title>
+<meta name="description" content="Resolve an eccentric in-plane force into direct shear and torsional shear and find the combined nominal throat demand.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-elements/chapters/11-weld-groups/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Eccentrically loaded weld groups · OneSimulation">
+<meta property="og:description" content="Resolve an eccentric in-plane force into direct shear and torsional shear and find the combined nominal throat demand.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-elements/chapters/11-weld-groups/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Eccentrically loaded weld groups</h1><p class="lead">Resolve an eccentric in-plane force into direct shear and torsional shear and find the combined nominal throat demand.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#throat">Reduce a weld to a carrying area</a><a href="#attachment">Calculate a corner stress</a><a href="#interpretation">Decide what changes the joint demand</a><a href="#size">Recover a leg dimension</a><a href="#welded-fatigue">Turn a weld-group force history into a detail stress range</a><a href="#weld-block">Compare a static throat check with a cyclic duty decision</a></nav></aside><article class="prose reference"><section><h2 id="throat">Reduce a weld to a carrying area</h2>
+<p>A fillet weld joins two plates along a line, but its specified leg length is not the effective area transmitting force. For an ideal equal-leg 45° fillet, the shortest distance from the root to the theoretical weld face is the throat \(t=s/\sqrt{2}\), where \(s\) is leg length. Effective throat area is \(t\) times effective weld length under the simplified model. End details and local weld defects require separate assessment.</p>
+<p>Consider a bracket carrying an in-plane force whose line of action misses the weld group centroid. Move the force to that centroid and retain its moment \(M_z=Fe\). The direct force gives a uniform elastic shear flow vector \(q_d=F/\sum L\) under the line-weld approximation. The moment demands another shear flow, tangent about the centroid. For a rigid attachment and uniform throat and elastic response, assume its magnitude is proportional to radius \(r\), as expected from a small relative rotation.</p>
+<div class="math display">\[J_L=\int_{\rm welds}r^2\,ds,\qquad q_m(r)=\frac{M_z r}{J_L},\qquad \boldsymbol{\tau}=(\mathbf q_d+\mathbf q_m)/t .\]</div>
+<p>The line property \(J_L\) has units of length cubed, since weld length rather than throat area is integrated. For an unequal throat one must weight the centroid and polar property with the appropriate area or stiffness. Add direct and moment contributions as vectors at each point before locating maximum stress.</p>
+</section>
+<section><h2 id="attachment">Calculate a corner stress</h2>
+<p>Take two vertical parallel welds of length 80 mm each, centred at \(x=\pm30\,\mathrm{mm}\). Their endpoints lie at \(y=\pm40\,\mathrm{mm}\). An upward force \(F=4.0\,\mathrm{kN}\) acts at \(x=+100\,\mathrm{mm}\). Its equivalent counterclockwise moment is 400,000 N mm. The total line length is 160 mm, so the direct flow is 25 N/mm upwards. The group line polar property is</p>
+<div class="math display">\[J_L=2[80(30)^2+80^3/12]=229333\,\mathrm{mm^3}.\]</div>
+<p>At the upper right corner the moment-induced flow vector is \(M_z(-y,x)/J_L=(-69.8,52.3)\,\mathrm{N/mm}\). Adding the direct contribution gives \((-69.8,77.3)\,\mathrm{N/mm}\), magnitude 104.2 N/mm. By symmetry the lower right corner has the same magnitude; the left endpoints experience partial cancellation of the vertical components. For an effective throat 4 mm, the maximum nominal combined shear is 26.0 MPa.</p>
+</section>
+<section><h2 id="interpretation">Decide what changes the joint demand</h2>
+<p>If the force passes through the centroid the moment vanishes and the throat stress is only \(25/4=6.25\,\mathrm{MPa}\). Increasing throat lowers nominal stress but leaves the line shear flow required by equilibrium unchanged. Moving the force closer to the attachment or spreading the welds farther apart can reduce the moment-induced flow. A transverse load normal to the plate introduces bending or prying and would require a different weld-group analysis. Fatigue at the weld toe depends on local geometry and the applicable welded-detail category, so the present nominal elastic calculation alone cannot predict a fatigue life.</p>
+</section>
+<section><h2 id="size">Recover a leg dimension</h2>
+<p>A 4 mm ideal throat corresponds to a theoretical equal leg of \(4\sqrt2=5.66\,\mathrm{mm}\). A drawing that specifies a 4 mm leg instead leaves only a 2.83 mm theoretical throat, raising the calculated nominal maximum stress from 26.0 to about 36.8 MPa.</p>
+</section>
+<section><h2 id="welded-fatigue">Turn a weld-group force history into a detail stress range</h2>
+<p>The static line-weld model produces a shear-flow vector for a given applied load. A fluctuating load introduces a separate fatigue question. In common nominal-stress assessment methods, experimental S–N curves for a specific welded detail can already incorporate local weld geometry and residual stresses. Use the exact nominal stress component, range convention, detail classification and life range associated with the test data. Multiplying such a detail stress again by an arbitrary notch factor can count the same local effect twice. Conversely, a smooth-base-metal fatigue curve generally does not represent a welded detail.</p>
+<p>For an illustrative single-slope detail curve let \(\Delta s_{\rm ref}\) be the tested stress range at \(N_{\rm ref}\) cycles and exponent \(m\). Constant-amplitude life is \(N=N_{\rm ref}(\Delta s_{\rm ref}/\Delta s)^m\). Under an assumed linear accumulation of damage, a repeated block containing \(n_i\) cycles of each range consumes</p>
+<div class="math display">\[D_{\rm block}=\sum_i\frac{n_i}{N_{\rm ref}}\left(\frac{\Delta s_i}{\Delta s_{\rm ref}}\right)^m.\]</div>
+<p>The stress range is maximum minus minimum stress in the designated component, not its alternating half-amplitude. For a strictly proportional cycle, each local shear component in the preceding elastic model scales with the applied force. If force direction or line of action changes, the most highly stressed location can shift; recompute the vector histories before choosing the assessment component. A mesh-refined local notch stress and a nominal throat stress are different definitions and require corresponding fatigue data.</p>
+</section>
+<section><h2 id="weld-block">Compare a static throat check with a cyclic duty decision</h2>
+<p>Assume the applicable nominal-stress data for an illustrative connection give \(\Delta s_{\rm ref}=70\,\mathrm{MPa}\) at \(N_{\rm ref}=2.0\times10^6\) cycles with \(m=3\) throughout the ranges considered. These are supplied exercise data. A measured local nominal stress range is 35 MPa for 9000 ordinary cycles and 80 MPa for 300 heavy cycles per operating block. Their respective lives are \(2.0\times10^6(70/35)^3=16.0\times10^6\) and \(2.0\times10^6(70/80)^3=1.34\times10^6\) cycles.</p>
+<p>Ordinary cycles consume \(9000/(16.0\times10^6)=0.0005625\) per block; heavy cycles consume \(300/(1.34\times10^6)=0.000224\). The sum predicts approximately \(1/0.0007865=1271\) blocks at unit damage. If an unchanged force path permits throat to grow by 20%, the nominal stress ranges scale by \(1/1.2\), and the calculated block life grows by \(1.2^3=1.728\) to about 2196 blocks. That improvement assumes the revised detail retains the same applicable S–N curve and geometry-independent loading distribution. If instead the hot spot shifts into the base-plate toe or a short stiff attachment raises local restraint, throat increase alone will not reproduce this scaling. Testing a representative weld or checking a matching detail category is more informative than increasing nominal strength without tracing the new failure location.</p>
+<p>Under the supplied single-slope assumption the equivalent constant range for the same 9300 cycles is \([(9000\times35^3+300\times80^3)/9300]^{1/3}=38.7\,\mathrm{MPa}\) approximately. The arithmetic average range is only 36.45 MPa and underweights the heavy events. Quoting the equivalent range together with its associated cycle count makes the fatigue calculation reproducible.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/machine-elements/problem-sheets/5/">Problem sheet 5 · Friction work and fluid films</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/machine-elements/chapters/12-reliability-tolerances/">Chapter 12 · Tolerance stacks and reliability of assemblies</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

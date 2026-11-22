@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydrodynamic lubrication and sliding bearings · OneSimulation</title>
+<meta name="description" content="Derive the flow balance in a converging lubricant film and determine why the sliding surface can support a load without solid contact.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-elements/chapters/10-fluid-film-bearings/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hydrodynamic lubrication and sliding bearings · OneSimulation">
+<meta property="og:description" content="Derive the flow balance in a converging lubricant film and determine why the sliding surface can support a load without solid contact.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-elements/chapters/10-fluid-film-bearings/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Hydrodynamic lubrication and sliding bearings</h1><p class="lead">Derive the flow balance in a converging lubricant film and determine why the sliding surface can support a load without solid contact.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#film">Where lubricant pressure comes from</a><a href="#step">Solve a two-depth ideal bearing</a><a href="#limits">Understand failure at low speed</a><a href="#scaling">Predict a viscosity change</a><a href="#squeeze">Derive load carried by a closing lubricant film</a><a href="#squeeze-time">Estimate the time for a thrust pad to approach its stop</a></nav></aside><article class="prose reference"><section><h2 id="film">Where lubricant pressure comes from</h2>
+<p>A shaft turning inside a plain bearing drags lubricant around with its surface. A load displaces the journal from the bore centre, creating a film whose gap narrows in one direction. Wall motion carries oil into this wedge, and a pressure gradient redistributes the flow so the same fluid rate passes successive sections. Pressure integrated over the bearing can then support a load. Surface motion alone in a uniform gap between surfaces with equal end pressures cannot produce this load in the ideal steady model.</p>
+<p>Consider a broad slider bearing rather than the full journal geometry. Let a lower wall move at speed \(U\); a fixed upper wall forms a slowly varying small gap \(h(x)\). Assume incompressible Newtonian lubricant, constant viscosity, negligible inertia and negligible leakage through the sides. Pressure is nearly uniform across the thickness. The axial momentum equation reduces to \(\mu d^2u/dy^2=dp/dx\), and no slip gives \(u(0)=U,\ u(h)=0\).</p>
+<div class="math display">\[u=U(1-y/h)-\frac{1}{2\mu}\frac{dp}{dx}\,y(h-y),\qquad q=\frac{Uh}{2}-\frac{h^3}{12\mu}\frac{dp}{dx}.\]</div>
+<p>Mass conservation makes \(q\) per unit width constant along the bearing. Where the local dragged flow \(Uh/2\) exceeds \(q\), pressure rises downstream. Where it falls short, pressure falls and supplies a forward pressure-driven contribution. The transition locates a pressure maximum.</p>
+</section>
+<section><h2 id="step">Solve a two-depth ideal bearing</h2>
+<p>Consider a stepped pad with two equal 10 mm long regions, gaps \(h_1=0.20\) and \(h_2=0.10\,\mathrm{mm}\) in the sliding direction. Both ends have ambient pressure, \(U=1.0\,\mathrm{m/s}\), and \(\mu=0.05\,\mathrm{Pa\,s}\). Ignore the local loss at the abrupt step and treat each region as fully developed. Integration of \(dp/dx=12\mu(Uh/2-q)/h^3\) across both regions gives zero net pressure change. With equal lengths this fixes</p>
+<div class="math display">\[q=\frac U2\frac{h_1^{-2}+h_2^{-2}}{h_1^{-3}+h_2^{-3}}=5.56\times10^{-5}\,\mathrm{m^2/s}.\]</div>
+<p>In the first region \(Uh_1/2=1.00\times10^{-4}\,\mathrm{m^2/s}\). The positive pressure gradient is \(3.33\times10^6\,\mathrm{Pa/m}\), giving an interface gauge pressure of 33.3 kPa. The second region has an equal opposite gradient. The resulting triangular pressure distribution integrates to a force per unit width of \(0.5(0.020)(33333)=333\,\mathrm{N/m}\). A nominal 50 mm width would thus support approximately 16.7 N under the negligible-side-leakage assumption.</p>
+</section>
+<section><h2 id="limits">Understand failure at low speed</h2>
+<p>With zero sliding speed, equal end pressures imply zero steady gauge pressure everywhere in this model, so the load capacity vanishes. Start-up and shutdown therefore differ from established hydrodynamic running. A separately pressurised hydrostatic bearing can carry load at zero shaft speed. If a solution predicts large negative absolute pressures in a diverging region, actual oil may cavitate and the full-film boundary conditions must change. Viscous heating can also lower the local viscosity. Film thickness, thermal balance and supply conditions all matter when transferring the simple slider result to a journal in service.</p>
+</section>
+<section><h2 id="scaling">Predict a viscosity change</h2>
+<p>For the same slider geometry and speed with equal prescribed end pressures, the calculated flux is independent of viscosity but all gauge pressure gradients are proportional to viscosity. Halving viscosity in the ideal stepped example therefore halves its load capacity at unchanged film thickness.</p>
+</section>
+<section><h2 id="squeeze">Derive load carried by a closing lubricant film</h2>
+<p>Sliding motion is not the only way to develop pressure in a thin film. Two parallel circular plates moving towards each other expel viscous oil radially, producing a squeeze-film pressure. Let plate radius be \(R\), uniform gap \(h(t)\), and approach speed \(v=-dh/dt&gt;0\). Assume incompressible Newtonian oil, no slip, negligible inertia, rigid parallel plates, negligible edge resistance and ambient pressure at the rim. The gap is much smaller than the radius. Neither plate moves radially, so depth-integrated radial flux per unit circumference is \(q_r=-h^3(dp/dr)/(12\mu)\), the stationary-wall pressure-driven slit relation.</p>
+<p>Inside radius \(r\), incompressibility requires outward flow through its circumference to equal the volume displaced by plate motion: \(2\pi r q_r=\pi r^2v\). Thus \(q_r=rv/2\) and \(dp/dr=-6\mu rv/h^3\). Integrating inward from ambient at the edge gives</p>
+<div class="math display">\[p(r)-p_a=\frac{3\mu v}{h^3}(R^2-r^2),\qquad W=\int_0^R(p-p_a)2\pi r\,dr=\frac{3\pi\mu R^4v}{2h^3}.\]</div>
+<p>The maximum pressure is at the centre, twice the area average because the pressure shape is parabolic. The load grows very steeply as the gap narrows at imposed speed. At imposed load, however, the approach slows. This distinction mirrors the need to separate displacement-controlled and force-controlled contact tests. A stationary gap with no relative normal motion produces no squeeze-generated pressure under the stated ambient boundary condition.</p>
+</section>
+<section><h2 id="squeeze-time">Estimate the time for a thrust pad to approach its stop</h2>
+<p>A circular pad of radius 25 mm settles under a constant additional normal force of 100 N on oil of dynamic viscosity \(0.15\,\mathrm{Pa\,s}\). Ignore inertia after the short initial transient. Rearranging the load law gives \(-dh/dt=2Wh^3/(3\pi\mu R^4)\). Between initial and final gaps, integration gives \(t=[3\pi\mu R^4/(4W)](h_f^{-2}-h_i^{-2})\). For \(h_i=150\,\mathrm{\mu m}\) and \(h_f=50\,\mathrm{\mu m}\) this yields 0.491 s.</p>
+<p>At an intermediate 100 micrometre gap the instantaneous speed is \(2(100)(10^{-4})^3/[3\pi(0.15)(0.025)^4]=0.000362\,\mathrm{m/s}\). The centre gauge pressure is \(2W/(\pi R^2)=102\,\mathrm{kPa}\), independent of gap here because the load is prescribed and the approach speed adapts. Halving the gap at unchanged load reduces approach speed eightfold. The ideal solution takes infinite time to reach zero thickness, which should not be interpreted as assurance against surface contact: roughness, oil leakage paths, tilt and elasticity enter before an arbitrarily small gap is reached. On separation the sign of the calculated pressure reverses and cavitation or air ingress may prevent the predicted tensile liquid pressure from developing.</p>
+<p>A load-cell test can independently discriminate squeeze action from simple dry sliding resistance. At fixed small gap and sufficiently slow normal motion the predicted force is proportional to approach speed, with a slope scaling as \(h^{-3}\). Closing the gap from 100 to 80 micrometres should multiply the force slope by \((100/80)^3=1.95\). The transient test must either measure instantaneous gap or be run with an imposed motion, since holding load constant causes speed and gap to evolve together. Comparing forces at the same clock time on two different tests would not isolate the gap dependence.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/machine-elements/chapters/09-clutches-brakes/">Chapter 9 · Friction clutches, braking torque and heat</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/machine-elements/problem-sheets/5/">Problem sheet 5 · Friction work and fluid films</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

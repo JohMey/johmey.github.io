@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hydrostatic pressure and forces on submerged surfaces · OneSimulation</title>
+<meta name="description" content="Derive pressure from a body-force balance and locate the resultant force on a vertical gate.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/02-hydrostatics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hydrostatic pressure and forces on submerged surfaces · OneSimulation">
+<meta property="og:description" content="Derive pressure from a body-force balance and locate the resultant force on a vertical gate.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/02-hydrostatics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Hydrostatic pressure and forces on submerged surfaces</h1><p class="lead">Derive pressure from a body-force balance and locate the resultant force on a vertical gate.</p><p class="byline">Chapter 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#gradient">Balance a stationary fluid element</a><a href="#resultant">Use two separate integrals</a><a href="#gate">Calculate hinge moment before actuator force</a><a href="#layers">Include stratification and buoyancy</a><a href="#gauge">Read a two-fluid differential manometer</a><a href="#floating-stability">Derive a restoring moment for a floating body</a><a href="#pontoon">Measure a pontoon’s centre of gravity by shifting a weight</a><a href="#worked-plot">Place the hinge on a fully submerged vertical gate</a></nav></aside><article class="prose reference"><section><h2 id="gradient">Balance a stationary fluid element</h2>
+<p>A diver experiences pressure from all directions, while a sluice gate feels a net force mainly from one side. Pressure is a scalar state variable. The force on a surface element is directed opposite its outward normal and has magnitude \(p\,dA\). The net force on a real gate also depends on what presses on its back face. For a fluid at rest there is no viscous shear. Take a thin horizontal slab of area \(A\) and thickness \(dz\), with \(z\) upward. Its vertical force balance is \(p(z)A-p(z+dz)A-\rho gA\,dz=0\), or \(dp/dz=-\rho g\).</p>
+<p>For constant density this integrates to \(p=p_s+\rho gh\) at depth \(h\) below a free surface of pressure \(p_s\). A vented water surface has atmospheric absolute pressure. Gauge pressure subtracts that same atmospheric pressure at every point. It is convenient for net forces when the other face is exposed to the same atmosphere. A sealed gas space with appreciable excess pressure adds a uniform load component to the hydrostatic triangle.</p>
+</section>
+<section><h2 id="resultant">Use two separate integrals</h2>
+<p>For a flat vertical gate, add horizontal pressure forces to get \(F=\int_A p_g\,dA\), where \(p_g\) is the pressure difference across it. To find the force’s depth \(h_R\), match its moment: \(Fh_R=\int_A h p_g\,dA\). With a vented free surface on one side and air on the other, this gives \(F=\rho gA\bar h\) and \(h_R=\int_A h^2dA/(A\bar h)\). Decomposing the second moment into centroidal and parallel-axis pieces gives</p>
+<div class="math display">\[h_R=\bar h+\frac{I_G}{A\bar h}.\]</div>
+<p>Here \(I_G\) is the area’s second moment about its horizontal centroidal axis. Its SI unit is m⁴. The second term is positive: lower parts of a vertical gate carry more force per unit area, moving the resultant below the area centroid.</p>
+</section>
+<section><h2 id="gate">Calculate hinge moment before actuator force</h2>
+<p>A 1.20 m wide rectangular gate extends from the water surface to depth 1.80 m. Its horizontal hinge is at the surface. At the bottom the gauge pressure is \(1000(9.81)(1.80)=17.7\) kPa. The triangular pressure profile integrates to \(F=\rho g bH^2/2=19.1\) kN. The resultant lies at \(2H/3=1.20\) m beneath the hinge, producing a moment of 22.9 kN·m. A horizontal actuator at the bottom must pull with magnitude \(22.9/1.80=12.7\) kN to balance this water moment. This excludes gate weight and friction at the hinge.</p>
+<p>If the whole gate is submerged another metre with both ends still separated from the same air pressure on the back, its pressure diagram gains a uniform rectangle. That additional resultant acts at the gate centroid. It increases hinge moment, while the centre of pressure of the total load moves closer to the centroid measured relative to the gate. Simply adding one metre to the original lever arm would confuse a depth measured from the surface with a moment arm measured from the hinge.</p>
+</section>
+<section><h2 id="layers">Include stratification and buoyancy</h2>
+<p>In layered immiscible liquids, integrate \(\rho g\) through each layer. Pressure remains continuous across a flat interface when capillary effects are negligible, while its depth gradient changes. For a closed submerged object the resultant pressure force is upward with magnitude equal to the displaced fluid’s weight. To see this, replace the body by the fluid that would occupy its volume. In static equilibrium surface pressure must balance that fluid’s weight; the same surface pressure acts on the original object. Buoyancy concerns the net force on a closed surface. It cannot replace a hinge-moment calculation on an open gate.</p>
+</section>
+<section><h2 id="gauge">Read a two-fluid differential manometer</h2>
+<p>Two water taps at the same elevation connect to opposite legs of a manometer containing a heavier immiscible liquid of density 2500 kg/m³. If the heavy-fluid interfaces differ in height by 40 mm, following a hydrostatic path gives a pressure difference \((2500-1000)g(0.040)=589\,\mathrm{Pa}\). The tap above the lower heavy-fluid interface has the larger pressure. The water columns matter even though both taps sit at the same elevation.</p>
+</section>
+<section><h2 id="floating-stability">Derive a restoring moment for a floating body</h2>
+<p>Equality of weight and buoyancy establishes vertical equilibrium of a floating body, but does not determine whether a small roll is restored. Consider a long prismatic pontoon with vertical sides floating at rest in a liquid of uniform density. Let the displaced volume be \(\nabla\), its centroid the centre of buoyancy \(B\), and the centre of gravity \(G\) on the upright symmetry axis. For a small heel angle \(\theta\), a strip of waterplane area \(dA\) at transverse coordinate \(y\) gains a submerged slice of volume approximately \(y\theta\,dA\) on one side and loses one on the opposite side.</p>
+<p>The first moment of these changed wedges shifts the centre of buoyancy sideways by \(\Delta y_B=\theta\int y^2dA/\nabla=\theta I_{\rm wp}/\nabla\). Thus the line of buoyancy in the tilted configuration intersects the original symmetry axis at a point \(M\), the transverse metacentre, located \(BM=I_{\rm wp}/\nabla\) above \(B\) to first order. The initial righting lever is \(GM\sin\theta\simeq GM\,\theta\), and the corresponding restoring moment magnitude is \(WGM\theta\) when \(GM&gt;0\).</p>
+<p>The waterplane second moment here is taken about the longitudinal heel axis; it is not the structural bending second moment of the vessel wall. A wide waterplane can increase stability without changing the weight because its outer strips contribute strongly to \(I_{\rm wp}\). A centre of gravity above the centre of buoyancy can still be stable if it remains below the metacentre.</p>
+</section>
+<section><h2 id="pontoon">Measure a pontoon’s centre of gravity by shifting a weight</h2>
+<p>A rectangular pontoon 4.0 m long and 2.0 m wide floats with 0.40 m draft in freshwater. Its displaced volume is \(4(2)(0.4)=3.20\,\mathrm{m^3}\), so the total supported mass is 3200 kg. The centre of buoyancy lies 0.20 m above the keel. Its waterplane moment is \(4(2^3)/12=2.667\,\mathrm{m^4}\), giving \(BM=2.667/3.20=0.833\,\mathrm m\) and \(KM=1.033\,\mathrm m\) above the keel.</p>
+<p>Shift a pre-existing 100 kg test weight transversely by 0.40 m without changing its height. A settled heel of 2.0° balances the imposed heeling moment against buoyancy. For small heel the more accurate inclination-test expression is \(GM=md/(M_{\rm tot}\tan\theta)=100(0.40)/[3200\tan2^\circ]=0.358\,\mathrm m\). The inferred unshifted vertical centre of gravity is \(KG=1.033-0.358=0.675\,\mathrm m\). Raising a 400 kg installed component by 0.80 m would raise the combined centre by \(400(0.80)/3200=0.100\) m and reduce initial \(GM\) to 0.258 m. A slack liquid surface inside the pontoon or partial emergence of its deck edge changes the small-heel model; either can invalidate an extrapolation of the measured initial restoring moment to large roll angles.</p>
+<p>For the original centre of gravity the initial rotational stiffness is \(WGM=3200(9.81)(0.358)=11.24\,\mathrm{kN\,m/rad}\). A loading estimate from a small known heeling moment can therefore serve as a separate check on the shifted-weight experiment. This stiffness is hydrostatic; rolling inertia and hydrodynamic damping are still required to predict a free-roll period or decay.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Place the hinge on a fully submerged vertical gate</h2>
+<p>A rectangular vertical gate is 2 m tall and of constant width. Integrate hydrostatic gauge pressure over its area. The centre of pressure is \(h_c+I_c/(A h_c)\), so the offset below the centroid shrinks as the gate is submerged more deeply.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/fluid-mechanics/02-hydrostatics.png" alt="Place the hinge on a fully submerged vertical gate. Horizontal axis: Depth of top edge (m). Vertical axis: Depth below free surface (m). Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>With the top at the free surface, pressure acts 1.333 m below it rather than at the 1 m centroid. When the top is 3 m down, the offset is just 0.0833 m. Absolute pressure on both sides would cancel in this gauge-pressure loading case.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/fluid-mechanics/02-hydrostatics.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Depth below free surface (m) at selected values of Depth of top edge (m).</caption><thead><tr><th scope="col">Depth of top edge (m)</th><th scope="col">Centre of pressure</th><th scope="col">Area centroid</th></tr></thead><tbody><tr><th scope="row">0</th><td>1.3333</td><td>1</td></tr><tr><th scope="row">0.76</th><td>1.9494</td><td>1.76</td></tr><tr><th scope="row">1.5</th><td>2.6333</td><td>2.5</td></tr><tr><th scope="row">2.24</th><td>3.3429</td><td>3.24</td></tr><tr><th scope="row">3</th><td>4.0833</td><td>4</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/fluid-mechanics/02-hydrostatics.csv" download>Download all 151 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/fluid-mechanics/chapters/01-kinematics/">Chapter 1 · Velocity fields, flow rates and conservation of mass</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/fluid-mechanics/problem-sheets/1/">Problem sheet 1 · Mass balances and hydrostatic loading</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

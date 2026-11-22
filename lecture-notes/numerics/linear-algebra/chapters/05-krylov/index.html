@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krylov subspaces and preconditioning · OneSimulation</title>
+<meta name="description" content="Derive the first CG steps from a minimum-energy principle and determine what is gained by changing the metric in which a linear system is solved.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/chapters/05-krylov/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Krylov subspaces and preconditioning · OneSimulation">
+<meta property="og:description" content="Derive the first CG steps from a minimum-energy principle and determine what is gained by changing the metric in which a linear system is solved.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/linear-algebra/chapters/05-krylov/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Krylov subspaces and preconditioning</h1><p class="lead">Derive the first CG steps from a minimum-energy principle and determine what is gained by changing the metric in which a linear system is solved.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-geometrical-interpretation-of-positive-definiteness">A geometrical interpretation of positive definiteness</a><a href="#work-through-a-two-dimensional-example">Work through a two-dimensional example</a><a href="#improve-the-geometry-of-the-search">Improve the geometry of the search</a><a href="#read-an-energy-norm-convergence-estimate">Read an energy-norm convergence estimate</a><a href="#relate-the-stopping-norm-to-energy">Relate the stopping norm to energy</a><a href="#turn-a-known-spectral-interval-into-a-polynomial-guarantee">Turn a known spectral interval into a polynomial guarantee</a><a href="#compare-an-interval-bound-with-the-actual-finite-spectrum">Compare an interval bound with the actual finite spectrum</a><a href="#worked-plot">Same condition number, different Krylov histories</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-geometrical-interpretation-of-positive-definiteness">A geometrical interpretation of positive definiteness</h2>
+<p>Assume \(A=A^T\) and \(v^TAv&gt;0\) for all nonzero \(v\). The algebraic solution \(x_\star\) is the unique minimiser of \(J(x)=x^TAx/2-b^Tx\). Indeed, completing the square gives \(J(x)-J(x_\star)=(x-x_\star)^TA(x-x_\star)/2\). For a structural stiffness matrix this has the interpretation of excess elastic potential energy. The negative gradient at an approximation is the residual \(r=b-Ax\). Even in a purely algebraic application this energy geometry explains which approximation CG selects.</p>
+<p>In a chosen search direction \(p\), minimise \(J(x+\alpha p)\) by differentiation. The optimal step is \(\alpha=p^Tr/(p^TAp)\). Two successive minimisations should not undo each other. If \(p_i^TAp_j=0\) for distinct directions, minimisation along \(p_j\) preserves minimisation along \(p_i\). Such directions are called conjugate. CG generates them from successive residuals and matrix-vector products. Starting with \(p_0=r_0\), the exact-arithmetic recurrences are \(\alpha_k=(r_k^Tr_k)/(p_k^TAp_k)\), \(r_{k+1}=r_k-\alpha_kAp_k\), \(\beta_k=(r_{k+1}^Tr_{k+1})/(r_k^Tr_k)\), and \(p_{k+1}=r_{k+1}+\beta_kp_k\).</p>
+</section>
+<section>
+<h2 id="work-through-a-two-dimensional-example">Work through a two-dimensional example</h2>
+<p>Take \(A=\operatorname{diag}(1,4)\), \(b=(1,1)^T\), and \(x_0=0\). Then \(p_0=(1,1)^T\), \(Ap_0=(1,4)^T\) and \(\alpha_0=2/5=0.4\). The first approximation is \((0.4,0.4)^T\); its residual is \((0.6,-0.6)^T\). That residual is perpendicular to the old search direction because the line minimum has already been reached. The update coefficient is \(\beta_0=0.72/2=0.36\), giving \(p_1=(0.96,-0.24)^T\).</p>
+<p>Check the conjugacy directly: \(p_0^TAp_1=0.96-0.96=0\). Now \(p_1^TAp_1=1.152\), so \(\alpha_1=0.72/1.152=0.625\). The second approximation is \((1,0.25)^T\), which solves the system. A repeated steepest descent restart would search along the new residual, lose conjugacy, and generally need more than two steps. In floating-point arithmetic, residual orthogonality gradually deteriorates. A fresh residual computed from the final vector is a valuable check.</p>
+</section>
+<section>
+<h2 id="improve-the-geometry-of-the-search">Improve the geometry of the search</h2>
+<p>At iteration \(k\), candidates lie in \(x_0+\operatorname{span}\{r_0,Ar_0,\ldots,A^{k-1}r_0\}\). The error can be written \(p_k(A)e_0\) for a polynomial with \(p_k(0)=1\). If the operator has only a few distinct eigenvalues, a low-degree polynomial can vanish on them all. More generally, many eigenvalues in a tight cluster can be reduced together. This explains why the condition number gives only a worst-case convergence estimate.</p>
+<p>A positive definite preconditioner \(M\) corresponds to solving with \(M^{-1/2}AM^{-1/2}\). For the diagonal example, \(M=\operatorname{diag}(A)\) makes the transformed operator the identity, so one step suffices. For a full matrix, the same choice corrects scales but may leave strong coupling untouched. Applying an approximate inverse also costs time and memory. Compare total solve time, setup cost and physical error over representative loads before choosing a preconditioner. The heated cube experiment reports how changing the tolerance alters the same temperature observable on a fixed mesh. <a href="/lecture-notes/numerics/linear-algebra/#experiment">Compare direct and iterative heat balances</a>.</p>
+</section>
+<section>
+<h2 id="read-an-energy-norm-convergence-estimate">Read an energy-norm convergence estimate</h2>
+<p>For symmetric positive definite \(A\), a classical CG estimate is \(\|e_k\|_A/\|e_0\|_A\leq2[(\sqrt\kappa-1)/(\sqrt\kappa+1)]^k\). To see the square root appear, minimise the largest magnitude of an error polynomial over the entire eigenvalue interval \([\lambda_{\min},\lambda_{\max}]\), with its value fixed at one at zero. Shifting a Chebyshev polynomial onto that interval produces the stated decay. Treating every point of the interval as a possible eigenvalue makes this a deliberately pessimistic estimate when the actual eigenvalues form tight clusters.</p>
+<p>For \(\kappa=100\), the factor is \(9/11\). The bound first guarantees a reduction below \(10^{-3}\) after 38 iterations. If effective preconditioning reduces the condition number to 4, the factor becomes \(1/3\) and seven iterations suffice for the same guarantee. The comparison gives a budget for the search iterations only. An expensive preconditioner can erase that saving when it is set up for a single small load case. For repeated loads, setup can be spread over many solves, changing the economics without changing the convergence analysis.</p>
+</section>
+<section>
+<h2 id="relate-the-stopping-norm-to-energy">Relate the stopping norm to energy</h2>
+<p>For a symmetric positive definite system the energy error squared equals \(r^TA^{-1}r\), since \(r=Ae\). Consequently residuals with the same Euclidean length may have different physical significance. With \(A=\operatorname{diag}(1,100)\), residuals \((1,0)^T\) and \((0,1)^T\) both have length one, but their energy errors are 1 and 0.1. A tolerance derived from an energy specification should account for this spectral weighting.</p>
+</section>
+<section>
+<h2 id="turn-a-known-spectral-interval-into-a-polynomial-guarantee">Turn a known spectral interval into a polynomial guarantee</h2>
+<p>Let \(A\) be symmetric positive definite with spectrum in \([a,b]\), \(0&lt;a&lt;b\). After \(k\) conjugate-gradient steps from \(x_0\), every available state error has the form \(p(A)e_0\), where \(p\) has degree at most \(k\) and \(p(0)=1\). The constraint at zero follows because the correction is an element of the Krylov space generated by the initial residual \(Ae_0\). Expressing \(e_0\) in orthonormal eigenvectors shows that the squared energy error is \(\sum_i\lambda_i |p(\lambda_i)|^2 |e_{0,i}|^2\). Bounding the maximum of the polynomial over the entire spectral interval gives a guarantee independent of the initial error.</p>
+<p>Map \([a,b]\) to \([-1,1]\) through \(s=(a+b-2\lambda)/(b-a)\). The degree-\(k\) Chebyshev polynomial \(T_k(s)\) has magnitude at most one there, while at \(\lambda=0\) its argument \(s_0=(a+b)/(b-a)\) exceeds one. Thus \(p(\lambda)=T_k(s)/T_k(s_0)\) is an admissible trial polynomial with worst amplitude \(1/T_k(s_0)\). Since CG minimises the energy norm over all trial corrections, it performs at least as well as this explicit choice. Positive definiteness is used twice: it defines the energy norm and keeps zero outside the proposed spectral interval.</p>
+</section>
+<section>
+<h2 id="compare-an-interval-bound-with-the-actual-finite-spectrum">Compare an interval bound with the actual finite spectrum</h2>
+<p>Suppose the only eigenvalues are 1, 2 and 4. For two steps take \(T_2(s)=2s^2-1\), \(s_0=5/3\). Then \(T_2(s_0)=41/9\), so the worst relative energy error is at most \(9/41\approx0.2195\) for the trial polynomial and hence for CG. At the spectral endpoints the polynomial equals \(9/41\). At \(\lambda=2\), however, \(s=1/3\) and the factor is \(-7/41\). Each mode has acquired a small amplitude even though the signs differ. The actual energy error depends on how much of the initial energy lay in each mode.</p>
+<p>For three steps the spectral interval still has infinitely many possible points. But the actual three eigenvalues permit the polynomial \((1-\lambda)(1-\lambda/2)(1-\lambda/4)\), which equals one at zero and vanishes on the entire spectrum. CG can therefore reach the exact solution on this finite example in at most three steps in exact arithmetic. Repeated eigenvalues do not increase this bound. The interval guarantee loses this information by preparing for every point between the smallest and largest eigenvalues, including values absent from the matrix.</p>
+<p>A strong preconditioner can produce a narrow spectral cluster plus a few outliers. A helpful interpretation is to spend a small number of polynomial roots suppressing the outliers and use the rest to approximate zero across the cluster. The number of distinct eigendirections and the distribution of initial energy then complement a simple condition-number estimate. Finite precision can spoil exact finite termination, particularly when supposedly eliminated components reappear through roundoff.</p>
+<p>If \(A\) is instead indefinite, a polynomial residual argument may still be meaningful for a different Krylov solver, but the quantity \(e^TAe\) can vanish for nonzero error or become negative. The preceding minimisation proof then loses the positive measure of approximation on which it depends. Checking symmetry alone is insufficient to apply it.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Same condition number, different Krylov histories</h2>
+<p>Solve two positive diagonal systems from zero with identical right-hand sides. Both have extreme eigenvalues 1 and 100. Plot the error in \(\|e\|_A=\sqrt{e^\mathsf{T}Ae}\), using the known diagonal inverse as a reference.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/linear-algebra/05-krylov.png" alt="Same condition number, different Krylov histories. Horizontal axis: Conjugate-gradient iterations. Vertical axis: Relative error in the energy norm. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>For two distinct eigenvalues a degree-two error polynomial can vanish on the whole spectrum. The spread-out spectrum requires many more directions. Values smaller than 10⁻¹⁵ are displayed at that floor.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/linear-algebra/05-krylov.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Relative error in the energy norm at selected values of Conjugate-gradient iterations.</caption><thead><tr><th scope="col">Conjugate-gradient iterations</th><th scope="col">Two distinct eigenvalues</th><th scope="col">Twenty logarithmically spaced</th></tr></thead><tbody><tr><th scope="row">0</th><td>1</td><td>1</td></tr><tr><th scope="row">4</th><td>1e−15</td><td>0.54871</td></tr><tr><th scope="row">8</th><td>1e−15</td><td>0.22333</td></tr><tr><th scope="row">12</th><td>1e−15</td><td>0.057405</td></tr><tr><th scope="row">16</th><td>1e−15</td><td>0.0058119</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/linear-algebra/05-krylov.csv" download>Download all 17 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/linear-algebra/problem-sheets/2/">Problem sheet 2 · Fitting and relaxation</a></span><span>Next<br><a href="/lecture-notes/numerics/linear-algebra/chapters/06-spectral/">Chapter 6 · Eigenvalues, modes and spectral gaps</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

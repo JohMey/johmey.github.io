@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accuracy with few evaluations · OneSimulation</title>
+<meta name="description" content="Derive mapped Gaussian weights, expose an underintegrated element and design a tolerance check for a sharply localised signal.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/problem-sheets/3/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Accuracy with few evaluations · OneSimulation">
+<meta property="og:description" content="Derive mapped Gaussian weights, expose an underintegrated element and design a tolerance check for a sharply localised signal.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/problem-sheets/3/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Accuracy with few evaluations</h1><p class="lead">Derive mapped Gaussian weights, expose an underintegrated element and design a tolerance check for a sharply localised signal.</p><p class="byline">Problem sheet 3 · Chapters 5 and 6</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#map-a-rule-and-check-its-units">Map a rule and check its units</a><a href="#measure-mass-of-an-alternating-displacement">Measure mass of an alternating displacement</a><a href="#interpret-an-adaptive-estimate">Interpret an adaptive estimate</a></nav></aside><article class="prose reference"><section>
+<h2 id="map-a-rule-and-check-its-units">Map a rule and check its units</h2>
+<p>Use the two-node Gauss rule to integrate \(x^2\) over \([1,4]\). Give physical nodes and weights. Compare with the exact antiderivative, then explain what happens if the reference weights are used without the mapping factor.</p>
+<details><summary>Worked solution</summary>
+<p>The midpoint is 2.5 and half-length is 1.5, so nodes are \(2.5\pm1.5/\sqrt3\) and weights are both 1.5. The sum of squared nodal values is \(2[2.5^2+(1.5/\sqrt3)^2]=14\), giving integral 21. The antiderivative gives \((64-1)/3=21\).</p>
+<p>Using weights equal to one would report 14. When \(x\) is measured in metres, the weights carry metres and the integral carries m³. Ignoring the Jacobian is a scale error as well as a dimensional inconsistency.</p>
+</details>
+</section>
+<section>
+<h2 id="measure-mass-of-an-alternating-displacement">Measure mass of an alternating displacement</h2>
+<p>On \(0\leq x\leq1\), linearly interpolate nodal values \((1,-1)\). Compute the exact squared norm, the one-point midpoint approximation and the two-point Gauss result. Explain which field escapes the one-point sampling.</p>
+<details><summary>Worked solution</summary>
+<p>Linear interpolation gives \(u=1-2x\), so \(\int_0^1 u^2dx=1-2+4/3=1/3\). The midpoint value is zero, giving zero numerical norm with one point. The two Gauss nodes are \(1/2\pm1/(2\sqrt3)\), where \(u=\mp1/\sqrt3\). Weights \(1/2\) give \(1/3\).</p>
+<p>The field changes sign inside the element and its node lies exactly at the one-point sample. Treating zero discrete norm as proof of zero field would introduce a spurious unconstrained mode.</p>
+</details>
+</section>
+<section>
+<h2 id="interpret-an-adaptive-estimate">Interpret an adaptive estimate</h2>
+<p>For a smooth interval, one Simpson panel gives 1.2000 and two half-panels give 1.1850. Estimate the signed correction, the corrected integral and whether an assigned tolerance of 0.0005 is met. Separately, a narrow pulse is known to lie between two sample positions. How would you modify the initial partition?</p>
+<details><summary>Worked solution</summary>
+<p>The correction to the fine value is \((1.1850-1.2000)/15=-0.0010\). The extrapolated estimate is 1.1840. The local error indicator 0.0010 exceeds the budget, so refine both halves and reuse the existing nodal evaluations.</p>
+<p>For a pulse with known edges, introduce breakpoints at the edges and sample its interior. An indicator assembled from two rules that both miss the pulse can be zero even when the physical integral is finite.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/approximation-and-quadrature/chapters/06-adaptive-integration/">Chapter 6 · Adaptive integration and error estimates</a></span><span>Next<br><a href="/lecture-notes/numerics/approximation-and-quadrature/chapters/07-divided-differences/">Chapter 7 · Divided differences and derivative data</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

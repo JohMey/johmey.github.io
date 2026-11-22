@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stress transformation and combined loading · OneSimulation</title>
+<meta name="description" content="Find principal stresses and elastic yield measures at a shaft surface carrying bending and torsion.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/05-combined-stress/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stress transformation and combined loading · OneSimulation">
+<meta property="og:description" content="Find principal stresses and elastic yield measures at a shaft surface carrying bending and torsion.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/05-combined-stress/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Stress transformation and combined loading</h1><p class="lead">Find principal stresses and elastic yield measures at a shaft surface carrying bending and torsion.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#point">A section resultant does not specify a failure plane</a><a href="#rotate">Change the orientation of a cut</a><a href="#example">Compare principal stresses on a machine shaft</a><a href="#yield">Interpret an equivalent stress</a><a href="#pressure">Change the mean stress without changing the distortion</a><a href="#membrane">Derive the two membrane stresses of a thin cylinder</a><a href="#instrumented-vessel">Infer shell strain and the effect of axial restraint</a><a href="#worked-plot">Choose a cut plane for a combined stress state</a></nav></aside><article class="prose reference"><section><h2 id="point">A section resultant does not specify a failure plane</h2>
+<p>The free-body diagram of a shaft gives bending moments and torque. A potential crack, however, can cut the shaft on any plane. To compare the local stress with a material test, first evaluate the stress components at the same material point. At the outer fibre of a circular shaft the bending normal stress may be large. At the neutral axis the bending stress vanishes. Values from different points cannot be combined into one stress state.</p>
+<p>For a circular shaft of diameter \(d\) bending moment \(M\) gives surface stress \(32M/(\pi d^3)\), and torque \(T\) gives surface shear \(16T/(\pi d^3)\). The torsion relation uses \(J=\pi d^4/32\). The combination assumes elastic small deformation in a smooth prismatic portion, sufficiently far from shoulders, load introduction and keyways. At a traction-free outer surface the radial traction is zero. Use a local basis with longitudinal and circumferential axes for the remaining plane-stress components.</p>
+</section>
+<section><h2 id="rotate">Change the orientation of a cut</h2>
+<p>In two dimensions write the stress tensor with normal components \(\sigma_x,\sigma_y\) and shear \(\tau_{xy}\). The traction vector on a cut with unit normal \(\mathbf n\) is \(\mathbf t=\boldsymbol\sigma\mathbf n\). Project that vector along and perpendicular to \(\mathbf n=(\cos\theta,\sin\theta)\). The normal stress becomes a constant average plus a sinusoidal term; the shear varies with twice the same angle:</p>
+<div class="math display">\[\sigma_n=\frac{\sigma_x+\sigma_y}{2}+\frac{\sigma_x-\sigma_y}{2}\cos 2\theta+\tau_{xy}\sin 2\theta.\]</div>
+<p>The largest and smallest in-plane normal stresses differ from the mean by \(R=\sqrt{[(\sigma_x-\sigma_y)/2]^2+\tau_{xy}^2}\). The shear on those principal planes vanishes. Taking the third principal stress as zero allows a three-dimensional maximum-shear check: evaluate half the difference of the largest and smallest of all three principal stresses. In a biaxial tensile state, ignoring the zero third stress can underestimate this difference.</p>
+</section>
+<section><h2 id="example">Compare principal stresses on a machine shaft</h2>
+<p>Let a 40 mm diameter steel shaft carry \(M=300\) N·m and \(T=200\) N·m. At its tensile bending surface, \(\sigma_x=47.75\) MPa, \(\sigma_y=0\) and \(\tau_{xy}=15.92\) MPa. The in-plane mean is 23.87 MPa and the radius is 28.69 MPa. The principal stresses are about 52.57 and −4.82 MPa. The plane of greatest tension is rotated through half of \(\operatorname{atan2}(2\tau_{xy},\sigma_x-\sigma_y)\), here 16.8° from the original plane normal. The maximum shear magnitude is 28.7 MPa.</p>
+<p>A useful check is the trace: the principal stresses sum to 47.75 MPa, the same sum as the original normal components. A second check is the determinant: the two principal values have opposite signs since the determinant of this particular matrix is \(-\tau_{xy}^2\). A picture with the two directions marked prevents confusing the angle of a plane normal with that of the line drawn for the plane itself.</p>
+</section>
+<section><h2 id="yield">Interpret an equivalent stress</h2>
+<p>For isotropic ductile materials a common onset-of-yield model uses von Mises equivalent stress. Under plane stress it is \(\sqrt{\sigma_x^2-\sigma_x\sigma_y+\sigma_y^2+3\tau_{xy}^2}\), giving 55.1 MPa here. Compare this scalar with the uniaxial yield strength from a material test under a comparable temperature and loading rate. A given yield strength of 220 MPa corresponds to a nominal static factor of about 4.0. That number answers a defined static question. A shaft rotating under a stationary transverse force cycles the tensile and compressive stress of a given material point once per revolution. Evaluating its fatigue resistance requires the stress range and a separate material model.</p>
+</section>
+<section><h2 id="pressure">Change the mean stress without changing the distortion</h2>
+<p>Apply a uniform external hydrostatic pressure of 50 MPa to a material point whose original principal stresses are 100, 0 and 0 MPa. The new principal stresses are 50, −50 and −50 MPa, since pressure acts on every plane. Their pairwise differences remain 100, 0 and −100 MPa, so the von Mises stress remains 100 MPa. This illustrates why a distortion-based yield condition must include all three normal directions under confinement. Applying a plane-stress formula after adding pressure only to the in-plane directions would represent a different three-dimensional loading.</p>
+</section>
+<section><h2 id="membrane">Derive the two membrane stresses of a thin cylinder</h2>
+<p>A hydraulic accumulator behaves differently in its axial and circumferential directions even if it is made of isotropic steel. Consider a long cylindrical shell of mean radius \(r\), wall thickness \(t\ll r\), closed ends and internal gauge pressure \(p\). Away from nozzles and end transitions, symmetry permits a membrane model with tensile stresses uniform through the thickness. The radial stress changes from approximately \(-p\) at the inner wall to zero outside. Its magnitude is small compared with \(pr/t\) if the shell is thin.</p>
+<p>Cut the cylinder longitudinally into two halves of length \(L\). The net force from pressure acts on the projected rectangle of area \(2rL\), not on the curved wetted area. The two cut edges carry hoop tension. A different cut across the full circular end isolates the cap thrust and the single axial membrane stress. The resulting balances are</p>
+<div class="math display">\[2\sigma_\theta tL=p(2rL),\qquad 2\pi rt\sigma_z=p\pi r^2,\qquad \sigma_\theta=pr/t,\quad \sigma_z=pr/(2t).\]</div>
+<p>The factor of two follows from geometry and end load transmission. If the ends are open and pressure thrust returns through a separate frame, the cylinder may carry little axial membrane force. Always follow the cap force into the structure before assigning axial stress. A cap anchored externally and a welded pressure shell have different load paths even at the same gauge pressure.</p>
+</section>
+<section><h2 id="instrumented-vessel">Infer shell strain and the effect of axial restraint</h2>
+<p>For a closed vessel with \(r=0.20\,\mathrm m\), \(t=4.0\,\mathrm{mm}\) and \(p=1.2\,\mathrm{MPa}\), the membrane stresses are 60 MPa circumferentially and 30 MPa axially. These directions are principal at an unperturbed surface. Under plane stress the von Mises stress is \(\sqrt{60^2+30^2-60(30)}=52.0\,\mathrm{MPa}\). With \(E=200\,\mathrm{GPa}\) and \(\nu=0.30\), an outer hoop gauge reads \((60-0.30\times30)/200000=255\) microstrain and an axial gauge reads only \((30-0.30\times60)/200000=60\) microstrain. The radius increases by about \(0.20(255\times10^{-6})=51\,\mathrm{\mu m}\). The smaller axial signal is particularly sensitive to temperature correction.</p>
+<p>Now imagine an axial restraint strong enough to hold the length constant without affecting the radius directly. The condition \(\varepsilon_z=0\) gives \(\sigma_z=\nu\sigma_\theta=18\) MPa. The cap thrust has not disappeared. An external axial reaction must remove the difference of 12 MPa integrated over the shell area \(2\pi rt\), about 60.3 kN. A gauge-based interpretation using the unrestrained 30 MPa estimate would miss this load. Conversely, where the restraint attaches, local bending and stress concentration may dominate the smooth membrane solution. Locate comparison gauges several characteristic wall dimensions away from such load introduction.</p>
+<p>The force calculation can be audited directly. Pressure thrust on the end cap is \(1.2\pi(200)^2=151\,\mathrm{kN}\) in MPa and millimetres. An 18 MPa shell stress carries \(18[2\pi(200)(4)]=90.5\,\mathrm{kN}\). Their difference, 60.3 kN, is precisely the required external load path. A restraint instrumented with a load cell would test the assumed axial boundary condition independently of the strain readings.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Choose a cut plane for a combined stress state</h2>
+<p>A material point has \(\sigma_x=80,\ \sigma_y=-20,\ \tau_{xy}=30\) MPa. Resolve the traction on a rotated plane into normal and tangential components. The stress transformation contains twice the rotation angle because both the traction vector and the basis change.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/engineering-mechanics/05-combined-stress.png" alt="Choose a cut plane for a combined stress state. Horizontal axis: Rotation of plane normal from x (degrees). Vertical axis: Traction component (MPa). Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>The major principal stress is 30 + √3400 ≈ 88.3 MPa at about 15.5°, where the shear vanishes. The maximum absolute in-plane shear is 58.3 MPa and occurs on planes 45° from the principal planes.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/engineering-mechanics/05-combined-stress.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Traction component (MPa) at selected values of Rotation of plane normal from x (degrees).</caption><thead><tr><th scope="col">Rotation of plane normal from x (degrees)</th><th scope="col">Normal stress</th><th scope="col">Signed shear</th></tr></thead><tbody><tr><th scope="row">−90</th><td>−20</td><td>−30</td></tr><tr><th scope="row">−45</th><td>3.5527e−15</td><td>50</td></tr><tr><th scope="row">0</th><td>80</td><td>30</td></tr><tr><th scope="row">45</th><td>60</td><td>−50</td></tr><tr><th scope="row">90</th><td>−20</td><td>−30</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/engineering-mechanics/05-combined-stress.csv" download>Download all 361 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/engineering-mechanics/problem-sheets/2/">Problem sheet 2 · Beam actions and deformations</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/engineering-mechanics/chapters/06-elastic-stability/">Chapter 6 · Elastic stability of compression members</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

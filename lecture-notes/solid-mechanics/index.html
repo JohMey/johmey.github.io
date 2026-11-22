@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why does a beam bend less when turned on edge? · OneSimulation</title>
+<meta name="description" content="Use moment balance to predict how far the tip of a cantilever moves when you rotate its cross-section.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/solid-mechanics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why does a beam bend less when turned on edge? · OneSimulation">
+<meta property="og:description" content="Use moment balance to predict how far the tip of a cantilever moves when you rotate its cross-section.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/solid-mechanics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/course/#mechanics">Forces and motion</a> / Solid mechanics</p><h1>Why does a beam bend less when turned on edge?</h1><p class="lead">Use moment balance to predict how far the tip of a cantilever moves when you rotate its cross-section.</p><p class="prerequisites"><strong>Prerequisites</strong> Force and moment balance, elementary integration.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Take a cut through a loaded beam</a><a href="#boundary">Use the clamp to fix slope and displacement</a><a href="#worked">Turn a 120 mm aluminium beam on edge</a><a href="#tutorial">Tutorial on bending stiffness</a><a href="#numerical">Optional numerical comparison</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Take a cut through a loaded beam</h2>
+<p>Clamp a rectangular ruler to a bench and hang a weight from its free end. Turn the ruler on edge and hang the same weight again. Its length, mass and material are unchanged. Which property of the cross-section controls the motion of the tip?</p>
+<p>Let \(x\) measure distance from the clamp, \(L\) be the span and \(F\) the downward end force. Cut the beam at \(x\) and take moments of the free segment about the cut. Its internal bending moment has magnitude \(M(x)=F(L-x)\). The largest moment occurs at the clamp. This moment stretches the upper fibres and shortens the lower ones. The beam can carry these internal stresses while it is at rest.</p>
+<p>For a slender, homogeneous beam, assume that each cross-section stays plane and perpendicular to the bent centreline. A fibre at distance \(z\) from the neutral axis has strain of magnitude \(|z|\kappa\), where \(\kappa\) is the local curvature. Hooke’s law converts strain to stress. Integrating the moment of that stress over the section gives</p>
+<div class="math display">\[M=E\kappa I,\qquad I=\int_A z^2\,dA=\frac{bh^3}{12}.\]</div>
+<p>Here \(E\) is Young’s modulus, \(b\) is width and \(h\) is vertical depth. Material further from the neutral axis contributes more to the bending stiffness \(EI\).</p>
+</section>
+<section>
+<h2 id="boundary">Use the clamp to fix slope and displacement</h2>
+<p>Measure deflection \(w\) positively downwards. For small slopes \(\kappa\simeq w''\). The clamp fixes \(w(0)=w'(0)=0\). Integrating \(EIw''=F(L-x)\) from the clamp first gives \(EIw'=F(Lx-x^2/2)\), then</p>
+<div class="math display">\[w(x)=\frac{Fx^2(3L-x)}{6EI},\qquad w(L)=\frac{FL^3}{3EI}.\]</div>
+<p>This is a centreline prediction for small elastic deflection. Short beams may also deform appreciably in shear, and the three-dimensional stress close to the clamp depends on how it grips the beam.</p>
+<p class="source-note">Further study · David Roylance develops the slope and deflection of beams under different loads in <a href="https://ocw.mit.edu/courses/3-11-mechanics-of-materials-fall-1999/13534abb67b86d2fb8ee11a1f4f2b8c4_MIT3_11F99_bdisp.pdf">Beam Displacements (MIT, PDF)</a>.</p>
+</section>
+<section>
+<h2 id="worked">Turn a 120 mm aluminium beam on edge</h2>
+<figure class="lecture-figure"><img src="/assets/beam-orientation.png" width="1440" height="810" loading="lazy" alt="A cantilever carries a 30 N downward end force. Its rectangular section can be laid flat or turned on edge."><figcaption>The dashed lines mark the neutral axis. Rotating the beam places more material far from this axis.</figcaption></figure>
+<p>Take \(F=30\) N, \(E=70\) GPa and an 18 mm wide, 12 mm deep section. In metres, \(I=0.018(0.012)^3/12=2.592\times10^{-9}\) m⁴. The tip moves down by \(30(0.120)^3/[3(70\times10^9)I]=0.0952\) mm.</p>
+<p>Turn the same section through 90°. With 18 mm now vertical, \(I\) grows by \((18/12)^2=2.25\). The same force gives \(0.0952/2.25=0.0423\) mm of deflection. The square in this ratio appears because width and depth both change during the rotation.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial on bending stiffness</h2>
+<h3>1. Move the load inwards</h3>
+<p>Place the 30 N load halfway along the original flat beam. How far does the point under the load move? Does the free tip move by the same amount?</p>
+<details><summary>Solution to the load-position problem</summary><p>Write \(a=L/2\). The loaded portion behaves as a cantilever of length \(a\), so \(w(a)=Fa^3/(3EI)=0.0119\) mm. Beyond the load the bending moment is zero. The remaining length continues at slope \(w'(a)=Fa^2/(2EI)\), giving \(w(L)=w(a)+(L-a)w'(a)=0.0298\) mm. A straight segment can have a nonzero slope.</p></details>
+<h3>2. Compare stresses after rotation</h3>
+<p>Return the 30 N load to the free end. Find the nominal bending stress magnitude at the outer fibre halfway along the beam in each orientation. Explain why the stress ratio differs from the tip-deflection ratio.</p>
+<details><summary>Solution to the stress comparison</summary><p>At midspan \(M=30(0.060)=1.80\) N·m. The stress \(M(h/2)/I\) is \(4.17\) MPa with 12 mm vertical. Turning the section on edge multiplies \(I\) by 2.25 and \(h/2\) by 1.5, so the stress falls to \(2.78\) MPa. Deflection depends on \(I\) alone for a given material and load, while stress also depends on the fibre’s distance from the neutral axis.</p></details>
+</section>
+<section>
+<h2 id="numerical">Optional numerical comparison</h2>
+<p>Sample the vertical displacement at the centre of the loaded end face. For the original orientation, compare its magnitude with 0.0952 mm and check that the relative difference is below 1% on the supplied mesh. The 3D continuum model includes the clamp and the end-face traction. <a href="/blog/cantilever_beam_bending/">OneSimulation example of cantilever bending</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/lecture-notes/geotechnics/">Why does the ground sink when groundwater is pumped?</a></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anisotropic diffusion and mesh alignment · OneSimulation</title>
+<meta name="description" content="Relate a diffusion tensor to principal directions and test whether a face-flux approximation can represent a rotated material.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/08-anisotropy/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Anisotropic diffusion and mesh alignment · OneSimulation">
+<meta property="og:description" content="Relate a diffusion tensor to principal directions and test whether a face-flux approximation can represent a rotated material.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/partial-differential-equations/chapters/08-anisotropy/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Anisotropic diffusion and mesh alignment</h1><p class="lead">Relate a diffusion tensor to principal directions and test whether a face-flux approximation can represent a rotated material.</p><p class="byline">Chapter 8 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#begin-with-an-energy-and-a-constitutive-law">Begin with an energy and a constitutive law</a><a href="#a-patch-test-for-a-face-flux">A patch test for a face flux</a><a href="#distinguish-length-scales-from-transport-axes">Distinguish length scales from transport axes</a><a href="#rotate-the-temperature-keeping-the-material-fixed">Rotate the temperature, keeping the material fixed</a><a href="#construct-a-positive-directional-stencil-for-a-rotated-tensor">Construct a positive directional stencil for a rotated tensor</a><a href="#reach-a-strongly-tilted-direction-using-a-wider-stencil">Reach a strongly tilted direction using a wider stencil</a></nav></aside><article class="prose reference"><section>
+<h2 id="begin-with-an-energy-and-a-constitutive-law">Begin with an energy and a constitutive law</h2>
+<p>In a conducting sheet with directional properties, heat flux is \(\boldsymbol q=-K\nabla T\), where \(K\) is symmetric positive definite. With constant volumetric capacity, conservation gives a diffusion operator proportional to \(\nabla\cdot(K\nabla T)\). For insulating boundaries and no sources, multiplying by \(T\) and integrating by parts gives a decay term \(-\int\nabla T^TK\nabla T\). It is nonpositive because the eigenvalues of \(K\) are positive. This energy test checks the sign of a discrete spatial operator even when flux and gradient do not point along the same line.</p>
+<p>Let the principal conductivities be 4 and 1. Rotating the principal axes through 45 degrees gives \(K=R\operatorname{diag}(4,1)R^T=\left(\begin{smallmatrix}2.5&amp;1.5\\1.5&amp;2.5\end{smallmatrix}\right)\). Along the diagonal direction \((1,1)/\sqrt2\), multiplying by \(K\) scales the gradient fourfold; along the other diagonal the scale is one. Along the Cartesian \(x\) direction a transverse flux component appears. The off-diagonal entries express a real constitutive response and cannot be dropped by refining the same incorrect stencil.</p>
+</section>
+<section>
+<h2 id="a-patch-test-for-a-face-flux">A patch test for a face flux</h2>
+<p>Use the exact affine temperature \(T(x,y)=y\), whose gradient is \((0,1)^T\). The flux is \((-1.5,-2.5)^T\). A vertical face with outward normal \(e_x\) therefore carries \(-1.5\) units of flux per unit length. A two-point formula based only on temperatures at the left and right cell centres sees identical temperatures and returns zero. Both fields have zero divergence in the interior because each flux is constant, so checking interior residuals alone would miss the incorrect boundary transport. Compare individual face fluxes as well as cell residuals in a linear patch test.</p>
+<p>To recover the normal flux one can reconstruct the full gradient using neighbouring data, or choose a weak form integrating \((\nabla v)^TK\nabla T\) over each element. On a triangle with affine basis functions the gradients are constant, so constant \(K\) yields an element matrix \(A_{ij}=|E|\nabla\phi_i^TK\nabla\phi_j\). Symmetry is immediate and the row sums vanish because the basis functions sum to one.</p>
+</section>
+<section>
+<h2 id="distinguish-length-scales-from-transport-axes">Distinguish length scales from transport axes</h2>
+<p>For constant \(K\), a Fourier mode \(e^{i\xi\cdot x}\) decays with factor \(e^{-t\xi^TK\xi}\) when capacity is one. At unit wave number, a mode along the fast principal axis falls to \(e^{-4}\approx0.0183\) after one unit of time; a perpendicular one retains \(e^{-1}\approx0.368\). This test excites the two conductivities separately. On an elongated mesh the mesh dimensions also affect the fastest discrete time scale, so the same physical tensor can require different explicit step sizes on two grids.</p>
+</section>
+<section>
+<h2 id="rotate-the-temperature-keeping-the-material-fixed">Rotate the temperature, keeping the material fixed</h2>
+<p>The directional heat transport along a unit vector \(n\) is controlled by \(n^TKn\) when the imposed temperature gradient is parallel to \(n\). For the worked tensor and \(n=(1,0)^T\), this effective conductivity is 2.5 even though the full flux has a transverse component. If the specimen instead has insulated long sides, then its transverse gradient can adjust until transverse flux vanishes. Solving \(1.5T_x+2.5T_y=0\) gives \(T_y=-0.6T_x\) and effective longitudinal flux \(-1.6T_x\). The same material therefore gives different one-dimensional reductions under different boundary constraints.</p>
+</section>
+<section>
+<h2 id="construct-a-positive-directional-stencil-for-a-rotated-tensor">Construct a positive directional stencil for a rotated tensor</h2>
+<p>For constant \(K=\left(\begin{smallmatrix}a&amp;b\\b&amp;c\end{smallmatrix}\right)\), the diffusion operator is \(a u_{xx}+2b u_{xy}+c u_{yy}\). On a square grid, the centred second difference along the lattice diagonal \((1,1)\), divided by \(h^2\), approximates \((\partial_x+\partial_y)^2u\), including the required mixed derivative with positive sign. For \(b\ge0\) one can therefore combine the three directional second differences with coefficients \(a-b,c-b,b\) along the horizontal, vertical and positive diagonal directions. Expanding these terms recovers the desired operator for every quadratic field.</p>
+<p>If all three coefficients are nonnegative, a local maximum has a nonpositive spatial diffusion update. This sign property supports a discrete maximum principle and, with a sufficiently small explicit time step, a positive averaging update. For negative \(b\), the opposite diagonal changes the mixed derivative sign and the analogous coefficients involve \(|b|\). Positive definiteness of the continuum tensor only requires \(ac&gt;b^2\), which is weaker than both \(a\ge|b|\) and \(c\ge|b|\). A physically valid material can therefore defeat this particular compact positive stencil.</p>
+</section>
+<section>
+<h2 id="reach-a-strongly-tilted-direction-using-a-wider-stencil">Reach a strongly tilted direction using a wider stencil</h2>
+<p>Set \(a=1,\ b=1.5,\ c=4\). The determinant \(4-2.25=1.75\) is positive and both eigenvalues are positive. Yet the compact three-direction construction would assign horizontal coefficient \(-0.5\). To see the numerical problem, give the centre value zero, both horizontal neighbours value one and all diagonal and vertical neighbours zero. The centre is a minimum, but the compact operator returns \(-1/h^2\). An explicit positive time step would drive that minimum below zero, contradicting the smoothing behaviour expected from a monotone diffusion discretisation.</p>
+<p>Consider instead a second difference along the longer lattice vector \((1,2)\). Dividing by \(h^2\) with coordinate increments \(h,2h\) approximates \(u_{xx}+4u_{xy}+4u_{yy}\). Multiplying it by \(0.75\) produces the desired mixed coefficient three. The remaining horizontal and vertical coefficients are \(1-0.75=0.25\) and \(4-3=1\), both positive. At an interior node this wider stencil has all positive neighbour couplings. On the quadratic patch \(u=xy\) the exact operator value is three; the long diagonal evaluates the centred difference as four, and its weighted contribution is exactly three while both axial differences vanish.</p>
+<p>The longer reach introduces a boundary question: a point one row from the edge may lack a neighbour two rows away. Replacing it ad hoc with a nearest available value can destroy consistency or positivity. A boundary treatment, a mesh aligned to the material axes or a compatible finite-element formulation must address that issue separately. Selecting a positive interior stencil alone does not prove a complete domain discretisation monotone.</p>
+<p>For the wider stencil an explicit update at an interior node has centre coefficient \(1-2(0.25+1+0.75)\Delta t/h^2\) for unit heat capacity. Preserving nonnegative weights therefore requires \(\Delta t\le h^2/4\) in the units of this example. Positive face couplings are necessary for this argument, while a compatible time step supplies the remaining condition.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/partial-differential-equations/chapters/07-interface-fluxes/">Chapter 7 · Interfaces, contact resistance and Robin data</a></span><span>Next<br><a href="/lecture-notes/numerics/partial-differential-equations/problem-sheets/4/">Problem sheet 4 · Material interfaces and anisotropy</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

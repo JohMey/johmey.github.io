@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Friction clutches, braking torque and heat · OneSimulation</title>
+<meta name="description" content="Integrate annular contact traction and connect the torque needed to synchronise rotating bodies with their frictional heat release.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-elements/chapters/09-clutches-brakes/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Friction clutches, braking torque and heat · OneSimulation">
+<meta property="og:description" content="Integrate annular contact traction and connect the torque needed to synchronise rotating bodies with their frictional heat release.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/mechanical-engineering/machine-elements/chapters/09-clutches-brakes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/mechanical-engineering/">Mechanical engineering</a> / <a href="/lecture-notes/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Friction clutches, braking torque and heat</h1><p class="lead">Integrate annular contact traction and connect the torque needed to synchronise rotating bodies with their frictional heat release.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#annulus">Each ring acts through a different lever arm</a><a href="#acceleration">Determine the relative speed decay</a><a href="#engagement">Check one start and repeated operation</a><a href="#wear">Check the pressure at the inner radius</a><a href="#periodic-heat">Derive the peak temperature under repeated braking</a><a href="#rotor-temperature">Distinguish larger thermal mass from better cooling</a></nav></aside><article class="prose reference"><section><h2 id="annulus">Each ring acts through a different lever arm</h2>
+<p>A single-plate clutch uses an axial force to transmit torque across annular friction interfaces. Assume axisymmetric pressure \(p(r)\) with inner radius \(r_i\), outer radius \(r_o\) and friction coefficient \(\mu\). A narrow ring has normal force \(dN=p(r)2\pi r\,dr\). When slipping with fully mobilised friction, it transmits torque \(dT=\mu r\,dN\). The normal force on each active interface is the axial clamp force \(W\) in an ordinary axial stack; the total torque capacity adds over the number \(z\) of active interfaces.</p>
+<p>For uniform pressure integrate the normal force and torque separately, then eliminate pressure. For the idealised uniform-wear law the wear rate scales with \(pv\). Since sliding speed is proportional to \(r\), equal wear implies \(p(r)r\) constant. Integration gives two different effective radii.</p>
+<div class="math display">\[T=z\mu W r_e,\qquad r_{e,p}=\frac{2}{3}\frac{r_o^3-r_i^3}{r_o^2-r_i^2},\qquad r_{e,w}=(r_o+r_i)/2 .\]</div>
+<p>Uniform pressure is a useful model for a new ideal face; uniform wear models a different radial distribution. Both depend on alignment and the ability of the backing plates to distribute load. The distinction is greater for a wide annulus than for a narrow ring.</p>
+</section>
+<section><h2 id="acceleration">Determine the relative speed decay</h2>
+<p>During engagement two rotors initially have angular speeds \(\omega_1,\omega_2\) and inertias \(I_1,I_2\). If external torques are negligible during a short engagement, angular momentum conservation gives the common final speed. Friction does equal and opposite angular work on the two rotors, but at different instantaneous speeds while they slip. Their net mechanical energy decreases. Eliminating the final speed from the energy difference gives</p>
+<div class="math display">\[\omega_f=\frac{I_1\omega_1+I_2\omega_2}{I_1+I_2},\qquad E_{\rm heat}=\tfrac12 I_{\rm red}(\omega_1-\omega_2)^2,\quad I_{\rm red}=\frac{I_1I_2}{I_1+I_2}.\]</div>
+<p>For a constant slipping torque \(T\), relative speed decreases at \(T/I_{\rm red}\) until synchronisation. Increasing clamp force shortens the engagement but does not reduce this energy at the same initial speeds in the isolated model. It increases the heat generation rate and can alter peak surface temperature.</p>
+</section>
+<section><h2 id="engagement">Check one start and repeated operation</h2>
+<p>Let \(I_1=0.20,\ I_2=0.30\,\mathrm{kg\,m^2}\) and starting speeds be 100 and 0 rad/s. Then \(\omega_f=40\,\mathrm{rad/s}\), \(I_{\rm red}=0.12\,\mathrm{kg\,m^2}\) and heat release is 600 J. For \(r_i=40,\ r_o=80\,\mathrm{mm}\), \(z=2\), \(\mu=0.30\), \(W=1000\,\mathrm N\) and uniform wear, the torque is \(2(0.30)(1000)(0.060)=36\,\mathrm{N\,m}\). Synchronisation takes \(0.12(100)/36=0.333\,\mathrm s\). The mean heat generation over that interval is 1.80 kW. Six identical starts per minute give an average of 60 W over a complete operating cycle. These two rates govern different aspects of cooling and surface temperature; an application with an actively driven motor during engagement requires its external work to be included.</p>
+</section>
+<section><h2 id="wear">Check the pressure at the inner radius</h2>
+<p>Under uniform wear \(pr=C\) and \(W=2\pi C(r_o-r_i)\). At the stated load and radii the maximum pressure occurs at the inner edge and equals \(1000/[2\pi(0.080-0.040)(0.040)]=99.5\,\mathrm{kPa}\). An average face pressure alone would hide this radial concentration.</p>
+</section>
+<section><h2 id="periodic-heat">Derive the peak temperature under repeated braking</h2>
+<p>A mean heat load sets the long-time cooling requirement, while peak friction temperature may control a brake lining. A simple intermediate model treats the thermally active rotor and lining as a uniform heat capacity \(C\) connected to ambient by conductance \(H\). Let \(\theta=T-T_\infty\). For the heat rate \(P(t)\) actually entering this lump, \(C\dot\theta=P-H\theta\) with thermal time \(\tau=C/H\). The generated friction heat may be shared between two bodies; use the fraction entering the modelled part or include both bodies in the same effective lump only when their temperatures justify that choice.</p>
+<p>For a repeat duty with constant heat rate \(P\) over braking time \(t_b\), then zero heat input over cooling time \(t_c\), integrate each constant-input segment. Writing \(a=e^{-t_b/\tau}\), \(b=e^{-t_c/\tau}\) gives \(\theta_{\rm peak}=a\theta_{\rm start}+(P/H)(1-a)\) and \(\theta_{\rm next}=b\theta_{\rm peak}\). At cyclic equilibrium next equals start, so</p>
+<div class="math display">\[\theta_{\rm peak}=\frac{P}{H}\frac{1-a}{1-ab},\qquad \theta_{\min}=b\theta_{\rm peak}.\]</div>
+<p>Integrating the balance over one full cycle independently gives mean rise \(\bar\theta=(P/H)t_b/(t_b+t_c)\), because stored energy returns to its starting value. The peak depends on capacity \(C\), although the mean is fixed by \(H\) and time-averaged power. A high-conductivity rotor with ample time for diffusion may fit a lumped model reasonably; very short contact events can create local flash temperatures far above the bulk estimate.</p>
+</section>
+<section><h2 id="rotor-temperature">Distinguish larger thermal mass from better cooling</h2>
+<p>A test rotor receives 6000 J every minute, distributed approximately uniformly over a 10 s braking interval. Use effective rotor heat capacity \(C=800\,\mathrm{J/K}\), conductance \(H=4.0\,\mathrm{W/K}\) and ambient temperature 25 °C. During braking \(P=600\,\mathrm W\); during the next 50 s it is zero. The time constant is 200 s. For periodic operation \(a=e^{-0.05}=0.9512,\ b=e^{-0.25}=0.7788\), giving peak rise \(150(1-0.9512)/(1-e^{-0.30})=28.23\) K and minimum rise \(0.7788(28.23)=21.98\) K. The rotor cycles between approximately 47.0 and 53.2 °C, while the mean is 50 °C.</p>
+<p>The first stop from ambient raises the rotor by only \(150(1-e^{-0.05})=7.32\) K. A single-stop test is therefore poor evidence for repeated-duty thermal margin. Doubling rotor heat capacity while keeping cooling unchanged changes \(\tau\) to 400 s. The periodic peak rise becomes \(150(1-e^{-0.025})/(1-e^{-0.15})=26.59\) K, but the mean rise stays 25 K. By contrast, doubling conductance would halve the mean rise under the same duty. Added thermal mass mainly reduces the ripple and slows warmup; stronger heat removal lowers the long-term mean as well. Actual fans and convection coefficients can vary with rotor speed during a stop and should be represented if the measured cooldown deviates systematically from one exponential.</p>
+<p>Thermal approach to periodic operation follows directly from the update. The difference from the steady-cycle temperature at the same point of each cycle is multiplied by \(ab=e^{-60/200}=0.741\) every minute. Reaching within 5% of that periodic offset therefore takes about ten cycles. A test of only two or three stops will still be dominated by warmup.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/mechanical-engineering/machine-elements/problem-sheets/4/">Problem sheet 4 · Elastic springs and belt traction</a></span><span>Next<br><a href="/lecture-notes/mechanical-engineering/machine-elements/chapters/10-fluid-film-bearings/">Chapter 10 · Hydrodynamic lubrication and sliding bearings</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

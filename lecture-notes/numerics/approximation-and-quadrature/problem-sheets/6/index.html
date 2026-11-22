@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing where to sample · OneSimulation</title>
+<meta name="description" content="Exploit endpoint structure, test aliasing and design a stratified random estimate with a known variance.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/problem-sheets/6/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Choosing where to sample · OneSimulation">
+<meta property="og:description" content="Exploit endpoint structure, test aliasing and design a stratified random estimate with a known variance.">
+<meta property="og:url" content="https://onesimulation.onrender.com/lecture-notes/numerics/approximation-and-quadrature/problem-sheets/6/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/lecture-notes/" aria-current="location">Lecture Notes</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/lecture-notes/">Lecture Notes</a> / <a href="/lecture-notes/numerics/">Numerical mathematics</a> / <a href="/lecture-notes/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Choosing where to sample</h1><p class="lead">Exploit endpoint structure, test aliasing and design a stratified random estimate with a known variance.</p><p class="byline">Problem sheet 6 · Chapters 11 and 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#remove-a-singular-factor">Remove a singular factor</a><a href="#expose-a-false-agreement">Expose a false agreement</a><a href="#two-strata-with-different-variability">Two strata with different variability</a><a href="#course-synthesis">Choose a quadrature variable before choosing a rule</a></nav></aside><article class="prose reference"><section>
+<h2 id="remove-a-singular-factor">Remove a singular factor</h2>
+<p>Evaluate \(\int_0^1 x^{-2/3}(1+x)\,dx\) using \(x=t^q\). Select \(q\), derive the transformed integrand, and decide whether one Simpson panel pair gives the exact integral.</p>
+<details><summary>Worked solution</summary>
+<p>To neutralise the power require \(q(1-2/3)-1=0\), giving \(q=3\). Then \(x^{-2/3}dx=t^{-2}3t^2dt=3dt\) and the finite endpoint value is 3.</p>
+<p>Integrating \(3(1+t^3)\) gives \(3+3/4=3.75\). Simpson is exact on cubics; its three samples are \(3,3.375,6\), and their weighted sum divided by six is 3.75.</p>
+</details>
+</section>
+<section>
+<h2 id="expose-a-false-agreement">Expose a false agreement</h2>
+<p>For \(f(x)=\cos(12\pi x)\) on \([0,1]\), find the trapezoid results with 3 and 6 panels. Test 12 panels and explain why the initial equal answers cannot justify a zero error estimate.</p>
+<details><summary>Worked solution</summary>
+<p>With three panels the phase advances \(4\pi\) at each sample; with six it advances \(2\pi\). Both return the constant sample average 1.</p>
+<p>With twelve panels samples alternate between 1 and −1. The half-weight endpoints together count as one positive value, so all contributions cancel. The exact integral is zero. Correlated aliasing on the first two grids invalidates a smooth-error extrapolation.</p>
+</details>
+</section>
+<section>
+<h2 id="two-strata-with-different-variability">Two strata with different variability</h2>
+<p>A response has variance 1 on the first half of \([0,1]\) and 4 on the other half. Estimate the integral from twelve independent evaluations. Compare the variances for allocations (6,6) and (4,8). Derive the continuous optimum under the same fixed budget.</p>
+<details><summary>Worked solution</summary>
+<p>Each stratum mean has variance \(\sigma_i^2/n_i\) and weight \(1/2\), so total variance is \((1/n_1+4/n_2)/4\). Equal allocation gives \(5/24\); (4,8) gives \(3/16\), slightly smaller.</p>
+<p>Differentiating \(1/n_1+4/(12-n_1)\) gives \(-1/n_1^2+4/(12-n_1)^2\). Its zero requires \(12-n_1=2n_1\). Positive second derivative yields the optimum (4,8), allocating in proportion to each stratum's standard deviation.</p>
+</details>
+</section>
+<section class="course-synthesis"><h2 id="course-synthesis">Choose a quadrature variable before choosing a rule</h2>
+<p>Estimate the integral of exp(−x)/√x from 0 to 1. A composite trapezoidal rule in x fails at its first endpoint. Remove the singularity by substitution, compute Simpson estimates using two and four panels in the new variable, and derive a practical error estimate. Explain why fitting a polynomial to the original endpoint would change the question.</p>
+<details><summary>Worked solution</summary>
+<p>Set x = t². The Jacobian 2t cancels 1/√x for t positive, and the integrand extends smoothly to g(0) = 2. The integral is now the integral of 2 exp(−t²) over [0,1]. The endpoint value is a limit implied by the model and the substitution.</p>
+<p>With two equal panels Simpson gives [g(0)+4g(0.5)+g(1)]/6 ≈ 1.49436. With four panels the weights are 1,4,2,4,1 times 1/12, giving about 1.49371. If the leading error is proportional to h⁴, the estimated fine-grid error magnitude is |S₄−S₂|/15 ≈ 0.000043.</p>
+<p>The exact benchmark √π erf(1) ≈ 1.4936483 shows that the fine-grid estimate is already close; the asymptotic estimate is approximate on these coarse grids. Replacing the infinite original endpoint by a fitted finite number amounts to imposing an arbitrary sampling model. The substitution preserves the exact integral and also explains why a higher-order rule now has the smoothness it needs.</p>
+</details></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/lecture-notes/numerics/approximation-and-quadrature/chapters/12-random-quadrature/">Chapter 12 · Monte Carlo integration and stratification</a></span><span>Next<br><a href="/lecture-notes/numerics/approximation-and-quadrature/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
