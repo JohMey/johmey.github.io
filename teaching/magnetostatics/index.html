@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Magnetostatics · OneSimulation</title>
-<meta name="description" content="Vector potential, coils, magnetic flux and inductance.">
+<title>When does the long-solenoid formula work? · OneSimulation</title>
+<meta name="description" content="Add the fields of current loops along a coil and estimate the centre-field error caused by its finite length.">
 <meta name="theme-color" content="#f5f2e8">
 <link rel="canonical" href="https://onesimulation.onrender.com/teaching/magnetostatics/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Magnetostatics · OneSimulation">
-<meta property="og:description" content="Vector potential, coils, magnetic flux and inductance.">
+<meta property="og:title" content="When does the long-solenoid formula work? · OneSimulation">
+<meta property="og:description" content="Add the fields of current loops along a coil and estimate the centre-field error caused by its finite length.">
 <meta property="og:url" content="https://onesimulation.onrender.com/teaching/magnetostatics/">
 <meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
@@ -27,86 +27,37 @@
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Magnetostatics</h1><p class="lead">Vector potential, coils, magnetic flux and inductance.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Current, flux and vector potential</a><a href="#boundary">Coils, inductance and open boundaries</a><a href="#worked">Worked example and lab</a><a href="#onesimulation">Model the physics in OneSimulation</a><a href="#case-studies">Notebook case studies</a><a href="#recipes">Additional worked models</a></nav></aside><article class="prose reference"><section>
-<h2 id="theory">Current, flux and vector potential</h2>
-<p>For steady currents, \(\nabla\times\mathbf H=\mathbf J\) and \(\nabla\cdot\mathbf B=0\). In an isotropic linear medium \(\mathbf B=\mu\mathbf H\), except that remanent magnetisation can contribute an additional term. Writing \(\mathbf B=\nabla\times\mathbf A\) enforces the divergence condition and leads to an equation in \(\mathbf A\).</p>
-<p>The transformation \(\mathbf A\mapsto\mathbf A+\nabla\chi\) leaves \(\mathbf B\) unchanged. A vector-potential solve therefore needs a gauge or equivalent treatment of the null space. Continuity of normal \(\mathbf B\) and the prescribed jump in tangential \(\mathbf H\) constrain the material interfaces.</p>
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/course/#fields">Electric and magnetic fields</a> / Magnetostatics</p><h1>When does the long-solenoid formula work?</h1><p class="lead">Add the fields of current loops along a coil and estimate the centre-field error caused by its finite length.</p><p class="prerequisites"><strong>Prerequisites</strong> Magnetic field of a current loop and integration.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Building a coil from current loops</a><a href="#boundary">What the two ends contribute</a><a href="#worked">Field at the centre of a short solenoid</a><a href="#tutorial">Tutorial · Testing a long-coil estimate</a><a href="#numerical">Numerical comparison · A coil with finite winding thickness</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Building a coil from current loops</h2>
+<p>The usual solenoid formula depends only on turns per metre and current. A short coil, however, can have a noticeably weaker field than that formula predicts. To see where the length enters, start with one circular loop of radius \(R\) carrying steady current \(I\) in air. On its axis, every wire element has a partner across the loop. Their radial field components cancel and their axial components add.</p>
+<p>At distance \(u\) from the plane of the loop, each element lies a distance \(\sqrt{R^2+u^2}\) from the observation point. The axial projection of the Biot–Savart law is \(dB_z=(\mu_0 I/4\pi)R\,d\ell/(R^2+u^2)^{3/2}\). Integrating \(d\ell\) around the circumference \(2\pi R\) gives</p>
+<div class="math display">\[B_{\rm loop}(u)=\frac{\mu_0 I R^2}{2(R^2+u^2)^{3/2}}.\]</div>
 </section>
 <section>
-<h2 id="boundary">Coils, inductance and open boundaries</h2>
-<p>A single circular filament of radius \(R\) carrying current \(I\) gives \(B_z=\mu_0IR^2/[2(R^2+z^2)^{3/2}]\) on its axis by the Biot–Savart law. A tightly wound thin coil of \(N\) identical turns multiplies this result by \(N\). In a linear system, an independent inductance check is \(W_m=LI^2/2\).</p>
-<p>A finite mesh truncates the air domain. Increase the distance to the truncation surface at fixed mesh resolution near the coil to estimate the boundary error separately from spatial discretization error.</p>
+<h2 id="boundary">What the two ends contribute</h2>
+<p>Let the coil occupy \(-L/2\leq z'\leq L/2\) and distribute \(N\) turns uniformly over its length. Assume a thin winding, no magnetic core and free space outside. A slice of width \(dz'\) contains \((N/L)\,dz'\) loops. At the centre, sum their fields using the loop result and the antiderivative \(z'/\sqrt{R^2+z'^2}\) for \(R^2/(R^2+z'^2)^{3/2}\). The two limits give</p>
+<div class="math display">\[B_{\rm centre}=\frac{\mu_0 NI}{2\sqrt{R^2+(L/2)^2}}=\frac{\mu_0(N/L)I}{\sqrt{1+(2R/L)^2}}.\]</div>
+<p>With the turn density \(N/L\) fixed and \(L/R\) large, the denominator approaches one. The familiar long-solenoid result applies deep inside such a coil. Holding \(N\) fixed and shortening the coil gives a different limit, the field \(\mu_0 NI/(2R)\) of \(N\) coincident loops.</p>
+<p class="source-note">Further study · <a href="https://openstax.org/books/university-physics-volume-2/pages/12-6-solenoids-and-toroids">Solenoids and Toroids</a> (OpenStax, University Physics II §12.6).</p>
 </section>
 <section>
-<h2 id="worked">Worked example and lab</h2>
-<p>For a thin 100-turn coil with \(R=50\) mm and \(I=2\) A, \(B_z(0)=2.51\) mT. At \(z=R\) the field falls by a factor \(2^{-3/2}\) to 0.889 mT.</p>
-<ol><li>Run the solenoid-axis notebook and compare samples with the reference appropriate to its coil length.</li><li>Double the current in a linear material and check whether the field doubles and energy quadruples.</li><li>Repeat with a larger air domain and a finer coil mesh. Report the two changes separately.</li></ol>
+<h2 id="worked">Field at the centre of a short solenoid</h2>
+<p>A 200-turn winding has radius 25 mm, length 30 mm and current 1.0 A. The long-coil estimate is \(\mu_0(200/0.030)(1.0)=8.38\,\mathrm{mT}\), with \(\mu_0\approx4\pi\times10^{-7}\,\mathrm{H/m}\). Here \(2R/L=1.67\), so the finite-length factor is \(1/\sqrt{1+1.67^2}=0.514\). The centre field is 4.31 mT. Much of the field spreads around the ends of this short winding.</p>
 </section>
-<section><h2 id="onesimulation">Model the physics in OneSimulation</h2><p><code>onesim.physics.magnetostatics</code></p>
-<p>Assemble the model from permeability, a formulation and current sources. <code>MagneticVectorPotential(gauge=CoulombGauge())</code> gives a vector-potential model with a divergence constraint. <code>SolenoidCurrent</code> supplies azimuthal winding current and a meshing support. <code>MagneticInsulation</code> sets tangential potential to zero. The explicit potential, magnetic-field and reluctance boundary declarations represent other tangential boundary models. Use the coil example in Chapter <a class="xref" href="/tutorials/spatial-models/">3</a> as a starting point. Record the gauge, outer boundary distance and winding mesh size. For a linear material, plot <span class="math">\(B/I\)</span> for several currents on the same axes to verify scaling.</p></section><section><h2 id="case-studies">Notebook case studies</h2><ul><li><a href="/blog/solenoid_on_axis_field/">On-axis field of a solenoid</a></li><li><a href="/blog/solenoid_inductance_from_energy/">Inductance from the magnetic field energy</a></li></ul></section><section><h2 id="recipes">Additional worked models</h2><p>The solenoid chapter exercises the current source, embedded winding support and magnetic insulation. The manufactured trace below isolates the tangential condition and the gauge from winding geometry.</p>
-<h3 id="imposed-tangential-potential-and-a-uniform-magnetic-field"><span class="num">6.13.1</span> Imposed tangential potential and a uniform magnetic field</h3>
-<p>Use a known divergence-free vector potential as tangential trace. The resulting flux density is the curl of that field. This example exercises a nonzero trace and the Coulomb constraint.</p>
-<pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">onesimulation_plot_theme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">theme</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d3</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">VacuumPermeability</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructuredTetrahedralMesher</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.fem</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiniteElement</span><span class="p">,</span> <span class="n">Nedelec</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.linear</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseDirect</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.magnetostatics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">CoulombGauge</span><span class="p">,</span>
-    <span class="n">MagneticPotentialBoundary</span><span class="p">,</span>
-    <span class="n">MagneticVectorPotential</span><span class="p">,</span>
-    <span class="n">Magnetostatics</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
-
-<span class="n">box</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">Magnetostatics</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
-    <span class="n">permeability</span><span class="o">=</span><span class="n">VacuumPermeability</span><span class="p">(),</span>
-    <span class="n">formulation</span><span class="o">=</span><span class="n">MagneticVectorPotential</span><span class="p">(</span>
-        <span class="n">gauge</span><span class="o">=</span><span class="n">CoulombGauge</span><span class="p">(</span><span class="n">multiplier_reference_dof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="p">),</span>
-<span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">vector_potential</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
-
-
-<span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Uniform B patch&quot;</span><span class="p">,</span>
-    <span class="n">geometry</span><span class="o">=</span><span class="n">box</span><span class="p">,</span>
-    <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="p">,),</span>
-    <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span>
-        <span class="n">MagneticPotentialBoundary</span><span class="p">(</span>
-            <span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">vector_potential</span>
-        <span class="p">),</span>
-    <span class="p">),</span>
-<span class="p">)</span>
-<span class="n">mesh</span> <span class="o">=</span> <span class="n">StructuredTetrahedralMesher</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span>
-    <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
-    <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span>
-    <span class="n">numerics</span><span class="o">=</span><span class="n">Numerics</span><span class="p">(</span>
-        <span class="n">spatial</span><span class="o">=</span><span class="n">FiniteElement</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">Nedelec</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="n">linear_solver</span><span class="o">=</span><span class="n">SparseDirect</span><span class="p">()</span>
-    <span class="p">),</span>
-<span class="p">)</span><span class="o">.</span><span class="n">solve_stationary</span><span class="p">()</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.37</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.51</span><span class="p">)))</span>
-<span class="n">B</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">magnetic_flux_density</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
-<span class="n">theme</span><span class="o">.</span><span class="n">use_theme</span><span class="p">()</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.6</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">B</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;B </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;World x [m]&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Magnetic flux density [T]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-magnetic-potential-boundary.png"><img loading="lazy" src="/showcase/figures/recipe-magnetic-potential-boundary.png" alt="Figure computed with OneSimulation: recipe magnetic potential boundary"></a></figure></section></article></div>
+<section>
+<h2 id="tutorial">Tutorial · Testing a long-coil estimate</h2>
+<ol>
+<li><p>An engineer wants the long-solenoid formula to overestimate the actual centre field by at most 5% of the actual value. What minimum length is needed at \(R=25\) mm?</p>
+<details><summary>Worked solution</summary><p>The ratio of estimated to actual field is \(\sqrt{1+(2R/L)^2}\). Requiring it to be at most 1.05 gives \(L/R\geq 2/\sqrt{1.05^2-1}=6.25\). The threshold is 156.2 mm, so a whole-millimetre design needs at least 157 mm. This tests the single centre point. A requirement covering the ends would need the field at additional positions.</p></details></li>
+<li><p>Place the probe at one end of the original 30 mm coil. Integrate the contributions from loops at distances \(0\) to \(L\). What fraction of the centre field reaches the probe?</p>
+<details><summary>Worked solution</summary><p>Inserting the new limits into the same antiderivative gives \(B_{\rm end}=(\mu_0 NI/2L)L/\sqrt{R^2+L^2}=3.22\,\mathrm{mT}\). Its ratio to \(B_{\rm centre}\) is \(3.22/4.31=0.747\). For a very long coil the ratio tends to one half, since turns then extend far away on only one side of an end probe.</p></details></li>
+</ol>
+</section>
+<section>
+<h2 id="numerical">Numerical comparison · A coil with finite winding thickness</h2>
+<p>The OneSimulation case uses the worked example’s turn count, length and current with winding radii of 23.5 and 26.5 mm. Its three-dimensional mesh includes the winding and surrounding air. Compare the reported central \(B_z\) with 4.31 mT at the mean radius, then inspect the axial profile. The published case reports agreement within about 3%. Its plotted samples average the field over the axis point and a 6 mm probe ring, which matters when comparing a computed value with a point formula. <a href="/blog/solenoid_on_axis_field/">Inspect the finite-solenoid calculation</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/teaching/electromagnetics/">How far does an alternating magnetic field penetrate a metal?</a></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

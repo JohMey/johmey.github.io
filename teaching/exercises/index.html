@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eight numerical methods exercises · OneSimulation</title>
-<meta name="description" content="Models, tasks and deliverables for eight Python lab exercises.">
+<title>Problem classes · OneSimulation</title>
+<meta name="description" content="Practise a topic from one lecture or try a problem that connects ideas across subjects.">
 <meta name="theme-color" content="#f5f2e8">
 <link rel="canonical" href="https://onesimulation.onrender.com/teaching/exercises/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Eight numerical methods exercises · OneSimulation">
-<meta property="og:description" content="Models, tasks and deliverables for eight Python lab exercises.">
+<meta property="og:title" content="Problem classes · OneSimulation">
+<meta property="og:description" content="Practise a topic from one lecture or try a problem that connects ideas across subjects.">
 <meta property="og:url" content="https://onesimulation.onrender.com/teaching/exercises/">
 <meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
-
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
@@ -27,99 +27,33 @@
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell">
-  <p class="edition"><a href="/teaching/">Teaching</a></p>
-  <h1>Eight numerical methods exercises</h1>
-  <p class="lead">Each exercise gives a model, a quantitative check and a notebook deliverable. The first two can be run with standard Python.</p>
-  <div class="download-row"><a class="button button-primary" href="/downloads/teaching-baselines.py" download>Download the script for exercises 1 and 2</a><a class="link-text" href="/teaching/course/">View course plan</a></div>
-</header>
-<div class="shell article-layout">
-  <aside class="article-nav"><nav aria-label="Exercises"><strong>Exercises</strong><a href="#exercise-1">1. Cooling</a><a href="#exercise-2">2. Oscillator</a><a href="#exercise-3">3. Stencil order</a><a href="#exercise-4">4. Slope limiters</a><a href="#exercise-5">5. Poisson benchmark</a><a href="#exercise-6">6. Linear solvers</a><a href="#exercise-7">7. Cantilever</a><a href="#exercise-8">8. Reaction–diffusion</a></nav></aside>
-  <article class="prose">
-    <section id="exercise-1">
-      <h2>1. Radiative cooling</h2>
-      <p>Integrate <var>dT/dt = −βT⁴</var> for 30 s with <var>T₀ = 400 K</var> and <var>β = 5 × 10<sup>−10</sup> K<sup>−3</sup> s<sup>−1</sup></var>. For surroundings at 0 K, the reference is <var>T(t) = (T₀<sup>−3</sup> + 3βt)<sup>−1/3</sup></var>.</p>
-      <pre><code>python teaching-baselines.py cooling --step 0.4 &gt; cooling.csv</code></pre>
-      <ol>
-        <li>Plot the numerical and exact temperatures against time. Record the maximum absolute temperature error.</li>
-        <li>Repeat with maximum steps of 0.2, 0.1 and 0.05 s. Use the actual step from the CSV and compute the observed order from successive error ratios.</li>
-        <li>Set the surroundings to 293 K using <var>−β(T⁴ − 293⁴)</var>. Check that the temperature decreases towards 293 K from above, and estimate the remaining error with a finer time step.</li>
-      </ol>
-      <p><strong>Submit</strong> The temperature curve, the convergence table and the check for the 293 K case.</p>
-    </section>
-    <section id="exercise-2">
-      <h2>2. Damped oscillator</h2>
-      <p>Set <var>x″ + 2γx′ + ω₀²x = 0</var>, with <var>γ = 0.1 s<sup>−1</sup></var>, <var>ω₀ = 2π s<sup>−1</sup></var>, <var>x(0) = 1 m</var> and <var>x′(0) = 0</var>. The script supplies the exact displacement and specific energy over ten damped periods.</p>
-      <pre><code>python teaching-baselines.py oscillator --step 0.1 &gt; oscillator.csv</code></pre>
-      <ol>
-        <li>Plot displacement and specific energy from the numerical and exact columns.</li>
-        <li>Halve the step at fixed damping. Then double the damping at fixed step and compare the change in the physical decay.</li>
-        <li>Report the largest tested step for which the displacement error at ten periods is below 1% of the exact displacement magnitude there. Repeat with the next finer step.</li>
-      </ol>
-      <p><strong>Submit</strong> Both plots, the error table and the tested step limit.</p>
-    </section>
-    <section id="exercise-3">
-      <h2>3. Order of a finite difference stencil</h2>
-      <p>Solve periodic advection <var>uₜ + uₓ = 0</var> on <var>[0, 1)</var> to <var>t = 1</var>. The solution returns to the initial profile after one circuit.</p>
-      <ol>
-        <li>Use <var>sin(2πx)</var> initially. Compare second- and fourth-order centred spatial differences with RK4 and <var>Δt = 0.2Δx</var>.</li>
-        <li>Run 32, 64, 128 and 256 points, record the RMS error and fit a slope on a log–log plot.</li>
-        <li>Repeat with the periodic triangular profile <var>1 − |2x − 1|</var>. Compare slopes and plot the error near the kink.</li>
-      </ol>
-      <p><strong>Submit</strong> Error plots and observed orders for both profiles.</p>
-    </section>
-    <section id="exercise-4">
-      <h2>4. Slope limiters in finite volumes</h2>
-      <p>Use the periodic advection model from exercise 3 with 100 cells and Courant number 0.4. Start with <var>u = 1</var> on <var>[0.25, 0.5)</var> and <var>u = 0</var> elsewhere.</p>
-      <ol>
-        <li>Use piecewise linear reconstruction with an upwind numerical flux. Compare unlimited centred slopes, minmod and monotonized central. Use the same second-order SSP Runge–Kutta time integration in all three runs.</li>
-        <li>After one circuit, measure the minimum and maximum, the sum of absolute jumps including the periodic seam, and the change in <var>Σᵢ uᵢ Δx</var>. The initial mass is 0.25.</li>
-        <li>Repeat with <var>sin(2πx)</var>. Compare the trade-off between pulse smearing and smooth-wave error.</li>
-      </ol>
-      <p><strong>Submit</strong> A table of bounds, total variation and mass errors, with both profiles plotted.</p>
-    </section>
-    <section id="exercise-5">
-      <h2>5. One Poisson model, five discretizations</h2>
-      <ol>
-        <li>Run the <a href="/tutorials/method-comparison/#run">benchmark script</a> on 16 cells per direction and compare the five cell-centre RMS errors with the article.</li>
-        <li>Repeat on 8 and 32 cells per direction. Estimate the order separately over 8→16 and 16→32. Record resources if the largest direct solve exceeds your machine’s memory or time budget.</li>
-        <li>Plot error against wall time and identify which tested runs meet <var>RMS ≤ 10<sup>−5</sup></var>. List what you would need to hold fixed in a second benchmark on curved geometry.</li>
-      </ol>
-      <p><strong>Submit</strong> Errors, observed orders and the error–time plot.</p>
-    </section>
-    <section id="exercise-6">
-      <h2>6. Linear solver accuracy</h2>
-      <p>Use linear FEM on the 16³ Poisson grid from exercise 5. Keep the assembled system and initial guess fixed when comparing iterative methods.</p>
-      <ol>
-        <li>Solve directly, with conjugate gradients and with GMRES using an ILU preconditioner. Apply CG to the symmetric positive definite system after eliminating the fixed boundary values.</li>
-        <li>For relative tolerances from 10<sup>−3</sup> to 10<sup>−9</sup>, record iterations, relative residual <var>‖b − Ax‖₂ / ‖b‖₂</var>, wall time and cell-centre RMS difference from the direct solution.</li>
-        <li>Choose the loosest tested tolerance where the difference from the direct solution is at most a tenth of the direct solution's discretization error.</li>
-      </ol>
-      <p><strong>Submit</strong> A solver comparison and the two errors that justify your chosen tolerance.</p>
-    </section>
-    <section id="exercise-7">
-      <h2>7. A cantilever in 3D</h2>
-      <p>Use a 200 mm cantilever with a 20 × 10 mm rectangular section, <var>E = 70 GPa</var> and <var>ν = 0.33</var>. Fix one end and apply a total transverse force of 1 N to the other face, in the 10 mm direction. The beam reference is <var>u = FL³/(3EI)</var> and <var>I = bh³/12</var>, giving about 22.86 µm.</p>
-      <ol>
-        <li>Report mean transverse displacement on the loaded face for two meshes. Compare axial stress at midspan at the same physical location on both grids.</li>
-        <li>Compare the displacement with the Euler–Bernoulli formula. Discuss local stress near the clamp separately from displacement.</li>
-        <li>Double the length while keeping the section and force fixed. Compare the displacement ratio with the predicted factor of eight.</li>
-      </ol>
-      <p><strong>Submit</strong> Mesh sizes, displacements, a stress check and the length-scaling comparison.</p>
-    </section>
-    <section id="exercise-8">
-      <h2>8. Verify a reaction–diffusion equation</h2>
-      <p>On the unit square with zero Dirichlet data, solve <var>−∇·(D∇u) + ku = f</var> with <var>D = 0.1</var>, <var>k = 2</var> and prescribed exact field <var>u = sin(πx) sin(πy)</var>.</p>
-      <ol>
-        <li>Apply the operator to the exact field to derive <var>f = (2Dπ² + k)u</var>. Check the boundary values.</li>
-        <li>Solve on 16², 32² and 64² cells. Compare cell-centre RMS errors and inspect the signed error field.</li>
-        <li>Compute both pairwise convergence orders and relate them to the discretization and linear solver tolerance.</li>
-      </ol>
-      <p><strong>Submit</strong> Source derivation, refinement table and one error-field plot.</p>
-    </section>
-  </article>
-</div>
-
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Problem classes</h1><p class="lead">Practise a topic from one lecture or try a problem that connects ideas across subjects.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#chapter-problems">Tutorials by subject</a><a href="#relaxation">A common clock for cooling and reaction</a><a href="#constraint">A heated bar with a gap at the support</a><a href="#frequencies">Two systems with the same period</a></nav></aside><article class="prose reference"><aside class="moved-bookmark" id="exercise-1"><p>The numerical methods lab has moved. <a href="/tutorials/numerical-lab/exercises/#exercise-1">Open exercise 1 in the lab</a>.</p></aside><aside class="moved-bookmark" id="exercise-2"><p>The numerical methods lab has moved. <a href="/tutorials/numerical-lab/exercises/#exercise-2">Open exercise 2 in the lab</a>.</p></aside><aside class="moved-bookmark" id="exercise-3"><p>The numerical methods lab has moved. <a href="/tutorials/numerical-lab/exercises/#exercise-3">Open exercise 3 in the lab</a>.</p></aside><aside class="moved-bookmark" id="exercise-4"><p>The numerical methods lab has moved. <a href="/tutorials/numerical-lab/exercises/#exercise-4">Open exercise 4 in the lab</a>.</p></aside><aside class="moved-bookmark" id="exercise-5"><p>The numerical methods lab has moved. <a href="/tutorials/numerical-lab/exercises/#exercise-5">Open exercise 5 in the lab</a>.</p></aside><aside class="moved-bookmark" id="exercise-6"><p>The numerical methods lab has moved. <a href="/tutorials/numerical-lab/exercises/#exercise-6">Open exercise 6 in the lab</a>.</p></aside><aside class="moved-bookmark" id="exercise-7"><p>The numerical methods lab has moved. <a href="/tutorials/numerical-lab/exercises/#exercise-7">Open exercise 7 in the lab</a>.</p></aside><aside class="moved-bookmark" id="exercise-8"><p>The numerical methods lab has moved. <a href="/tutorials/numerical-lab/exercises/#exercise-8">Open exercise 8 in the lab</a>.</p></aside><section><h2 id="chapter-problems">Tutorials by subject</h2><p>Each problem set follows its lecture. Work through the questions on paper, then open a solution to compare your assumptions, units and reasoning.</p><div class="seminar-directory"><div><h3>Forces and motion</h3><ul><li><a href="/teaching/solid-mechanics/#tutorial">Solid mechanics</a></li><li><a href="/teaching/geotechnics/#tutorial">Geotechnics</a></li><li><a href="/teaching/hydrodynamics/#tutorial">Fluid mechanics</a></li><li><a href="/teaching/multibody/#tutorial">Rigid-body dynamics</a></li></ul></div><div><h3>Transport and thermal response</h3><ul><li><a href="/teaching/heat-transfer/#tutorial">Heat transfer</a></li><li><a href="/teaching/chemistry/#tutorial">Chemical kinetics</a></li><li><a href="/teaching/biophysics/#tutorial">Biophysics</a></li><li><a href="/teaching/multiphysics/#tutorial">Thermoelasticity</a></li></ul></div><div><h3>Electric and magnetic fields</h3><ul><li><a href="/teaching/electrostatics/#tutorial">Electrostatics</a></li><li><a href="/teaching/magnetostatics/#tutorial">Magnetostatics</a></li><li><a href="/teaching/electromagnetics/#tutorial">Electromagnetic induction</a></li><li><a href="/teaching/magnetohydrodynamics/#tutorial">Magnetohydrodynamics</a></li></ul></div><div><h3>Waves and oscillations</h3><ul><li><a href="/teaching/systems/#tutorial">Circuit dynamics</a></li><li><a href="/teaching/plasma/#tutorial">Plasma physics</a></li><li><a href="/teaching/acoustics/#tutorial">Acoustics</a></li><li><a href="/teaching/optics/#tutorial">Optics</a></li></ul></div></div></section><section>
+<h2 id="relaxation">A common clock for cooling and reaction</h2>
+<p>A metal part cools in air at 20 °C. It starts at 68 °C and reaches 44 °C in 6 min. In a separate experiment, a well-mixed reversible reaction approaches an equilibrium concentration of 0.20 mol/L. Its measured concentration falls from 0.80 to 0.50 mol/L in 90 s. Assume constant parameters and a single exponential relaxation in each experiment.</p>
+<p>What should you plot to make the two experiments fall on the same curve? Use the measurements to predict when the metal reaches 26 °C and when the concentration reaches 0.275 mol/L.</p>
+<details><summary>Work through the time and amplitude scales</summary>
+<p>Subtract the equilibrium value first. The temperature excess goes from 48 to 24 K and the concentration excess from 0.60 to 0.30 mol/L. Both measurements therefore give a half-life. Write \(y=(X-X_{\rm eq})/(X_0-X_{\rm eq})\) and \(s=t/t_{1/2}\). The two sets of points fall on \(y=2^{-s}\).</p>
+<p>The target excesses are 6 K and 0.075 mol/L. Each is one eighth of its initial value, so three half-lives must pass. The cooling time is 18 min and the reaction time is 270 s. A later point far from the same curve would give you a reason to revisit the constant-parameter assumption.</p></details>
+<p class="related-reading">Related lectures · <a href="/teaching/heat-transfer/">Cooling in air</a> and <a href="/teaching/chemistry/">Reversible reactions</a></p>
+</section>
+<section>
+<h2 id="constraint">A heated bar with a gap at the support</h2>
+<p>A straight steel bar of length 1.0 m and cross-section 100 mm² is fixed axially at its left end. Its right end lies 0.30 mm from a rigid stop. Take \(E=200\) GPa and \(\alpha=12\times10^{-6}\ \mathrm{K}^{-1}\). The temperature rises uniformly by 50 K. Assume small strain, elastic behaviour and lateral support against buckling.</p>
+<p>Sketch axial stress against temperature rise. When does the bar first touch the stop? Find the final displacement and the force on the stop. After heating, the part cools in air at its original temperature. Its excess temperature halves every six minutes. When does the bar lose contact, and what clearance opens six minutes later?</p>
+<details><summary>Determine the contact point and reaction</summary>
+<p>Before contact there is no axial force, and the right end moves by \(\alpha L\Delta T\). It closes the 0.30 mm gap at \(\Delta T=0.00030/(12\times10^{-6}\times1.0)=25\) K. From that point the end remains 0.30 mm from its initial location. The additional 25 K of heating produces a compressive strain relative to free expansion.</p>
+<p>Taking tension as positive, \(\sigma=-E\alpha(50-25)=-60\) MPa. The graph is horizontal at zero up to 25 K, then falls with slope −2.4 MPa/K. At 50 K the bar pushes on the stop with a force of \(60\times10^6\times100\times10^{-6}=6000\) N. The stop unloads when the excess temperature returns to 25 K, after six minutes of cooling. Six minutes later the excess is 12.5 K and the bar extends freely by 0.150 mm, leaving a clearance of 0.150 mm.</p></details>
+<p class="related-reading">Related lectures · <a href="/teaching/multiphysics/">Thermal strain and constraints</a> and <a href="/teaching/heat-transfer/">Cooling in air</a></p>
+</section>
+<section>
+<h2 id="frequencies">Two systems with the same period</h2>
+<p>A rigid air column of length 1.0 m supports a longitudinal standing wave with half a wavelength between its ends. The speed of sound is 340 m/s. An ideal LC circuit contains a 10 µF capacitor. Choose the inductance so that the circuit oscillates at the acoustic frequency. If the air column is then doubled in length, what change to the inductance restores the match?</p>
+<details><summary>Match the frequencies and test the scaling</summary>
+<p>The standing wave has wavelength \(2L=2.0\) m, hence \(f=c/(2L)=170\) Hz. In the circuit, charge obeys \(\ddot q+q/(\mathcal L C)=0\), so \(2\pi f=1/\sqrt{\mathcal L C}\). With \(C=10^{-5}\) F, the required inductance is \(\mathcal L=1/[(2\pi\cdot170)^2 C]=0.0876\) H.</p>
+<p>Doubling the air-column length halves its frequency to 85 Hz. The inductance must increase fourfold to about 0.351 H. The air column sets a round-trip travel time through its length. The circuit sets an energy-exchange time through the square root of inductance times capacitance.</p></details>
+<p class="related-reading">Related lectures · <a href="/teaching/acoustics/">Standing sound waves</a> and <a href="/teaching/systems/">Circuit oscillations</a></p>
+</section>
+</article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

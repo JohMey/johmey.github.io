@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Acoustics · OneSimulation</title>
-<meta name="description" content="Linear sound, impedance, reflection and cavity modes.">
+<title>Which notes can a closed room sustain? · OneSimulation</title>
+<meta name="description" content="Apply rigid-wall conditions to the wave equation and predict the frequencies and shapes of standing sound waves.">
 <meta name="theme-color" content="#f5f2e8">
 <link rel="canonical" href="https://onesimulation.onrender.com/teaching/acoustics/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Acoustics · OneSimulation">
-<meta property="og:description" content="Linear sound, impedance, reflection and cavity modes.">
+<meta property="og:title" content="Which notes can a closed room sustain? · OneSimulation">
+<meta property="og:description" content="Apply rigid-wall conditions to the wave equation and predict the frequencies and shapes of standing sound waves.">
 <meta property="og:url" content="https://onesimulation.onrender.com/teaching/acoustics/">
 <meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
@@ -27,300 +27,38 @@
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Acoustics</h1><p class="lead">Linear sound, impedance, reflection and cavity modes.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Small disturbances in a fluid</a><a href="#boundary">Reflection and standing modes</a><a href="#worked">Worked example and lab</a><a href="#onesimulation">Model the physics in OneSimulation</a><a href="#case-studies">Notebook case studies</a><a href="#recipes">Additional worked models</a></nav></aside><article class="prose reference"><section>
-<h2 id="theory">Small disturbances in a fluid</h2>
-<p>Sound in a uniform, stationary fluid consists of small pressure and velocity perturbations. Let \(p\) be acoustic pressure in Pa, \(u\) particle velocity in m/s, \(\rho_0\) the equilibrium density and \(c\) the sound speed. In one dimension the linearised momentum and mass balances are</p>
-<div class="math display">\[\rho_0 \partial_t u=-\partial_x p,\qquad
-\partial_t p=-\rho_0 c^2\partial_x u.\]</div>
-<p>Differentiate the second equation in time and substitute the first to obtain \(\partial_{tt}p=c^2\partial_{xx}p\). For a right-moving wave, \(u=p/(\rho_0 c)\). The ratio \(Z_0=\rho_0c\) is the characteristic impedance. The sign reverses for a left-moving wave, so the product \(pu\) also records the direction of energy transport.</p>
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/course/#oscillations">Waves and oscillations</a> / Acoustics</p><h1>Which notes can a closed room sustain?</h1><p class="lead">Apply rigid-wall conditions to the wave equation and predict the frequencies and shapes of standing sound waves.</p><p class="prerequisites"><strong>Prerequisites</strong> Sinusoidal waves and partial derivatives.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">From a pressure disturbance to a wave</a><a href="#boundary">Fit a wave between rigid walls</a><a href="#worked">Locate the lowest note and its silent plane</a><a href="#tutorial">Tutorial on listening positions and room shape</a><a href="#numerical">Optional numerical comparison</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">From a pressure disturbance to a wave</h2>
+<p>A loudspeaker sweeps through a range of pitches in a closed room. At a few frequencies the pressure response depends strongly on where the listener stands. To predict those frequencies, first consider air at rest with uniform density \(\rho_0\) and sound speed \(c\). Let \(p\) be a small pressure disturbance and \(\mathbf u\) the particle velocity.</p>
+<p>Pressure differences accelerate a parcel of air. Compression raises its density and, through the adiabatic relation \(p=c^2\rho'\), its pressure. Linear momentum and mass conservation therefore give</p>
+<div class="math display">\[\rho_0\,\partial_t\mathbf u=-\nabla p,\qquad
+\partial_t p=-\rho_0c^2\nabla\cdot\mathbf u.\]</div>
+<p>Differentiate the pressure equation in time and substitute the velocity equation to obtain \(\partial_{tt}p=c^2\nabla^2p\). A standing wave has a pressure shape \(P(\mathbf x)\) whose amplitude oscillates in time. Substituting \(p=P\cos(\omega t)\) gives \(\nabla^2P+(\omega/c)^2P=0\).</p>
 </section>
 <section>
-<h2 id="boundary">Reflection and standing modes</h2>
-<p>A rigid wall imposes \(u=0\). An incident pressure wave then reflects with the same pressure sign. A pressure-release plane imposes \(p=0\) and reverses the pressure sign. Two rigid ends at \(x=0,L\) admit pressure shapes \(\cos(n\pi x/L)\) and frequencies \(f_n=nc/(2L)\). The spatially constant mode has zero frequency.</p>
-<p>Separate spatial and temporal error. With explicit time stepping, the Courant number \(c\Delta t/\Delta x\) must be compatible with the integrator and flux; wave phase can remain inaccurate even when the run is stable. Estimate it over several periods.</p>
+<h2 id="boundary">Fit a wave between rigid walls</h2>
+<p>At a fixed wall the normal air velocity stays zero, so momentum balance gives \(\partial_n P=0\). Along a box of length \(L_x\), a shape \(\cos(k_xx)\) has zero derivative at the first wall. The opposite wall requires \(\sin(k_x L_x)=0\), or \(k_x=n_x\pi/L_x\). Applying the same argument in the other directions gives products of three cosines and frequencies</p>
+<div class="math display">\[f_{n_x n_y n_z}=\frac{c}{2}\sqrt{(n_x/L_x)^2+(n_y/L_y)^2+(n_z/L_z)^2}.\]</div>
+<p>The indices are nonnegative integers. A zero index means uniform pressure along that direction. All three zero together give a static pressure offset. Uniform, lossless air and perfectly rigid walls give sharp resonances. In a real room, absorption also sets how long each note rings.</p>
 </section>
 <section>
-<h2 id="worked">Worked example and lab</h2>
-<p>For \(c=343\) m/s, \(\rho_0=1.2\) kg/m³ and \(L=1\) m, the first rigid-wall frequency is 171.5 Hz. A 1 Pa sinusoidal travelling wave has peak particle velocity 2.43 mm/s and mean intensity \(p_\mathrm{peak}^2/(2\rho_0c)\simeq1.21\) mW/m².</p>
-<ol><li>Use the periodic-line setup and initialise consistent pressure and particle velocity. Compare a pressure probe with its phase-shifted exact signal after one traversal.</li><li>Replace periodic conditions with rigid end walls. Excite the first mode and estimate its frequency from the interval between successive maxima.</li><li>Double the spatial resolution at fixed Courant number; report frequency and amplitude errors independently.</li></ol>
+<h2 id="worked">Locate the lowest note and its silent plane</h2>
+<p>Consider a box of \(1.0\times0.7\times0.5\) m filled with air at \(c=343\) m/s. The longest dimension allows the longest half-wave. The lowest positive frequency is \(f_{100}=343/(2\times1.0)=171.5\) Hz. Its pressure shape is proportional to \(\cos(\pi x/L_x)\). The end walls have opposite pressure signs at each peak, and the midplane \(x=0.50\) m is a pressure node. A microphone on that plane can miss this mode entirely.</p>
 </section>
-<section><h2 id="onesimulation">Model the physics in OneSimulation</h2><p><code>onesim.physics.acoustics</code></p>
-<p>Choose <code>LinearAcoustics</code> for linear pressure and axial particle velocity on a line. Supply density in kg/m<span class="math">\(^3\)</span>, sound speed in m/s, damping if needed and the initial pressure and velocity. A traveling sinusoid uses <span class="math">\(u=p/(\rho c)\)</span> for the positive propagation direction. A reflecting wall, a periodic pair and a prescribed flux represent different physical experiments. Verified routes include FD with a polynomial derivative, FV with a Rusanov flux and MUSCL reconstruction, and DG with a Rusanov face flux. Start with <code>test_acoustic_method_flexibility.py</code> for the line case and plot pressure versus arclength at successive times.</p>
-<p>Choose <code>PressureDrivenMode</code> for a single mechanical mode with force equal to effective area times applied pressure. <code>RadiatingMode</code> adds a constant radiation resistance. <code>UltrasonicAcoustics</code> uses the linear damped wave model. The structural-acoustics, vibroacoustics and ultrasound facades have their own provider contracts.</p>
-<pre class="code" data-lang="python"><code><span class="c1"># Use run_lumped and scalar_series from the cooling chapter.</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="n">PressureDrivenMode</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">mode</span> <span class="o">=</span> <span class="n">PressureDrivenMode</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">stiffness</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">damping</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">pressure_loading</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">_</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="n">run_lumped</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="p">((</span><span class="n">mode</span><span class="o">.</span><span class="n">displacement</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)),</span>
-    <span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">displacement</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">velocity</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">displacement</span> <span class="o">=</span> <span class="n">scalar_series</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">displacement</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">displacement</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span></code></pre></section><section><h2 id="case-studies">Notebook case studies</h2><ul><li><a href="/blog/rigid_box_acoustic_modes/">Acoustic modes of a rigid box</a></li><li><a href="/blog/helmholtz_resonator_baffle/">Helmholtz resonator in a wall</a></li></ul></section><section><h2 id="recipes">Additional worked models</h2><p>This section includes the field-based declarations and the independently callable acoustics service configurations. The configuration keys in the service recipes belong to the indicated provider.</p>
-<h3 id="pressure-driven-acoustic-mode"><span class="num">6.4.1</span> Pressure-driven acoustic mode</h3>
-<p>Apply a constant pressure to a single effective area. Displacement and modal energy show the build-up from rest.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="n">PressureDrivenMode</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">PressureDrivenMode</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
-    <span class="n">mass</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">stiffness</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">area</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">damping</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
-    <span class="n">pressure_loading</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">displacement</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;displacement&quot;</span><span class="p">,</span> <span class="s2">&quot;velocity&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">),</span>
-    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;displacement&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Pressure-driven acoustic mode&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-pressure-driven-mode.png"><img loading="lazy" src="/showcase/figures/recipe-pressure-driven-mode.png" alt="Figure computed with OneSimulation: recipe pressure driven mode"></a></figure>
-<h3 id="radiation-resistance-in-one-acoustic-mode"><span class="num">6.4.2</span> Radiation resistance in one acoustic mode</h3>
-<p>Release an initially displaced mode. The constant radiation resistance converts modal motion into nonnegative radiated power.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadiatingMode</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">RadiatingMode</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
-    <span class="n">mass</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">stiffness</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">area</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">damping</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
-    <span class="n">radiation_resistance</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">displacement</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;displacement&quot;</span><span class="p">,</span> <span class="s2">&quot;radiated_power&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">),</span>
-    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;radiated_power&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Radiation resistance in one acoustic mode&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-radiating-mode.png"><img loading="lazy" src="/showcase/figures/recipe-radiating-mode.png" alt="Figure computed with OneSimulation: recipe radiating mode"></a></figure>
-<h3 id="propagation-of-a-plane-acoustic-wave"><span class="num">6.4.3</span> Propagation of a plane acoustic wave</h3>
-<p>Initialize pressure and velocity with the same right-moving characteristic. Their relative amplitude is set by acoustic impedance. A periodic domain isolates the phase error.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearAcoustics</span>
-
-<span class="n">line</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">LinearAcoustics</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">line</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sound_speed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">wave</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
-<span class="n">end</span> <span class="o">=</span> <span class="mf">0.12</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">line_experiment</span><span class="p">(</span>
-    <span class="n">line</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="n">wave</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">wave</span><span class="p">),</span>
-    <span class="n">FiniteDifference</span><span class="p">(</span><span class="n">gradient</span><span class="o">=</span><span class="n">CentralDifference</span><span class="p">()),</span>
-    <span class="n">cells</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
-    <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">exact</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">wave</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">end</span><span class="p">)</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">pressure</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">exact</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">dof_coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.002</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">profile_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Acoustic propagation&quot;</span><span class="p">,</span>
-    <span class="n">result</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="p">(</span><span class="s2">&quot;pressure&quot;</span><span class="p">,</span> <span class="s2">&quot;velocity&quot;</span><span class="p">),</span>
-    <span class="n">reference</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;pressure&quot;</span><span class="p">:</span> <span class="n">exact</span><span class="p">,</span> <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">exact</span><span class="p">},</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-linear-acoustics.png"><img loading="lazy" src="/showcase/figures/recipe-linear-acoustics.png" alt="Figure computed with OneSimulation: recipe linear acoustics"></a></figure>
-<h3 id="damped-ultrasonic-wave-and-intensity"><span class="num">6.4.4</span> Damped ultrasonic wave and intensity</h3>
-<p>This declaration shares the pressure and velocity balance and exposes an intensity diagnostic. The signed intensity is pressure times particle velocity.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="n">UltrasonicAcoustics</span>
-
-<span class="n">line</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">UltrasonicAcoustics</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">line</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sound_speed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">velocity_damping</span><span class="o">=</span><span class="mf">0.5</span>
-<span class="p">)</span>
-<span class="n">wave</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">line_experiment</span><span class="p">(</span>
-    <span class="n">line</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="n">wave</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">wave</span><span class="p">),</span>
-    <span class="n">FiniteVolume</span><span class="p">(</span><span class="n">convection</span><span class="o">=</span><span class="n">Rusanov</span><span class="p">(),</span> <span class="n">reconstruction</span><span class="o">=</span><span class="n">MUSCL</span><span class="p">()),</span>
-    <span class="n">cells</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
-    <span class="n">end</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">pressure</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">velocity</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">intensity</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">p</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">profile_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Damped ultrasonic wave&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;pressure&quot;</span><span class="p">,</span> <span class="s2">&quot;velocity&quot;</span><span class="p">,</span> <span class="s2">&quot;intensity&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-ultrasonic-acoustics.png"><img loading="lazy" src="/showcase/figures/recipe-ultrasonic-acoustics.png" alt="Figure computed with OneSimulation: recipe ultrasonic acoustics"></a></figure>
-<h3 id="provider-pressure-and-particle-velocity"><span class="num">6.4.5</span> Provider pressure and particle velocity</h3>
-<p>Specify both initial arrays on the provider coordinate grid. The wave moves without coupling to a mechanical mode.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AcousticsConfiguration</span><span class="p">,</span> <span class="n">AcousticsPublicApi</span>
-
-<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
-<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
-<span class="n">configuration</span> <span class="o">=</span> <span class="n">AcousticsConfiguration</span><span class="p">(</span>
-    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
-        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-        <span class="n">initial_pressure</span><span class="o">=</span><span class="n">wave</span><span class="p">,</span>
-        <span class="n">initial_velocity</span><span class="o">=</span><span class="n">wave</span><span class="p">,</span>
-        <span class="n">sound_speed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">AcousticsPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Provider pressure and particle velocity&quot;</span><span class="p">,</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
-    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
-    <span class="p">(</span><span class="s2">&quot;Pressure [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">pressure</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Velocity [m/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">velocity</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-acoustics-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-acoustics-public-api.png" alt="Figure computed with OneSimulation: recipe acoustics public api"></a></figure>
-<h3 id="acoustic-loading-of-a-structural-mode"><span class="num">6.4.6</span> Acoustic loading of a structural mode</h3>
-<p>The structural service delegates the line wave calculation and advances a driven mode from its spatial pressure. Read the acoustic carrier through the nested result.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">StructuralAcousticsConfiguration</span><span class="p">,</span>
-    <span class="n">StructuralAcousticsPublicApi</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
-<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
-<span class="n">configuration</span> <span class="o">=</span> <span class="n">StructuralAcousticsConfiguration</span><span class="p">(</span>
-    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
-        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-        <span class="n">initial_pressure</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="n">wave</span><span class="p">,</span>
-        <span class="n">initial_velocity</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
-        <span class="n">modal_mass</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-        <span class="n">modal_stiffness</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-        <span class="n">area</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">StructuralAcousticsPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Acoustic loading of a structural mode&quot;</span><span class="p">,</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">acoustics_result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
-    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
-    <span class="p">(</span><span class="s2">&quot;Pressure [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">acoustics_result</span><span class="o">.</span><span class="n">pressure</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Velocity [m/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">acoustics_result</span><span class="o">.</span><span class="n">velocity</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-structural-acoustics-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-structural-acoustics-public-api.png" alt="Figure computed with OneSimulation: recipe structural acoustics public api"></a></figure>
-<h3 id="absorption-from-an-ultrasonic-wave"><span class="num">6.4.7</span> Absorption from an ultrasonic wave</h3>
-<p>Specify the absorption coefficient separately from the wave parameters. The facade returns absorbed power density on its acoustic coordinates.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="n">UltrasoundConfiguration</span><span class="p">,</span> <span class="n">UltrasoundPublicApi</span>
-
-<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
-<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
-<span class="n">configuration</span> <span class="o">=</span> <span class="n">UltrasoundConfiguration</span><span class="p">(</span>
-    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
-        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-        <span class="n">initial_pressure</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="n">wave</span><span class="p">,</span>
-        <span class="n">initial_velocity</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="n">wave</span><span class="p">,</span>
-        <span class="n">absorption_coefficient</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">UltrasoundPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Absorption from an ultrasonic wave&quot;</span><span class="p">,</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
-    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
-    <span class="p">(</span><span class="s2">&quot;Intensity [W/m2]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">intensity</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Absorbed power density [W/m3]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">absorbed_power_density</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-ultrasound-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-ultrasound-public-api.png" alt="Figure computed with OneSimulation: recipe ultrasound public api"></a></figure>
-<h3 id="acoustic-radiation-from-a-structural-mode"><span class="num">6.4.8</span> Acoustic radiation from a structural mode</h3>
-<p>Supply initial modal velocity and radiation resistance. The final radiated power is a mode diagnostic, and the nested acoustic result retains the carrier.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">VibroacousticsConfiguration</span><span class="p">,</span>
-    <span class="n">VibroacousticsPublicApi</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">n</span> <span class="o">=</span> <span class="mi">32</span>
-<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x0</span><span class="p">)</span>
-<span class="n">configuration</span> <span class="o">=</span> <span class="n">VibroacousticsConfiguration</span><span class="p">(</span>
-    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">cell_count</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
-        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-        <span class="n">initial_pressure</span><span class="o">=</span><span class="mi">1</span> <span class="o">+</span> <span class="n">wave</span><span class="p">,</span>
-        <span class="n">initial_velocity</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
-        <span class="n">radiation_resistance</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">VibroacousticsPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Acoustic radiation from a structural mode&quot;</span><span class="p">,</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">structural_acoustics</span><span class="o">.</span><span class="n">acoustics_result</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span>
-    <span class="s2">&quot;Provider coordinate [m]&quot;</span><span class="p">,</span>
-    <span class="p">(</span><span class="s2">&quot;Pressure [Pa]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">structural_acoustics</span><span class="o">.</span><span class="n">acoustics_result</span><span class="o">.</span><span class="n">pressure</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Velocity [m/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">structural_acoustics</span><span class="o">.</span><span class="n">acoustics_result</span><span class="o">.</span><span class="n">velocity</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-vibroacoustics-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-vibroacoustics-public-api.png" alt="Figure computed with OneSimulation: recipe vibroacoustics public api"></a></figure>
-<h3 id="evaluate-the-low-level-acoustic-rate"><span class="num">6.4.9</span> Evaluate the low-level acoustic rate</h3>
-<p>Bind an acoustic provider directly to its spatial operator. Compare the pressure and velocity rates for a periodic traveling wave with the analytical and centered-difference references.</p>
-<pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">onesimulation_plot_theme</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">theme</span>
-<span class="n">theme</span><span class="o">.</span><span class="n">use_theme</span><span class="p">()</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.discretization.equations.contracts.operators.operator_contracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpatialExecutionContext</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.acoustics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AcousticsProvider</span><span class="p">,</span> <span class="n">AcousticsSpatialOperator</span>
-
-<span class="n">density</span> <span class="o">=</span> <span class="mf">1.2</span>  <span class="c1"># kg/m³</span>
-<span class="n">speed</span> <span class="o">=</span> <span class="mf">340.0</span>  <span class="c1"># m/s</span>
-<span class="n">count</span> <span class="o">=</span> <span class="mi">64</span>
-<span class="n">length</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># m</span>
-<span class="n">provider</span> <span class="o">=</span> <span class="n">AcousticsProvider</span><span class="p">(</span><span class="n">cell_count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">,</span> <span class="n">sound_speed</span><span class="o">=</span><span class="n">speed</span><span class="p">,</span>
-                             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">length</span><span class="p">),</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">operator</span> <span class="o">=</span> <span class="n">AcousticsSpatialOperator</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="n">kernel_choice</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
-<span class="n">x</span><span class="p">,</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">coordinate_axes</span>
-<span class="n">wave_number</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">length</span>
-<span class="n">pressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">wave_number</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
-<span class="n">velocity</span> <span class="o">=</span> <span class="n">pressure</span><span class="o">/</span><span class="p">(</span><span class="n">density</span><span class="o">*</span><span class="n">speed</span><span class="p">)</span>
-<span class="n">state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">pressure</span><span class="p">,</span> <span class="n">velocity</span><span class="p">))</span>
-<span class="n">context</span> <span class="o">=</span> <span class="n">SpatialExecutionContext</span><span class="p">(</span><span class="s2">&quot;periodic-line&quot;</span><span class="p">,</span> <span class="s2">&quot;pressure-velocity&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-<span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">residual</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-<span class="n">exact_pressure_rate</span> <span class="o">=</span> <span class="n">speed</span> <span class="o">*</span> <span class="n">wave_number</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">wave_number</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
-<span class="n">discrete_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="n">wave_number</span> <span class="o">*</span> <span class="n">operator</span><span class="o">.</span><span class="n">spacings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">rate</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">discrete_factor</span> <span class="o">*</span> <span class="n">exact_pressure_rate</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">exact_pressure_rate</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.002</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">exact_pressure_rate</span><span class="p">))</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">rate</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">density</span><span class="o">*</span><span class="n">speed</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
-<span class="n">fields</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">reconstruction</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">&quot;pressure&quot;</span><span class="p">],</span> <span class="n">pressure</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">&quot;velocity&quot;</span><span class="p">],</span> <span class="n">velocity</span><span class="p">)</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">exact_pressure_rate</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Traveling-wave reference&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[::</span><span class="mi">3</span><span class="p">],</span> <span class="n">rate</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">::</span><span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Acoustic operator&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Periodic coordinate [m]&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Pressure rate [Pa/s]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/low-level-acoustics-spatial.png"><img loading="lazy" src="/showcase/figures/low-level-acoustics-spatial.png" alt="Figure computed with OneSimulation: low level acoustics spatial"></a></figure></section></article></div>
+<section>
+<h2 id="tutorial">Tutorial on listening positions and room shape</h2>
+<h3>1. Can a microphone distinguish two modes?</h3>
+<p>Find the frequency of mode \((1,1,0)\). Choose a point that detects this mode and a point where it vanishes but the lowest mode still has a strong signal.</p>
+<details><summary>Solution to the microphone placement</summary><p>The frequency is \(171.5\sqrt{1+(1/0.7)^2}=299.1\) Hz. The shape is proportional to \(\cos(\pi x/1.0)\cos(\pi y/0.7)\), independent of height. Both modes have a pressure maximum in magnitude at the corner \(x=y=0\). Move along the end wall to \(y=0.35\) m. The second factor vanishes while the lowest mode’s first factor stays at 1.</p></details>
+<h3>2. Split a shared resonance</h3>
+<p>Find two distinct axial modes at 343 Hz. Raise the ceiling from 0.50 m to 0.55 m while keeping the other dimensions fixed. What would a frequency sweep resolve?</p>
+<details><summary>Solution to the ceiling change</summary><p>The original modes \((2,0,0)\) and \((0,0,1)\) fit two half-waves along \(x\) and one half-wave along \(z\), respectively. After raising the ceiling, the first remains at 343 Hz and the second falls to \(343/(2\times0.55)=311.8\) Hz. The original shared frequency was a consequence of the room dimensions. A suitable source and microphone can now resolve two distinct peaks if losses are small enough.</p></details>
+</section>
+<section>
+<h2 id="numerical">Optional numerical comparison</h2>
+<p>In the rigid-box calculation, discard the spatially constant mode and compare the lowest positive frequency with 171.5 Hz. Use a 1% relative error as a first check. Inspect the corresponding pressure shape for a node at \(x=0.50\) m. Its overall sign and amplitude can vary with eigenvector normalisation. <a href="/blog/rigid_box_acoustic_modes/">OneSimulation example of rigid-box modes</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/teaching/optics/">Why does reflected light become polarised?</a></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Multibody dynamics · OneSimulation</title>
-<meta name="description" content="Generalised coordinates, constraints and pendulum motion.">
+<title>Why does a freely spinning handle flip? · OneSimulation</title>
+<meta name="description" content="Use angular momentum to distinguish stable and unstable rotation about the principal axes of a rigid body.">
 <meta name="theme-color" content="#f5f2e8">
 <link rel="canonical" href="https://onesimulation.onrender.com/teaching/multibody/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Multibody dynamics · OneSimulation">
-<meta property="og:description" content="Generalised coordinates, constraints and pendulum motion.">
+<meta property="og:title" content="Why does a freely spinning handle flip? · OneSimulation">
+<meta property="og:description" content="Use angular momentum to distinguish stable and unstable rotation about the principal axes of a rigid body.">
 <meta property="og:url" content="https://onesimulation.onrender.com/teaching/multibody/">
 <meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
@@ -27,282 +27,39 @@
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Multibody dynamics</h1><p class="lead">Generalised coordinates, constraints and pendulum motion.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Generalised coordinates and constraints</a><a href="#boundary">Pendulum and the small-angle reference</a><a href="#worked">Worked example and lab</a><a href="#onesimulation">Model the physics in OneSimulation</a><a href="#case-studies">Notebook case studies</a><a href="#recipes">Additional worked models</a></nav></aside><article class="prose reference"><section>
-<h2 id="theory">Generalised coordinates and constraints</h2>
-<p>Choose coordinates \(q\) that describe the configuration and express kinetic energy \(T\) and potential energy \(V\) in those coordinates. With Lagrangian \(L=T-V\), the equations are \(\frac{d}{dt}(\partial L/\partial\dot q)-\partial L/\partial q=Q\), with \(Q\) the applied nonconservative generalised force. For holonomic constraints \(g(q)=0\), a multiplier transmits reaction forces along the constraint gradients.</p>
-<p>For example, a point mass on a rigid link of length \(\ell\) can use an angle \(\theta\), or Cartesian coordinates with \(x^2+y^2=\ell^2\). The latter formulation exposes the constraint force and requires consistent initial positions and velocities. Check both \(g(q)\) and its time derivative during numerical integration.</p>
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a> / <a href="/teaching/course/#mechanics">Forces and motion</a> / Rigid-body dynamics</p><h1>Why does a freely spinning handle flip?</h1><p class="lead">Use angular momentum to distinguish stable and unstable rotation about the principal axes of a rigid body.</p><p class="prerequisites"><strong>Prerequisites</strong> Angular momentum and linear second-order differential equations.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">A constant angular momentum in a rotating frame</a><a href="#boundary">Perturb the middle-axis spin</a><a href="#worked">Estimate how quickly a wobble grows</a><a href="#tutorial">Tutorial on spin stability</a><a href="#numerical">Optional numerical comparison</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">A constant angular momentum in a rotating frame</h2>
+<p>Toss a rigid handle with a slight wobble. A spin about one of its axes can lead to a dramatic tumble even after it leaves your hand. Where does the change in rotation come from when there is no torque about the centre of mass?</p>
+<p>Describe the spin using the body's three principal axes through its centre of mass. On those axes, angular momentum has components \(L_i=I_i\omega_i\). In an inertial frame \(\mathbf L\) is constant. A body-fixed observer sees the axes rotate, so the derivative rule gives \((d\mathbf L/dt)_{\rm body}=-\boldsymbol\omega\times\mathbf L\). Its first component and the two cyclic permutations are Euler’s equations</p>
+<div class="math display">\[I_1\dot\omega_1=(I_2-I_3)\omega_2\omega_3,\quad
+I_2\dot\omega_2=(I_3-I_1)\omega_3\omega_1,\quad
+I_3\dot\omega_3=(I_1-I_2)\omega_1\omega_2.\]</div>
+<p>Assume a rigid body with three distinct moments \(I_1&lt;I_2&lt;I_3\), negligible drag and no applied torque. Exact spin about any single principal axis is a solution. Stability asks what happens after a small error in the launch.</p>
 </section>
 <section>
-<h2 id="boundary">Pendulum and the small-angle reference</h2>
-<p>With angle measured from the downward vertical, \(T=m\ell^2\dot\theta^2/2\) and \(V=mg\ell(1-\cos\theta)\). The exact equation is \(\ddot\theta+(g/\ell)\sin\theta=0\). Linearising about equilibrium gives period \(2\pi\sqrt{\ell/g}\). The period increases at finite amplitude.</p>
+<h2 id="boundary">Perturb the middle-axis spin</h2>
+<p>Start near \((0,\Omega,0)\). Write \(\omega_1=a\), \(\omega_3=b\). The change in \(\omega_2\) is proportional to the product \(ab\), so to first order \(\omega_2=\Omega\). The other equations then read \(\dot a=-(I_3-I_2)\Omega b/I_1\) and \(\dot b=-(I_2-I_1)\Omega a/I_3\). Differentiating the first gives</p>
+<div class="math display">\[\ddot a=\lambda^2 a,\qquad \lambda^2=\Omega^2\frac{(I_3-I_2)(I_2-I_1)}{I_1 I_3}.\]</div>
+<p>The positive coefficient permits a growing exponential. A generic launch error contains this growing component. The approximation describes the onset of tumbling. Once the transverse components are comparable with \(\Omega\), the full equations determine the flip.</p>
 </section>
 <section>
-<h2 id="worked">Worked example and lab</h2>
-<p>A 0.5 m pendulum has small-angle period 1.42 s at \(g=9.81\) m/s². At a 30° release the leading relative period correction \(\theta_0^2/16\) is about 1.7%, using radians.</p>
-<ol><li>Run the multibody model and estimate the period from turning points or same-direction zero crossings.</li><li>Compare small and finite release angles. For the undamped case monitor total energy, and monitor length residual if using Cartesian coordinates.</li><li>Halve the time step. Compare numerical energy drift with the physical change introduced when damping is added.</li></ol>
+<h2 id="worked">Estimate how quickly a wobble grows</h2>
+<p>Consider a rotor with principal moments \(2,3,4\) kg·m² spinning at \(6\) rad/s about axis 2. Its growth rate is \(6\sqrt{(4-3)(3-2)/(2\times4)}=2.12\) s⁻¹. A disturbance in the growing mode takes \(\ln 2/\lambda=0.327\) s to double from 0.03 to 0.06 rad/s. Both are small compared with the spin rate. This doubling time measures instability during the initial motion.</p>
 </section>
-<section><h2 id="onesimulation">Model the physics in OneSimulation</h2><p><code>onesim.physics.multibody</code></p>
-<p><code>SimplePendulum</code> advances angle and angular velocity. <code>EulerTop</code> evolves rotation about principal inertia axes. <code>TorsionalDrivetrain</code> uses shaft stiffness, damping and gear ratios. <code>DrivenFourBar</code> also has geometry and an assembly branch. <code>LinearJointSystem</code> adds algebraic constraints to inertial dynamics. For a linkage, check constraint residuals and initial configuration consistency as well as the trajectory. <code>test_multibody_input_flexibility.py</code> gives driven examples and tests physical inputs.</p>
-<pre class="code" data-lang="python"><code><span class="c1"># Use run_lumped and scalar_series from the cooling chapter.</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimplePendulum</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">pendulum</span> <span class="o">=</span> <span class="n">SimplePendulum</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">_</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="n">run_lumped</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span> <span class="n">pendulum</span><span class="p">,</span>
-    <span class="p">((</span><span class="n">pendulum</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">),</span> <span class="p">(</span><span class="n">pendulum</span><span class="o">.</span><span class="n">angular_velocity</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)),</span>
-    <span class="p">(</span><span class="n">pendulum</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">pendulum</span><span class="o">.</span><span class="n">energy</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">theta</span> <span class="o">=</span> <span class="n">scalar_series</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">pendulum</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
-<span class="n">energy</span> <span class="o">=</span> <span class="n">scalar_series</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">pendulum</span><span class="o">.</span><span class="n">energy</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">energy</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span></code></pre>
-<p>Plot angle and phase against time or convert the angle to a bob position for an animation. The small-angle period <span class="math">\(2\pi\sqrt{\ell/g}\)</span> provides a reference for small initial angles. Use energy or torque balance for larger amplitudes.</p></section><section><h2 id="case-studies">Notebook case studies</h2><ul><li><a href="/blog/dzhanibekov_t_handle/">Dzhanibekov effect: the flipping T-handle</a></li><li><a href="/blog/vehicle_suspension_lumped_model/">Lumped model of a vehicle suspension with occupants</a></li></ul></section><section><h2 id="recipes">Additional worked models</h2><p>This section includes the field-based declarations and the independently callable multibody dynamics service configurations. The configuration keys in the service recipes belong to the indicated provider.</p>
-<h3 id="finite-amplitude-pendulum-motion"><span class="num">6.14.1</span> Finite-amplitude pendulum motion</h3>
-<p>The angular state is integrated directly. Energy remains constant in the unforced case, even when the motion departs from a small-angle approximation.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimplePendulum</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">SimplePendulum</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
-    <span class="n">length</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">angle</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">angular_velocity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;angle&quot;</span><span class="p">,</span> <span class="s2">&quot;angular_velocity&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">),</span>
-    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Finite-amplitude pendulum motion&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-simple-pendulum.png"><img loading="lazy" src="/showcase/figures/recipe-simple-pendulum.png" alt="Figure computed with OneSimulation: recipe simple pendulum"></a></figure>
-<h3 id="torque-free-rotation-in-body-coordinates"><span class="num">6.14.2</span> Torque-free rotation in body coordinates</h3>
-<p>The inertia tuple contains the principal moments. Inspect two body-axis angular velocities and check that the rigid body's kinetic energy is conserved.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">EulerTop</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">EulerTop</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
-    <span class="n">inertia</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">omega_x</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">omega_y</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">omega_z</span><span class="o">=</span><span class="mf">0.3</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;omega_x&quot;</span><span class="p">,</span> <span class="s2">&quot;omega_y&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">),</span>
-    <span class="n">end</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Torque-free rotation in body coordinates&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-euler-top.png"><img loading="lazy" src="/showcase/figures/recipe-euler-top.png" alt="Figure computed with OneSimulation: recipe euler top"></a></figure>
-<h3 id="driven-linkage-on-the-open-branch"><span class="num">6.14.3</span> Driven linkage on the open branch</h3>
-<p>Supply the four link lengths, an assembly branch and a crank speed. Track the crank angle and the output rocker position.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">DrivenFourBar</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">DrivenFourBar</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
-    <span class="n">ground_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">crank_length</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">coupler_length</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-    <span class="n">rocker_length</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-    <span class="n">drive_speed</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
-    <span class="n">assembly_branch</span><span class="o">=</span><span class="s2">&quot;open&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">input_angle</span><span class="o">=</span><span class="mf">0.4</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;input_angle&quot;</span><span class="p">,</span> <span class="s2">&quot;rocker_x&quot;</span><span class="p">,</span> <span class="s2">&quot;rocker_y&quot;</span><span class="p">),</span>
-    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;input_angle&quot;</span><span class="p">],</span> <span class="mf">0.4</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Driven linkage on the open branch&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-driven-four-bar.png"><img loading="lazy" src="/showcase/figures/recipe-driven-four-bar.png" alt="Figure computed with OneSimulation: recipe driven four bar"></a></figure>
-<h3 id="oscillation-of-two-shaft-inertias"><span class="num">6.14.4</span> Oscillation of two shaft inertias</h3>
-<p>Start with a twist across the shaft and apply no external torque. Damping reduces the total mechanical energy while exchanging angular momentum.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">TorsionalDrivetrain</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">TorsionalDrivetrain</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
-    <span class="n">inertias</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-    <span class="n">shaft_stiffness</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,),</span>
-    <span class="n">shaft_damping</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,),</span>
-    <span class="n">external_torques</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">angle_0</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">angle_1</span><span class="o">=-</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">omega_0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">omega_1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;angle_0&quot;</span><span class="p">,</span> <span class="s2">&quot;angle_1&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">),</span>
-    <span class="n">end</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Oscillation of two shaft inertias&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-torsional-drivetrain.png"><img loading="lazy" src="/showcase/figures/recipe-torsional-drivetrain.png" alt="Figure computed with OneSimulation: recipe torsional drivetrain"></a></figure>
-<h3 id="acceleration-under-a-linear-joint-constraint"><span class="num">6.14.5</span> Acceleration under a linear joint constraint</h3>
-<p>Constrain the two positions to coincide and apply a force to only one mass. Start with a compatible position and velocity and inspect the constraint reaction.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearJointSystem</span>
-
-<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">LinearJointSystem</span><span class="p">(</span>
-    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
-    <span class="n">masses</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-    <span class="n">constraint_matrix</span><span class="o">=</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">),),</span>
-    <span class="n">constraint_targets</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,),</span>
-    <span class="n">forces</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
-    <span class="n">domain</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">position_0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">position_1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">velocity_0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">velocity_1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;position_0&quot;</span><span class="p">,</span> <span class="s2">&quot;position_1&quot;</span><span class="p">,</span> <span class="s2">&quot;reaction_0&quot;</span><span class="p">),</span>
-    <span class="n">end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-    <span class="n">linear_solver</span><span class="o">=</span><span class="n">SparseDirect</span><span class="p">(),</span>
-<span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;position_0&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;position_1&quot;</span><span class="p">],</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Acceleration under a linear joint constraint&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-linear-joint-system.png"><img loading="lazy" src="/showcase/figures/recipe-linear-joint-system.png" alt="Figure computed with OneSimulation: recipe linear joint system"></a></figure>
-<h3 id="torsional-service-with-two-rotating-inertias"><span class="num">6.14.6</span> Torsional service with two rotating inertias</h3>
-<p>Configure a finite final time, an initial shaft twist and damping. The output is indexed by inertia rather than by spatial coordinate.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">DrivetrainConfiguration</span><span class="p">,</span> <span class="n">DrivetrainPublicApi</span>
-
-<span class="n">settings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">inertias</span><span class="o">=</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span>
-    <span class="n">shaft_stiffness</span><span class="o">=</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,),</span>
-    <span class="n">shaft_damping</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,),</span>
-    <span class="n">initial_angles</span><span class="o">=</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">),</span>
-    <span class="n">final_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">time_step</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span>
-    <span class="n">DrivetrainPublicApi</span><span class="p">(),</span> <span class="n">DrivetrainConfiguration</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Torsional service with two rotating inertias&quot;</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
-    <span class="s2">&quot;Inertia index&quot;</span><span class="p">,</span>
-    <span class="p">(</span><span class="s2">&quot;Angle [rad]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">angles</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Angular velocity [rad/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">angular_velocities</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-drivetrain-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-drivetrain-public-api.png" alt="Figure computed with OneSimulation: recipe drivetrain public api"></a></figure>
-<h3 id="projected-dynamics-of-a-linear-joint"><span class="num">6.14.7</span> Projected dynamics of a linear joint</h3>
-<p>Supply a compatible constrained state and choose projection enforcement. The endpoint positions and velocities must satisfy the same linear relation.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">JointSystemsConfiguration</span><span class="p">,</span> <span class="n">JointSystemsPublicApi</span>
-
-<span class="n">settings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">masses</span><span class="o">=</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span>
-    <span class="n">constraint_matrix</span><span class="o">=</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">),),</span>
-    <span class="n">constraint_targets</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,),</span>
-    <span class="n">external_force</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-    <span class="n">initial_positions</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-    <span class="n">initial_velocities</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-    <span class="n">final_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">time_step</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span>
-    <span class="n">JointSystemsPublicApi</span><span class="p">(),</span> <span class="n">JointSystemsConfiguration</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Projected dynamics of a linear joint&quot;</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
-    <span class="s2">&quot;Mass index&quot;</span><span class="p">,</span>
-    <span class="p">(</span><span class="s2">&quot;Position [m]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">positions</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Velocity [m/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">velocities</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Reaction [N]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">reaction_forces</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-joint-systems-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-joint-systems-public-api.png" alt="Figure computed with OneSimulation: recipe joint systems public api"></a></figure>
-<h3 id="free-rigid-body-translation-and-rotation"><span class="num">6.14.8</span> Free rigid-body translation and rotation</h3>
-<p>An external force and principal inertias advance the six-degree-of-freedom state. The service also returns a quaternion and a rigid transform.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">RigidBodyDynamicsConfiguration</span><span class="p">,</span>
-    <span class="n">RigidBodyDynamicsPublicApi</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">settings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">mass</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">inertia</span><span class="o">=</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span>
-    <span class="n">external_force</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
-    <span class="n">initial_angular_velocity</span><span class="o">=</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
-    <span class="n">final_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">time_step</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span>
-    <span class="n">RigidBodyDynamicsPublicApi</span><span class="p">(),</span> <span class="n">RigidBodyDynamicsConfiguration</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">service_figure</span><span class="p">(</span>
-    <span class="s2">&quot;Free rigid-body translation and rotation&quot;</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
-    <span class="s2">&quot;Component index (x, y, z)&quot;</span><span class="p">,</span>
-    <span class="p">(</span><span class="s2">&quot;Position [m]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">position</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Linear momentum [kg m/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">linear_momentum</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;Angular velocity [rad/s]&quot;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">angular_velocity</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-rigid-body-dynamics-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-rigid-body-dynamics-public-api.png" alt="Figure computed with OneSimulation: recipe rigid body dynamics public api"></a></figure>
-<h3 id="inverse-kinematics-of-a-two-link-chain"><span class="num">6.14.9</span> Inverse kinematics of a two-link chain</h3>
-<p>Provide a reachable Cartesian target and an initial branch seed. Plot the solved joint positions and verify the end effector reaches the target.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">KinematicsConfiguration</span><span class="p">,</span> <span class="n">KinematicsPublicApi</span>
-
-<span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
-<span class="n">configuration</span> <span class="o">=</span> <span class="n">KinematicsConfiguration</span><span class="p">(</span>
-    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">link_lengths</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
-        <span class="n">initial_joint_angles</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span>
-        <span class="n">target_position</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">KinematicsPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">end_effector</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
-<span class="n">theme</span><span class="o">.</span><span class="n">use_theme</span><span class="p">()</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="o">.</span><span class="n">joint_positions</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Solved chain&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">target</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">theme</span><span class="o">.</span><span class="n">COPPER</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Target&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;x [m]&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;y [m]&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-kinematics-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-kinematics-public-api.png" alt="Figure computed with OneSimulation: recipe kinematics public api"></a></figure>
-<h3 id="four-bar-service-closure-and-transmission-angle"><span class="num">6.14.10</span> Four-bar service closure and transmission angle</h3>
-<p>Read the ground pivot, crank and rocker pin after solving the selected assembly branch. The coupler geometry is reconstructed from the returned pins.</p>
-<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.multibody</span><span class="w"> </span><span class="kn">import</span> <span class="n">MechanismsConfiguration</span><span class="p">,</span> <span class="n">MechanismsPublicApi</span>
-
-<span class="n">configuration</span> <span class="o">=</span> <span class="n">MechanismsConfiguration</span><span class="p">(</span>
-    <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">ground_length</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
-        <span class="n">crank_length</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">coupler_length</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-        <span class="n">rocker_length</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-        <span class="n">initial_input_angle</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
-        <span class="n">input_rate</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
-        <span class="n">assembly_branch</span><span class="o">=</span><span class="s2">&quot;open&quot;</span><span class="p">,</span>
-        <span class="n">final_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">time_step</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">run_service</span><span class="p">(</span><span class="n">MechanismsPublicApi</span><span class="p">(),</span> <span class="n">configuration</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">closure_residual</span> <span class="o">&lt;</span> <span class="mf">1e-9</span>
-<span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
-    <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">result</span><span class="o">.</span><span class="n">crank_pin</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">rocker_pin</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">ground_pivot</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-<span class="p">)</span>
-<span class="n">theme</span><span class="o">.</span><span class="n">use_theme</span><span class="p">()</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;constrained&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">vertices</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;x [m]&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;y [m]&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Four-bar linkage&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
-<figure><a href="/showcase/figures/recipe-mechanisms-public-api.png"><img loading="lazy" src="/showcase/figures/recipe-mechanisms-public-api.png" alt="Figure computed with OneSimulation: recipe mechanisms public api"></a></figure></section></article></div>
+<section>
+<h2 id="tutorial">Tutorial on spin stability</h2>
+<h3>1. Launch the rotor about its largest moment</h3>
+<p>Keep the same rotor and spin rate, but give axis 3 the large spin component. Find the equation for a small \(\omega_1\) and predict what a body-mounted sensor would see.</p>
+<details><summary>Solution to the stability calculation</summary><p>With \(\omega_3=\Omega\), the first two Euler equations give \(\dot\omega_1=-(I_3-I_2)\Omega\omega_2/I_1\) and \(\dot\omega_2=(I_3-I_1)\Omega\omega_1/I_2\). Now \(\ddot\omega_1=-\Omega^2(I_3-I_2)(I_3-I_1)\omega_1/(I_1 I_2)\). The sensor sees a bounded oscillation of angular frequency \(6\sqrt{2/6}=3.46\) rad/s. One sign change in this feedback accounts for the difference in stability.</p></details>
+<h3>2. Can a flip consume rotational energy?</h3>
+<p>Multiply each Euler equation by its own \(\omega_i\) and add. Decide whether a measured decrease in one angular velocity component is evidence that energy has been dissipated.</p>
+<details><summary>Solution to the energy balance</summary><p>The left-hand side is the derivative of \(E=\tfrac12\sum_i I_i\omega_i^2\). On the right, the coefficient of \(\omega_1\omega_2\omega_3\) is \((I_2-I_3)+(I_3-I_1)+(I_1-I_2)=0\). Energy is constant. Its contributions along the three moving axes can change during the flip, and a single component can even reverse sign.</p></details>
+</section>
+<section>
+<h2 id="numerical">Optional numerical comparison</h2>
+<p>The T-handle study uses the moments of a specific CAD body. Compare its three perturbed launches. Check that only the middle-axis launch repeatedly reverses its dominant body-frame spin component, and compare the full period between same-direction zero crossings with the case reference of 1.23810 s. <a href="/blog/dzhanibekov_t_handle/">OneSimulation example of the flipping T-handle</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying"><a href="/teaching/exercises/">Continue to the problem classes</a></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

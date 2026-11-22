@@ -190,3 +190,60 @@ td { font-variant-numeric: tabular-nums; white-space: nowrap; }
 @media (max-width: 560px) {
   .feature-case-grid { grid-template-columns: 1fr; }
 }
+
+/* Lecture notes and problem classes */
+.teaching-index { padding-bottom: 3.25rem; }
+.teaching-header { padding-block: clamp(2.2rem, 5vw, 4.3rem) 2rem; }
+.teaching-header .edition, .first-lecture .edition { margin-bottom: .65rem; }
+.teaching-header h1 { font-size: clamp(2.55rem, 5.7vw, 4.45rem); }
+.teaching-header .lead { max-width: 43rem; }
+.study-links { display: flex; flex-wrap: wrap; gap: .45rem 1.5rem; margin-top: 1rem; font-weight: 620; }
+.first-lecture { display: grid; grid-template-columns: 1fr 1fr; gap: min(4.5vw, 3.5rem); align-items: center;
+  padding-block: 1.65rem; border-block: 1px solid var(--rule); }
+.first-lecture h2 { font-size: clamp(1.65rem, 3.4vw, 2.7rem); max-width: 20ch; }
+.first-lecture h2 a, .chapter-list a { text-decoration: none; }
+.first-lecture h2 a:hover, .chapter-list a:hover { text-decoration: underline; }
+.first-lecture p:not(.edition) { margin-block: .8rem; max-width: 34rem; }
+.first-lecture figure, .lecture-figure { border: 1px solid var(--rule); background: var(--page); }
+.teaching-contents { padding-top: 2.5rem; }
+.contents-group { display: grid; grid-template-columns: minmax(9rem, 1fr) 3fr; gap: 1rem 2.25rem;
+  padding-block: 1.55rem; border-bottom: 1px solid var(--rule); }
+.contents-group h3 { color: var(--subtle); max-width: 13em; }
+.chapter-list, .seminar-directory ul { padding: 0; margin: 0; list-style: none; }
+.chapter-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.15rem 2rem; }
+.subject-name { display: block; color: var(--stamp); font-weight: 620; font-size: .83rem; }
+.chapter-list a { font: 600 1.23rem/1.25 var(--serif); display: inline-block; margin-top: .16rem; }
+.prerequisites { margin-top: .85rem; font-size: .9rem; color: var(--subtle); }
+.prerequisites strong { color: var(--ink); margin-right: .35rem; }
+.lecture-figure { max-width: 31rem; }
+.lecture-figure figcaption { padding: .55rem .85rem .75rem; }
+.lecture-onward { margin-top: 2.2rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-family: var(--serif); }
+.prose section:has(> #tutorial) { padding: 1.25rem clamp(.8rem, 2.4vw, 1.6rem); border-left: .2rem solid var(--stamp);
+  background: var(--page); }
+.prose details[open] { padding-bottom: .85rem; }
+.reading-list li { padding-left: .35rem; }
+.reading-list li + li { margin-top: .85rem; }
+.reading-list a { font-weight: 620; }
+.prose .reading-list p { margin-top: .15rem; }
+.seminar-directory { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.15rem; margin-top: 1.2rem; }
+.related-reading { font-size: .9rem; }
+@media (max-width: 700px) {
+  .first-lecture, .contents-group { grid-template-columns: 1fr; }
+  .first-lecture { gap: 1.05rem; }
+  .chapter-list { gap: .95rem 1.1rem; }
+}
+@media (max-width: 450px) {
+  .chapter-list, .seminar-directory { grid-template-columns: 1fr; }
+}
+@media print {
+  .study-links, .lecture-onward { display: none; }
+  .prose section:has(> #tutorial) { break-inside: auto; }
+}
+.moved-bookmark { display: none; }
+.moved-bookmark:target { display: block; padding: .75rem 1rem; border-left: .2rem solid var(--stamp); }
+.prose:has(#tutorial), .prose:has(#chapter-problems) { min-width: 0; }
+@media (max-width: 650px) {
+  .prose:has(#tutorial) p mjx-container, .prose:has(#chapter-problems) p mjx-container {
+    max-width: 100%; overflow-x: auto; padding-block: .18em; vertical-align: middle;
+  }
+}
