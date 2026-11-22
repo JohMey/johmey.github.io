@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thermal stresses in a coated plate · OneSimulation</title>
+<meta name="description" content="A ceramic-coated substrate cooled from its stress-free temperature: bending, interface stresses and the peel stress concentration at the free edge.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://johmey.github.io/blog/layered_plate_thermal_stress/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thermal stresses in a coated plate · OneSimulation">
+<meta property="og:description" content="A ceramic-coated substrate cooled from its stress-free temperature: bending, interface stresses and the peel stress concentration at the free edge.">
+<meta property="og:url" content="https://johmey.github.io/blog/layered_plate_thermal_stress/">
+<meta property="og:image" content="https://johmey.github.io/showcase/figures/library/layered_plate_thermal_stress.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/" aria-current="location">Blog</a><a href="/teaching/">Teaching</a><a href="/about/">About</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/blog/">Notebook blog</a> / <a href="/blog/#mechanics">Mechanics</a></p><h1>Thermal stresses in a coated plate</h1><p class="lead">A ceramic-coated substrate cooled from its stress-free temperature: bending, interface stresses and the peel stress concentration at the free edge.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#what">What it computes</a><a href="#checks">What it checks</a><a href="#geometry">Geometry</a><a href="#notebook">The notebook</a></nav></aside><article class="prose reference"><p class="study-note">To reproduce the case, put its notebook and accompanying inputs in the same folder. Use the Python environment set up in the <a href="/tutorials/install/">installation tutorial</a>. Start with the original parameters and compare the result with the check reported below.</p><div class="chips"><span>STEP import</span><span>Plane strain</span><span>Quadratic FEM</span><span>Region-wise materials</span><span>Bilayer theory check</span></div><div class="button-row"><a class="button" href="/downloads/notebooks/layered_plate_thermal_stress.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress.py" download>Download the script (.py)</a><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress_geometry.py" download>Download the geometry script (.py)</a></div><figure><img loading="lazy" src="/showcase/figures/library/layered_plate_thermal_stress.png" alt="Thermal stresses in a coated plate"><figcaption>Thermal stresses in a coated plate. Run the notebook to produce its own figures.</figcaption></figure><h2 id="what">What it computes</h2><p>OneSimulation cuts the plate from the STEP file to its cross-section and solves 2D plane-strain thermoelasticity with quadratic quadrilaterals graded towards the interface and the free end; each layer is its own region with its own material, and the cooled temperature comes from a heat-conduction solve on the same section. The script that builds the STEP file comes with the notebook.</p><h2 id="checks">What it checks</h2><p>At mid-span the axial stress matches the closed-form bilayer solution at the faces and on both sides of the interface to 0.01 MPa (-51.11, 90.68, -106.14 and -91.67 MPa); towards the free edge peel and shear stress rise to about 65 MPa at the interface.</p><h2 id="geometry">Geometry</h2><p>The notebook starts at the import of the CAD files <a href="/downloads/notebooks/layered_plate_thermal_stress.step" download><code>layered_plate_thermal_stress.step</code></a>, <a href="/downloads/notebooks/layered_plate_thermal_stress_coating.step" download><code>layered_plate_thermal_stress_coating.step</code></a>: STEP (AP242), readable by any CAD program, with the names of the faces that the boundary conditions use. Put them next to the notebook.</p><figure><img loading="lazy" src="/showcase/figures/library/layered_plate_thermal_stress_geometry.png" alt="Geometry of the example: Thermal stresses in a coated plate"><figcaption>The geometry as the notebook reads it from the STEP file and draws it.</figcaption></figure><div class="button-row"><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress_coating.step" download>Download the part coating (.step)</a><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress_geometry.py" download>Download the geometry script (.py)</a></div><h3 id="geometry-script">The geometry script</h3><p>The script <a href="/downloads/notebooks/layered_plate_thermal_stress_geometry.py" download><code>layered_plate_thermal_stress_geometry.py</code></a> builds the geometry with the CAD objects of OneSimulation and writes the files. Change a dimension there, run it, and run the notebook again.</p><div class="notebook"><div class="nb-code"><pre class="code" data-lang="python"><code><span class="sd">&quot;&quot;&quot;Geometry of the OneSimulation example &quot;Thermal stresses in a coated plate&quot;.</span>
+
+<span class="sd">Builds a thin slab of one half of the plate (30 mm long, 10 mm substrate with a 2 mm coating,</span>
+<span class="sd">0.5 mm deep) with the CAD objects of OneSimulation and writes layered_plate_thermal_stress.step;</span>
+<span class="sd">its faces keep the names x_min, x_max, y_min, y_max, z_min and z_max. The coating, which marks the</span>
+<span class="sd">region of the second material, is written to layered_plate_thermal_stress_coating.step. The</span>
+<span class="sd">example computes on the cross-section z = 0.25 mm in plane strain.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d3</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
+
+<span class="n">half_length</span><span class="p">,</span> <span class="n">substrate</span><span class="p">,</span> <span class="n">coating</span><span class="p">,</span> <span class="n">slab</span> <span class="o">=</span> <span class="mf">0.030</span><span class="p">,</span> <span class="mf">0.010</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">,</span> <span class="mf">0.0005</span>
+<span class="n">plate</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">half_length</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">substrate</span> <span class="o">+</span> <span class="n">coating</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">slab</span><span class="p">)</span>
+<span class="n">coat</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">half_length</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">coating</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">slab</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">substrate</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+<span class="n">plate</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;layered_plate_thermal_stress.step&quot;</span><span class="p">)</span>
+<span class="n">coat</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;layered_plate_thermal_stress_coating.step&quot;</span><span class="p">)</span></code></pre></div></div><h2 id="notebook">The notebook</h2><p class="muted">The complete notebook, cell by cell. Run it to produce the figures and the comparison printout.</p><div class="notebook"><div class="nb-md"><p>A substrate plate (10 mm thick) carries a coating (2 mm thick). The coating is deposited at 800 °C, where both layers are stress free, and the plate is then cooled to 150 °C. The substrate contracts more than the coating, so the coating ends up in compression and the plate bends. Near the free ends the stresses must turn around, which concentrates peel and shear stress at the interface.</p>
+<p>| layer | <span class="math">\(E\)</span> | <span class="math">\(\nu\)</span> | <span class="math">\(\alpha\)</span> | |---|---|---|---| | substrate | 130 GPa | 0.28 | <span class="math">\(3\cdot10^{-6}\)</span> 1/K | | coating | 70 GPa | 0.17 | <span class="math">\(5\cdot10^{-7}\)</span> 1/K |</p>
+<p>The plate is long in the third direction and is in plane strain, <span class="math">\(u_z=0\)</span>.</p>
+<p>A thin slab of one half of the 60 mm long plate comes from the CAD file <code>layered_plate_thermal_stress.step</code>; <code>layered_plate_thermal_stress_coating.step</code> holds the coating, which marks the region of the second material. The script <code>layered_plate_thermal_stress_geometry.py</code> builds both with the CAD objects of OneSimulation. The model is two-dimensional: it lives on the cross-section of the slab, with one region and one material per layer.</p>
+<p><strong>Reference.</strong> Away from the ends the plate behaves like a bilayer beam (Timoshenko, 1925). With <span class="math">\(E_i'=E_i/(1-\nu_i^2)\)</span> and the thermal strain <span class="math">\(e_i=(1+\nu_i)\alpha_i\Delta T\)</span>,</p>
+<div class="math display">\[\sigma_{xx}(y)=E_i'\,\bigl(\varepsilon_0+\kappa y-e_i\bigr),\qquad
+  \sum_i\int_i\sigma_{xx}\,dy=0,\qquad \sum_i\int_i\sigma_{xx}\,y\,dy=0 ,\]</div>
+<p>where the two balances fix the strain <span class="math">\(\varepsilon_0\)</span> and the curvature <span class="math">\(\kappa\)</span>.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.exchange</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">IsotropicSolid</span><span class="p">,</span> <span class="n">regionwise</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Geometric</span><span class="p">,</span> <span class="n">cartesian</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.fem</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiniteElement</span><span class="p">,</span> <span class="n">Lagrange</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.field_transfer</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiniteElementEvaluation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.linear</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseDirect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.heat_transfer</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedTemperature</span><span class="p">,</span> <span class="n">HeatConduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.solid_mechanics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FixedDisplacementComponents</span><span class="p">,</span>
+    <span class="n">IsotropicThermalExpansion</span><span class="p">,</span>
+    <span class="n">LinearElasticity</span><span class="p">,</span>
+    <span class="n">TractionFree</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.field_connections</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldCoupling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span><span class="p">,</span> <span class="n">theme</span>
+
+<span class="n">theme</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Geometry and mesh</h4>
+<p><code>load</code> returns the slab and the coating, <code>section</code> cuts both at half depth; the regions keep the side names <code>x_min</code> (mid-span), <code>x_max</code> (free end), <code>y_min</code> and <code>y_max</code>. The quadrilateral mesh has a node line on the interface and is graded towards it and towards the free end.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">plate</span><span class="p">,</span> <span class="n">coat</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;layered_plate_thermal_stress.step&quot;</span><span class="p">),</span> <span class="n">load</span><span class="p">(</span>
+    <span class="s2">&quot;layered_plate_thermal_stress_coating.step&quot;</span>
+<span class="p">)</span>
+<span class="n">half_length</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">slab</span> <span class="o">=</span> <span class="n">plate</span><span class="o">.</span><span class="n">size</span>
+<span class="n">coating</span> <span class="o">=</span> <span class="n">coat</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">substrate</span> <span class="o">=</span> <span class="n">thickness</span> <span class="o">-</span> <span class="n">coating</span>
+<span class="n">section</span> <span class="o">=</span> <span class="n">plate</span><span class="o">.</span><span class="n">section</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">slab</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">coating_region</span> <span class="o">=</span> <span class="n">coat</span><span class="o">.</span><span class="n">section</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">slab</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">sides</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">boundaries</span>
+<span class="n">along</span> <span class="o">=</span> <span class="n">half_length</span> <span class="o">*</span> <span class="n">Geometric</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">toward</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reference</span><span class="p">()</span>
+<span class="n">across</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span>
+    <span class="n">substrate</span> <span class="o">*</span> <span class="n">Geometric</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">40.0</span><span class="p">,</span> <span class="n">toward</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reference</span><span class="p">(),</span>
+    <span class="n">substrate</span> <span class="o">+</span> <span class="n">coating</span> <span class="o">*</span> <span class="n">Geometric</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">8.0</span><span class="p">)</span><span class="o">.</span><span class="n">reference</span><span class="p">()[</span><span class="mi">1</span><span class="p">:],</span>
+<span class="p">]</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">cartesian</span><span class="p">(</span>
+    <span class="n">geometry</span><span class="o">=</span><span class="n">section</span><span class="p">,</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">along</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">across</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">extents</span><span class="o">=</span><span class="p">(</span><span class="n">half_length</span><span class="p">,</span> <span class="n">thickness</span><span class="p">),</span>
+    <span class="n">node_axes</span><span class="o">=</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">along</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">across</span><span class="p">)),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">plate</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="s2">&quot;substrate&quot;</span><span class="p">),</span> <span class="n">coat</span><span class="o">.</span><span class="n">named</span><span class="p">(</span><span class="s2">&quot;coating&quot;</span><span class="p">)],</span>
+    <span class="n">camera</span><span class="o">=</span><span class="n">plots</span><span class="o">.</span><span class="n">Camera</span><span class="p">(</span><span class="n">elevation</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=-</span><span class="mi">60</span><span class="p">),</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Slab of the half plate&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span>
+    <span class="n">section</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Cross-section with its named sides, meshed with </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">cell_count</span><span class="si">}</span><span class="s2"> quadrilaterals&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Model</h4>
+<p>Plane strain on the cross-section. The mid-span <span class="math">\(x=0\)</span> is a symmetry line, held vertically at its lower end. The material properties are given region by region. The uniform final temperature comes from a heat-conduction model on the same section and enters the mechanics as thermal strain.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">layers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;substrate&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">130e9</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">,</span> <span class="mf">3.0e-6</span><span class="p">),</span> <span class="s2">&quot;coating&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">70e9</span><span class="p">,</span> <span class="mf">0.17</span><span class="p">,</span> <span class="mf">5.0e-7</span><span class="p">)}</span>
+<span class="n">deposition</span><span class="p">,</span> <span class="n">final</span> <span class="o">=</span> <span class="mf">1073.15</span><span class="p">,</span> <span class="mf">423.15</span>
+<span class="n">layered</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">index</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="n">regionwise</span><span class="p">(</span>
+    <span class="p">((</span><span class="n">coating_region</span><span class="p">,</span> <span class="n">layers</span><span class="p">[</span><span class="s2">&quot;coating&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">]),),</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">layers</span><span class="p">[</span><span class="s2">&quot;substrate&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
+    <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">material</span> <span class="o">=</span> <span class="n">IsotropicSolid</span><span class="p">(</span>
+    <span class="n">density</span><span class="o">=</span><span class="mf">3000.0</span><span class="p">,</span>
+    <span class="n">specific_heat_capacity</span><span class="o">=</span><span class="mf">700.0</span><span class="p">,</span>
+    <span class="n">thermal_conductivity</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+    <span class="n">youngs_modulus</span><span class="o">=</span><span class="n">layered</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Pa&quot;</span><span class="p">),</span>
+    <span class="n">poisson_ratio</span><span class="o">=</span><span class="n">layered</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
+    <span class="n">thermal_expansion_coefficient</span><span class="o">=</span><span class="n">layered</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;1/K&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">numerics</span> <span class="o">=</span> <span class="n">Numerics</span><span class="p">(</span>
+    <span class="n">spatial</span><span class="o">=</span><span class="n">FiniteElement</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">Lagrange</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span> <span class="n">linear_solver</span><span class="o">=</span><span class="n">SparseDirect</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">heat</span> <span class="o">=</span> <span class="n">HeatConduction</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">section</span><span class="o">.</span><span class="n">domain</span><span class="p">(),</span> <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">)</span>
+<span class="n">cooled</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span>
+    <span class="n">problem</span><span class="o">=</span><span class="n">Problem</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Final temperature&quot;</span><span class="p">,</span>
+        <span class="n">geometry</span><span class="o">=</span><span class="n">section</span><span class="p">,</span>
+        <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">heat</span><span class="p">,),</span>
+        <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">FixedTemperature</span><span class="p">(</span><span class="n">boundary</span><span class="o">=</span><span class="n">sides</span><span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="n">physics</span><span class="o">=</span><span class="n">heat</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">final</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">),</span>
+    <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span>
+    <span class="n">numerics</span><span class="o">=</span><span class="n">numerics</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">solve_stationary</span><span class="p">()</span>
+
+<span class="n">solid</span> <span class="o">=</span> <span class="n">LinearElasticity</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">section</span><span class="o">.</span><span class="n">domain</span><span class="p">(),</span>
+    <span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span>
+    <span class="n">kinematics</span><span class="o">=</span><span class="s2">&quot;plane_strain&quot;</span><span class="p">,</span>
+    <span class="n">thermal_strain</span><span class="o">=</span><span class="n">IsotropicThermalExpansion</span><span class="p">(</span><span class="n">reference_temperature</span><span class="o">=</span><span class="n">deposition</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Coated plate&quot;</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="o">=</span><span class="n">section</span><span class="p">,</span>
+    <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">solid</span><span class="p">,),</span>
+    <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">TractionFree</span><span class="p">(</span><span class="n">boundary</span><span class="o">=</span><span class="n">sides</span><span class="o">.</span><span class="n">x_max</span> <span class="o">|</span> <span class="n">sides</span><span class="o">.</span><span class="n">y_min</span> <span class="o">|</span> <span class="n">sides</span><span class="o">.</span><span class="n">y_max</span><span class="p">,</span> <span class="n">physics</span><span class="o">=</span><span class="n">solid</span><span class="p">),</span>
+        <span class="n">FixedDisplacementComponents</span><span class="p">(</span>
+            <span class="n">boundary</span><span class="o">=</span><span class="n">sides</span><span class="o">.</span><span class="n">x_min</span><span class="p">,</span>
+            <span class="n">physics</span><span class="o">=</span><span class="n">solid</span><span class="p">,</span>
+            <span class="n">components</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+            <span class="n">where</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">},</span>
+        <span class="p">),</span>
+    <span class="p">),</span>
+    <span class="n">couplings</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">FieldCoupling</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="n">cooled</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">heat</span><span class="o">.</span><span class="n">temperature</span><span class="p">),</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">solid</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
+            <span class="n">transfer</span><span class="o">=</span><span class="n">FiniteElementEvaluation</span><span class="p">(),</span>
+        <span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">stress</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Simulation</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> <span class="n">numerics</span><span class="o">=</span><span class="n">numerics</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">solve_stationary</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">solid</span><span class="o">.</span><span class="n">stress</span><span class="p">)</span>
+<span class="p">)</span></code></pre></div><div class="nb-md"><h4>Results</h4>
+<p>The axial stress at mid-span against the bilayer solution of Timoshenko.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="k">def</span><span class="w"> </span><span class="nf">bilayer_stress</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Axial stress of the bilayer beam at the height y.&quot;&quot;&quot;</span>
+    <span class="n">stiffness</span><span class="p">,</span> <span class="n">load_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">alpha</span><span class="p">),</span> <span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">substrate</span><span class="p">),</span> <span class="p">(</span><span class="n">substrate</span><span class="p">,</span> <span class="n">substrate</span> <span class="o">+</span> <span class="n">coating</span><span class="p">))</span>
+    <span class="p">):</span>
+        <span class="n">moments</span> <span class="o">=</span> <span class="p">[(</span><span class="n">upper</span><span class="o">**</span><span class="n">k</span> <span class="o">-</span> <span class="n">lower</span><span class="o">**</span><span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
+        <span class="n">stiffness</span> <span class="o">+=</span> <span class="n">E</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">nu</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">moments</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">moments</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
+        <span class="n">load_vector</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="n">E</span>
+            <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">nu</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">alpha</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">final</span> <span class="o">-</span> <span class="n">deposition</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">moments</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="p">)</span>
+    <span class="n">strain</span><span class="p">,</span> <span class="n">curvature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">stiffness</span><span class="p">,</span> <span class="n">load_vector</span><span class="p">)</span>
+    <span class="n">E</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">substrate</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">E</span>
+        <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">nu</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="o">*</span> <span class="p">(</span><span class="n">strain</span> <span class="o">+</span> <span class="n">curvature</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">final</span> <span class="o">-</span> <span class="n">deposition</span><span class="p">))</span>
+    <span class="p">)</span>
+
+
+<span class="n">heights</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;lower face&quot;</span><span class="p">:</span> <span class="mf">2e-6</span><span class="p">,</span>
+    <span class="s2">&quot;substrate at the interface&quot;</span><span class="p">:</span> <span class="n">substrate</span> <span class="o">-</span> <span class="mf">2e-6</span><span class="p">,</span>
+    <span class="s2">&quot;coating at the interface&quot;</span><span class="p">:</span> <span class="n">substrate</span> <span class="o">+</span> <span class="mf">2e-6</span><span class="p">,</span>
+    <span class="s2">&quot;upper face&quot;</span><span class="p">:</span> <span class="n">substrate</span> <span class="o">+</span> <span class="n">coating</span> <span class="o">-</span> <span class="mf">2e-6</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">at_mid_span</span> <span class="o">=</span> <span class="n">stress</span><span class="o">.</span><span class="n">evaluate</span><span class="p">([[</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">heights</span><span class="o">.</span><span class="n">values</span><span class="p">()])[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;position&#39;</span><span class="si">:</span><span class="s2">28s</span><span class="si">}</span><span class="s2"> simulation [MPa]   bilayer [MPa]&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">heights</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">at_mid_span</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">28s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">16.2f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">bilayer_stress</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">15.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></code></pre></div><div class="nb-md"><h4>Figure</h4>
+<p>The axial stress near one end of the plate, the stress through the thickness at mid-span, and the peel and shear stress along the interface towards the free end.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">megapascal</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="n">s</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e6</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">substrate</span> <span class="o">+</span> <span class="n">coating</span> <span class="o">-</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mi">121</span><span class="p">)</span>
+<span class="n">through</span> <span class="o">=</span> <span class="n">stress</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">),</span> <span class="n">y</span><span class="p">)))[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+<span class="n">interface</span> <span class="o">=</span> <span class="n">stress</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">half_length</span> <span class="o">-</span> <span class="n">distance</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="n">substrate</span> <span class="o">-</span> <span class="mf">2e-6</span><span class="p">)))</span>
+<span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">surface</span><span class="p">(</span>
+    <span class="n">stress</span><span class="p">,</span>
+    <span class="n">component</span><span class="o">=</span><span class="n">megapascal</span><span class="p">,</span>
+    <span class="n">colormap</span><span class="o">=</span><span class="s2">&quot;diverging&quot;</span><span class="p">,</span>
+    <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="mi">110</span><span class="p">),</span>
+    <span class="n">subdivisions</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;σ_xx [MPa]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Axial stress near the free end&quot;</span><span class="p">,</span>
+    <span class="n">xlimits</span><span class="o">=</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">),</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;x from mid-span [m]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;y [m]&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="n">points</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;simulation&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">through</span><span class="p">[::</span><span class="mi">4</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e3</span> <span class="o">*</span> <span class="n">y</span><span class="p">[::</span><span class="mi">4</span><span class="p">])},</span>
+    <span class="n">reference</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bilayer solution&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">bilayer_stress</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e3</span> <span class="o">*</span> <span class="n">y</span><span class="p">)},</span>
+    <span class="n">hlines</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;interface&quot;</span><span class="p">:</span> <span class="mf">1e3</span> <span class="o">*</span> <span class="n">substrate</span><span class="p">},</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;σ_xx at mid-span [MPa]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;height [mm]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Stress through the thickness&quot;</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="mf">1e3</span> <span class="o">*</span> <span class="n">distance</span><span class="p">,</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;peel stress σ_yy&quot;</span><span class="p">:</span> <span class="n">interface</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">,</span>
+        <span class="s2">&quot;shear stress σ_xy&quot;</span><span class="p">:</span> <span class="n">interface</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;logx&quot;</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;distance from the free end [mm]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;stress at the interface [MPa]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Stress concentration at the free edge&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Going further</h4>
+<p>Make the coating thinner in <code>layered_plate_thermal_stress_geometry.py</code>, write the files again, and the stress in it approaches the film limit <span class="math">\(E_c'(1+\nu)\,\Delta\alpha\,\Delta T\)</span>; add a compliant interlayer and watch the edge stresses drop.</p></div></div><div class="button-row"><a class="button" href="/downloads/notebooks/layered_plate_thermal_stress.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress.py" download>Download the script (.py)</a><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/layered_plate_thermal_stress_geometry.py" download>Download the geometry script (.py)</a></div><p class="source-note"><a href="https://johmey.github.io/OneSimulation-Showcase/examples/notebooks/layered_plate_thermal_stress.html">Original OneSimulation Showcase entry</a></p></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

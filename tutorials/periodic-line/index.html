@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reusable periodic-line setup · OneSimulation</title>
+<meta name="description" content="">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://johmey.github.io/tutorials/periodic-line/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reusable periodic-line setup · OneSimulation">
+<meta property="og:description" content="">
+<meta property="og:url" content="https://johmey.github.io/tutorials/periodic-line/">
+<meta property="og:image" content="https://johmey.github.io/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/">Teaching</a><a href="/about/">About</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/tutorials/">Tutorial</a></p><h1>Reusable periodic-line setup</h1></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><p>Several reference cases use periodic endpoints to isolate wave propagation or diffusion from boundary effects. Construct the model on the same line passed to the helper. The returned fields remain on the selected numerical carrier. When comparing against a Fourier mode, use point values for nodal or sample data and cell averages for FV data. For a uniform mesh of <span class="math">\(N\)</span> cells per wavelength, the cell mean of the sinusoidal part is the center value multiplied by <span class="math">\(\operatorname{sinc}(1/N)\)</span> in NumPy's normalized convention.</p>
+<pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d1</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">PeriodicPair</span><span class="p">,</span> <span class="n">StructuredLineMesher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassicalRungeKutta4</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.initial_conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InitialValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.problem_definition.boundaries</span><span class="w"> </span><span class="kn">import</span> <span class="n">PeriodicBoundary</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_periodic_line</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">initial</span><span class="p">,</span> <span class="n">numerics</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">cells</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">StructuredLineMesher</span><span class="p">(</span><span class="n">cells</span><span class="o">=</span><span class="n">cells</span><span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">line</span><span class="p">,</span> <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="p">,),</span>
+        <span class="n">initial_conditions</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">InitialValue</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">ref</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">initial</span><span class="p">),</span>
+        <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span><span class="n">PeriodicBoundary</span><span class="p">(</span>
+            <span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">pair</span><span class="o">=</span><span class="n">PeriodicPair</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">end</span><span class="p">),</span>
+        <span class="p">),),</span>
+    <span class="p">)</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> <span class="n">numerics</span><span class="o">=</span><span class="n">numerics</span><span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span><span class="o">.</span><span class="n">require_valid</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span></code></pre></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

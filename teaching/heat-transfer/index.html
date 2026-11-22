@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heat transfer · OneSimulation</title>
+<meta name="description" content="Conduction, convection, radiation and thermal balances.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://johmey.github.io/teaching/heat-transfer/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Heat transfer · OneSimulation">
+<meta property="og:description" content="Conduction, convection, radiation and thermal balances.">
+<meta property="og:url" content="https://johmey.github.io/teaching/heat-transfer/">
+<meta property="og:image" content="https://johmey.github.io/assets/methods.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/" aria-current="location">Teaching</a><a href="/about/">About</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/teaching/">Teaching</a></p><h1>Heat transfer</h1><p class="lead">Conduction, convection, radiation and thermal balances.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Energy conservation</a><a href="#boundary">Resistance and lumped capacity</a><a href="#worked">Worked example and lab</a><a href="#onesimulation">Model the physics in OneSimulation</a><a href="#case-studies">Notebook case studies</a><a href="#recipes">Additional worked models</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Energy conservation</h2>
+<p>For an isotropic stationary solid, the local energy balance is \(\rho c_p\partial_tT=\nabla\cdot(k\nabla T)+\dot q\). The outward conductive heat flux is \(-k\nabla T\cdot\mathbf n\). Prescribing this flux, prescribing temperature and using a convection law are three different boundary conditions. A convecting boundary gives \(-k\nabla T\cdot\mathbf n=h(T-T_\infty)\).</p>
+<p>If material properties are constant, the diffusivity \(\alpha=k/(\rho c_p)\) sets the diffusion time \(L^2/\alpha\). Integrate the PDE over the domain to compare the energy stored with volumetric heating and net boundary heat flow. In a stationary source-free system, net outward heat flow is zero.</p>
+</section>
+<section>
+<h2 id="boundary">Resistance and lumped capacity</h2>
+<p>A plane wall of area \(A\), thickness \(L\) and conductivity \(k\) has conduction resistance \(L/(kA)\). A convection film adds \(1/(hA)\) in series at a wall face. In a lumped body with negligible internal temperature gradients, \(T-T_\infty=(T_0-T_\infty)e^{-t/\tau}\) and \(\tau=\rho c_p V/(hA)\).</p>
+<p>The Biot number \(Bi=h(V/A)/k\) compares internal and surface thermal resistances. A small value supports the lumped model. Thermal radiation uses absolute temperature and a fourth-power law, so the exponential convection solution does not apply to pure radiation.</p>
+</section>
+<section>
+<h2 id="worked">Worked example and lab</h2>
+<p>A 20 mm plane wall with \(k=2\) W/(m·K), area 1 m² and face temperatures 310 K and 290 K conducts 2 kW. Adding a convection film with \(h=100\) W/(m²·K) doubles the thermal resistance. At the same hot-face to ambient temperature difference, the rate is 1 kW.</p>
+<ol><li>Run a steady conduction case and integrate both face fluxes. Compare with the resistance model.</li><li>Run a transient wall or lumped example. Compare the temperature history and the heat balance, then halve the time step.</li><li>Use the free-convection notebook to see how the Nusselt number measures departures from conduction.</li></ol>
+</section>
+<section><h2 id="onesimulation">Model the physics in OneSimulation</h2><p><code>onesim.physics.heat_transfer</code></p>
+<p>Use <code>HeatConduction</code> for a spatial Fourier balance with material properties and optional volumetric heating in W/m<span class="math">\(^3\)</span>. Supply <code>FixedTemperature</code> in K, <code>HeatFlux</code> as positive outward flux in W/m<span class="math">\(^2\)</span>, or <code>ConvectiveHeatFlux</code> with an ambient temperature and transfer coefficient. <code>RadiativeHeatFlux</code> applies a nonlinear grey diffuse boundary law to a spatial model. <code>ConvectiveHeatTransfer</code> adds a prescribed velocity field to the volume problem, as in Chapter <a class="xref" href="/tutorials/spatial-models/">3</a>. <code>HeatAdvectionDiffusion</code> is the line model with specified thermal diffusivity and advection speed. <code>RadiationCooling</code> and <code>PhaseChangeHeating</code> use lumped thermal states. Phase change uses <code>ThermalPhaseChangeLawSet</code> and a finite mushy interval. Plot temperature and enthalpy or liquid fraction across the transition to make the latent-heat effect visible.</p>
+<p>For a first conduction notebook, prescribe a linear temperature trace on all faces of a box, set zero volumetric source and choose P1 FEM. A linear solution and constant conductive flux give independent verification. See <code>test_public_stationary.py</code>. The source exposes separate thermal service configurations, validation reports and feature entry points for integrations that use the facade instead of <code>Simulation</code>.</p></section><section><h2 id="case-studies">Notebook case studies</h2><ul><li><a href="/blog/axisymmetric_ring_steady_conduction/">Axisymmetric ring heated in its bore</a></li><li><a href="/blog/wall_transient_vs_lumped/">Transient conduction in a wall and a lumped thermal network</a></li><li><a href="/blog/air_cavity_free_convection/">Free convection of air between two vertical plates</a></li></ul></section><section><h2 id="recipes">Additional worked models</h2><h3 id="enthalpy-and-liquid-fraction-during-heating"><span class="num">6.10.1</span> Enthalpy and liquid fraction during heating</h3>
+<p>Use specific enthalpy as the initial state and derive temperature and liquid fraction from the phase law. The mushy interval spreads the latent heat across a finite temperature range.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.heat_transfer</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhaseChangeHeating</span><span class="p">,</span> <span class="n">ThermalPhaseChangeLawSet</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PhaseChangeHeating</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
+    <span class="n">mass</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">heating_power</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">phase_law</span><span class="o">=</span><span class="n">ThermalPhaseChangeLawSet</span><span class="p">(</span><span class="s2">&quot;mushy&quot;</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">302</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">history_case</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">specific_enthalpy</span><span class="o">=-</span><span class="mf">2.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;specific_enthalpy&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;liquid_fraction&quot;</span><span class="p">),</span>
+    <span class="n">end</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;specific_enthalpy&quot;</span><span class="p">],</span> <span class="o">-</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">history_plot</span><span class="p">(</span><span class="s2">&quot;Enthalpy and liquid fraction during heating&quot;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-phase-change-heating.png"><img loading="lazy" src="/showcase/figures/recipe-phase-change-heating.png" alt="Figure computed with OneSimulation: recipe phase change heating"></a></figure>
+<h3 id="advection-and-decay-of-a-temperature-wave"><span class="num">6.10.2</span> Advection and decay of a temperature wave</h3>
+<p>Use a periodic Fourier mode to distinguish phase transport from amplitude decay. The carrier here stores cell averages. The analytic curve includes the cell-average sinc factor.</p>
+<pre class="code" data-lang="python"><code><span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.heat_transfer</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeatAdvectionDiffusion</span>
+
+<span class="n">line</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">speed</span><span class="p">,</span> <span class="n">diffusivity</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.02</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">HeatAdvectionDiffusion</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">line</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">speed</span><span class="p">,</span> <span class="n">thermal_diffusivity</span><span class="o">=</span><span class="n">diffusivity</span>
+<span class="p">)</span>
+<span class="n">n</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="mf">0.15</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">line_experiment</span><span class="p">(</span>
+    <span class="n">line</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">temperature</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">300</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)),</span>
+    <span class="n">FiniteVolume</span><span class="p">(</span>
+        <span class="n">convection</span><span class="o">=</span><span class="n">Rusanov</span><span class="p">(),</span> <span class="n">reconstruction</span><span class="o">=</span><span class="n">MUSCL</span><span class="p">(),</span> <span class="n">diffusion</span><span class="o">=</span><span class="n">TwoPointDiffusion</span><span class="p">()</span>
+    <span class="p">),</span>
+    <span class="n">cells</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+    <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">exact</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">300</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+    <span class="o">-</span><span class="n">diffusivity</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">end</span>
+<span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">speed</span> <span class="o">*</span> <span class="n">end</span><span class="p">))</span>
+<span class="n">field</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+    <span class="n">field</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">exact</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">dof_coordinates</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">profile_figure</span><span class="p">(</span>
+    <span class="s2">&quot;Periodic heat transport&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">&quot;temperature&quot;</span><span class="p">,),</span>
+    <span class="n">reference</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="n">exact</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre>
+<figure><a href="/showcase/figures/recipe-heat-advection-diffusion.png"><img loading="lazy" src="/showcase/figures/recipe-heat-advection-diffusion.png" alt="Figure computed with OneSimulation: recipe heat advection diffusion"></a></figure></section></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

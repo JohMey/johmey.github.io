@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inductance from the magnetic field energy · OneSimulation</title>
+<meta name="description" content="The inductance of a finite thick-winding solenoid extracted from the magnetic energy, graded against the Nagaoka-corrected closed form.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://johmey.github.io/blog/solenoid_inductance_from_energy/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Inductance from the magnetic field energy · OneSimulation">
+<meta property="og:description" content="The inductance of a finite thick-winding solenoid extracted from the magnetic energy, graded against the Nagaoka-corrected closed form.">
+<meta property="og:url" content="https://johmey.github.io/blog/solenoid_inductance_from_energy/">
+<meta property="og:image" content="https://johmey.github.io/showcase/figures/library/solenoid_inductance_from_energy.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/" aria-current="location">Blog</a><a href="/teaching/">Teaching</a><a href="/about/">About</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/blog/">Notebook blog</a> / <a href="/blog/#electromagnetics">Electromagnetics</a></p><h1>Inductance from the magnetic field energy</h1><p class="lead">The inductance of a finite thick-winding solenoid extracted from the magnetic energy, graded against the Nagaoka-corrected closed form.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#what">What it computes</a><a href="#checks">What it checks</a><a href="#geometry">Geometry</a><a href="#notebook">The notebook</a></nav></aside><article class="prose reference"><p class="study-note">To reproduce the case, put its notebook and accompanying inputs in the same folder. Use the Python environment set up in the <a href="/tutorials/install/">installation tutorial</a>. Start with the original parameters and compare the result with the check reported below.</p><div class="chips"><span>STEP import</span><span>Field energy</span><span>Nedelec elements</span><span>Nagaoka check</span></div><div class="button-row"><a class="button" href="/downloads/notebooks/solenoid_inductance_from_energy.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/solenoid_inductance_from_energy.py" download>Download the script (.py)</a><a class="button light" href="/downloads/notebooks/solenoid_inductance_from_energy.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/solenoid_inductance_from_energy_geometry.py" download>Download the geometry script (.py)</a></div><figure><img loading="lazy" src="/showcase/figures/library/solenoid_inductance_from_energy.png" alt="Inductance from the magnetic field energy"><figcaption>Inductance from the magnetic field energy. Run the notebook to produce its own figures.</figcaption></figure><h2 id="what">What it computes</h2><p>OneSimulation solves the 3D magnetostatic field and integrates (1/2) B.H over the domain. The air volume is read from a STEP file with named faces; the script that builds it comes with the notebook.</p><h2 id="checks">What it checks</h2><p>The inductance from the field energy is 294.0 µH against 313.2 µH from the Nagaoka-corrected closed form (-6.2 %); it approaches the reference from below as the winding mesh is refined.</p><h2 id="geometry">Geometry</h2><p>The notebook starts at the import of the CAD file <a href="/downloads/notebooks/solenoid_inductance_from_energy.step" download><code>solenoid_inductance_from_energy.step</code></a>: STEP (AP242), readable by any CAD program, with the names of the faces that the boundary conditions use. Put it next to the notebook.</p><figure><img loading="lazy" src="/showcase/figures/library/solenoid_inductance_from_energy_geometry.png" alt="Geometry of the example: Inductance from the magnetic field energy"><figcaption>The geometry as the notebook reads it from the STEP file and draws it.</figcaption></figure><div class="button-row"><a class="button light" href="/downloads/notebooks/solenoid_inductance_from_energy.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/solenoid_inductance_from_energy_geometry.py" download>Download the geometry script (.py)</a></div><h3 id="geometry-script">The geometry script</h3><p>The script <a href="/downloads/notebooks/solenoid_inductance_from_energy_geometry.py" download><code>solenoid_inductance_from_energy_geometry.py</code></a> builds the geometry with the CAD objects of OneSimulation and writes the file. Change a dimension there, run it, and run the notebook again.</p><div class="notebook"><div class="nb-code"><pre class="code" data-lang="python"><code><span class="sd">&quot;&quot;&quot;Geometry of the OneSimulation example &quot;Inductance from the magnetic field energy&quot;.</span>
+
+<span class="sd">Builds the air cylinder around the coil, radius 100 mm and 360 mm long, with the CAD objects of</span>
+<span class="sd">OneSimulation and writes solenoid_inductance_from_energy.step. The faces keep their names</span>
+<span class="sd">outer_wall, bottom and top in the file. The winding is no part of the file: the notebook declares it</span>
+<span class="sd">as a current source, and the mesher embeds its volume in the air.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d3</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cylinder</span>
+
+<span class="n">air</span> <span class="o">=</span> <span class="n">Cylinder</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.100</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mf">0.360</span><span class="p">)</span>
+<span class="n">air</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;solenoid_inductance_from_energy.step&quot;</span><span class="p">)</span></code></pre></div></div><h2 id="notebook">The notebook</h2><p class="muted">The complete notebook, cell by cell. Run it to produce the figures and the comparison printout.</p><div class="notebook"><div class="nb-md"><p>A circuit designer does not want the field of a coil but the one number it implies: its inductance. It follows from the stored magnetic energy,</p>
+<div class="math display">\[W=\frac12\int \mathbf B\cdot\mathbf H\,\mathrm dV,\qquad L=\frac{2W}{I^2}.\]</div>
+<p>The coil is a solenoid with 240 turns, inner radius 10 mm, outer radius 20 mm and length 120 mm, carrying 1 A. The winding is a uniform azimuthal current density. The model solves <span class="math">\(\nabla\times(\mu_0^{-1}\nabla\times\mathbf A)=\mathbf J\)</span> with Nédélec edge elements and a Coulomb gauge in an air cylinder with magnetic insulation on its surface.</p>
+<p>The air cylinder comes from the CAD file <code>solenoid_inductance_from_energy.step</code>; the script <code>solenoid_inductance_from_energy_geometry.py</code> builds it with the CAD objects of OneSimulation. The winding is declared as a current source, and the mesher embeds its volume in the air.</p>
+<p><strong>Reference.</strong> The long-solenoid formula for a winding of finite thickness, multiplied by Nagaoka's end-correction factor <span class="math">\(K\)</span>:</p>
+<div class="math display">\[L_\mathrm{ref}=K\,\mu_0\,n^2\,\ell\,A_\mathrm{eff},\qquad n=\frac{N}{\ell},\qquad
+  A_\mathrm{eff}=\pi\Bigl[R_i^2+\frac{(R_o-R_i)(R_o+3R_i)}{6}\Bigr].\]</div>
+<p><span class="math">\(A_\mathrm{eff}\)</span> accounts for the field falling linearly across the winding. The combination is accurate to about 2 % for this coil.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plane</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.d3</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnularCylinder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.exchange</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">VacuumPermeability</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalRefinement</span><span class="p">,</span> <span class="n">TetrahedralMesher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.fem</span><span class="w"> </span><span class="kn">import</span> <span class="n">FiniteElement</span><span class="p">,</span> <span class="n">Nedelec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.linear</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseDirect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.magnetostatics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CoulombGauge</span><span class="p">,</span>
+    <span class="n">MagneticInsulation</span><span class="p">,</span>
+    <span class="n">MagneticVectorPotential</span><span class="p">,</span>
+    <span class="n">Magnetostatics</span><span class="p">,</span>
+    <span class="n">SolenoidCurrent</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.results.integration</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_value</span><span class="p">,</span> <span class="n">measure</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span><span class="p">,</span> <span class="n">theme</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">ellipe</span><span class="p">,</span> <span class="n">ellipk</span>
+
+<span class="n">theme</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Geometry and mesh</h4>
+<p>The winding is an embedded region of the air cylinder, meshed finely enough to resolve the field across its thickness.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">air</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;solenoid_inductance_from_energy.step&quot;</span><span class="p">)</span>
+<span class="n">centre</span> <span class="o">=</span> <span class="n">air</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="n">inner_radius</span><span class="p">,</span> <span class="n">outer_radius</span><span class="p">,</span> <span class="n">coil_length</span><span class="p">,</span> <span class="n">turns</span><span class="p">,</span> <span class="n">current</span> <span class="o">=</span> <span class="mf">0.010</span><span class="p">,</span> <span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mf">1.0</span>
+<span class="n">coil</span> <span class="o">=</span> <span class="n">SolenoidCurrent</span><span class="p">(</span>
+    <span class="n">inner_radius</span><span class="o">=</span><span class="n">inner_radius</span><span class="p">,</span>
+    <span class="n">outer_radius</span><span class="o">=</span><span class="n">outer_radius</span><span class="p">,</span>
+    <span class="n">length</span><span class="o">=</span><span class="n">coil_length</span><span class="p">,</span>
+    <span class="n">turns</span><span class="o">=</span><span class="n">turns</span><span class="p">,</span>
+    <span class="n">current</span><span class="o">=</span><span class="n">current</span><span class="p">,</span>
+    <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">centre</span><span class="p">),</span>
+    <span class="n">support_factory</span><span class="o">=</span><span class="n">AnnularCylinder</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">TetrahedralMesher</span><span class="p">(</span>
+    <span class="n">target_size</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
+    <span class="n">embedded_regions</span><span class="o">=</span><span class="p">(</span><span class="n">coil</span><span class="o">.</span><span class="n">support</span><span class="p">,),</span>
+    <span class="n">refinements</span><span class="o">=</span><span class="p">(</span><span class="n">LocalRefinement</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">coil</span><span class="o">.</span><span class="n">support</span><span class="p">,</span> <span class="n">target_size</span><span class="o">=</span><span class="mf">0.007</span><span class="p">),),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">air</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">geometry</span><span class="p">([</span><span class="n">air</span><span class="p">,</span> <span class="n">coil</span><span class="o">.</span><span class="n">support</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Air cylinder with the winding&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span>
+    <span class="n">mesh</span><span class="p">,</span>
+    <span class="n">groups</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,),</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">cell_count</span><span class="si">}</span><span class="s2"> tetrahedra&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Model</h4></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">model</span> <span class="o">=</span> <span class="n">Magnetostatics</span><span class="p">(</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">air</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
+    <span class="n">permeability</span><span class="o">=</span><span class="n">VacuumPermeability</span><span class="p">(),</span>
+    <span class="n">formulation</span><span class="o">=</span><span class="n">MagneticVectorPotential</span><span class="p">(</span><span class="n">gauge</span><span class="o">=</span><span class="n">CoulombGauge</span><span class="p">()),</span>
+    <span class="n">current_sources</span><span class="o">=</span><span class="p">(</span><span class="n">coil</span><span class="p">,),</span>
+<span class="p">)</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Solenoid inductance&quot;</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="o">=</span><span class="n">air</span><span class="p">,</span>
+    <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="p">,),</span>
+    <span class="n">boundary_conditions</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">MagneticInsulation</span><span class="p">(</span><span class="n">boundary</span><span class="o">=</span><span class="n">air</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="n">physics</span><span class="o">=</span><span class="n">model</span><span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">numerics</span> <span class="o">=</span> <span class="n">Numerics</span><span class="p">(</span>
+    <span class="n">spatial</span><span class="o">=</span><span class="n">FiniteElement</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">Nedelec</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span> <span class="n">linear_solver</span><span class="o">=</span><span class="n">SparseDirect</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">flux_density</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Simulation</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> <span class="n">numerics</span><span class="o">=</span><span class="n">numerics</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">solve_stationary</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">magnetic_flux_density</span><span class="p">)</span>
+<span class="p">)</span></code></pre></div><div class="nb-md"><h4>Results</h4>
+<p>The energy integral runs over the whole air cylinder. The reference is the long-solenoid formula with the effective winding area and Nagaoka's factor.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">mu0</span> <span class="o">=</span> <span class="n">VacuumPermeability</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+<span class="n">squared</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">B</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="p">(</span><span class="n">B</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">inductance</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">mean_value</span><span class="p">(</span><span class="n">flux_density</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">squared</span><span class="p">)</span>
+    <span class="o">*</span> <span class="n">measure</span><span class="p">(</span><span class="n">flux_density</span><span class="p">)</span>
+    <span class="o">/</span> <span class="p">(</span><span class="n">mu0</span> <span class="o">*</span> <span class="n">current</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="n">inner_radius</span><span class="o">**</span><span class="mi">2</span>
+    <span class="o">+</span> <span class="p">(</span><span class="n">outer_radius</span> <span class="o">-</span> <span class="n">inner_radius</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">outer_radius</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">inner_radius</span><span class="p">)</span> <span class="o">/</span> <span class="mi">6</span>
+<span class="p">)</span>
+<span class="n">k2</span> <span class="o">=</span> <span class="p">(</span><span class="n">inner_radius</span> <span class="o">+</span> <span class="n">outer_radius</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span>
+    <span class="p">(</span><span class="n">inner_radius</span> <span class="o">+</span> <span class="n">outer_radius</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">coil_length</span><span class="o">**</span><span class="mi">2</span>
+<span class="p">)</span>
+<span class="n">nagaoka</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">4</span>
+    <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k2</span><span class="p">))</span>
+    <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k2</span><span class="p">)</span> <span class="o">/</span> <span class="n">k2</span> <span class="o">*</span> <span class="p">(</span><span class="n">ellipk</span><span class="p">(</span><span class="n">k2</span><span class="p">)</span> <span class="o">-</span> <span class="n">ellipe</span><span class="p">(</span><span class="n">k2</span><span class="p">))</span> <span class="o">+</span> <span class="n">ellipe</span><span class="p">(</span><span class="n">k2</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">k2</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">reference</span> <span class="o">=</span> <span class="n">nagaoka</span> <span class="o">*</span> <span class="n">mu0</span> <span class="o">*</span> <span class="p">(</span><span class="n">turns</span> <span class="o">/</span> <span class="n">coil_length</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">coil_length</span> <span class="o">*</span> <span class="n">area</span>
+<span class="n">centre_field</span> <span class="o">=</span> <span class="n">flux_density</span><span class="o">.</span><span class="n">evaluate</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">centre</span><span class="p">]])[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;inductance from the field energy   </span><span class="si">{</span><span class="mf">1e6</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">inductance</span><span class="si">:</span><span class="s2">7.1f</span><span class="si">}</span><span class="s2"> µH&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;closed form with end correction    </span><span class="si">{</span><span class="mf">1e6</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">reference</span><span class="si">:</span><span class="s2">7.1f</span><span class="si">}</span><span class="s2"> µH   (difference </span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">inductance</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">reference</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2"> %)&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;field at the coil centre           </span><span class="si">{</span><span class="mf">1e3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">centre_field</span><span class="si">:</span><span class="s2">7.3f</span><span class="si">}</span><span class="s2"> mT   (</span><span class="si">{</span><span class="n">centre_field</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">mu0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">turns</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">coil_length</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">current</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> of the infinite solenoid)&quot;</span>
+<span class="p">)</span></code></pre></div><div class="nb-md"><h4>Figure</h4>
+<p>The field strength in a section through the axis, and the axial field across the mid-plane against the infinite solenoid, whose field falls linearly through the winding.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">axial</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">B</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="mf">1e3</span> <span class="o">*</span> <span class="n">B</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">outer_radius</span><span class="p">,</span> <span class="mi">61</span><span class="p">)</span>
+<span class="n">profile</span> <span class="o">=</span> <span class="n">axial</span><span class="p">(</span>
+    <span class="n">flux_density</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">centre</span><span class="p">)))</span>
+    <span class="p">),</span>
+    <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ideal</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mf">1e3</span>
+    <span class="o">*</span> <span class="n">mu0</span>
+    <span class="o">*</span> <span class="n">turns</span>
+    <span class="o">/</span> <span class="n">coil_length</span>
+    <span class="o">*</span> <span class="n">current</span>
+    <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">((</span><span class="n">outer_radius</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">outer_radius</span> <span class="o">-</span> <span class="n">inner_radius</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">section</span><span class="p">(</span>
+    <span class="n">flux_density</span><span class="p">,</span>
+    <span class="n">plane</span><span class="o">=</span><span class="n">Plane</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">normal</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+    <span class="n">component</span><span class="o">=</span><span class="n">axial</span><span class="p">,</span>
+    <span class="n">colormap</span><span class="o">=</span><span class="s2">&quot;diverging&quot;</span><span class="p">,</span>
+    <span class="n">contours</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+    <span class="n">subdivisions</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;B_z [mT]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Axial field in a section through the axis&quot;</span><span class="p">,</span>
+    <span class="n">xlimits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">),</span>
+    <span class="n">ylimits</span><span class="o">=</span><span class="p">(</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">),</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="mf">1e3</span> <span class="o">*</span> <span class="n">r</span><span class="p">,</span>
+    <span class="p">{</span><span class="s2">&quot;simulation&quot;</span><span class="p">:</span> <span class="n">profile</span><span class="p">},</span>
+    <span class="n">reference</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;infinite solenoid&quot;</span><span class="p">:</span> <span class="n">ideal</span><span class="p">},</span>
+    <span class="n">vlines</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;winding&quot;</span><span class="p">:</span> <span class="mf">1e3</span> <span class="o">*</span> <span class="n">inner_radius</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="mf">1e3</span> <span class="o">*</span> <span class="n">outer_radius</span><span class="p">},</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;radius [mm]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;axial flux density [mT]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Mid-plane profile&quot;</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Going further</h4>
+<p>Shorten the coil and watch the end correction grow, or enlarge the air cylinder in <code>solenoid_inductance_from_energy_geometry.py</code> and write the STEP file again: the insulated surface confines the return flux and lowers the inductance slightly. The same recipe with <span class="math">\(\tfrac12\int\varepsilon|\mathbf E|^2\,\mathrm dV\)</span> gives capacitances from electrostatic fields.</p></div></div><div class="button-row"><a class="button" href="/downloads/notebooks/solenoid_inductance_from_energy.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/solenoid_inductance_from_energy.py" download>Download the script (.py)</a><a class="button light" href="/downloads/notebooks/solenoid_inductance_from_energy.step" download>Download the geometry (.step)</a><a class="button light" href="/downloads/notebooks/solenoid_inductance_from_energy_geometry.py" download>Download the geometry script (.py)</a></div><p class="source-note"><a href="https://johmey.github.io/OneSimulation-Showcase/examples/notebooks/solenoid_inductance_from_energy.html">Original OneSimulation Showcase entry</a></p></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One model, five discretizations · OneSimulation</title>
+<meta name="description" content="A measured FEM, FVM and FDM comparison on a 16³ Poisson mesh with an exact solution.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://johmey.github.io/tutorials/method-comparison/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="One model, five discretizations · OneSimulation">
+<meta property="og:description" content="A measured FEM, FVM and FDM comparison on a 16³ Poisson mesh with an exact solution.">
+<meta property="og:url" content="https://johmey.github.io/tutorials/method-comparison/">
+<meta property="og:image" content="https://johmey.github.io/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Tutorial</a><a href="/blog/">Blog</a><a href="/teaching/">Teaching</a><a href="/about/">About</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Blog · Numerical methods</p>
+  <h1>One model, five discretizations</h1>
+  <p class="lead">On the same 16³ mesh, the cell-centre RMS error ranges from 2.8 × 10<sup>−3</sup> for linear finite elements to 1.7 × 10<sup>−8</sup> for fourth-order finite differences. Here is the model and how those errors were measured.</p>
+  <p class="byline"><a href="/about/">Dr. Johannes Meyer</a></p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#setup">Model</a><a href="#results">Results</a><a href="#interpretation">Interpretation</a><a href="#run">Reproduce the run</a></nav></aside>
+  <article class="prose">
+    <section id="setup">
+      <h2>A cube with an exact solution</h2>
+      <p>Solve <var>−∇²φ = ρ</var> on the unit cube with zero potential on all six faces. Set <var>ρ = 3π² sin(πx) sin(πy) sin(πz)</var>. Then <var>φ = sin(πx) sin(πy) sin(πz)</var> satisfies both the equation and the boundary values.</p>
+      <p>All five runs use the same 4,096 hexahedral cells, source, boundary conditions and sparse direct solver. The discretizations can have different numbers of degrees of freedom, so each solution is evaluated at the same 4,096 cell centres. The script reports the root mean square of the difference from the exact value at those points.</p>
+    </section>
+    <section id="results">
+      <h2>Measured errors and wall times</h2>
+      <figure class="paper-figure"><img src="/assets/methods.png" width="1400" height="658" alt="Log-scale chart of five RMS errors. Fourth-order finite differences give the smallest error." loading="lazy"><figcaption>Cell-centre RMS error on a logarithmic scale.</figcaption></figure>
+      <div class="table-wrap">
+        <table><caption>Reference run on Apple Silicon. The timer spans assembly, solve and evaluation at cell centres.</caption>
+          <thead><tr><th scope="col">Discretization</th><th scope="col">RMS error</th><th scope="col">Wall time</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">FEM, linear elements</th><td>2.8 × 10<sup>−3</sup></td><td>14 s</td></tr>
+            <tr><th scope="row">FEM, quadratic elements</th><td>6.3 × 10<sup>−7</sup></td><td>86 s</td></tr>
+            <tr><th scope="row">FVM, central diffusion</th><td>5.7 × 10<sup>−4</sup></td><td>6 s</td></tr>
+            <tr><th scope="row">FDM, second order</th><td>1.1 × 10<sup>−3</sup></td><td>6 s</td></tr>
+            <tr><th scope="row">FDM, fourth order</th><td>1.7 × 10<sup>−8</sup></td><td>7 s</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="interpretation">
+      <h2>What the cube favours</h2>
+      <p>The fourth-order stencil uses the regular grid and the smooth solution. Its cell-centre error is about 65,000 times smaller than that of second-order FDM in this run. Quadratic FEM also lowers the error substantially, with a larger system and about six times the wall time of linear FEM.</p>
+      <p>To compare methods on a curved domain, run a separate mesh-refinement study with a reference solution suited to that boundary. Use the same error norm and sampling points throughout that comparison.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>Download the script and activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a>. Start with eight cells per direction, then run the reference grid.</p>
+      <pre><code>python poisson-five-methods.py --cells 8
+python poisson-five-methods.py --cells 16</code></pre>
+      <p>Wall times vary by machine. To estimate the observed convergence order from the two runs, calculate <var>log(E₈ / E₁₆) / log(2)</var> separately for each method. The <a href="/teaching/exercises/#exercise-5">lab exercise</a> adds a third grid to check whether the order holds.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/poisson-five-methods.py" download>Download comparison script</a></div>
+      <details><summary>Read the full Python script</summary><pre><code>"""Compare five spatial discretizations for a manufactured Poisson solution."""
+
+import argparse
+from time import perf_counter
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--cells', type=int, default=16, help='Hexahedra per direction (default: 16)')
+args = parser.parse_args()
+if args.cells &lt; 7:
+    parser.error('--cells must be at least 7')
+
+import numpy as np
+from dataclasses import dataclass
+from onesim.cad.d3 import Box
+from onesim.meshing import StructuredHexahedralMesher
+from onesim.numerics import Numerics
+from onesim.numerics.linear import SparseDirect
+from onesim.physics.electrostatics import FixedPotential, PoissonEquation
+from onesim.simulation import Problem, Simulation
+
+@dataclass(frozen=True)
+class Permittivity:
+    unit = "F/m"
+    def evaluate(self, **state):
+        return 1.0
+
+cube = Box(length=1, width=1, height=1)
+exact = lambda x, y, z: np.sin(np.pi*x) * np.sin(np.pi*y) * np.sin(np.pi*z)
+
+field = PoissonEquation(
+    domain=cube.volume, permittivity=Permittivity(),
+    charge_density=lambda x, y, z: 3 * np.pi**2 * exact(x, y, z))
+
+problem = Problem(
+    name="Charge in a grounded box", geometry=cube, physics=(field,),
+    boundary_conditions=(
+        FixedPotential(physics=field, boundary=cube.boundaries.all, value=0.0),))
+
+mesh = StructuredHexahedralMesher(cells=(args.cells,) * 3).generate(cube)
+
+from onesim.numerics.fem import FiniteElement, Lagrange
+from onesim.numerics.fvm import FiniteVolume, LeastSquaresGradient, CentralDifference
+from onesim.numerics.fdm import (FiniteDifference, CentralLaplacian,
+    PolynomialDifference, PolynomialLaplacian)
+from onesim.numerics.fdm import CentralDifference as FDGradient
+
+methods = {
+    "FEM, linear elements":    FiniteElement(element=Lagrange(order=1)),
+    "FEM, quadratic elements": FiniteElement(element=Lagrange(order=2)),
+    "FVM":                     FiniteVolume(gradient=LeastSquaresGradient(),
+                                            diffusion=CentralDifference()),
+    "FDM, 2nd order":          FiniteDifference(gradient=FDGradient(),
+                                                diffusion=CentralLaplacian()),
+    "FDM, 4th order":          FiniteDifference(
+                                   gradient=PolynomialDifference(accuracy_order=4),
+                                   diffusion=PolynomialLaplacian(accuracy_order=4)),
+}
+
+centres = mesh.coordinates[mesh.cells].mean(axis=1)
+for name, spatial in methods.items():
+    start = perf_counter()
+    result = Simulation(
+        problem=problem, mesh=mesh,
+        numerics=Numerics(spatial=spatial, linear_solver=SparseDirect()),
+    ).solve_stationary()
+    phi = result.field(field.potential).evaluate(centres)
+    error = np.sqrt(np.mean((phi - exact(*centres.T))**2))
+    print(f"{name:26s} RMS={error:.2e}, {perf_counter() - start:.2f} s")
+</code></pre></details>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

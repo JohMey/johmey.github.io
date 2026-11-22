@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reversible reaction equilibrium · OneSimulation</title>
+<meta name="description" content="A reversible reaction A to/from B relaxing to equilibrium; transient and equilibrium are graded against theory.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://johmey.github.io/blog/reversible_reaction_equilibrium/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reversible reaction equilibrium · OneSimulation">
+<meta property="og:description" content="A reversible reaction A to/from B relaxing to equilibrium; transient and equilibrium are graded against theory.">
+<meta property="og:url" content="https://johmey.github.io/blog/reversible_reaction_equilibrium/">
+<meta property="og:image" content="https://johmey.github.io/showcase/figures/library/reversible_reaction_equilibrium.png">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/" aria-current="location">Blog</a><a href="/teaching/">Teaching</a><a href="/about/">About</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/blog/">Notebook blog</a> / <a href="/blog/#chemistry">Chemistry</a></p><h1>Reversible reaction equilibrium</h1><p class="lead">A reversible reaction A to/from B relaxing to equilibrium; transient and equilibrium are graded against theory.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#what">What it computes</a><a href="#checks">What it checks</a><a href="#notebook">The notebook</a></nav></aside><article class="prose reference"><p class="study-note">To reproduce the case, put its notebook and accompanying inputs in the same folder. Use the Python environment set up in the <a href="/tutorials/install/">installation tutorial</a>. Start with the original parameters and compare the result with the check reported below.</p><div class="chips"><span>0D kinetics</span><span>Runge-Kutta 4</span><span>Closed-form check</span></div><div class="button-row"><a class="button" href="/downloads/notebooks/reversible_reaction_equilibrium.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/reversible_reaction_equilibrium.py" download>Download the script (.py)</a></div><figure><img loading="lazy" src="/showcase/figures/library/reversible_reaction_equilibrium.png" alt="Reversible reaction equilibrium"><figcaption>Reversible reaction equilibrium. Run the notebook to produce its own figures.</figcaption></figure><h2 id="what">What it computes</h2><p>OneSimulation integrates the forward and reverse mass-action reactions in time on a homogeneous (0D) network.</p><h2 id="checks">What it checks</h2><p>The relaxation rate k_f + k_r, the transient and the equilibrium ratio C_B/C_A = k_f/k_r match the closed form.</p><h2 id="notebook">The notebook</h2><p class="muted">The complete notebook, cell by cell. Run it to produce the figures and the comparison printout.</p><div class="notebook"><div class="nb-md"><p>A species <span class="math">\(A\)</span> converts into <span class="math">\(B\)</span> and back in a homogeneous, well-mixed (0D) batch reactor through two opposing first-order steps:</p>
+<div class="math display">\[A \xrightarrow{\;k_f\;} B,\qquad B \xrightarrow{\;k_r\;} A .\]</div>
+<p>With mass-action rate laws the homogeneous balances are</p>
+<div class="math display">\[\frac{dC_A}{dt}=-k_f C_A + k_r C_B,\qquad
+  \frac{dC_B}{dt}=+k_f C_A - k_r C_B,\qquad C_A(0)=C_{A0},\;C_B(0)=0 .\]</div>
+<p>OneSimulation integrates this network on a lumped (0D) domain with an explicit classical Runge-Kutta scheme. The two opposing steps are declared as two irreversible constant-rate reactions sharing the same two species.</p>
+<p><strong>Reference.</strong> Because <span class="math">\(C_A+C_B=C_{A0}\)</span> is conserved, <span class="math">\(C_A\)</span> obeys a single linear relaxation equation. With the relaxation rate <span class="math">\(\lambda=k_f+k_r\)</span> and the equilibrium value <span class="math">\(C_A^{\mathrm{eq}}=\dfrac{k_r}{k_f+k_r}C_{A0}\)</span>,</p>
+<div class="math display">\[C_A(t)=C_A^{\mathrm{eq}}+\bigl(C_{A0}-C_A^{\mathrm{eq}}\bigr)e^{-\lambda t},\]</div>
+<p>and at equilibrium detailed balance fixes the ratio <span class="math">\(C_B^{\mathrm{eq}}/C_A^{\mathrm{eq}}=k_f/k_r\)</span>. We compare both the transient and the equilibrium ratio.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.cad.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LumpedDomain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LumpedMesh</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Numerics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.discretization</span><span class="w"> </span><span class="kn">import</span> <span class="n">LumpedParameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.numerics.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassicalRungeKutta4</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.physics.chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReactionIR</span><span class="p">,</span>
+    <span class="n">ReactionKinetics</span><span class="p">,</span>
+    <span class="n">ReactionNetworkIR</span><span class="p">,</span>
+    <span class="n">SpeciesIR</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.simulation.initial_conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InitialValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">onesim.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span><span class="p">,</span> <span class="n">theme</span>
+
+<span class="n">theme</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Parameters</h4>
+<p>The values are freely adjustable. The forward and reverse coefficients set the relaxation rate <span class="math">\(\lambda=k_f+k_r\)</span> and the equilibrium split. The window spans twelve relaxation times, so the system is essentially at equilibrium at the end.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">k_f</span> <span class="o">=</span> <span class="mf">1.2</span>
+<span class="n">k_r</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="n">C_A0</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">C_B0</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="n">relaxation_rate</span> <span class="o">=</span> <span class="n">k_f</span> <span class="o">+</span> <span class="n">k_r</span>
+<span class="n">C_total</span> <span class="o">=</span> <span class="n">C_A0</span> <span class="o">+</span> <span class="n">C_B0</span>
+<span class="n">C_A_eq</span> <span class="o">=</span> <span class="n">k_r</span> <span class="o">/</span> <span class="n">relaxation_rate</span> <span class="o">*</span> <span class="n">C_total</span>
+<span class="n">C_B_eq</span> <span class="o">=</span> <span class="n">k_f</span> <span class="o">/</span> <span class="n">relaxation_rate</span> <span class="o">*</span> <span class="n">C_total</span>
+<span class="n">tau</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">relaxation_rate</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="mf">12.0</span> <span class="o">*</span> <span class="n">tau</span>
+<span class="n">time_step</span> <span class="o">=</span> <span class="mf">0.02</span> <span class="o">*</span> <span class="n">tau</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;relaxation rate k_f+k_r = </span><span class="si">{</span><span class="n">relaxation_rate</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> 1/s,  relaxation time = </span><span class="si">{</span><span class="n">tau</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> s&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;equilibrium: C_A_eq = </span><span class="si">{</span><span class="n">C_A_eq</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, C_B_eq = </span><span class="si">{</span><span class="n">C_B_eq</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> mol/m^3,  ratio k_f/k_r = </span><span class="si">{</span><span class="n">k_f</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">k_r</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span></code></pre></div><div class="nb-md"><h4>Model</h4>
+<p>Two species (<span class="math">\(A\)</span>, <span class="math">\(B\)</span>) and two irreversible reactions with constant rate coefficients: <span class="math">\(A\to B\)</span> at <span class="math">\(k_f\)</span> and <span class="math">\(B\to A\)</span> at <span class="math">\(k_r\)</span>. Together they form the reversible pair in a single lumped control volume.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">network</span> <span class="o">=</span> <span class="n">ReactionNetworkIR</span><span class="p">(</span>
+    <span class="s2">&quot;reversible_pair&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="n">species</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">SpeciesIR</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-27</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+        <span class="n">SpeciesIR</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-27</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+    <span class="p">),</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">ReactionIR</span><span class="p">(</span><span class="s2">&quot;forward&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">k_f</span><span class="p">}),</span>
+        <span class="n">ReactionIR</span><span class="p">(</span><span class="s2">&quot;reverse&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">k_r</span><span class="p">}),</span>
+    <span class="p">),</span>
+    <span class="n">strict_balance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">domain</span> <span class="o">=</span> <span class="n">LumpedDomain</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ReactionKinetics</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="o">.</span><span class="n">system</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">300.0</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="n">network</span><span class="p">)</span>
+<span class="n">C_A</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">concentration</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+<span class="n">C_B</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">concentration</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Reversible reaction equilibrium&quot;</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
+    <span class="n">physics</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="p">,),</span>
+    <span class="n">initial_conditions</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">InitialValue</span><span class="p">(</span><span class="n">C_A</span><span class="p">,</span> <span class="n">C_A0</span><span class="p">),</span>
+        <span class="n">InitialValue</span><span class="p">(</span><span class="n">C_B</span><span class="p">,</span> <span class="n">C_B0</span><span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span>
+    <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+    <span class="n">mesh</span><span class="o">=</span><span class="n">LumpedMesh</span><span class="p">(</span><span class="n">domain</span><span class="p">),</span>
+    <span class="n">numerics</span><span class="o">=</span><span class="n">Numerics</span><span class="p">(</span>
+        <span class="n">spatial</span><span class="o">=</span><span class="n">LumpedParameters</span><span class="p">(),</span>
+        <span class="n">time_integrator</span><span class="o">=</span><span class="n">ClassicalRungeKutta4</span><span class="p">(),</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">simulation</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span><span class="o">.</span><span class="n">require_valid</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">end_time</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="n">time_step</span><span class="p">)</span></code></pre></div><div class="nb-md"><h4>Comparison with the relaxation solution</h4>
+<p>The stored concentration histories are compared, time by time, with the closed-form exponential relaxation, and the final state is compared with the equilibrium split and the detailed-balance ratio.</p></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">times</span><span class="p">,</span> <span class="n">num_A</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">C_A</span><span class="p">)</span><span class="o">.</span><span class="n">time_series</span><span class="p">()</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">num_B</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">C_B</span><span class="p">)</span><span class="o">.</span><span class="n">time_series</span><span class="p">()</span>
+
+<span class="n">exact_A</span> <span class="o">=</span> <span class="n">C_A_eq</span> <span class="o">+</span> <span class="p">(</span><span class="n">C_A0</span> <span class="o">-</span> <span class="n">C_A_eq</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">relaxation_rate</span> <span class="o">*</span> <span class="n">times</span><span class="p">)</span>
+<span class="n">exact_B</span> <span class="o">=</span> <span class="n">C_B_eq</span> <span class="o">+</span> <span class="p">(</span><span class="n">C_B0</span> <span class="o">-</span> <span class="n">C_B_eq</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">relaxation_rate</span> <span class="o">*</span> <span class="n">times</span><span class="p">)</span>
+
+<span class="n">err</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+    <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">num_A</span> <span class="o">-</span> <span class="n">exact_A</span><span class="p">))),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">num_B</span> <span class="o">-</span> <span class="n">exact_B</span><span class="p">)))</span>
+<span class="p">)</span>
+<span class="n">rel_error</span> <span class="o">=</span> <span class="n">err</span> <span class="o">/</span> <span class="n">C_total</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Maximum absolute error against the relaxation: </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> mol/m^3&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;  (</span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rel_error</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> % of total)&quot;</span>
+<span class="p">)</span>
+
+<span class="n">final_A</span><span class="p">,</span> <span class="n">final_B</span> <span class="o">=</span> <span class="n">num_A</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">num_B</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;final C_A = </span><span class="si">{</span><span class="n">final_A</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> (eq </span><span class="si">{</span><span class="n">C_A_eq</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">),  final C_B = </span><span class="si">{</span><span class="n">final_B</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> (eq </span><span class="si">{</span><span class="n">C_B_eq</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="p">)</span>
+<span class="n">ratio</span> <span class="o">=</span> <span class="n">final_B</span> <span class="o">/</span> <span class="n">final_A</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;equilibrium ratio C_B/C_A = </span><span class="si">{</span><span class="n">ratio</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">,  k_f/k_r = </span><span class="si">{</span><span class="n">k_f</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">k_r</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">mass_error</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">num_A</span> <span class="o">+</span> <span class="n">num_B</span> <span class="o">-</span> <span class="n">C_total</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Maximum mass-balance error C_A+C_B-C_total: </span><span class="si">{</span><span class="n">mass_error</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> mol/m^3&quot;</span><span class="p">)</span></code></pre></div><div class="nb-md"><h4>Figure</h4></div><div class="nb-code"><pre class="code" data-lang="python"><code><span class="n">t_fine</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+<span class="n">shown</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">//</span> <span class="mi">40</span><span class="p">))</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="n">points</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;C_A&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">shown</span><span class="p">],</span> <span class="n">num_A</span><span class="p">[</span><span class="n">shown</span><span class="p">]),</span> <span class="s2">&quot;C_B&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">shown</span><span class="p">],</span> <span class="n">num_B</span><span class="p">[</span><span class="n">shown</span><span class="p">])},</span>
+    <span class="n">reference</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;C_A&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">t_fine</span><span class="p">,</span> <span class="n">C_A_eq</span> <span class="o">+</span> <span class="p">(</span><span class="n">C_A0</span> <span class="o">-</span> <span class="n">C_A_eq</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">relaxation_rate</span> <span class="o">*</span> <span class="n">t_fine</span><span class="p">)),</span>
+        <span class="s2">&quot;C_B&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">t_fine</span><span class="p">,</span> <span class="n">C_B_eq</span> <span class="o">+</span> <span class="p">(</span><span class="n">C_B0</span> <span class="o">-</span> <span class="n">C_B_eq</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">relaxation_rate</span> <span class="o">*</span> <span class="n">t_fine</span><span class="p">)),</span>
+    <span class="p">},</span>
+    <span class="n">hlines</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;equilibrium C_A&quot;</span><span class="p">:</span> <span class="n">C_A_eq</span><span class="p">,</span> <span class="s2">&quot;equilibrium C_B&quot;</span><span class="p">:</span> <span class="n">C_B_eq</span><span class="p">},</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;time [s]&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;concentration [mol/m^3]&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Reversible reaction: OneSimulation (markers) and exact relaxation (dashed)&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plots</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></code></pre></div><div class="nb-md"><h4>Going further</h4>
+<p>Change the ratio <span class="math">\(k_f/k_r\)</span> and watch the equilibrium split move while the relaxation rate stays <span class="math">\(k_f+k_r\)</span>. Start from the product side (<span class="math">\(C_A=0\)</span>, <span class="math">\(C_B=C_{B0}\)</span>) and confirm the same equilibrium is reached from above. Replace the two constant laws by Arrhenius laws and couple a temperature to study how the equilibrium shifts with <span class="math">\(T\)</span>.</p></div></div><div class="button-row"><a class="button" href="/downloads/notebooks/reversible_reaction_equilibrium.ipynb" download>Download the notebook (.ipynb)</a><a class="button light" href="/downloads/notebooks/reversible_reaction_equilibrium.py" download>Download the script (.py)</a></div><p class="source-note"><a href="https://johmey.github.io/OneSimulation-Showcase/examples/notebooks/reversible_reaction_equilibrium.html">Original OneSimulation Showcase entry</a></p></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
