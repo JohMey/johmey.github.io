@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STEP import and tensile deformation · OneSimulation</title>
+<meta name="description" content="Reproduce the deformation of a steel sleeve under 40 MPa and compare it with the uniaxial bar formula.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://johmey.github.io/tutorials/step/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STEP import and tensile deformation · OneSimulation">
+<meta property="og:description" content="Reproduce the deformation of a steel sleeve under 40 MPa and compare it with the uniaxial bar formula.">
+<meta property="og:url" content="https://johmey.github.io/tutorials/step/">
+<meta property="og:image" content="https://johmey.github.io/assets/step-result.png">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/step/" aria-current="page">Tutorial</a><a href="/blog/five-discretizations/">Blog</a><a href="/teaching/">Teaching</a><a href="/about/">About</a></nav>
+<a class="header-contact" href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact</a>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Structural mechanics</p>
+  <h1>STEP import and tensile deformation</h1>
+  <p class="lead">Run a steel sleeve model under 40 MPa tension, check the loaded area and compare the axial displacement with a bar formula.</p>
+  <div class="download-row">
+    <a class="button button-primary" href="/downloads/step-import.ipynb" download>Download notebook</a>
+    <a class="button" href="/downloads/step-import.py" download>Download Python script</a>
+    <a class="button" href="/downloads/steel-sleeve.step" download>Download STEP geometry</a>
+  </div>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="Tutorial sections"><strong>On this page</strong><a href="#setup">Set up</a><a href="#model">Model and faces</a><a href="#check">Results and checks</a><a href="#adapt">Adapt the example</a><a href="#code">Source code</a></nav></aside>
+  <article class="prose">
+    <section id="setup">
+      <h2>1. Set up and run</h2>
+      <p>Use CPython 3.13 and OneSimulation Runtime 0.2.1a8. Open <strong>View content</strong> in Gumroad, download the ZIP for your platform, extract it and put <code>step-import.py</code> beside the wheel. Enter the Gumroad licence key when the activation command prompts for it.</p>
+      <details open><summary>macOS · Apple Silicon</summary>
+        <pre><code>python3.13 -m venv .venv-onesimulation
+.venv-onesimulation/bin/python -m pip install './onesimulation-0.2.1a8-cp313-cp313-macosx_11_0_arm64.whl[meshing,compute,visualization]'
+.venv-onesimulation/bin/python -m pip check
+.venv-onesimulation/bin/onesimulation-license activate-gumroad
+.venv-onesimulation/bin/python step-import.py</code></pre>
+      </details>
+      <details><summary>Ubuntu 22.04 · x86-64</summary>
+        <pre><code>python3.13 -m venv .venv-onesimulation
+.venv-onesimulation/bin/python -m pip install './onesimulation-0.2.1a8-cp313-cp313-linux_x86_64.whl[meshing,compute,visualization]'
+.venv-onesimulation/bin/python -m pip check
+.venv-onesimulation/bin/onesimulation-license activate-gumroad
+.venv-onesimulation/bin/python step-import.py</code></pre>
+      </details>
+      <details><summary>Windows x64 · PowerShell</summary>
+        <pre><code>py -3.13 -m venv .venv-onesimulation
+.\.venv-onesimulation\Scripts\python.exe -m pip install './onesimulation-0.2.1a8-cp313-cp313-win_amd64.whl[meshing,compute,visualization]'
+.\.venv-onesimulation\Scripts\python.exe -m pip check
+.\.venv-onesimulation\Scripts\onesimulation-license.exe activate-gumroad
+.\.venv-onesimulation\Scripts\python.exe step-import.py</code></pre>
+      </details>
+      <p>For the notebook, install JupyterLab in the same Python environment if needed (<code>python -m pip install jupyterlab</code>). Start it with <code>python -m jupyterlab</code> from that environment. Results are written to <code>ergebnisse_onesimulation/</code>.</p>
+    </section>
+    <section id="model">
+      <h2>2. Model and face assignments</h2>
+      <p>With <code>STEP_DATEI = None</code>, the script creates the sleeve, exports it as STEP, then imports that file for meshing. This exercises the same import path as an external CAD file.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th scope="col">Input</th><th scope="col">Benchmark value</th></tr></thead>
+        <tbody><tr><th scope="row">Geometry</th><td>100 mm long, radii 12 and 18 mm</td></tr>
+        <tr><th scope="row">Material</th><td>Stainless steel 304, E = 193 GPa</td></tr>
+        <tr><th scope="row">Boundary conditions</th><td>Lower end fixed, upper face at 40 MPa, free cylindrical walls</td></tr>
+        <tr><th scope="row">Discretization</th><td>Quadratic FEM, 1,731 tetrahedra in the reference run</td></tr></tbody>
+      </table></div>
+      <p>Run <code>survey_step</code> before editing the face groups. The sample uses faces 0 and 2 for the cylindrical walls, 1 for the fixed end and 3 for the load. The fast mesh has a 6 mm target size. The refined profile uses 3 mm.</p>
+    </section>
+    <section id="check">
+      <h2>3. Results and checks</h2>
+      <dl class="measurements">
+        <div><dt>Computed elongation</dt><dd>20.49 µm</dd></div>
+        <div><dt>Bar formula</dt><dd>20.73 µm</dd></div>
+        <div><dt>Relative difference</dt><dd>1.15%</dd></div>
+      </dl>
+      <figure class="paper-figure"><img src="/assets/step-result.png" width="1400" height="728" alt="Plotted axial displacement from quadratic finite elements and the uniaxial bar formula" loading="lazy"><figcaption>Axial displacement against position along the sleeve. The reference assumes uniaxial stress.</figcaption></figure>
+      <p>The ideal force is <var>σπ(R² − r²)</var>, about 22.62 kN. Integrating the traction on the triangulated end face gives 22.58 kN. This check helps catch a wrong face assignment or unit conversion. The lower clamp restricts lateral contraction, so the bar formula <var>u = σL/E</var> is an approximate displacement reference.</p>
+      <div class="download-row"><a class="button" href="/downloads/step-displacement.csv" download>Displacement CSV</a><a class="button" href="/downloads/step-displacement.vtk" download>ParaView VTK</a><a class="button" href="/downloads/step-referenz.json" download>Verification JSON</a></div>
+    </section>
+    <section id="adapt">
+      <h2>4. Adapt the model</h2>
+      <p>Set <code>STEP_DATEI</code> to your file, inspect its face indices and set the length unit. Replace the load, constraints and material in the script. Choose a reference and a tolerance for that geometry before interpreting the displacement field.</p>
+      <p>The example assumes small strains and linear elasticity. It does not include contact, yielding or thermal loading.</p>
+    </section>
+    <section id="code">
+      <h2>Source code</h2>
+      <details><summary>Read the full Python script</summary><pre><code># STEP sleeve in tension. Read the tutorial before changing the input file or face map.
+"""Generated from the OneSimulation example notebook.
+Needs the installed, activated OneSimulation runtime. See
+https://johmey.github.io/OneSimulation-Showcase/examples/notebooks.html
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from importlib.metadata import version
+from pathlib import Path
+from time import perf_counter
+import csv
+import json
+import numpy as np
+import matplotlib.pyplot as plt
+
+from onesim.cad import CadGeometryBuilder
+from onesim.cad.d3 import AnnularCylinder, ImportedSolid
+from onesim.cad.exchange import survey_step
+from onesim.materials.library import standard_material
+from onesim.meshing import TetrahedralMesher
+from onesim.numerics import Numerics
+from onesim.numerics.fem import FiniteElement, Lagrange
+from onesim.numerics.linear import SparseDirect
+from onesim.physics.solid_mechanics import (
+    FixedDisplacement, LinearElasticity, Traction, TractionFree,
+)
+from onesim.simulation import Problem, Simulation
+
+assert version("onesimulation") == "0.2.1a8"
+STEP_DATEI = None
+PROFILE = "SCHNELL"
+PROFILES = {"SCHNELL": {"target_size": 0.006}, "HOCHAUFGELOEST": {"target_size": 0.003}}
+config = PROFILES[PROFILE]
+output_dir = Path("ergebnisse_onesimulation")
+output_dir.mkdir(exist_ok=True)
+
+INNENRADIUS, AUSSENRADIUS, LAENGE = 0.012, 0.018, 0.100
+ZUGSPANNUNG = 40.0e6
+WERKSTOFF = standard_material("stainless_steel_304")
+
+if STEP_DATEI is None:
+
+
+    entwurf = AnnularCylinder(inner_radius=INNENRADIUS,
+                              outer_radius=AUSSENRADIUS, length=LAENGE)
+    gebaut = CadGeometryBuilder().build(entwurf)
+    step_pfad = output_dir / "huelse.step"
+    gebaut.kernel.export_step(gebaut.reference, step_pfad)
+    volumen_erwartet = entwurf.measure
+else:
+    step_pfad = Path(STEP_DATEI)
+    volumen_erwartet = None
+assert step_pfad.is_file() and step_pfad.stat().st_size &gt; 0, step_pfad
+print(f"STEP-Datei: {step_pfad} ({step_pfad.stat().st_size / 1024:.1f} KiB)")
+
+
+
+
+
+
+
+
+
+
+
+
+
+uebersicht = survey_step(step_pfad)
+print(f"Flächen: {uebersicht.face_count}; Volumen: {uebersicht.volume:.6e} m^3; "
+      f"Einheit: {uebersicht.unit}")
+print(f"Umschließender Kasten: "
+      + ", ".join(f"{wert:+.4f}" for wert in uebersicht.bounds))
+print()
+print(f"{'Index':&gt;5}  {'Name':&lt;10} {'Fläche / m^2':&gt;14}  Normale")
+for flaeche in uebersicht:
+    normale = ", ".join(f"{wert:+.3f}" for wert in flaeche.normal)
+    print(f"{flaeche.index:&gt;5}  {flaeche.member:&lt;10} {flaeche.area:&gt;14.6e}  ({normale})")
+
+if volumen_erwartet is not None:
+
+    volumen_abweichung = abs(uebersicht.volume / volumen_erwartet - 1.0)
+    assert volumen_abweichung &lt; 1e-9, volumen_abweichung
+    print(f"\nRelative Volumenabweichung gegen den Entwurf: {volumen_abweichung:.3e}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+FLAECHEN_GESAMT = 4
+FLAECHENGRUPPEN = (
+    ("innenwand", (0,)),
+    ("einspannung", (1,)),
+    ("aussenwand", (2,)),
+    ("zugflaeche", (3,)),
+)
+koerper = ImportedSolid(path=str(step_pfad), unit="m",
+                        face_count=FLAECHEN_GESAMT, face_groups=FLAECHENGRUPPEN)
+werkstoff = WERKSTOFF.create()
+model = LinearElasticity(domain=koerper.volume, material=werkstoff)
+problem = Problem(
+    name="Aus STEP gelesene Hülse unter gleichmäßigem Zug",
+    geometry=koerper, physics=(model,),
+    boundary_conditions=(
+        FixedDisplacement(boundary=koerper.boundaries.einspannung,
+                          physics=model, value=(0.0, 0.0, 0.0)),
+        Traction(boundary=koerper.boundaries.zugflaeche, physics=model,
+                 value=(0.0, 0.0, ZUGSPANNUNG)),
+        TractionFree(boundary=koerper.boundaries.innenwand
+                     | koerper.boundaries.aussenwand, physics=model),
+    ),
+)
+
+gestartet = perf_counter()
+mesh = TetrahedralMesher(target_size=config["target_size"]).generate(koerper)
+netz_sekunden = perf_counter() - gestartet
+gestartet = perf_counter()
+result = Simulation(
+    problem=problem, mesh=mesh,
+    numerics=Numerics(spatial=FiniteElement(element=Lagrange(order=2)),
+                      linear_solver=SparseDirect()),
+).solve_stationary()
+loesung_sekunden = perf_counter() - gestartet
+displacement = result.field(model.displacement)
+print(f"Tetraeder: {mesh.cell_count}; Netzknoten: {len(mesh.coordinates)}; "
+      f"FEM-Knoten: {len(displacement.values)}")
+print(f"Vernetzen: {netz_sekunden:.2f} s; Lösen: {loesung_sekunden:.2f} s")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+flaechen_facetten = {
+    name: len(mesh.facets(getattr(koerper.boundaries, name)))
+    for name, _ in FLAECHENGRUPPEN
+}
+facetten_gesamt = len(mesh.facets(koerper.boundaries.all))
+assert sum(flaechen_facetten.values()) == facetten_gesamt
+print("Randfacetten je benannter Fläche:", flaechen_facetten)
+
+mittelradius = 0.5 * (INNENRADIUS + AUSSENRADIUS)
+winkel = np.linspace(0.0, 2.0 * np.pi, 13)[:-1]
+stirn_punkte = np.column_stack((
+    mittelradius * np.cos(winkel), mittelradius * np.sin(winkel),
+    np.full_like(winkel, LAENGE),
+))
+stirn_u = np.asarray(displacement.evaluate(stirn_punkte))
+einspann_punkte = np.column_stack((
+    mittelradius * np.cos(winkel), mittelradius * np.sin(winkel),
+    np.zeros_like(winkel),
+))
+einspann_max = float(np.max(np.abs(displacement.evaluate(einspann_punkte))))
+
+z = np.linspace(0.0, LAENGE, 61)
+achse = np.column_stack((np.full_like(z, mittelradius), np.zeros_like(z), z))
+achse_u = np.asarray(displacement.evaluate(achse))
+youngs_modulus = float(WERKSTOFF.properties["youngs_modulus"])
+stab_referenz = ZUGSPANNUNG * z / youngs_modulus
+dehnung_berechnet = float(stirn_u[:, 2].mean())
+dehnung_referenz = ZUGSPANNUNG * LAENGE / youngs_modulus
+dehnung_abweichung = abs(dehnung_berechnet / dehnung_referenz - 1.0)
+
+operator = result.operators[model.model_id]
+_, _, knotenlasten = operator.conditions(0.0)
+integrierte_last = np.asarray(knotenlasten).reshape(-1, 3).sum(axis=0)
+querschnitt = np.pi * (AUSSENRADIUS**2 - INNENRADIUS**2)
+sollkraft = ZUGSPANNUNG * querschnitt
+
+
+
+last_quer = float(np.linalg.norm(integrierte_last[:2]) / sollkraft)
+last_abweichung = float(abs(integrierte_last[2] / sollkraft - 1.0))
+
+mises = np.asarray(result.field(model.von_mises_stress).evaluate(
+    np.array([[mittelradius, 0.0, LAENGE / 2]])))
+mises_abweichung = float(abs(mises[0] / ZUGSPANNUNG - 1.0))
+
+assert np.isfinite(achse_u).all() and np.isfinite(mises).all()
+assert einspann_max &lt; 1e-12
+assert last_quer &lt; 1e-12
+assert last_abweichung &lt; 0.01
+assert float(np.ptp(stirn_u[:, 2])) / abs(dehnung_berechnet) &lt; 0.01
+assert dehnung_abweichung &lt; 0.03
+assert mises_abweichung &lt; 0.02
+
+print(f"Verlängerung: {dehnung_berechnet * 1e6:.3f} um; "
+      f"Stabformel: {dehnung_referenz * 1e6:.3f} um "
+      f"(Abweichung {100 * dehnung_abweichung:.2f} %)")
+print(f"Integrierte Zugkraft: {integrierte_last[2]:.6f} N; "
+      f"exakter Kreisring: {sollkraft:.6f} N "
+      f"(Facettierung {100 * last_abweichung:.3f} %)")
+print(f"von-Mises-Spannung auf halber Höhe: {mises[0] / 1e6:.3f} MPa "
+      f"(Abweichung {100 * mises_abweichung:.2f} %)")
+
+csv_pfad = output_dir / "step_import_huelse.csv"
+with csv_pfad.open("w", encoding="utf-8", newline="") as datei:
+    schreiber = csv.writer(datei)
+    schreiber.writerow(["z_m", "ux_m", "uy_m", "uz_m", "stabformel_uz_m"])
+    schreiber.writerows(np.column_stack((z, achse_u, stab_referenz)))
+
+
+
+
+
+
+
+
+
+
+
+import onesim.visualization as visualization
+from onesim.results.storage import write_for_paraview
+
+cream, ink, green, copper = "#F7F2E7", "#223D35", "#336B57", "#B66E43"
+plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 11,
+                     "text.color": ink, "axes.labelcolor": ink,
+                     "xtick.color": ink, "ytick.color": ink,
+                     "svg.fonttype": "none"})
+fig, ax = plt.subplots(figsize=(8, 4.5), facecolor=cream)
+ax.set_facecolor(cream)
+ax.plot(z * 1000, achse_u[:, 2] * 1e6, color=green, linewidth=2.4,
+        label="OneSimulation, Q2-FEM auf dem STEP-Körper")
+ax.plot(z * 1000, stab_referenz * 1e6, color=copper, linewidth=1.6,
+        linestyle="--", label=r"Stabformel $u_z=\sigma z/E$")
+ax.set_xlabel("Höhe z / mm")
+ax.set_ylabel(r"Verlängerung $u_z$ / µm")
+ax.set_title("Aus STEP gelesene Hülse unter 40 MPa Zug", color=ink)
+ax.legend(frameon=False)
+ax.grid(True, color=ink, alpha=0.12)
+fig.tight_layout()
+png_pfad = output_dir / "step_import_huelse.png"
+svg_pfad = output_dir / "step_import_huelse.svg"
+fig.savefig(png_pfad, dpi=200)
+fig.savefig(svg_pfad)
+
+PARAVIEW_FELDER = (model.displacement, model.von_mises_stress, model.stress)
+paraview_dateien = [
+    write_for_paraview(result, mesh, PARAVIEW_FELDER,
+                       output_dir / f"step_import_huelse.{suffix}")
+    for suffix in ("vtk", "xdmf")
+]
+for pfad in paraview_dateien:
+    assert pfad.is_file() and pfad.stat().st_size &gt; 1000, pfad
+    print(f"ParaView-Datei: {pfad} ({pfad.stat().st_size / 1024:.1f} KiB)")
+
+figure = visualization.result(result.result_set, model.von_mises_stress.field_id,
+                              title="von-Mises-Spannung (Pa)")
+assert figure.data, "Die Bibliotheksgrafik enthält keine Spur"
+figure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+verification = {
+    "passed": True,
+    "profile": PROFILE,
+    "runtime_version": version("onesimulation"),
+    "example": "linear elastic tension on a solid imported from STEP",
+    "step_file": str(step_pfad),
+    "step_file_bytes": int(step_pfad.stat().st_size),
+    "imported_face_count": int(uebersicht.face_count),
+    "declared_face_count": FLAECHEN_GESAMT,
+    "imported_volume_m3": float(uebersicht.volume),
+    "imported_bounds_m": [float(wert) for wert in uebersicht.bounds],
+    "face_group_boundary_facets": flaechen_facetten,
+    "boundary_facets_total": int(facetten_gesamt),
+    "mesh_cells": int(mesh.cell_count),
+    "mesh_nodes": int(len(mesh.coordinates)),
+    "fem_nodes": int(len(displacement.values)),
+    "material": WERKSTOFF.name,
+    "material_quality": WERKSTOFF.quality,
+    "youngs_modulus_pa": youngs_modulus,
+    "applied_tension_pa": ZUGSPANNUNG,
+    "cross_section_m2": float(querschnitt),
+    "computed_elongation_m": dehnung_berechnet,
+    "bar_formula_elongation_m": dehnung_referenz,
+    "elongation_relative_difference": dehnung_abweichung,
+    "integrated_force_n": integrierte_last.tolist(),
+    "target_force_n": float(sollkraft),
+    "axial_load_relative_difference": last_abweichung,
+    "transverse_load_relative_error": last_quer,
+    "midheight_von_mises_pa": float(mises[0]),
+    "midheight_von_mises_relative_difference": mises_abweichung,
+    "mesh_seconds": float(netz_sekunden),
+    "solve_seconds": float(loesung_sekunden),
+    "output_files": [str(csv_pfad), str(png_pfad), str(svg_pfad),
+                     *(str(pfad) for pfad in paraview_dateien)],
+    "limitations": [
+        "STEP read with the bundled CAD kernel; other exchange formats are not qualified",
+        "Boundaries are named by kernel face index; recheck the face table after a CAD change",
+        "Nominal handbook material values at 20 degC; no certified material data",
+        "Small-strain stationary isotropic linear elasticity; no contact, plasticity or thermal load",
+        "Bar formula is an approximate reference; the clamped end suppresses lateral contraction",
+        "One mesh is not a convergence study",
+        "The loaded end face is triangulated, so the integrated force is slightly below the exact annulus",
+        "ParaView export samples the quadratic solution at the written mesh vertices",
+        "No experimental or COMSOL validation",
+    ],
+}
+assert all(Path(pfad).stat().st_size &gt; 0 for pfad in verification["output_files"])
+json_pfad = output_dir / "step_import_huelse_verifikation.json"
+json_pfad.write_text(json.dumps(verification, indent=2, ensure_ascii=False),
+                     encoding="utf-8")
+print(json.dumps(verification, indent=2, ensure_ascii=False))
+</code></pre></details>
+      <p>Focus – Structures &amp; Mechanics covers this commercial workflow. Gumroad shows the seven-day trial and the monthly price before you confirm.</p>
+      <div class="download-row"><a class="button button-primary" href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?variant=Focus%20%E2%80%93%20Structures%20%26%20Mechanics&amp;monthly=true&amp;wanted=true&amp;utm_source=onesimulation_web&amp;utm_medium=tutorial&amp;utm_campaign=engineering_pilot&amp;utm_content=step">Start the Focus trial on Gumroad</a><a class="button" href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Ask about the example</a></div>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
