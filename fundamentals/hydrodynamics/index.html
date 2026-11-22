@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why does a narrower channel carry so much less fluid? · OneSimulation</title>
+<meta name="description" content="Derive the velocity profile between parallel plates and see how a change in gap alters the flow rate.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/hydrodynamics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why does a narrower channel carry so much less fluid? · OneSimulation">
+<meta property="og:description" content="Derive the velocity profile between parallel plates and see how a change in gap alters the flow rate.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/hydrodynamics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/course/#mechanics">Forces and motion</a> / Fluid mechanics</p><h1>Why does a narrower channel carry so much less fluid?</h1><p class="lead">Derive the velocity profile between parallel plates and see how a change in gap alters the flow rate.</p><p class="prerequisites"><strong>Prerequisites</strong> Shear stress, viscosity and integration.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Balance pressure and shear in a thin channel</a><a href="#boundary">Recover the profile and the flow rate</a><a href="#worked">Halve a ten-millimetre gap</a><a href="#tutorial">Tutorial on pressure drop and wall drag</a><a href="#numerical">Optional numerical comparison</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Balance pressure and shear in a thin channel</h2>
+<p>A liquid flows between two parallel plates. If the gap is halved, the available area halves. Why does the flow rate fall much further when the same pressure drop drives the liquid?</p>
+<p>Take a horizontal channel of length \(L\) with plate separation \(H\). The plates are much wider than the gap. Let \(x\) point downstream and \(y\) run from the lower plate to the upper one. Assume steady, fully developed, laminar flow of an incompressible Newtonian liquid. Away from the inlet and side edges the velocity has one component \(u(y)\). Each parcel moves at constant velocity, so pressure forces balance viscous shear forces.</p>
+<p>Write \(G=(p_{\rm in}-p_{\rm out})/L&gt;0\). In a thin layer the net downstream pressure force per unit volume is \(G\), and the net shear force per unit volume is \(d\tau_{xy}/dy\). With dynamic viscosity \(\mu\) and \(\tau_{xy}=\mu\,du/dy\), momentum balance gives \(\mu u''=-G\).</p>
+</section>
+<section>
+<h2 id="boundary">Recover the profile and the flow rate</h2>
+<p>Symmetry sets \(u'(H/2)=0\). Integrating once gives \(\mu u'=G(H/2-y)\). Use no slip at the lower plate, \(u(0)=0\), in the second integration. The resulting parabola also satisfies no slip at the upper plate. Its centreline speed and the flow per unit plate width \(q\) follow directly</p>
+<div class="math display">\[u(y)=\frac{G}{2\mu}y(H-y),\qquad u_{\max}=\frac{GH^2}{8\mu},\qquad
+q=\int_0^H u\,dy=\frac{GH^3}{12\mu}.\]</div>
+<p>At a fixed pressure gradient the mean speed \(q/H\) scales with the square of the gap. Multiplying by the flow area introduces a third power. The ratio \(u_{\max}/(q/H)=3/2\) does not depend on the gap or viscosity.</p>
+</section>
+<section>
+<h2 id="worked">Halve a ten-millimetre gap</h2>
+<p>Take \(H=0.010\) m, \(\mu=0.0010\) Pa·s and \(G=0.80\) Pa/m. The centreline speed is \(0.80(0.010)^2/[8(0.0010)]=0.010\) m/s. Integrating the profile gives \(q=6.67\times10^{-5}\) m²/s. This is a volume rate per metre of width.</p>
+<p>At \(H=0.005\) m with \(G\) fixed, \(q\) falls by a factor of eight to \(8.33\times10^{-6}\) m²/s. The smaller gap both removes flow area and brings the moving liquid closer to a no-slip wall.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial on pressure drop and wall drag</h2>
+<h3>1. Specify a flow rate instead of a pressure drop</h3>
+<p>A pump must maintain the original flow rate after the gap halves. Find the new pressure gradient and the new centreline speed. Which of the pump’s operating conditions changed?</p>
+<details><summary>Solution to the pump calculation</summary><p>At fixed \(q\), \(G=12\mu q/H^3\). Halving \(H\) requires \(G=8(0.80)=6.4\) Pa/m. With the same volume rate crossing half the area, the mean and centreline speeds both double. The new peak is 0.020 m/s. The pressure drop across a channel of fixed length rises eightfold.</p></details>
+<h3>2. Recover wall drag two ways</h3>
+<p>Use the original 10 mm gap and a channel segment 2 m long. Calculate the magnitude of the shear stress at each wall. Check that the drag from both plates balances the pressure force per metre of width.</p>
+<details><summary>Solution to the force balance</summary><p>The wall slope gives \(|\tau_w|=GH/2=0.0040\) Pa. Each plate exerts drag on the liquid, so their combined magnitude per unit width is \(2L|\tau_w|=0.016\) N/m. From the ends, \(\Delta p=GL=1.6\) Pa and \(\Delta p H=0.016\) N/m acts downstream. The opposing forces balance, as steady developed motion requires.</p></details>
+</section>
+<section>
+<h2 id="numerical">Optional numerical comparison</h2>
+<p>The channel example applies an equivalent uniform body force and specifies the developed profile on the open and side faces. Sample the streamwise velocity from plate to plate. Compare the peak with 0.010 m/s and the ratio of peak to cross-gap mean with 1.5. A 1% tolerance on each is sufficient to detect using the half-gap in place of the full gap. <a href="/blog/poiseuille_channel_flow/">OneSimulation example of plane Poiseuille flow</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/fundamentals/multibody/">Why does a freely spinning handle flip?</a></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

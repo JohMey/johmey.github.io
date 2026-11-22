@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verification, refinement and local error · OneSimulation</title>
+<meta name="description" content="Use a manufactured solution to verify an implementation, estimate observed convergence and identify when adaptivity is needed for the physical quantity of interest.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/chapters/06-verification/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Verification, refinement and local error · OneSimulation">
+<meta property="og:description" content="Use a manufactured solution to verify an implementation, estimate observed convergence and identify when adaptivity is needed for the physical quantity of interest.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/chapters/06-verification/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Verification, refinement and local error</h1><p class="lead">Use a manufactured solution to verify an implementation, estimate observed convergence and identify when adaptivity is needed for the physical quantity of interest.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#build-a-test-with-a-known-answer">Build a test with a known answer</a><a href="#read-a-three-grid-study">Read a three-grid study</a><a href="#decide-where-further-resolution-matters">Decide where further resolution matters</a><a href="#residual-marking">Choose cells to refine from residuals and flux jumps</a><a href="#check-refinement-at-an-identical-location">Check refinement at an identical location</a><a href="#separate-space-and-time-with-a-crossed-refinement-study">Separate space and time with a crossed refinement study</a><a href="#recover-a-hidden-temporal-bias-from-four-runs">Recover a hidden temporal bias from four runs</a><a href="#worked-plot">Resolve a second spatial frequency on the same grid</a></nav></aside><article class="prose reference"><section>
+<h2 id="build-a-test-with-a-known-answer">Build a test with a known answer</h2>
+<p>Consider \(-\nabla\cdot(D\nabla u)+\kappa u=f\) on the unit square. Select the exact field \(u_\star=\sin(\pi x)\sin(\pi y)\) and prescribe its value at the boundary. Now choose \(D=1+x\), \(\kappa=2\), using coordinates normalised to a metre. Differentiation gives \(\Delta u_\star=-2\pi^2u_\star\) and \(u_{\star,x}=\pi\cos(\pi x)\sin(\pi y)\). The required source is therefore</p>
+<div class="math display">\[f=[2(1+x)\pi^2+2]u_\star-\pi\cos(\pi x)\sin(\pi y).\]</div>
+<p>The derivative of \(D\) is essential: inserting only the local value of \(D\) times the Laplacian specifies a different differential equation. Manufacturing a source tests whether the code solves the stated model and boundary conditions. Experimental validation asks a separate question about fidelity to physical observations. A polished plot resembling the exact field does not substitute for a numerical error measure with defined sample positions and units.</p>
+</section>
+<section>
+<h2 id="read-a-three-grid-study">Read a three-grid study</h2>
+<p>On successively halved mesh spacings suppose the error in one norm follows \(E_h=C h^p+o(h^p)\). Taking ratios gives \(p\simeq\log_2(E_h/E_{h/2})\). Three grids provide two such estimates, indicating whether a consistent asymptotic trend is present. A single ratio may result from cancellation between terms of different order. State the norm, grid location, geometry representation, time step if applicable, and the residual tolerance. Comparing a cell average on one grid with a nodal peak on another can produce a meaningless rate.</p>
+<p>For the variable-diffusion square, maximum nodal errors at 24, 48 and 96 intervals per axis are approximately \(1.33345\times10^{-3},3.33763\times10^{-4},8.34283\times10^{-5}\). The observed orders are approximately 1.998 and 2.000. The finest-grid algebraic residual is already far below the field error in its respective normalisation. Tightening the iteration tolerance alone will not remove the leading spatial defect. Raising the sine mode while holding the mesh fixed increases derivatives of the exact solution and tests a different resolution regime. <a href="/fundamentals/numerics/partial-differential-equations/#experiment">Inspect the grid and mode experiment</a>.</p>
+</section>
+<section>
+<h2 id="decide-where-further-resolution-matters">Decide where further resolution matters</h2>
+<p>A manufactured sine is smooth everywhere. Actual domains may contain a re-entrant corner, a material jump or a narrow source. Derivative bounds used in theoretical convergence estimates can fail locally there. Uniformly halving a two-dimensional mesh roughly quadruples the cell count while spending most new cells away from a localised feature. Local refinement attempts to concentrate new degrees of freedom where they matter to a chosen output. Which cells merit refinement depends on the equation, boundary data and the output being measured.</p>
+<p>For a conforming finite-element approximation, one class of error indicators combines an element residual with jumps in normal flux across interior faces. The residual tests whether each element satisfies the differential balance, while the jumps measure disagreements between neighbouring reconstructed fluxes. In a constant-coefficient Poisson example, a piecewise linear solution can have zero elementwise Laplacian even when it bends globally; the slope changes then appear at interelement faces. An indicator using only the interior derivative would miss this information. Mesh-length factors and coefficient weights are necessary to combine the terms in a specific norm.</p>
+<p>Finish a refinement study by tracking the physical observable itself. If the objective is integrated heat flow, a changing maximum pointwise gradient near one corner may have little influence on that integral. Conversely, apparently stable domain averages can hide an unresolved peak. Report observed change with resolution and an independent balance or analytic check, specifying exactly which quantity has been verified.</p>
+</section>
+<section>
+<h2 id="residual-marking">Choose cells to refine from residuals and flux jumps</h2>
+<p>A mesh-convergence table needs several complete solutions. To spend the next refinement locally, examine the equation that the present field still fails to satisfy. For \(-u''=f\) with zero Dirichlet endpoints, let \(u_h\) be its conforming piecewise-linear Galerkin solution. Integrating the error equation by parts on each cell \(K\) gives</p>
+<div class="math display">\[\int_0^1(u-u_h)'v'\,dx=\sum_K\int_K(f+u_h'')v\,dx-\sum_z J_z v(z),\qquad J_z=u_h'(z^-)-u_h'(z^+) .\]</div>
+<p>The sum over \(z\) includes interior nodes only. Even when the cell derivative is constant and \(u_h''=0\) in each open cell, its jumps measure failures of flux continuity. Dropping these terms would miss part of the weak residual. Galerkin orthogonality lets us substitute \(v-I_hv\) for \(v\), where \(I_hv\) is a local conforming approximation. Local interpolation and trace estimates supply the mesh-length factors in an indicator. One conventional allocation on a uniform mesh is</p>
+<div class="math display">\[\eta_K^2=h_K^2\int_K(f+u_h'')^2\,dx+\frac{h_K}{2}\sum_{z\in\partial K\ {\rm interior}}J_z^2 .\]</div>
+<p>The half shares a node between its two neighbors. An upper bound on the energy error involves the square root of the summed indicators and a mesh-independent constant. Efficiency estimates can also involve unresolved variations in the load. The indicator is a refinement criterion, not a measured cell error.</p>
+<h3>Spending one refinement near a source</h3>
+<p>On the two half-intervals let \(f=0\) on the left and \(f=4\) on the right. The central hat function integrates to \(1/4\) on the right, so the interior load is \(1\). Its stiffness is \(4\). The central temperature is \(1/4\). The cell slopes are \(1/2,-1/2\), so \(J=1\). The jump contributes \(1/4\) to each indicator squared. The source contributes zero on the left and \((1/2)^2(16/2)=2\) on the right. Thus the right cell accounts for \(2.25/2.5=90\%\) of the total. A bulk-marking rule targeting at least \(75\%\) marks this one cell.</p>
+<p>An exact check explains the distinction between indicator and error. Integrating the differential equation gives the exact slope \(1/2\) throughout the left cell and \(1/2-4(x-1/2)\) on the right. The true squared energy error is zero on the left and \(\int_0^{1/2}(1-4s)^2ds=1/6\) on the right. The indicator assigns some weight to the neighbor because both cells share a flux jump. Its largest contribution nevertheless identifies the curved part of the field.</p>
+<p class="source-note">Practise on sheet 3 · <a href="/fundamentals/numerics/partial-differential-equations/problem-sheets/3/#transfer-mark-source-patch">Refine a three-cell source patch</a>. Further reading · <a href="https://conan.iwr.uni-heidelberg.de/data/teaching/finiteelements_ws2021/num2_updated.pdf#page=160">Heidelberg University · Lecture Notes on Scientific Computing with Partial Differential Equations · §9.2 Residual-based a-posteriori Error Estimator and §9.3 Local Mesh Adaptation</a>.</p>
+</section>
+<section>
+<h2 id="check-refinement-at-an-identical-location">Check refinement at an identical location</h2>
+<p>Suppose a displacement is reported at the centre of a square. On an even grid that point may coincide with a node, whereas on an odd grid it can lie at the centre of a cell. Taking the maximum over mesh nodes produces a different sample on each grid. A refinement curve can then combine field discretisation error with the movement of the evaluation point. Choose a fixed physical point and evaluate each solution there with its own consistent interpolation, or compare a well-defined integral over the same physical region.</p>
+<p>Similarly, compare gradients on compatible supports. Nodal averages of element stresses can look smoother than the individual element values, yet smoothing can alter extrema and convergence rates. Record the native support and any recovery operator. This makes an apparent improvement reproducible and gives students enough information to explain a discrepancy between two otherwise credible simulation reports.</p>
+</section>
+<section>
+<h2 id="separate-space-and-time-with-a-crossed-refinement-study">Separate space and time with a crossed refinement study</h2>
+<p>Suppose a reported output has asymptotic error \(Q(h,k)-Q_\star=A h^p+B k^q\) plus smaller terms, with spatial spacing \(h\) and time step \(k\). Refining both coordinates in a fixed relation examines only one line across this two-dimensional error surface. Opposite signed contributions can cancel on that line. A genuine spatial order check uses several \(h\) at fixed sufficiently small \(k\), and a temporal check uses several \(k\) at controlled \(h\). When exact values are available, the individual error signs provide particularly clear evidence of cancellation.</p>
+<p>A small crossed design with coarse and fine settings in both directions already offers a structural test. Denote its four outputs by \(Q_{cc},Q_{cf},Q_{fc},Q_{ff}\), with the first subscript indicating the spatial mesh. For an additive leading error the spatial change \(Q_{cc}-Q_{fc}\) equals \(Q_{cf}-Q_{ff}\). Their difference, \(Q_{cc}-Q_{cf}-Q_{fc}+Q_{ff}\), measures a mixed contribution or departure from the leading separated model. A small difference supports that model over the tested settings but cannot prove that the assumed orders are correct; additional refinement levels are needed to estimate orders from the data.</p>
+</section>
+<section>
+<h2 id="recover-a-hidden-temporal-bias-from-four-runs">Recover a hidden temporal bias from four runs</h2>
+<p>Take a manufactured output \(Q=10+2h^2-k\). The benchmark value is ten. Choose \(h_c=0.2,\ h_f=0.1,\ k_c=0.1,\ k_f=0.05\). The four outputs are respectively \(9.98,\ 10.03,\ 9.92,\ 9.97\). At either time step, halving the spatial mesh reduces the output by 0.06. At either spatial mesh, halving the time step increases the output by 0.05. The mixed difference is zero. Refining both together moves the value by only −0.01, concealing spatial and temporal changes five or six times larger.</p>
+<p>If the orders are independently known as \(p=2,\ q=1\), the fine-grid spatial bias is \((Q_{cf}-Q_{ff})/(2^2-1)=0.02\). The fine-time bias is \((Q_{fc}-Q_{ff})/(2^1-1)=-0.05\). Subtracting both from the fine result gives \(9.97-0.02+0.05=10\), exactly recovering the limit in this idealised expansion. Choosing instead \(k=2h^2\) on every paired run would return exactly ten for every mesh, including a very coarse one. A convergence plot along that line would demonstrate cancellation rather than independent verification.</p>
+<p>Explicit stability restrictions can make unrestricted crossing impractical. If a coarse time step is unstable on the finest spatial grid, choose a stable common range or use an implicit reference to isolate spatial error. Keep output locations, boundary representation and integration tolerances consistent across the crossed study, since changes in those other approximations can also enter the mixed difference.</p>
+<p>A fifth run can interrogate the assumption that the fine-grid spatial change is asymptotic. At \(h=0.05,\ k=0.05\) the manufactured output is 9.955. The change from 9.97 is 0.015, one quarter of the earlier spatial change 0.06 at the same time step. This independent ratio supports \(p=2\) for the tested family; it does not distinguish a true zero cross term from a smaller mixed term below the numerical resolution.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Resolve a second spatial frequency on the same grid</h2>
+<p>Set the exact field on the square to \(\sin(m\pi x)\sin(m\pi y)\) and manufacture the corresponding source for diffusion coefficient \(1+x\) and reaction coefficient 2. Run the downloadable OneSimulation model with m = 1 and 2 on each grid. The boundary data agree, while the source and the exact interior curvatures change.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/partial-differential-equations/06-verification.png" alt="Resolve a second spatial frequency on the same grid. Horizontal axis: Uniform intervals per axis. Vertical axis: Maximum absolute nodal field error. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Both series approach a slope of minus two on the log–log axes. At fixed grid count the higher-frequency solution is less accurate. Doubling its grid count restores the points per wavelength; compare those shifted entries to see how closely that simple resolution argument predicts the actual errors.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/partial-differential-equations/06-verification.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Maximum absolute nodal field error at selected values of Uniform intervals per axis.</caption><thead><tr><th scope="col">Uniform intervals per axis</th><th scope="col">1 half-wave per axis</th><th scope="col">2 half-waves per axis</th></tr></thead><tbody><tr><th scope="row">8</th><td>0.012068</td><td>0.052561</td></tr><tr><th scope="row">16</th><td>0.0030008</td><td>0.012829</td></tr><tr><th scope="row">24</th><td>0.0013335</td><td>0.0056768</td></tr><tr><th scope="row">32</th><td>0.0007509</td><td>0.0031883</td></tr><tr><th scope="row">64</th><td>0.00018768</td><td>0.00079605</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/partial-differential-equations/06-verification.csv" download>Download all 7 plotted samples (CSV)</a></p></details><p><a href="/downloads/teaching/numerics/partial-differential-equations.py" download>Download the OneSimulation model (Python)</a></p></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/05-wave-propagation/">Chapter 5 · Wave speeds and numerical dispersion</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/problem-sheets/3/">Problem sheet 3 · Wave resolution and verification</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

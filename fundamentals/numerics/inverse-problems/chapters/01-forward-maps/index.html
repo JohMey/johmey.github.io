@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forward maps, information and identifiability · OneSimulation</title>
+<meta name="description" content="Decide what a measurement can tell you before attempting to fit it. Separate nonuniqueness, noise sensitivity and model error.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/01-forward-maps/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Forward maps, information and identifiability · OneSimulation">
+<meta property="og:description" content="Decide what a measurement can tell you before attempting to fit it. Separate nonuniqueness, noise sensitivity and model error.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/01-forward-maps/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Forward maps, information and identifiability</h1><p class="lead">Decide what a measurement can tell you before attempting to fit it. Separate nonuniqueness, noise sensitivity and model error.</p><p class="byline">Chapter 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#turn-a-measurement-protocol-into-an-operator">Turn a measurement protocol into an operator</a><a href="#tomographic-ray-matrix">Build a ray matrix from attenuation measurements</a><a href="#find-the-observable-combinations">Find the observable combinations</a><a href="#translate-a-nonlinear-ambiguity-into-an-experiment">Translate a nonlinear ambiguity into an experiment</a><a href="#establish-a-baseline-for-a-reconstruction">Establish a baseline for a reconstruction</a><a href="#characterise-an-identifiable-output-without-reconstructing-the-state">Characterise an identifiable output without reconstructing the state</a><a href="#recover-one-observable-from-overlapping-measurements">Recover one observable from overlapping measurements</a><a href="#worked-plot">How much information does a second sensor actually add?</a></nav></aside><article class="prose reference"><section><h2 id="turn-a-measurement-protocol-into-an-operator">Turn a measurement protocol into an operator</h2>
+<p>Imagine reconstructing the temperatures of two adjoining cells, \(x_1,x_2\), from sensor readings. A sensor averaging both cells gives \(y=(x_1+x_2)/2\). The vector \(x\) describes physical properties; the forward map predicts what this particular instrument will report. A second instrument may measure the same properties through a different map. Include spatial averaging, response time and calibration in that map if they are significant. Treating a finite-width sensor as an exact point sample can make an accurate experiment look inconsistent.</p>
+<p>For a linear experiment write \(y=Ax+\epsilon\), separating the ideal response from data error. With the averaging sensor, \(x=(20,24)\) and \((21,23)\) both give 22. The difference is a multiple of \((1,-1)\), which \(A\) maps to zero. The data specify an affine family \(x=x_0+z\), \(z\in\ker A\). More decimal places for the very same measurement cannot select one member. A unique reported answer may therefore reflect a chosen convention such as minimum norm or smoothness instead of new physical information.</p>
+</section>
+<section>
+<h2 id="tomographic-ray-matrix">Build a ray matrix from attenuation measurements</h2>
+<p>How does a detector reading become a row of a matrix? In a simple transmission scanner, assume a narrow monochromatic beam, negligible scattering into the detector and a known incident intensity \(I_0\). Over a short path segment \(ds\), the fractional intensity loss is \(\mu(s)\,ds\) to first order. Dividing the resulting differential equation \(dI/ds=-\mu I\) by \(I\), then integrating along the ray \(\gamma_i\), gives</p>
+<div class="math display">\[y_i=-\log(I_i/I_0)=\int_{\gamma_i}\mu(s)\,ds=\sum_j\ell_{ij}\mu_j .\]</div>
+<p>The last equality assumes the attenuation is constant within each model cell. The coefficient \(\ell_{ij}\) is the length of the path through cell \(j\). An unvisited cell contributes zero. Model refinement changes these lengths and the number of columns. With lengths in centimetres and attenuation in inverse centimetres, each log reading is dimensionless. This construction models individual rays. A finite detector that pools their intensities requires an additional averaging step in the forward model.</p>
+<h3>Which extra direction resolves a four-cell ambiguity?</h3>
+<p>Arrange four square cells of side \(1\) cm in two rows and list them in row-major order. Two horizontal and two vertical centre rays have log readings \(0.4,0.6,0.5,0.5\). Each traversed cell contributes one centimetre. The sum of the two horizontal readings equals the sum of the vertical readings, leaving three independent equations. If the top-left attenuation is \(t\), successive substitutions give the family</p>
+<div class="math display">\[(\mu_1,\mu_2,\mu_3,\mu_4)=(t,\,0.4-t,\,0.5-t,\,0.1+t)\quad{\rm cm}^{-1}.\]</div>
+<p>Even positivity admits \(0\le t\le0.4\). The vector \((1,-1,-1,1)\) describes a checkerboard change invisible to the original views. Add a diagonal ray joining the outer corners through cells 1 and 4. Each diagonal chord is \(\sqrt2\) cm. If the reading is \(0.3\sqrt2\), division by \(\sqrt2\) gives \(2t+0.1=0.3\), so \(t=0.1\). The field is \((0.1,0.3,0.4,0.2)\) in inverse centimetres. The extra row acts on the previous null vector by \(2\sqrt2\). Its orientation supplies the missing information. Repeating any original ray could improve its measurement precision but would preserve the checkerboard ambiguity.</p>
+<p class="source-note">Practise on sheet 1 · <a href="/fundamentals/numerics/inverse-problems/problem-sheets/1/#transfer-unresolved-rays">A detector that pools two unresolved rays</a>. Further reading · <a href="https://courses.compute.dtu.dk/02946/SC/Week1and2disc.pdf#page=7">Technical University of Denmark · Scientific Computing for X-Ray Computed Tomography · Discretization of CT Problems, slides 7, 9–10 and 16, Intersection of Line and Pixel, The Line Model and The System Matrix</a>.</p>
+</section>
+<section><h2 id="find-the-observable-combinations">Find the observable combinations</h2>
+<p>Every row of \(A\) is a measured linear combination. Every vector in its null space is orthogonal to all those rows. Thus a derived linear quantity \(c^\mathsf{T}x\) is uniquely determined by ideal data exactly when \(c\) lies in the row space. If \(c=A^\mathsf{T}w\), compute it as \(w^\mathsf{T}y\). Conversely, any component of \(c\) along a null direction changes the quantity while leaving the data unchanged. This test can rescue a useful question from an underdetermined experiment. Both temperatures may be ambiguous while their mean is measured precisely.</p>
+<p>Take a second reading \((x_1+x_2)/2+\eta(x_1-x_2)/2\). Subtract the first reading to isolate the contrast, \(x_1-x_2=2(y_2-y_1)/\eta\). With \(\eta\ne0\) both temperatures are identifiable in exact arithmetic. At \(\eta=0.01\), a difference error of just 0.02 K changes the recovered contrast by 4 K. Algebraic rank has improved, but the measurement has barely separated the two states. Changing the second sensor's spatial weighting can be much more effective than repeating its reading.</p>
+</section>
+<section><h2 id="translate-a-nonlinear-ambiguity-into-an-experiment">Translate a nonlinear ambiguity into an experiment</h2>
+<p>For a decay \(y(t)=A e^{-kt}\), an observation at \(t=0\) identifies \(A\) and says nothing about \(k\). A single later observation allows the continuum \(A=y(t)e^{kt}\). Two exact positive observations at distinct times yield \(k=\ln[y(t_1)/y(t_2)]/(t_2-t_1)\). This identifies both parameters under the assumed model. When the times are almost equal the denominator is small, which makes the slope sensitive to measurement noise. Late measurements can also be difficult when responses approach the instrument's noise floor.</p>
+<p>Always state the admissible parameter set. A power reading \(y=p^2\) determines \(|p|\); if physics requires \(p\ge0\), the sign ambiguity disappears, though sensitivity near zero still needs attention. In later chapters we will assess local sensitivity with derivatives. A full-rank local derivative distinguishes sufficiently close parameters under suitable regularity; widely separated alternatives can remain.</p>
+</section>
+<section><h2 id="establish-a-baseline-for-a-reconstruction">Establish a baseline for a reconstruction</h2>
+<p>Write down the unknowns with units, the controlled inputs, the measurements and their precision. Predict what changes when one unknown increases with all others fixed. Look for symmetries and parameter combinations that move predictions together. Finally name a second measurement able to separate them. This sequence gives a reason for the later numerical choices: least squares reconciles inconsistent data, while regularisation controls amplification or deliberately selects among weakly distinguished solutions.</p>
+</section>
+<section>
+<h2 id="characterise-an-identifiable-output-without-reconstructing-the-state">Characterise an identifiable output without reconstructing the state</h2>
+<p>Suppose an experiment provides exact linear observations \(Ax=y\) and a scientist wants a scalar \(Q=c^Tx\). Any two compatible states differ by a vector \(v\) satisfying \(Av=0\). Their outputs differ by \(c^Tv\). Consequently the output is identifiable for every compatible data set precisely when \(c\) is orthogonal to the nullspace. This condition can be checked entirely from the design, before taking a measurement. If it fails, arbitrarily precise measurements with the same operator cannot answer the scientific question unless other assumptions restrict the states.</p>
+<p>There is a constructive version. Every row of \(A\) is orthogonal to every null vector. The row space has dimension equal to the rank, whereas the nullspace dimension is the number of columns minus the rank. These dimension counts show that all vectors orthogonal to the nullspace lie in the row space. Hence the test is equivalent to solving \(A^Tw=c\) for observation weights \(w\). When the test succeeds, \(Q=w^TAx=w^Ty\). The weights specify exactly which combination of instrument readings answers the question without requiring a particular choice of unobserved coordinates.</p>
+</section>
+<section>
+<h2 id="recover-one-observable-from-overlapping-measurements">Recover one observable from overlapping measurements</h2>
+<p>Three masses sit on a support. One instrument reports \(x_1+x_2=7\) kg and another reports \(x_2+x_3=9\) kg. Subtracting gives \(x_3-x_1=2\) kg. In matrix language the target \(c=(-1,0,1)^T\) equals the second measurement row minus the first, so \(w=(-1,1)^T\). Independently parameterise all solutions by \(x=(7-t,t,9-t)^T\). Every admissible value of \(t\) produces the same difference. In contrast the total mass is \(16-t\), so even requiring all masses to be nonnegative leaves totals ranging from 9 to 16 kg. A convenient equal-mass assumption would select a value by adding external information.</p>
+<p>Now give the two readings independent measurement errors of standard deviation 0.20 and 0.30 kg. The same weighted difference has variance \(0.20^2+0.30^2=0.13\) kg² and standard deviation about 0.361 kg. It remains an unbiased estimate of the mass difference. A shared additive zero-offset error cancels in this difference, whereas it would affect an output using the sum. This is a second design question: identifiability determines whether suitable weights exist, while the error covariance determines whether applying those weights yields useful precision.</p>
+<p>A third instrument measuring \(x_2\) alone would remove the remaining ambiguity. Measuring the first overlapping pair again would tighten one known sum but retain the null direction \((-1,1,-1)^T\). When choosing the next measurement, evaluate its dot product with that unresolved direction. A nonzero product measures some of the missing information; a very small product makes the newly identifiable quantity fragile under noise.</p>
+<p>For example a reading of \(x_1+2x_2+x_3\) merely adds the two original readings. It has nonzero sensitivity to every individual mass yet zero dot product with the missing direction. The instrument can improve precision on a known combination while leaving exactly the same continuum of compatible total masses.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">How much information does a second sensor actually add?</h2>
+<p>The first measurement is the mean of two cells. The second is the same mean plus \(a(x_1-x_2)/2\). Differencing cancels the common mean and allows the contrast to be recovered. Assume independent, identically noisy readings.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/inverse-problems/01-forward-maps.png" alt="How much information does a second sensor actually add?. Horizontal axis: Differential weight in second observation. Vertical axis: Contrast standard error / single-reading σ. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At a = 0.1 the contrast error is about 28 single-reading standard deviations. Repeating each condition four times cuts uncertainty in half; changing the second sensor’s weight from 0.1 to 0.4 cuts it by four.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/inverse-problems/01-forward-maps.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Contrast standard error / single-reading σ at selected values of Differential weight in second observation.</caption><thead><tr><th scope="col">Differential weight in second observation</th><th scope="col">Two independent readings</th><th scope="col">Four repeats of each reading</th></tr></thead><tbody><tr><th scope="row">0.01</th><td>282.84</td><td>141.42</td></tr><tr><th scope="row">0.26</th><td>10.879</td><td>5.4393</td></tr><tr><th scope="row">0.505</th><td>5.6008</td><td>2.8004</td></tr><tr><th scope="row">0.75</th><td>3.7712</td><td>1.8856</td></tr><tr><th scope="row">1</th><td>2.8284</td><td>1.4142</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/inverse-problems/01-forward-maps.csv" download>Download all 199 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/">Course contents</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/chapters/02-whitened-least-squares/">Chapter 2 · Weighted least squares and residual diagnostics</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

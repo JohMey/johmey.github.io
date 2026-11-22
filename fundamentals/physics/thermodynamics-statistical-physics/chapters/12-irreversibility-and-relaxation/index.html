@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entropy production and relaxation · OneSimulation</title>
+<meta name="description" content="Derive a measurable rate of entropy production during contact between finite bodies and test it using temperature histories.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/12-irreversibility-and-relaxation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Entropy production and relaxation · OneSimulation">
+<meta property="og:description" content="Derive a measurable rate of entropy production during contact between finite bodies and test it using temperature histories.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/12-irreversibility-and-relaxation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Entropy production and relaxation</h1><p class="lead">Derive a measurable rate of entropy production during contact between finite bodies and test it using temperature histories.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#two-bodies-with-no-external-heat-exchange">Two bodies with no external heat exchange</a><a href="#identify-a-rate-law-experimentally">Identify a rate law experimentally</a><a href="#predict-a-quantity-beyond-the-equilibrium-temperature">Predict a quantity beyond the equilibrium temperature</a><a href="#couple-heat-transport-to-electrical-current">Couple heat transport to electrical current</a><a href="#find-a-matched-load-operating-point">Find a matched-load operating point</a><a href="#worked-plot">Account for entropy during isolated thermal exchange</a></nav></aside><article class="prose reference"><section><h2 id="two-bodies-with-no-external-heat-exchange">Two bodies with no external heat exchange</h2>
+<p>Connect two bodies through a weak thermal contact inside a perfectly insulated enclosure. Assume each equilibrates internally much faster than they exchange heat, so each has a single instantaneous temperature \(T_h\) or \(T_c\). Take their heat capacities \(C_h,C_c\) as positive constants over the range, with no work or phase change. Let \(J\) denote heat flowing per second from the initially hot body into the initially cold one. Energy conservation gives \(C_h\dot T_h=-J\) and \(C_c\dot T_c=J\). This immediately fixes the conserved weighted mean temperature.</p>
+<p>A body's entropy change for this model depends only on its successive internal equilibrium states, so \(dS_i=C_i\,dT_i/T_i\). The bridge can carry irreversible heat while that state relation remains valid inside each nearly uniform body. Adding both entropy rates gives</p>
+<div class="math display">\[\dot S_{\rm total}=J(1/T_c-1/T_h).\]</div>
+<p>Positive heat flow down the temperature difference produces positive entropy. Equilibrium sets the thermodynamic force \(1/T_c-1/T_h\) to zero. Thermodynamics constrains the sign of \(J\), yet a constitutive heat-transfer law is still needed to predict how quickly temperatures change.</p>
+</section>
+<section><h2 id="identify-a-rate-law-experimentally">Identify a rate law experimentally</h2>
+<p>Suppose \(J=G(T_h-T_c)\) with temperature-independent thermal conductance \(G\). Subtracting the two temperature balances shows that \(\Delta=T_h-T_c\) satisfies \(\dot\Delta=-G(1/C_h+1/C_c)\Delta\). The decaying difference and conserved weighted mean determine both temperature histories. The entropy-production rate becomes \(G\Delta^2/(T_hT_c)\). Near final temperature \(T_f\), the temperature difference decays exponentially while the entropy-production rate decays approximately twice as fast because it depends on the square.</p>
+<p>The total entropy increase can also be obtained without integrating this rate. Integrating each state differential from its initial temperature to the common final value gives</p>
+<div class="math display">\[\Delta S=C_h\ln(T_f/T_{h,0})+C_c\ln(T_f/T_{c,0}).\]</div>
+<p>This expression is independent of conductance so long as the enclosure is isolated and the final state is the same. Larger conductance produces entropy faster at early times but shortens the duration of the process. Replacing a sliding-contact resistance by a smaller one changes the temperature record even when the equilibrium entropy gain is identical.</p>
+</section>
+<section><h2 id="predict-a-quantity-beyond-the-equilibrium-temperature">Predict a quantity beyond the equilibrium temperature</h2>
+<p>Take \(C_h=500\) J/K, \(C_c=1500\) J/K, \(T_{h,0}=360\) K, \(T_{c,0}=300\) K and \(G=2.00\) W/K. Conservation gives \(T_f=315\) K. The initial heat current is 120 W, and \(\dot S(0)=120(1/300-1/360)=0.0667\) W/K. The relaxation time is 187.5 s. The net entropy gain is \(500\ln(315/360)+1500\ln(315/300)=6.42\) J/K to two decimal places.</p>
+<p>Use the <a href="/fundamentals/physics/thermodynamics-statistical-physics/#experiment">two-body temperature histories</a> to estimate the initial entropy-production rate and sum changes in \(C_i\ln T_i\) over the record. Doubling the conductance should double the initial rate and halve the measured relaxation time. Extending both runs to the same final tolerance should recover the same total entropy gain. A discrepancy that decreases as the sampling interval shrinks points to time resolution in the estimated initial slope.</p>
+<p>At a finite recorded time the entropy increase is smaller than its asymptotic endpoint value. Evaluate the state-function expression at the last recorded temperatures before attributing a shortfall to the numerical algorithm. The remaining difference measures entropy still to be produced during subsequent equilibration.</p>
+</section>
+<section><h2 id="couple-heat-transport-to-electrical-current">Couple heat transport to electrical current</h2>
+<p>A thermal bridge can also carry electric charge. In a simple thermoelectric generator a temperature difference produces an electromotive force through the Seebeck effect, while current carries Peltier heat at each end. Take an idealized device with constant effective Seebeck coefficient \(S\), internal resistance \(R\), open-circuit thermal conductance \(K\) and no additional contact losses. Let \(T_h&gt;T_c\) be externally fixed endpoint temperatures and choose positive current \(I\) as useful generator output. Connect a passive load \(R_L\) to the device.</p>
+<p>The open-circuit voltage is \(S(T_h-T_c)\). Current through the load is \(I=S\Delta T/(R+R_L)\), giving useful power \(P=I^2R_L=IS\Delta T-I^2R\). For a uniform element with constant properties, half its internal Joule heat flows to each end. The reversible heat carried per unit charge is \(ST\) by the Kelvin relation. Combining these contributions with Fourier conduction gives hot-side input and cold-side output,</p>
+<div class="math display">\[\dot Q_h=ST_hI+K\Delta T-\tfrac12I^2R,\qquad \dot Q_c=ST_cI+K\Delta T+\tfrac12I^2R .\]</div>
+<p>Their difference is exactly the electrical output. With the sign conventions fixed, the total reservoir entropy production is \(\dot Q_c/T_c-\dot Q_h/T_h\). The Peltier contributions cancel, leaving a positive term from conduction and another from Joule dissipation. This explicitly separates a reversible cross effect from two irreversible processes in the same device.</p>
+</section>
+<section><h2 id="find-a-matched-load-operating-point">Find a matched-load operating point</h2>
+<p>Use \(T_h=350\) K, \(T_c=300\) K, \(S=200\) μV/K, \(R=0.100\) Ω and \(K=0.00200\) W/K. The open-circuit voltage is \(0.0100\) V. With matched load \(R_L=0.100\) Ω, current is \(0.0500\) A and useful power \(0.250\) mW. Conductive heat leakage alone is \(0.100\) W. At the hot end the Peltier contribution is 3.50 mW and half the internal Joule heating is 0.125 mW. Thus \(\dot Q_h=103.375\) mW and \(\dot Q_c=103.125\) mW. Their measured difference is much smaller than either heat current.</p>
+<p>The operating efficiency \(P/\dot Q_h=0.00242\) is far below the reversible limit \(1-300/350=0.143\). Maximizing \(P=(S\Delta T)^2R_L/(R+R_L)^2\) at fixed endpoint temperatures indeed gives \(R_L=R\), but this choice need not maximize efficiency because the heat input also depends on current. With the circuit open the load receives zero power while \(K\Delta T\) still crosses the element and produces entropy. A reliable laboratory test therefore records electrical power and both thermal flows separately instead of interpreting an open-circuit voltage as evidence of appreciable useful energy conversion.</p>
+<p>The numerical heat currents allow a direct entropy audit. The reservoirs together gain \(0.103125/300-0.103375/350=4.84\times10^{-5}\) W/K. Most of this is already explained by bare heat conduction, since \(0.100(1/300-1/350)=4.76\times10^{-5}\) W/K. The small remainder is the Joule contribution deposited at the two ends. This calculation uses reservoir rates with signs for heat leaving the hot bath and entering the cold bath. A sign error can suggest negative entropy production when the parameters instead describe an ordinary inefficient generator.</p>
+<p>Recording the cold-end heat flow with its sign explicitly marked avoids the common confusion between heat entering the cold reservoir and heat entering the device.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Account for entropy during isolated thermal exchange</h2>
+<p>Two equal, temperature-independent heat capacities begin at 350 K and 250 K and exchange heat through a constant conductance. Energy fixes their common final temperature at 300 K. The temperature difference decays exponentially and each entropy change is \(C\ln(T/T_i)\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/thermodynamics-statistical-physics/12-irreversibility-and-relaxation.png" alt="Account for entropy during isolated thermal exchange. Horizontal axis: Time / temperature-difference decay time. Vertical axis: Entropy change / heat capacity. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>The hot body loses entropy while the isolated pair gains it. At equilibrium the total increase divided by one body’s heat capacity is ln(90000/87500) ≈ 0.0282. Energy conservation and entropy production constrain different quantities.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/thermodynamics-statistical-physics/12-irreversibility-and-relaxation.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Entropy change / heat capacity at selected values of Time / temperature-difference decay time.</caption><thead><tr><th scope="col">Time / temperature-difference decay time</th><th scope="col">Hot body</th><th scope="col">Cold body</th><th scope="col">Isolated pair</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>0</td><td>0</td></tr><tr><th scope="row">0.8</th><td>−0.081934</td><td>0.10448</td><td>0.022547</td></tr><tr><th scope="row">1.6</th><td>−0.12106</td><td>0.14809</td><td>0.027038</td></tr><tr><th scope="row">2.4</th><td>−0.13914</td><td>0.16709</td><td>0.027942</td></tr><tr><th scope="row">3.2</th><td>−0.14738</td><td>0.1755</td><td>0.028125</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/thermodynamics-statistical-physics/12-irreversibility-and-relaxation.csv" download>Download all 201 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/11-chemical-equilibrium/">Chapter 11 · Chemical equilibrium and reaction extent</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/6/">Problem sheet 6 · Equilibrium, kinetics and irreversibility</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

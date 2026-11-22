@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smooth pieces and integrated loads · OneSimulation</title>
+<meta name="description" content="Build a constrained trajectory, infer a spline curvature, and check quadrature by energy conservation over a measured interval.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Smooth pieces and integrated loads · OneSimulation">
+<meta property="og:description" content="Build a constrained trajectory, infer a spline curvature, and check quadrature by energy conservation over a measured interval.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Smooth pieces and integrated loads</h1><p class="lead">Build a constrained trajectory, infer a spline curvature, and check quadrature by energy conservation over a measured interval.</p><p class="byline">Problem sheet 2 · Chapters 3 and 4</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#connect-two-resting-positions">Connect two resting positions</a><a href="#identify-what-a-natural-endpoint-buys">Identify what a natural endpoint buys</a><a href="#recover-a-missing-quadratic-load">Recover a missing quadratic load</a><a href="#transfer-romberg-exactness">Does three-level extrapolation integrate every smooth input exactly?</a></nav></aside><article class="prose reference"><section>
+<h2 id="connect-two-resting-positions">Connect two resting positions</h2>
+<p>A carriage moves from 0 to 4 m in two seconds, starting and finishing at rest. Find the unique cubic trajectory satisfying these four endpoint data. Determine midpoint speed and the two endpoint accelerations. Can this cubic join a stationary segment with continuous acceleration?</p>
+<details><summary>Worked solution</summary>
+<p>With \(s=t/2\) the trajectory is \(4(3s^2-2s^3)\). Differentiating with respect to time gives \(v=12s(1-s)\) m/s, so \(v(1\ {\rm s})=3\) m/s. Acceleration is \(6(1-2s)\) m/s², giving \(+6\) and \(-6\) at the endpoints.</p>
+<p>The velocity can join rest continuously. The stationary segment has zero acceleration, so this particular cubic cannot also give a continuous acceleration there. Enforcing both endpoint accelerations adds two constraints, motivating a higher-degree segment.</p>
+</details>
+</section>
+<section>
+<h2 id="identify-what-a-natural-endpoint-buys">Identify what a natural endpoint buys</h2>
+<p>At \(x=0,1,2\) a rod has displacements \(0,2,0\). Construct the first segment of the natural cubic spline and find its slope at 0 and its value at 0.5. Compare with the quadratic through all three data.</p>
+<details><summary>Worked solution</summary>
+<p>The natural curvatures are \(M_0=M_2=0\). The interior equation gives \(4M_1=6(0-4+0)=-24\), so \(M_1=-6\). Integrate \(S''=-6x\) and impose the first two values to get \(S=3x-x^3\). The initial slope is 3 and midpoint value 1.375.</p>
+<p>The global quadratic is \(4x-2x^2\), with initial slope 4 and midpoint value 1.5. Both match every measured value. The difference is detectable in unmeasured derivatives and in the interior prediction because the quadratic has nonzero end curvature.</p>
+</details>
+</section>
+<section>
+<h2 id="recover-a-missing-quadratic-load">Recover a missing quadratic load</h2>
+<p>On a unit-width panel a power signal is quadratic. Its endpoint values are 2 W and 6 W; its measured energy over one second is 3 W·s. Infer its midpoint value, compare the midpoint and trapezoidal estimates, and determine the sign of curvature.</p>
+<details><summary>Worked solution</summary>
+<p>Simpson integrates the quadratic exactly, so \(3=(2+4P_m+6)/6\), giving \(P_m=2.5\) W. The midpoint estimate is 2.5 J and the trapezoidal estimate is 4 J. Their weighted combination \((2\cdot2.5+4)/3=3\) J reproduces the measured energy.</p>
+<p>The signal midpoint lies below the endpoint chord value 4 W, so the curvature is positive. These conclusions use the stipulated quadratic law; the same three observations cannot uniquely determine an arbitrary power history.</p>
+</details>
+</section>
+<section>
+<h2 id="transfer-romberg-exactness">Does three-level extrapolation integrate every smooth input exactly?</h2>
+<p>For \(f(x)=x^6\) on \([0,1]\), the trapezoids with one, two and four panels are \(1/2,\ 33/128,\ 1421/8192\). Compute the two first-column corrections and the final diagonal value. Compare it with the exact integral and identify the first uncancelled error power.</p>
+<details><summary>Worked solution</summary>
+<p>Removing the quadratic terms gives \(R_{1,1}=(4(33/128)-1/2)/3=17/96\) and \(R_{2,1}=(4(1421/8192)-33/128)/3=893/6144\). Removing the quartic term gives \((16(893/6144)-17/96)/15=55/384\).</p>
+<p>The exact value is \(1/7\), so the excess is \(1/2688\). Both cancellations were exact algebraically, but the trapezoid expansion for this polynomial also contains an \(h^6\) term. Three grids remove two independent error coefficients. Exact integration of every smooth function cannot follow from that finite information.</p>
+</details>
+<p class="source-note">Revisit chapter 4 · <a href="/fundamentals/numerics/approximation-and-quadrature/chapters/04-composite-quadrature/#romberg-table">Build a Romberg table from nested panels</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/04-composite-quadrature/">Chapter 4 · Composite quadrature and cancellation</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/05-gaussian-rules/">Chapter 5 · Gaussian quadrature and exactness</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

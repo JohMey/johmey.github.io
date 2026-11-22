@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Normal modes and energy exchange · OneSimulation</title>
+<meta name="description" content="Decompose a pair of coupled oscillators into independent motions and predict the envelope of a beat signal.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/04-normal-modes/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Normal modes and energy exchange · OneSimulation">
+<meta property="og:description" content="Decompose a pair of coupled oscillators into independent motions and predict the envelope of a beat signal.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/04-normal-modes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a></p><h1>Normal modes and energy exchange</h1><p class="lead">Decompose a pair of coupled oscillators into independent motions and predict the envelope of a beat signal.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#start-with-two-measurable-coordinates">Start with two measurable coordinates</a><a href="#use-symmetry-to-choose-coordinates">Use symmetry to choose coordinates</a><a href="#follow-a-release-from-one-side">Follow a release from one side</a><a href="#interpret-a-pair-of-peaks">Interpret a pair of peaks</a><a href="#a-tuned-auxiliary-mass-can-suppress-the-driven-motion">A tuned auxiliary mass can suppress the driven motion</a><a href="#tune-an-instrument-support">Tune an instrument support</a><a href="#find-how-much-mistuning-the-absorber-tolerates">Find how much mistuning the absorber tolerates</a><a href="#worked-plot">Distinguish two resonances near a crossing</a></nav></aside><article class="prose reference"><section><h2 id="start-with-two-measurable-coordinates">Start with two measurable coordinates</h2>
+<p>Fix two identical carts of mass \(m\) to opposite ends of a track using identical springs of stiffness \(k\), and join the carts to each other with a third spring of stiffness \(k_c\). The equilibrium lengths have already been set. Let \(x_1\) and \(x_2\) be small displacements from equilibrium, both positive to the right. The coupling spring extends by \(x_2-x_1\). Both coordinates contribute independently to the kinetic energy, but their potential energies are linked through this difference.</p>
+<p>From \(U=k(x_1^2+x_2^2)/2+k_c(x_2-x_1)^2/2\), the equations are \(m\ddot x_1=-(k+k_c)x_1+k_cx_2\) and \(m\ddot x_2=k_cx_1-(k+k_c)x_2\). One moving cart thus exerts a force on its neighbour. Release a single displaced cart and both generally move even though only one carried potential energy in its end spring at the start. The task is to predict that exchange without assuming that either cart alone executes a single harmonic oscillation.</p>
+</section>
+<section><h2 id="use-symmetry-to-choose-coordinates">Use symmetry to choose coordinates</h2>
+<p>Interchanging the two labels leaves the equations invariant. Their sum contains only \(x_1+x_2\) and their difference contains only \(x_1-x_2\). Define \(q_s=(x_1+x_2)/2\) and \(q_a=(x_1-x_2)/2\). Adding then subtracting the equations yields</p>
+<div class="math display">\[\ddot q_s+(k/m)q_s=0,\qquad \ddot q_a+[(k+2k_c)/m]q_a=0.\]</div>
+<p>The symmetric mode moves both carts together so that the central spring keeps its length. The antisymmetric mode moves them oppositely and stretches that spring by twice either displacement. These patterns determine the frequencies before an amplitude is chosen. Initial conditions select the weights and phases of the modes. For unequal masses symmetry is lost, but substituting \(\mathbf x=\boldsymbol\phi\cos\omega t\) in \(\mathbf M\ddot{\mathbf x}+\mathbf K\mathbf x=0\) still gives the generalised eigenproblem \(\mathbf K\boldsymbol\phi=\omega^2\mathbf M\boldsymbol\phi\).</p>
+</section>
+<section><h2 id="follow-a-release-from-one-side">Follow a release from one side</h2>
+<p>Displace cart 1 by \(A\) and leave cart 2 at its equilibrium position, both initially at rest. Each normal coordinate starts at \(A/2\) with zero velocity. Recombining gives \(x_1=A(\cos\omega_s t+\cos\omega_a t)/2\) and \(x_2=A(\cos\omega_s t-\cos\omega_a t)/2\). With \(\bar\omega=(\omega_s+\omega_a)/2\) and \(\Delta\omega=\omega_a-\omega_s\), the first expression is \(A\cos(\bar\omega t)\cos(\Delta\omega t/2)\). The rapid motion and the slow envelope arise from the same two undamped modes. A fading displacement over a few cycles need not indicate dissipated energy.</p>
+<p>The second cart has a complementary envelope. When the cosine envelope of cart 1 first vanishes, the sine envelope of cart 2 has unit magnitude. Its instantaneous displacement depends on the fast phase. The coupling spring also stores energy, so attributing all system energy to individual carts from their instantaneous displacements can misidentify the time of energy transfer. Modal energies remain constant for a linear undamped system.</p>
+</section>
+<section><h2 id="interpret-a-pair-of-peaks">Interpret a pair of peaks</h2>
+<p>Use \(m=1.00\) kg, \(k=100\) N/m, \(k_c=10.5\) N/m and \(A=0.030\) m. The angular frequencies are exactly 10.0 and 11.0 rad/s. A spectrum of the motion of cart 1 contains peaks at 1.592 and 1.751 Hz. The envelope first vanishes after \(\pi/\Delta\omega=3.142\) s and first regains unit magnitude after \(2\pi/\Delta\omega=6.283\) s. This is about ten rapid cycles. From the two measured frequencies and the known cart mass one can estimate the coupling because \(k_c=m(\omega_a^2-\omega_s^2)/2\).</p>
+<p>Repeat the release with both carts displaced by the same amount. Only the lower-frequency mode should survive. A remaining upper peak would be evidence to look for unequal initial positions, mass mismatch or spring asymmetry. Comparing the peaks under two physically different preparations gives a sharper model check than a single time trace.</p>
+<p>Symmetry gives the shapes directly for identical carts. With unequal carts, multiply the eigenvalue equation for mode \(i\) from the left by the transpose of mode \(j\), then subtract the reverse relation. Symmetry of the mass and stiffness matrices leaves \((\omega_i^2-\omega_j^2)\boldsymbol\phi_j^{T}\mathbf M\boldsymbol\phi_i=0\). Distinct modes are orthogonal under the mass-weighted product. This states exactly how to project a measured initial displacement onto unequal-mass modes. An ordinary unweighted average of the two cart displacements would generally mix them. Simultaneous recordings then test predicted mode shapes as well as their frequencies.</p>
+</section>
+<section><h2 id="a-tuned-auxiliary-mass-can-suppress-the-driven-motion">A tuned auxiliary mass can suppress the driven motion</h2>
+<p>Normal modes can be used to alter which coordinate moves under a repeated force. Attach a primary mass \(m\) to ground with a spring \(k\) and connect an auxiliary mass \(m_a\) to the primary with another spring \(k_a\). Both move along one line. Ignore damping for the ideal design and drive only the primary mass with \(F_0\cos\omega t\). Let \(X,Y\) denote signed steady harmonic displacement amplitudes. The equilibrium equations at the drive frequency are</p>
+<div class="math display">\[(k+k_a-m\omega^2)X-k_aY=F_0,\qquad -k_a X+(k_a-m_a\omega^2)Y=0.\]</div>
+<p>At \(\omega^2=k_a/m_a\), the coefficient multiplying \(Y\) in the second equation vanishes. It then requires \(X=0\). The primary equation fixes \(Y=-F_0/k_a\): the auxiliary spring force cancels the external drive on the primary. This is an antiresonance of the primary coordinate. A system with more than one coordinate can have a deep minimum between two resonance peaks because the measured coordinate combines both modal responses with opposing signs.</p>
+<p>To distinguish this cancellation from a normal mode, set the right-hand side to zero. Nonzero free motion demands a zero determinant, \((k+k_a-m\omega^2)(k_a-m_a\omega^2)-k_a^2=0\). At the proposed cancellation frequency that determinant is \(-k_a^2\), strictly nonzero, so the forced solution there is unique. On initial start-up a real experiment also excites transients at both natural frequencies. Weak damping or carefully chosen initial conditions is needed before the pure harmonic response can be observed.</p>
+</section>
+<section><h2 id="tune-an-instrument-support">Tune an instrument support</h2>
+<p>A 2.00 kg instrument sits on a 200 N/m mount and experiences a 1.00 N harmonic force at \(10.0\) rad/s, exactly its original undamped natural frequency. Add \(m_a=0.200\) kg and choose \(k_a=m_a\omega^2=20.0\) N/m. The ideal primary coordinate remains stationary at the drive frequency, while the auxiliary mass requires amplitude \(1.00/20.0=0.0500\) m. A design can therefore predict excellent isolation and still fail a travel constraint.</p>
+<p>Set \(s=\omega^2\) in the free-motion determinant. With these values it becomes \(0.4s^2-84s+4000=0\), with roots near \(73.0\) and \(137.0\) s⁻². The new natural frequencies are \(8.54\) and \(11.7\) rad/s, bracketing the designed minimum. The primary response is therefore vulnerable to detuning in either direction. As auxiliary mass tends to zero at fixed tuning, its spring stiffness tends to zero as well and the required auxiliary travel diverges. Monitoring auxiliary displacement while sweeping the forcing frequency gives a stronger design test than looking only for a minimum in the instrument record.</p>
+<p>It is worth distinguishing force cancellation from motion cancellation when interpreting a measured antiresonance. At the designed frequency the primary mass has negligible absolute acceleration, so the summed spring forces and external force must cancel on it. The attachment still experiences a finite cyclic force, equal to its stiffness times relative motion. A load cell in that small spring can therefore record a pronounced signal while the primary displacement sensor records its minimum. The two readings together check that suppression comes from the auxiliary degree of freedom, rather than from a drop in the drive force at that frequency.</p>
+</section>
+<section><h2 id="find-how-much-mistuning-the-absorber-tolerates">Find how much mistuning the absorber tolerates</h2>
+<p>Return to the mounted instrument and suppose the operating frequency drifts. Eliminate the auxiliary displacement from the two harmonic equations without setting it to resonance first. Cramer's rule gives primary compliance</p>
+<div class="math display">\[\frac{X}{F_0}=\frac{k_a-m_a\omega^2}{(k+k_a-m\omega^2)(k_a-m_a\omega^2)-k_a^2}.\]</div>
+<p>The numerator determines a zero and the denominator determines the two poles. At zero frequency the ratio is \(1/k\), since the free auxiliary mass offers no static restoring force. At very high frequency the ratio tends to \(-1/(m\omega^2)\) because the primary inertia dominates. Both limits are useful for checking the absolute phase and calibration of a measured response.</p>
+<p>Set the drive to \(9.80\) rad/s, only two percent below design. The auxiliary dynamic stiffness is \(20.0-0.200(9.80)^2=0.792\) N/m. The primary diagonal term is \(220-2.00(9.80)^2=27.9\) N/m. With the original 1.00 N drive the predicted primary amplitude is \(0.792/|27.9(0.792)-400|=2.10\) mm. The auxiliary amplitude from the second equation is about 53.0 mm. At \(10.2\) rad/s the corresponding primary amplitude is about 1.98 mm and changes sign relative to the force. Thus a two-percent frequency drift already matters if the instrument’s allowed motion is one millimetre.</p>
+<p>A small damper between the two masses limits the two resonant peaks but removes exact cancellation at the tuned frequency. The spring's dynamic stiffness is then replaced by \(k_a+i\omega c_a\) in both coupling terms. With real drive frequency and positive damping the numerator no longer vanishes exactly. The engineering choice can now be stated quantitatively: hold zero response at one precisely controlled frequency, or allow a finite minimum in order to improve nearby peak response when operating frequency varies.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Distinguish two resonances near a crossing</h2>
+<p>Two unit masses have squared-frequency matrix with diagonal entries \(1,d^2\) and off-diagonal entries 0.12. Sweep the second stiffness while keeping the coupling fixed. Diagonalise the symmetric matrix before taking square roots.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/classical-mechanics/04-normal-modes.png" alt="Distinguish two resonances near a crossing. Horizontal axis: Uncoupled frequency ratio. Vertical axis: Frequency / first uncoupled frequency. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At d = 1 the squared frequencies split to 0.88 and 1.12. The measured frequencies are approximately 0.938 and 1.058. The closest branches mix motion of both masses, so assigning a peak permanently to a single mass fails.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/classical-mechanics/04-normal-modes.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Frequency / first uncoupled frequency at selected values of Uncoupled frequency ratio.</caption><thead><tr><th scope="col">Uncoupled frequency ratio</th><th scope="col">Lower normal mode</th><th scope="col">Upper normal mode</th><th scope="col">Uncoupled second oscillator</th></tr></thead><tbody><tr><th scope="row">0.5</th><td>0.4809</td><td>1.0093</td><td>0.5</td></tr><tr><th scope="row">0.775</th><td>0.75322</td><td>1.0165</td><td>0.775</td></tr><tr><th scope="row">1.05</th><td>0.95956</td><td>1.0871</td><td>1.05</td></tr><tr><th scope="row">1.325</th><td>0.99066</td><td>1.332</td><td>1.325</td></tr><tr><th scope="row">1.6</th><td>0.9954</td><td>1.6029</td><td>1.6</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/classical-mechanics/04-normal-modes.csv" download>Download all 301 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/chapters/03-constraints-and-lagrange/">Chapter 3 · Constraints and Lagrange’s equations</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/problem-sheets/2/">Problem sheet 2 · Constrained motion and modes</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

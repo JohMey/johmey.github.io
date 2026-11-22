@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swirling flows and wall drag · OneSimulation</title>
+<meta name="description" content="Use a velocity distribution to infer local vorticity, pressure differences and the momentum lost to wall drag.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/4/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swirling flows and wall drag · OneSimulation">
+<meta property="og:description" content="Use a velocity distribution to infer local vorticity, pressure differences and the momentum lost to wall drag.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/4/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Swirling flows and wall drag</h1><p class="lead">Use a velocity distribution to infer local vorticity, pressure differences and the momentum lost to wall drag.</p><p class="byline">Problem sheet 4 · Chapters 7 and 8</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#vortex">A rigidly spinning tank</a><a href="#survey">A linear layer profile</a><a href="#growth">Infer a local shear stress</a><a href="#channel-probe-balance">Test a turbulent channel measurement</a></nav></aside><article class="prose reference"><section><h2 id="vortex">A rigidly spinning tank</h2>
+<p>Water in an open cylindrical tank of radius 0.15 m rotates as a solid body at 6 rad/s. Determine the circulation around the rim, local vorticity and wall-to-centre free-surface rise. Compare the vorticity with that of an ideal free-vortex exterior carrying the same circulation.</p>
+<details><summary>Reveal the worked solution</summary>
+<p>The rim speed is \(6(0.15)=0.90\,\mathrm{m/s}\) and circulation is \(2\pi(0.15)(0.90)=0.848\,\mathrm{m^2/s}\). The vorticity is \(2\Omega=12\,\mathrm{s^{-1}}\). Integrating the radial and vertical pressure balance gives \(\Delta z=6^2(0.15)^2/(2g)=0.0413\,\mathrm m\). A free vortex of the same circulation has zero local vorticity outside its core. The circulation measures what the loop encloses.</p></details>
+</section>
+<section><h2 id="survey">A linear layer profile</h2>
+<p>An idealised velocity survey gives \(u/U=y/\delta\) to the layer edge and unity above. Derive displacement and momentum thicknesses. For \(U=8\,\mathrm{m/s}\), water density 1000 kg/m³, \(\delta=2\,\mathrm{mm}\) and plate width 0.15 m, estimate drag on the surveyed face to this station.</p>
+<details><summary>Reveal the worked solution</summary>
+<p>Integrating \(1-\eta\) gives \(\delta^*=\delta/2=1.0\,\mathrm{mm}\). Integrating \(\eta(1-\eta)\) gives \(\theta_m=\delta/6=0.333\,\mathrm{mm}\). Under constant external pressure and speed, \(D=\rho U^2\theta_m b=3.20\,\mathrm N\). Only the one face to which the survey applies has been counted.</p>
+</details>
+</section>
+<section><h2 id="growth">Infer a local shear stress</h2>
+<p>A measured zero-pressure-gradient momentum thickness follows \(\theta_m=0.0010\sqrt{x/(1\,\mathrm m)}\,\mathrm m\). Air density is 1.2 kg/m³ and external speed 15 m/s. At \(x=0.25\,\mathrm m\), find local wall shear and integrated drag per unit width. Why do these two quantities have different units?</p>
+<details><summary>Reveal the worked solution</summary>
+<p>At the station \(\theta_m=0.00050\,\mathrm m\) and \(d\theta_m/dx=0.0010\). Local shear is \(\rho U^2d\theta_m/dx=0.270\,\mathrm{Pa}\). Drag per width is \(\rho U^2\theta_m=0.135\,\mathrm{N/m}\). Local shear is force per area; integrating along plate length removes one inverse length.</p>
+</details>
+</section>
+<section><h2 id="channel-probe-balance">Test a turbulent channel measurement</h2>
+<p>A water channel has half-height 15 mm and pressure gradient \(-80\) Pa/m. At a probe 5 mm from the lower wall, measurements give \(dU/dy=100\) s⁻¹ and \(\overline{u'v'}=-5.0\times10^{-4}\) m²/s². Use \(\rho=1000\) kg/m³ and \(\mu=0.0010\) Pa s. How well do the measurements close the momentum balance? What correlation would close it at the stated position?</p>
+<details><summary>Worked solution</summary>
+<p>The expected total stress is \(80(0.015-0.005)=0.80\) Pa. The gradient gives 0.10 Pa and the measured covariance gives another 0.50 Pa. Together these account for 0.60 Pa. The shortfall is 0.20 Pa, or 25% of the pressure-based stress at the probe. The wall stress of 1.20 Pa is a different comparison value.</p>
+<p>Holding the gradient fixed gives \(\overline{u'v'}=-(0.80-0.10)/1000=-7.0\times10^{-4}\) m²/s². Before changing a turbulence model, check the probe height, the averaging interval and whether the flow is fully developed. Changing the sign convention for just one term cannot resolve the shortfall.</p>
+</details><p class="source-note">Revisit chapter 8 · <a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/08-boundary-layers/#reynolds-channel-stress">Measure the momentum transported by turbulent fluctuations</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/08-boundary-layers/">Chapter 8 · Boundary layers and momentum thickness</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/09-drag-lift/">Chapter 9 · Pressure integration, lift and drag</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

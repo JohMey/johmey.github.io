@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design an informative experiment and test its predictions · OneSimulation</title>
+<meta name="description" content="Choose observations that separate parameters, then check uncertainty against the behaviour of new data.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/06-design-and-validation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Design an informative experiment and test its predictions · OneSimulation">
+<meta property="og:description" content="Choose observations that separate parameters, then check uncertainty against the behaviour of new data.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/06-design-and-validation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Design an informative experiment and test its predictions</h1><p class="lead">Choose observations that separate parameters, then check uncertainty against the behaviour of new data.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#express-design-as-a-change-in-sensitivity">Express design as a change in sensitivity</a><a href="#derive-temperature-and-time-sensitivities">Derive temperature and time sensitivities</a><a href="#compare-an-inference-with-three-numerical-experiments">Compare an inference with three numerical experiments</a><a href="#validate-the-model-where-it-will-be-used">Validate the model where it will be used</a><a href="#choose-a-design-for-the-prediction-that-will-be-reported">Choose a design for the prediction that will be reported</a><a href="#allocate-twelve-readings-for-a-target-near-one-endpoint">Allocate twelve readings for a target near one endpoint</a></nav></aside><article class="prose reference"><section><h2 id="express-design-as-a-change-in-sensitivity">Express design as a change in sensitivity</h2>
+<p>For independent whitened observations a candidate measurement with row derivative \(j\) adds \(j^\mathsf{T}j\) to the local information matrix. A repeat of the same measurement increases information along its existing direction, while a row with a new orientation can raise rank. After defining physically meaningful parameter scales, one can maximise the smallest eigenvalue to protect the weakest direction, or maximise the determinant to shrink a local uncertainty volume. If the scientific target is a single prediction \(h(p)\), minimising \(\nabla h^\mathsf{T}(J^\mathsf{T}J)^{-1}\nabla h\) at full rank may select a different design. Choose a criterion for the quantity actually needed.</p>
+</section>
+<section><h2 id="derive-temperature-and-time-sensitivities">Derive temperature and time sensitivities</h2>
+<p>Consider \(c=c_0e^{-kt}\) with \(k=k_r\exp[-(E/R)(1/T-1/T_r)]\). Estimate \(\theta=\ln k_r\) and \(E\), taking \(c_0\) as known. At fixed \(T\) the derivatives are</p>
+<div class="math display">\[\partial_\theta c=-ktc,\qquad \partial_E c=(ktc/R)(1/T-1/T_r).\]</div>
+<p>Within one temperature series all sensitivity rows are parallel in this two-parameter space, however many sampling times are used. Exactly at \(T_r\) the second component vanishes. Temperatures on opposite sides of the reference rotate the rows in opposite directions and can reduce parameter correlation. For equal absolute concentration uncertainty, the factor \(kt e^{-kt}\) peaks at \(kt=1\). A wider temperature range changes the rate as well as the orientation, so a time schedule informative at one temperature can miss the decay at another.</p>
+</section>
+<section><h2 id="compare-an-inference-with-three-numerical-experiments">Compare an inference with three numerical experiments</h2>
+<p>The <a href="/fundamentals/numerics/inverse-problems/#experiment">OneSimulation Arrhenius experiment</a> supplies three fits to noisy synthetic histories. First compare two runs at the wider temperature range: doubling the noise scale changes the reported standard error of \(E\) from 0.3636 to 0.7228 kJ/mol. Next restore the original noise and narrow the spacing between temperatures from 5 K to 1 K. The standard error reaches 1.4300 kJ/mol. The second change alters the geometry of the sensitivity rows, even though the number of observations stays the same. The exact factor also depends on the sampling times and nonlinear fit.</p>
+<p>The known generating value is 115 kJ/mol. A single fitted standard error describes expected spread under local assumptions. It is not a bound on any particular realised error. Vary the seed and record both the fitted estimate and its reported uncertainty. Compare the empirical spread with the average nominal error and inspect the distribution of standardised errors. A systematic shift under repeated seeds suggests estimator bias or a mismatch in the analysis; one unusual seed alone cannot settle that question.</p>
+</section>
+<section><h2 id="validate-the-model-where-it-will-be-used">Validate the model where it will be used</h2>
+<p>Hold out an entire temperature curve to test the predicted temperature dependence. Randomly omitting isolated time points from every curve mostly tests interpolation within already represented conditions; it also risks leakage if neighbouring errors are correlated. Fit only the training data, make the held-out prediction with its uncertainty, and plot signed prediction errors against time. If different temperatures systematically show opposite curvature errors, revisit the rate model before reporting more digits in \(E\).</p>
+<p>A reproducible inference records the forward equations, units, noise law, parameter scales, data split, residual plots and the specific prediction the fit supports. Parameter identifiability is tied to the observations available. Adding a second measurement condition can change the answer more than switching between two competent optimisation algorithms.</p>
+</section>
+<section>
+<h2 id="choose-a-design-for-the-prediction-that-will-be-reported">Choose a design for the prediction that will be reported</h2>
+<p>Consider a linear calibration \(y=a+bx+\epsilon\) on an instrument with two available settings \(x=-1,+1\). Assume independent errors of common known variance \(\sigma^2\). Any number of repetitions at the same setting estimates its mean response. Denote the two setting means by \(m_-\) and \(m_+\). The calibration then predicts the value at any target \(t\) by linear interpolation or extrapolation, \(Q(t)=(1-t)m_-/2+(1+t)m_+/2\). This expression follows by equating the coefficients of the constant and linear functions, both of which must be reproduced exactly.</p>
+<p>With \(n_-\) and \(n_+\) readings, the variance is \(\sigma^2[(1-t)^2/(4n_-)+(1+t)^2/(4n_+)]\). For a fixed budget \(N=n_-+n_+\), minimise over positive group sizes. Taking the derivative with respect to \(n_-\), or applying Cauchy–Schwarz, gives \(n_-:n_+=|1-t|:|1+t|\). The absolute values matter outside the calibration interval, where one interpolation weight becomes negative while its contribution to variance remains positive. This result assumes the slope law is trusted at the target and both settings cost the same.</p>
+</section>
+<section>
+<h2 id="allocate-twelve-readings-for-a-target-near-one-endpoint">Allocate twelve readings for a target near one endpoint</h2>
+<p>At \(t=1/2\) the target weights are \(1/4\) and \(3/4\). The optimal division of twelve readings is therefore three at the negative setting and nine at the positive setting. For unit measurement variance, the resulting prediction variance is \(1/(16\cdot3)+9/(16\cdot9)=1/12\). Splitting the readings equally instead gives \((1+9)/(16\cdot6)=5/48\). The first design reduces this particular variance by one fifth. Both designs can reconstruct the full line because both endpoints have been observed.</p>
+<p>If the target were a tight joint estimate of intercept and slope, the answer would change. The information matrix in these two parameters has diagonal entries \(N\) and off-diagonal entries \(n_+-n_-\) for unit variance. Its determinant is \(N^2-(n_+-n_-)^2=4n_-n_+\), maximised by a six–six design. For the three–nine design the determinant is 108 versus 144 when balanced. Giving up joint precision here buys precision specifically for the proposed positive-side prediction. A design decision cannot be assessed without knowing which quantity is intended for publication.</p>
+<p>As a further check, allow the physical calibration to contain an unmodelled quadratic term \(d x^2\). At both design points that contribution equals the same constant \(d\), so it is absorbed into the fitted intercept. At \(t=1/2\) its actual contribution is only \(d/4\). Every design using the two endpoints alone therefore incurs prediction bias \(3d/4\), however small its nominal variance. An additional interior validation setting can reveal this defect in a way that more repeated endpoint measurements cannot.</p>
+<p>A further constraint may come from instrument startup time. If changing between settings is expensive while taking repeated readings is cheap, run the readings in groups but randomise or balance their order across independent sessions. Otherwise a gradual drift can become indistinguishable from the slope. The independent-error variance derivation offers no protection against an unmodelled time effect confounded with the chosen temperature or excitation.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/chapters/05-nonlinear-inversion/">Chapter 5 · Nonlinear fitting and local models</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/problem-sheets/3/">Problem sheet 3 · Nonlinear estimates and experimental design</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

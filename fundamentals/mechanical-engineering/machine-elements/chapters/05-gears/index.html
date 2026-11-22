@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spur gear kinematics and tooth loads · OneSimulation</title>
+<meta name="description" content="Use pitch-line compatibility and power balance to find gear speed, tooth forces and the bending demand at a tooth root.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/05-gears/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spur gear kinematics and tooth loads · OneSimulation">
+<meta property="og:description" content="Use pitch-line compatibility and power balance to find gear speed, tooth forces and the bending demand at a tooth root.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/05-gears/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Spur gear kinematics and tooth loads</h1><p class="lead">Use pitch-line compatibility and power balance to find gear speed, tooth forces and the bending demand at a tooth root.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#pitch">Replace the mesh by two rolling pitch circles</a><a href="#contact">Resolve the force along the common normal</a><a href="#reducer">A low-speed conveyor stage</a><a href="#root">Build a first tooth-root estimate</a><a href="#contact-ratio">Count how many tooth pairs can carry load simultaneously</a><a href="#mesh-overlap">Evaluate a centre-distance change in a reducer</a><a href="#epicyclic-drive">Find the three speeds and housing reaction of a planetary gearset</a></nav></aside><article class="prose reference"><section><h2 id="pitch">Replace the mesh by two rolling pitch circles</h2>
+<p>Two external spur gears have straight teeth parallel to their axes. The common normal to a pair of involute flanks passes through a fixed pitch point on the line joining the centres. At that point the pitch circles roll together at equal tangential speed. The actual contacting flanks slide relative to one another away from the pitch point. Distinguishing pitch-circle motion from local sliding explains why the simple velocity ratio can hold while the tooth surfaces still require lubrication.</p>
+<p>For unshifted standard gears of the same module \(m\), pitch diameter equals module times tooth count, and the design centre distance equals half the sum of the pitch diameters. With a common angular sign convention on both parallel axes, the two external gears turn in opposite directions. Writing equality of pitch speeds in magnitude and then inserting direction gives</p>
+<div class="math display">\[d_i=mz_i,\qquad a=(d_1+d_2)/2,\qquad \frac{\omega_2}{\omega_1}=-\frac{d_1}{d_2}=-\frac{z_1}{z_2}.\]</div>
+<p>An idler changes the direction of the last gear in a simple train without changing the magnitude of the first-to-last ratio. A compound shaft carrying two distinct gears is different. Those two gears share angular speed, so the ratios of successive meshes multiply. Draw the shafts before multiplying any tooth counts.</p>
+</section>
+<section><h2 id="contact">Resolve the force along the common normal</h2>
+<p>Neglect tooth friction in the force construction. The resultant \(F_n\) acts normal to the contacting flanks. Its projection along the pitch tangent, \(F_t=F_n\cos\alpha\), produces torque on each shaft. Its radial projection, \(F_r=F_t\tan\alpha\), pushes the two gear centres apart. A straight spur mesh with aligned shafts produces no ideal axial component. The bearings must return both transverse force components to the housing.</p>
+<div class="math display">\[T_1=F_t d_1/2,\qquad T_2=F_t d_2/2,\qquad P=F_t v,\quad v=\pi d_1 n_1/60 .\]</div>
+<p>The transmitted tooth forces have equal magnitudes on both gears. The larger gear develops more torque because that force acts through a larger radius. Multiplying output torque by the correspondingly lower output speed recovers the input power in an ideal mesh. When estimating useful output power for a real stage, multiply input power by the specified efficiency and state which shaft receives that output.</p>
+</section>
+<section><h2 id="reducer">A low-speed conveyor stage</h2>
+<p>A motor drives a 20-tooth pinion at 1200 rpm. It meshes with a 60-tooth gear of module 3 mm and pressure angle 20°. The input power is 4.0 kW. Pitch diameters are 60 and 180 mm, the centre distance is 120 mm, and the output turns at 400 rpm in the opposite direction. Angular input speed is 125.66 rad/s, giving pinion torque 31.83 N m. The pitch-line speed is 3.770 m/s.</p>
+<p>Tangential force follows from \(4000/3.770=1061\,\mathrm N\). The radial separating force is \(1061\tan20^\circ=386\,\mathrm N\). The normal force is \(1061/\cos20^\circ=1129\,\mathrm N\). The ideal output torque is 95.5 N m. With a measured stage efficiency of 0.96, useful output is 3.84 kW and output torque is 91.7 N m. A design based on shaft torque alone omits the transverse force that bends the shaft and loads the bearings.</p>
+</section>
+<section><h2 id="root">Build a first tooth-root estimate</h2>
+<p>For a preliminary bending model treat the loaded tooth as a short cantilever of face width \(b\), effective thickness \(s\) and moment arm \(h\). The rectangular section modulus is \(bs^2/6\); the bending moment is approximately \(F_t h\). Hence root stress scales as \(6F_t h/(bs^2)\). For geometrically similar teeth write \(Y=s^2/(6hm)\), a dimensionless form factor in the module convention used here. Then \(\sigma_b\simeq F_t/(bmY)\).</p>
+<p>Taking \(b=24\,\mathrm{mm}\), \(m=3\,\mathrm{mm}\) and an illustrative \(Y=0.32\) gives \(1061/(24\times3\times0.32)=46.1\,\mathrm{MPa}\). This estimates nominal bending in the simplified geometry. The real tooth also sees local root concentration and surface contact stress. Uneven load across the face, dynamic tooth loads and changing load sharing during mesh can change the result. The shaft experiences a transverse force throughout steady running; an individual tooth is loaded only as it enters each mesh. That distinction changes its number of fatigue cycles.</p>
+</section>
+<section><h2 id="contact-ratio">Count how many tooth pairs can carry load simultaneously</h2>
+<p>The pitch circles determine the transmission ratio but do not establish whether tooth engagement is continuous. In an ideal external spur-gear pair the point of contact moves along the common line of action between intersections with the two addendum circles. A pair engages before the pitch point and disengages after it. The transverse contact ratio is that total active path length divided by base pitch, the spacing of adjacent involutes measured along the same line. If contact ratio lies between one and two, one pair is in mesh during part of a pitch interval and two during the remainder.</p>
+<p>For standard unshifted pitch radii \(r_1,r_2\), base radii \(r_{bi}=r_i\cos\alpha\), addendum radii \(r_{ai}\) and operating centre distance \(a_w\), the distance from the base tangent point to the addendum intersection is \(\sqrt{r_{ai}^2-r_{bi}^2}\). Subtract the distance between the two base tangent points, \(a_w\sin\alpha_w\). The operating angle satisfies \(\cos\alpha_w=(r_{b1}+r_{b2})/a_w\). For module \(m\) and reference pressure angle \(\alpha\), base pitch is \(p_b=\pi m\cos\alpha\). Therefore</p>
+<div class="math display">\[\varepsilon_\alpha=\frac{\sqrt{r_{a1}^2-r_{b1}^2}+\sqrt{r_{a2}^2-r_{b2}^2}-a_w\sin\alpha_w}{p_b}.\]</div>
+<p>This geometric expression presumes sufficient usable involute profile at both roots and no interference, profile modification or edge contact that shortens the path. It yields geometric overlap, not equal division of tooth load; stiffness and deflection evolve as a tooth crosses the mesh.</p>
+</section>
+<section><h2 id="mesh-overlap">Evaluate a centre-distance change in a reducer</h2>
+<p>A 20-tooth pinion meshes with a 40-tooth gear, both module 3 mm with 20° reference pressure angle and an addendum of one module. Reference pitch radii are 30 and 60 mm, base radii 28.19 and 56.38 mm, and addendum radii 33 and 63 mm. At the reference centre distance 90 mm, the first two square-root terms are 17.155 and 28.109 mm. The tangent-point spacing is \(90\sin20^\circ=30.782\) mm, giving active path length 14.482 mm. Base pitch is 8.856 mm and transverse contact ratio is 1.635.</p>
+<p>In this ideal mesh, about 63.5% of each base-pitch interval has two pairs engaged and 36.5% has one. Increase the centre distance to 90.5 mm while retaining exactly the same gears. The operating pressure angle increases to \(\arccos[(28.19+56.38)/90.5]=20.85^\circ\). The base pitch and addendum intersections remain fixed, but the longer tangent-point spacing lowers the contact ratio to 1.473. The single-pair portion expands to 52.7%. The tooth-count ratio remains exactly two, so a speed measurement alone cannot detect this reduction in load-sharing opportunity. Measuring backlash, centre distance or mesh vibration supplies different evidence. A target for tooth root stress should account for the time spent in single-pair mesh as well as nominal torque.</p>
+<p>At 1200 pinion rpm a 20-tooth pinion gives a mesh frequency of \(20(1200)/60=400\) Hz. The altered centre distance leaves this frequency unchanged while changing the fraction of each 2.50 ms mesh interval spent in single-pair contact. Dynamic excitation amplitude can therefore change without a shift in the measured mesh frequency.</p>
+</section>
+<section><h2 id="epicyclic-drive">Find the three speeds and housing reaction of a planetary gearset</h2>
+<p>A simple epicyclic train has a sun with \(N_s\) teeth, an internal ring with \(N_r\) teeth, and planets whose centres are carried by a rotating arm. One fixed-axis gear ratio cannot relate all three members. In a frame turning with the carrier, the planet centres are stationary and each mesh is an ordinary pitch-circle rolling constraint. The sun–planet mesh reverses the relative spin direction. The internal planet–ring mesh preserves it. Eliminating the planet speed gives the Willis relation</p>
+<div class="math display">\[N_s(\omega_s-\omega_c)+N_r(\omega_r-\omega_c)=0,\qquad \omega_c=\frac{N_s\omega_s+N_r\omega_r}{N_s+N_r}.\]</div>
+<p>All speeds use the same positive direction in the stationary frame. With ring locked, the carrier turns with the sun at the reduction ratio \(1+N_r/N_s\). If both input members turn together, all parts rotate as a rigid train and the planets have no spin relative to the carrier. These two limits help detect a sign error at an internal mesh.</p>
+<p>Next define all torques as torques applied to the train. In ideal steady operation the external powers sum to zero. For independent admissible sun and ring speeds, substitute the carrier relation into \(T_s\omega_s+T_r\omega_r+T_c\omega_c=0\). The two coefficients must each vanish, giving \(T_s=-T_c N_s/(N_s+N_r)\) and \(T_r=-T_c N_r/(N_s+N_r)\). This also yields \(T_s+T_r+T_c=0\), as required by angular momentum balance at constant speed.</p>
+<p>For a bench mixer choose \(N_s=24,\ N_r=72\). Same-module gears then need \(N_p=(72-24)/2=24\) teeth per planet. With the ring bolted to the frame and the sun driven at \(1200\,\mathrm{rpm}\), the carrier turns at \(300\,\mathrm{rpm}\). At \(T_s=+12.0\,\mathrm{N\,m}\), the load applies \(T_c=-48.0\,\mathrm{N\,m}\) and the frame applies \(T_r=+36.0\,\mathrm{N\,m}\) to the gearset. Sun input and carrier output each have magnitude \(1.51\,\mathrm{kW}\). The stationary ring transmits no power but its mounts still carry a reaction torque of 36.0 N m.</p>
+<p class="source-note">Practise on sheet 3 · <a href="/fundamentals/mechanical-engineering/machine-elements/problem-sheets/3/#practice-epicyclic-drive">Trace the power when both the sun and ring move</a>. Further reading · <a href="https://mechanics.ju.se/MachineElements/planetary-gears.html">Jönköping University · Applied Mechanics · §10.8 Planetary gears, “Seen from the carrier: the Willis equation” and “Torques and the forces on the teeth”</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-elements/problem-sheets/2/">Problem sheet 2 · Clamped interfaces and rolling contact</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/06-fits-and-interfaces/">Chapter 6 · Tolerances, interference and torque transmission</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

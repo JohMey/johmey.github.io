@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Divided differences and derivative data · OneSimulation</title>
+<meta name="description" content="Build an interpolating polynomial one measurement at a time and incorporate a measured slope at a repeated node.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/07-divided-differences/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Divided differences and derivative data · OneSimulation">
+<meta property="og:description" content="Build an interpolating polynomial one measurement at a time and incorporate a measured slope at a repeated node.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/07-divided-differences/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Divided differences and derivative data</h1><p class="lead">Build an interpolating polynomial one measurement at a time and incorporate a measured slope at a repeated node.</p><p class="byline">Chapter 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#keep-the-previous-fit">Keep the previous fit</a><a href="#three-temperatures-and-a-test-point">Three temperatures and a test point</a><a href="#let-two-nodes-coalesce">Let two nodes coalesce</a><a href="#rescale-before-comparing-coefficients">Rescale before comparing coefficients</a><a href="#differentiate-a-local-interpolant-on-an-uneven-grid">Differentiate a local interpolant on an uneven grid</a><a href="#estimate-a-heating-rate-from-unsymmetrical-sampling-times">Estimate a heating rate from unsymmetrical sampling times</a></nav></aside><article class="prose reference"><section>
+<h2 id="keep-the-previous-fit">Keep the previous fit</h2>
+<p>A new measurement arrives after a polynomial has been fitted to \(x_0,\ldots,x_{k-1}\). To preserve those measurements, add a multiple of \(\omega_k(x)=\prod_{j=0}^{k-1}(x-x_j)\). At each old node the correction vanishes. At a new distinct node \(x_k\) its coefficient is fixed by \(c_k=(f(x_k)-p_{k-1}(x_k))/\omega_k(x_k)\). This gives a triangular construction. Once a coefficient has been determined it remains in every subsequent polynomial provided the original order is retained.</p>
+<p>The coefficients can also be obtained using a table. Put \(f[x_i]=f(x_i)\) and subtract adjacent entries of the previous order before dividing by the distance between the two outer nodes. The subtraction cancels shared lower-order information. Algebraically the leading coefficient of the polynomial through \(x_i,\ldots,x_{i+k}\) is</p>
+<div class="math display">\[f[x_i,\ldots,x_{i+k}]=\frac{f[x_{i+1},\ldots,x_{i+k}]-f[x_i,\ldots,x_{i+k-1}]}{x_{i+k}-x_i}.\]</div>
+<p>This follows by combining the two lower-degree interpolants with factors \(x-x_i\) and \(x-x_{i+k}\). Their difference divided by the outer spacing agrees with every tabulated value and has the required leading coefficient.</p>
+</section>
+<section>
+<h2 id="three-temperatures-and-a-test-point">Three temperatures and a test point</h2>
+<p>Suppose a temperature sensor reports 2, 5 and 17 degrees at 0, 1 and 3 hours. First divided differences are 3 and 6 degrees per hour. The second difference is \((6-3)/3=1\) degree per hour squared. Hence \(p(x)=2+3x+x(x-1)\). At hour 2 this gives 10 degrees; the original straight line would give 8. The correction shows how strongly the additional observation changes that prediction. Neither interpolant by itself certifies that the temperature really did reach its predicted value between readings.</p>
+<p>Nested evaluation uses \(2+x[3+(x-1)]\) here. Each new layer adds one multiplication and one addition. Reordering the nodes changes the intermediate table, but uniqueness ensures the same final polynomial in exact arithmetic. Strongly unequal spacings can magnify noise in higher differences and make numerical results sensitive to the order.</p>
+</section>
+<section>
+<h2 id="let-two-nodes-coalesce">Let two nodes coalesce</h2>
+<p>If a second node approaches the first, the corresponding difference quotient tends to \(f'(x_0)\) for differentiable \(f\). An independently available derivative therefore supplies the diagonal entry directly. For a value 1 and slope 2 at zero and a value 4 at one, the required quadratic is \(1+2x+cx^2\); matching the final value gives \(c=1\). Its prediction at one half is 2.25. Perturb the initial slope by 0.1 while keeping endpoints fixed. The correction becomes \(0.1x(1-x)\), attaining 0.025 at the midpoint. Endpoint agreement alone would miss that uncertainty.</p>
+</section>
+<section>
+<h2 id="rescale-before-comparing-coefficients">Rescale before comparing coefficients</h2>
+<p>The coefficients have different units at successive orders. In the temperature example, expressing time in minutes divides the first divided differences by 60 and the second difference by \(60^2\). Their smaller printed magnitudes do not mean the curvature has become less significant. Evaluating the second term at the same physical instant multiplies by two correspondingly larger node differences and recovers exactly the original contribution. Scaling the node interval near unit size can make intermediate arithmetic more convenient; interpret a coefficient together with the product of distances it multiplies.</p>
+</section>
+<section>
+<h2 id="differentiate-a-local-interpolant-on-an-uneven-grid">Differentiate a local interpolant on an uneven grid</h2>
+<p>For samples at \(x_0-a,x_0,x_0+b\), where \(a,b&gt;0\), the derivative of their quadratic interpolant gives a three-point estimate of \(f'(x_0)\). Write it as \(w_- f(x_0-a)+w_0 f(x_0)+w_+f(x_0+b)\). Reproducing the derivatives of a constant, the centred coordinate and its square gives three equations: the weights must sum to zero, \(-a w_-+b w_+=1\), and \(a^2w_-+b^2w_+=0\). Solving yields \(w_-=-b/[a(a+b)],\ w_0=(b-a)/(ab),\ w_+=a/[b(a+b)]\). These are the same weights one obtains by differentiating Newton's divided-difference polynomial at the central node.</p>
+<p>A Taylor expansion exposes the leading cubic contribution. On \(f(x)=(x-x_0)^3\), the estimate is \(-a^3w_-+b^3w_+=ab\), although the exact derivative is zero. Thus the leading smooth-data bias is \(ab f'''(x_0)/6\), with higher-order terms controlled by higher derivatives and panel geometry. Moving the nearest observation closer can reduce this deterministic bias while greatly increasing the magnitude of the weights. The calculation reveals the same conflict between localisation and noise that occurs when derivatives are inferred from independently measured values.</p>
+</section>
+<section>
+<h2 id="estimate-a-heating-rate-from-unsymmetrical-sampling-times">Estimate a heating rate from unsymmetrical sampling times</h2>
+<p>Choose \(x_0=0\), \(a=1\) minute and \(b=2\) minutes. The weights are \(-2/3,\ 1/2,\ 1/6\) per minute. Let the exact temperature over this short interval be \(T(t)=10+3t+t^3/10\) degrees. The sampled readings are \(T(-1)=6.9,\ T(0)=10,\ T(2)=16.8\). Applying the formula gives \(-4.6+5+2.8=3.2\) degrees per minute. The analytical derivative at zero is three. Its 0.2 bias equals \(ab T'''/6=(1)(2)(0.6)/6\), exactly because the temperature has no higher powers.</p>
+<p>If each sample has independent standard deviation 0.12 degrees, the rate standard deviation is \(0.12\sqrt{4/9+1/4+1/36}=0.12\sqrt{26}/6\approx0.102\) degrees per minute. Halving both spacings reduces the cubic bias by four to 0.05, but doubles every derivative weight, increasing standard deviation to approximately 0.204. For the original grid, combining bias squared and variance gives mean squared error about 0.0504; for the refined grid it is about 0.0441. A further halving would make random error dominate still more strongly.</p>
+<p>The weights sum to zero, so a truly common temperature offset cancels, while time-dependent drift need not. Also, using a symmetric central-difference formula on these asymmetric sample times would estimate a slope centred elsewhere and introduce a contribution from any quadratic term. Keeping the acquisition times in the coefficient equations is essential when observations are irregular because of missed triggers or variable sampling intervals.</p>
+<p>A further check compares sampling the same temperatures with a fit that assumes the instrument clock is correct only to a tenth of a minute. At the central point the true local slope is three degrees per minute, so a timing error of 0.1 minute can by itself move a value by approximately 0.3 degrees. This is larger than the assumed independent temperature standard deviation. Errors in the sample locations would enter the divided differences through both numerator and denominator, and the simple fixed-time variance calculation would no longer describe the experiment.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/problem-sheets/3/">Problem sheet 3 · Accuracy with few evaluations</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/08-minimax/">Chapter 8 · Uniform approximation and alternation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

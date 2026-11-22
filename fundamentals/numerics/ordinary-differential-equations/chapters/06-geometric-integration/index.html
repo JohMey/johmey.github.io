@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Energy and geometric integration · OneSimulation</title>
+<meta name="description" content="Compare three time updates on a conservative oscillator and explain why a method can have small short-term state error yet distort an orbit over many periods.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/06-geometric-integration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Energy and geometric integration · OneSimulation">
+<meta property="og:description" content="Compare three time updates on a conservative oscillator and explain why a method can have small short-term state error yet distort an orbit over many periods.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/06-geometric-integration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Energy and geometric integration</h1><p class="lead">Compare three time updates on a conservative oscillator and explain why a method can have small short-term state error yet distort an orbit over many periods.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#choose-the-diagnostic-before-choosing-the-method">Choose the diagnostic before choosing the method</a><a href="#update-momentum-before-position">Update momentum before position</a><a href="#check-a-long-time-forecast-with-numbers">Check a long-time forecast with numbers</a><a href="#test-an-algorithm-by-reversing-the-clock">Test an algorithm by reversing the clock</a><a href="#test-a-flow-map-on-a-small-cell-of-phase-space">Test a flow map on a small cell of phase space</a><a href="#compare-the-phase-volume-of-an-oscillator-ensemble">Compare the phase volume of an oscillator ensemble</a></nav></aside><article class="prose reference"><section>
+<h2 id="choose-the-diagnostic-before-choosing-the-method">Choose the diagnostic before choosing the method</h2>
+<p>A mass on an ideal spring with unit mass and stiffness obeys \(\dot q=p,\ \dot p=-q\). The state moves on circles with conserved energy \(H=(q^2+p^2)/2\). At short times a state norm measures trajectory error, but over many periods there are independent questions about amplitude, phase and energy. A time-stepping method that systematically increases the orbit radius can produce an artificial runaway even on this simplest stable physical system.</p>
+<p>Forward Euler updates \(q_{n+1}=q_n+hp_n,\ p_{n+1}=p_n-hq_n\). Square and add: the cross terms cancel, leaving \(H_{n+1}=(1+h^2)H_n\). The phase space area factor of the update matrix is its determinant \(1+h^2\), also greater than one. Backward Euler instead contracts energy by \(1/(1+h^2)\). The second method is stable in the sense of bounded states, but it removes mechanical energy from an undamped model. The sign of drift explains much more here than a solitary endpoint comparison.</p>
+</section>
+<section>
+<h2 id="update-momentum-before-position">Update momentum before position</h2>
+<p>The momentum-first symplectic Euler scheme sets \(p_{n+1}=p_n-hq_n\) and \(q_{n+1}=q_n+hp_{n+1}\). Its update matrix in \((q,p)\) has rows \((1-h^2,h)\) and \((-h,1)\). Its determinant is one and trace is \(2-h^2\). For \(0&lt;h&lt;2\), the two eigenvalues are a complex conjugate pair of unit magnitude because their product is one and the trace lies strictly between −2 and 2. The resulting numerical frequency satisfies \(2\cos\theta=2-h^2\). Thus phase error still accumulates even if the amplitudes remain bounded.</p>
+<p>Direct substitution also verifies an exact discrete invariant \(\tilde H=(q^2+p^2-hqp)/2\). For \(h&lt;2\) the corresponding quadratic form is positive definite, so constant \(\tilde H\) confines the state to an ellipse. The exact physical energy can fluctuate around its initial level as the point moves around that ellipse. Area preservation alone would not guarantee this behaviour: for \(h&gt;2\) the determinant remains one but real reciprocal eigenvalues permit growth. The eigenvalue and invariant calculations supply the missing qualification.</p>
+</section>
+<section>
+<h2 id="check-a-long-time-forecast-with-numbers">Check a long-time forecast with numbers</h2>
+<p>Start at \((q,p)=(1,0)\) with \(h=0.1\). Forward Euler gives \((1,-0.1)\) and \(H=0.505\) after one step. After 100 steps the exact multiplicative law predicts \(H=0.5(1.01)^{100}=1.3524\). Symplectic Euler instead gives \((0.99,-0.1)\), \(H=0.49505\), but \(\tilde H=0.5\) again. The first step alone might suggest that the second scheme dissipates energy. The invariant predicts that the decrease cannot continue monotonically over many periods.</p>
+<p>Implicit midpoint, \((y_{n+1}-y_n)/h=J(y_n+y_{n+1})/2\) with the skew-symmetric oscillator matrix \(J\), preserves the exact quadratic energy. Dot both sides with the midpoint state. The left side is proportional to \(H_{n+1}-H_n\) and the right side is zero by skew symmetry. Its rotations need not accumulate the exact physical phase, since the rotation angle per step is \(2\arctan(h/2)\). A meaningful long-time study therefore records measured period, energy range and reversibility alongside any state error after a specified number of cycles.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/oscillator-energy.png" width="1264" height="720" loading="lazy" alt="Forward Euler energy grows from 0.5 to 1.35, backward Euler energy decays, and symplectic Euler energy oscillates around 0.5."><figcaption>An ideal oscillator sampled with step 0.1. Checking only the first few updates obscures the systematic growth or decay visible after 100 steps.</figcaption></figure>
+</section>
+<section>
+<h2 id="test-an-algorithm-by-reversing-the-clock">Test an algorithm by reversing the clock</h2>
+<p>A method is time symmetric if taking a step of length \(h\) and then a step of length \(-h\) restores the starting state, up to arithmetic and solve tolerance. For the midpoint update, exchanging the old and new values leaves their average unchanged and changes both sides of the difference equation consistently. This gives exact reversibility for an accurately solved implicit step. For forward Euler on the oscillator, the product of the forward and backward matrices is \((1+h^2)I\), so reversal actually scales the state.</p>
+<p>At \(h=0.1\), the simple reversal from \((1,0)\) therefore returns \((1.01,0)\) for forward Euler, making the failure visible in one pair of steps. This diagnostic is useful only for a reversible underlying evolution paired with its time-reversed integration law. A dissipative or dissipatively constrained physical system has different requirements. Reversibility, energy preservation and phase accuracy probe separate mathematical properties, each with a different operational test.</p>
+</section>
+<section>
+<h2 id="test-a-flow-map-on-a-small-cell-of-phase-space">Test a flow map on a small cell of phase space</h2>
+<p>For canonical coordinates \(z=(q,p)\), a differentiable Hamiltonian update \(z_+=\Psi(z)\) is symplectic when its Jacobian \(D\Psi\) preserves the matrix \(J=\left(\begin{smallmatrix}0&amp;1\\-1&amp;0\end{smallmatrix}\right)\) through \(D\Psi^T J D\Psi=J\). Direct multiplication shows that for any real two-by-two matrix \(M\), \(M^TJM=(\det M)J\). Thus in one degree of freedom symplecticity is equivalent to preserving oriented area. A small rectangle of nearby initial conditions should map to a region of the same signed area even when its sides stretch or tilt.</p>
+<p>For more than one degree of freedom, preserving ordinary volume is necessary but no longer sufficient. A map may stretch one canonical \((q,p)\) plane and compress another by the reciprocal factor. Its full determinant remains one while the area pairing in each plane changes. Energy is a further, independent diagnostic: an area-preserving map can move individual points among nearby energy contours. The determinant calculation tests a geometric property of the map across neighbouring trajectories, rather than just the energy at one chosen state.</p>
+</section>
+<section>
+<h2 id="compare-the-phase-volume-of-an-oscillator-ensemble">Compare the phase volume of an oscillator ensemble</h2>
+<p>For \(q'=p,\ p'=-q\) with unit frequency, forward Euler gives \(M=\left(\begin{smallmatrix}1&amp;h\\-h&amp;1\end{smallmatrix}\right)\), of determinant \(1+h^2\). Backward Euler gives \((I-hA)^{-1}\), where \(A\) has off-diagonal entries \(1,-1\), so its determinant is \(1/(1+h^2)\). A kick followed by a drift gives the symplectic Euler matrix with rows \((1-h^2,h)\) and \((-h,1)\), whose determinant is exactly one. These facts hold for every input rectangle, so they can be checked by integrating its corners rather than relying on a single solution.</p>
+<p>Choose \(h=0.2\) and an initial ensemble occupying a rectangle of area 0.01 in normalised phase coordinates. After 25 steps forward Euler predicts area \(0.01(1.04)^{25}\approx0.02666\). Backward Euler gives \(0.01/(1.04)^{25}\approx0.00375\). Symplectic Euler preserves 0.01. Repeated steps compound even a four percent per-step area change into a substantial distortion. For the oscillator all three approximate individual paths can initially look plausible, so this ensemble diagnostic reveals information inaccessible in a short plot of one coordinate.</p>
+<p>As a counterexample in four dimensions, scale the first pair of coordinates by \((2,1)\) and the second pair by \((1/2,1)\). The volume multiplier is one, but the first canonical area doubles while the second halves. A full symplecticity test must check \(M^TJM-J\) using the correctly ordered canonical coordinate pairs. An algorithm preserving volume in an arbitrary collection of engineering state units is not automatically qualified for long-time Hamiltonian integration.</p>
+<p>Area preservation also survives composing individual canonical shears: the determinants multiply and every shear has determinant one. This explains why reversing the order of a kick and a drift changes the phase error but preserves the two-dimensional area test. The two compositions may therefore produce different numeric positions while agreeing precisely on one geometric invariant. A useful verification suite includes both ensemble area and a trajectory observable with a known time dependence.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/05-adaptive-steps/">Chapter 5 · Adaptive steps and event locations</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/">Problem sheet 3 · Events and long trajectories</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

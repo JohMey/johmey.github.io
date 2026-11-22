@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bernoulli head, losses and pump duty · OneSimulation</title>
+<meta name="description" content="Build a mechanical-energy balance between two stations and distinguish a recoverable pressure change from irreversible loss.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/04-mechanical-energy/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bernoulli head, losses and pump duty · OneSimulation">
+<meta property="og:description" content="Build a mechanical-energy balance between two stations and distinguish a recoverable pressure change from irreversible loss.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/04-mechanical-energy/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Bernoulli head, losses and pump duty</h1><p class="lead">Build a mechanical-energy balance between two stations and distinguish a recoverable pressure change from irreversible loss.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#along">Integrate the acceleration along a streamline</a><a href="#system">Add distributed losses and machinery</a><a href="#pump">Lift water between open tanks</a><a href="#operating">Find the intersection with the pump characteristic</a><a href="#suction">Check the absolute pressure on a pump inlet</a><a href="#minimum-energy">Locate the critical depth from a constrained energy minimum</a><a href="#bed-hump">Predict when a raised bed changes the upstream water level</a></nav></aside><article class="prose reference"><section><h2 id="along">Integrate the acceleration along a streamline</h2>
+<p>A nozzle can lower static pressure while increasing speed. A valve can also lower pressure, yet recover little useful speed downstream. To separate the mechanisms, start from a steady, inviscid streamline in constant-density flow. Project Newton’s equation along its tangent \(s\), with gravity acting downward. The acceleration in that direction is \(u\,du/ds\), giving \(\rho u\,du=-dp-\rho g\,dz\). Integration between points on that streamline gives \(p/\rho+u^2/2+gz=\) constant.</p>
+<p>The three terms have units J/kg. Dividing by \(g\) measures the same energies as equivalent lengths of fluid column, called pressure head, velocity head and elevation head. A rise in speed at constant elevation can be paid for by a drop in static pressure even in lossless flow. Bringing such a stream to rest along a short, nearly lossless streamline would convert velocity head back into stagnation pressure. An irreversible loss reduces that recoverable total.</p>
+</section>
+<section><h2 id="system">Add distributed losses and machinery</h2>
+<p>For a steady incompressible stream between stations with approximately uniform profiles, a pump supplies head \(H_p\) and a turbine extracts head \(H_t\). Viscous losses \(h_L\) appear as mechanical energy converted into internal energy. With endpoints numbered in the flow direction the energy balance is</p>
+<div class="math display">\[\frac{p_1}{\rho g}+\frac{\bar u_1^2}{2g}+z_1+H_p=\frac{p_2}{\rho g}+\frac{\bar u_2^2}{2g}+z_2+H_t+h_L .\]</div>
+<p>For a noticeably nonuniform profile, multiply each velocity-head term by the kinetic-energy correction \(\alpha=\int_Au^3dA/(A\bar u^3)\). It differs from the momentum correction because energy flux weights the cube of velocity. Long straight pipes are commonly modelled with the Darcy loss \(f_D(L/D)\bar u^2/(2g)\) and fittings with \(K\bar u^2/(2g)\). State which pipe diameter supplies the reference velocity for each coefficient.</p>
+</section>
+<section><h2 id="pump">Lift water between open tanks</h2>
+<p>Two large vented reservoirs differ in elevation by 8.0 m. Water flows at \(Q=0.010\,\mathrm{m^3/s}\) through 40 m of 80 mm diameter pipe. Use a supplied Darcy friction factor 0.025 and total fitting coefficient 3.0, including entrance and exit losses. Both free surfaces have atmospheric pressure and negligible velocity. The pipe area is \(5.03\times10^{-3}\) m², giving mean speed 1.99 m/s and velocity head 0.202 m. Friction and fittings dissipate \([0.025(40/0.080)+3.0]0.202=3.13\) m. The pump therefore supplies 11.13 m head.</p>
+<p>The hydraulic power is \(\rho gQH_p=1.09\) kW for \(\rho=1000\) kg/m³. A pump with efficiency 0.70 at this duty requires 1.56 kW of shaft power. Elevation work alone would predict 0.785 kW hydraulic, and electrical input would also require the motor and drive efficiencies. These differences reflect which boundary is used for the energy balance.</p>
+</section>
+<section><h2 id="operating">Find the intersection with the pump characteristic</h2>
+<p>If coefficients are treated as fixed, the system head here has the form \(H_{\rm sys}=8+BQ^2\). Doubling the flow quadruples the losses, not the elevation rise. A real pump produces a head that depends on flow rate and rotational speed. Its steady operating point is where available head equals required head. Partially closing a valve increases \(B\); it does not directly prescribe a particular flow. Readjusting pump speed changes its characteristic instead. In a real design recheck friction factor and efficiency at the new rate. At low Reynolds number, where laminar friction factor varies inversely with speed, the distributed loss becomes linear rather than quadratic in flow.</p>
+</section>
+<section><h2 id="suction">Check the absolute pressure on a pump inlet</h2>
+<p>A pump inlet sits 3.0 m above an open water reservoir. At a particular duty the suction-line speed is 2.0 m/s and the loss between reservoir and inlet is 0.60 m. Atmospheric pressure is 101 kPa. Applying the mechanical energy balance upstream of the impeller gives absolute inlet pressure \(101000-1000(9.81)(3.0+0.60)-1000(2.0)^2/2=63.7\,\mathrm{kPa}\). If the supplied vapour pressure is 2.3 kPa, this tapping remains above it. Pressure may fall further inside the impeller. Evaluating cavitation margin requires the pump’s suction requirement at the actual duty and an absolute pressure reference; a negative gauge pressure at the tapping alone does not establish cavitation.</p>
+</section>
+<section><h2 id="minimum-energy">Locate the critical depth from a constrained energy minimum</h2>
+<p>In open-channel flow the atmosphere fixes the free-surface pressure, while the depth and speed can both adjust. Consider a rectangular channel of constant width with slowly changing bed elevation \(z_b\). Define the discharge per unit width \(q=vy\) and use the bed as the local elevation datum. With nearly hydrostatic pressure and approximately uniform section velocity, the mechanical head relative to the bed is \(E(y)=y+q^2/(2gy^2)\). This specific energy is finite at a given depth but diverges both for a very shallow stream at fixed discharge and for a very deep stream.</p>
+<p>At fixed \(q\), differentiate with respect to \(y\): \(dE/dy=1-q^2/(gy^3)\). The stationary depth is \(y_c=(q^2/g)^{1/3}\), its Froude number is one, and the second derivative \(3q^2/(gy^4)\) is positive. The minimum value is \(E_c=3y_c/2\). For any specific energy above this minimum two positive depths are possible. One is deep and slow and the other shallow and fast. One must know the upstream flow regime and the physical control to choose a branch.</p>
+<p>Across a smooth low hump with negligible loss the total head \(z_b+E\) remains constant. Raising the bed reduces the specific energy available at the crest. On the deep branch depth decreases towards critical, whereas on the shallow branch depth increases towards it. These opposite trends follow from the sign of \(dE/dy\). Neither branch can pass below \(E_c\) at the prescribed discharge.</p>
+</section>
+<section><h2 id="bed-hump">Predict when a raised bed changes the upstream water level</h2>
+<p>Water enters a wide rectangular flume at \(y=0.80\,\mathrm m\) and \(v=1.0\,\mathrm{m/s}\), giving \(q=0.80\,\mathrm{m^2/s}\) and upstream specific energy \(E_1=0.8510\,\mathrm m\). The critical depth is \((0.64/9.81)^{1/3}=0.4025\,\mathrm m\), so \(E_c=0.604\,\mathrm m\). The largest ideal bed rise that leaves the upstream state unchanged is \(0.851-0.604=0.247\,\mathrm m\). For a smaller 0.15 m bed rise the crest must have \(E=0.7010\,\mathrm m\). Solving \(y+0.03262/y^2=0.7010\) on the deep branch gives approximately 0.614 m, which can be checked by substitution. Speed increases to about 1.30 m/s while the stream remains subcritical.</p>
+<p>Raise the crest instead by 0.30 m. The unchanged upstream level would provide only 0.551 m specific energy, less than the minimum. If discharge stays fixed, the upstream surface must rise until at least \(E_1=0.30+0.604=0.904\,\mathrm m\) is available. The subcritical solution upstream is then approximately 0.860 m depth, a rise of about 60 mm. The physical limitation is the minimum section energy for the prescribed flow, not a loss of mass. Adding appreciable crest losses would require an even larger upstream head to sustain the same discharge.</p>
+<p>A depth gauge right at a critical crest is relatively insensitive as an energy measurement: the first derivative \(dE/dy\) vanishes there. Conversely, inferring depth from a noisy measured head becomes sensitive near the minimum because the inverse slope becomes large. Measurements upstream and downstream help identify which of the two nearby depth branches is physically present.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/03-momentum/">Chapter 3 · Control-volume momentum and forces on fittings</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/2/">Problem sheet 2 · Forces, flow work and losses</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

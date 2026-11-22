@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stationary iterations and smoothing · OneSimulation</title>
+<meta name="description" content="Derive two iterative solvers by splitting a matrix, and decide from their error modes whether repeated updates improve an approximation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/04-stationary-iterations/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stationary iterations and smoothing · OneSimulation">
+<meta property="og:description" content="Derive two iterative solvers by splitting a matrix, and decide from their error modes whether repeated updates improve an approximation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/04-stationary-iterations/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Stationary iterations and smoothing</h1><p class="lead">Derive two iterative solvers by splitting a matrix, and decide from their error modes whether repeated updates improve an approximation.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#split-a-difficult-solve-into-easy-solves">Split a difficult solve into easy solves</a><a href="#update-a-two-node-network">Update a two-node network</a><a href="#why-a-good-smoother-can-be-a-poor-solver">Why a good smoother can be a poor solver</a><a href="#estimate-the-cost-before-extrapolating-a-timing">Estimate the cost before extrapolating a timing</a><a href="#convergence-can-begin-with-a-large-increase">Convergence can begin with a large increase</a><a href="#a-coupled-recurrence-that-delivers-the-wrong-early-verdict">A coupled recurrence that delivers the wrong early verdict</a></nav></aside><article class="prose reference"><section>
+<h2 id="split-a-difficult-solve-into-easy-solves">Split a difficult solve into easy solves</h2>
+<p>A direct factorisation may consume substantial memory on a fine mesh. One alternative repeatedly solves with a matrix \(M\) that is easy to invert. Write \(A=M-N\). Starting at \(x^{(0)}\), solve \(Mx^{(k+1)}=Nx^{(k)}+b\). This update can also be written as a correction \(x^{(k+1)}=x^{(k)}+M^{-1}(b-Ax^{(k)})\). The exact solution is a fixed point. A convenient choice of \(M\) is useful only if these cheap corrections move arbitrary starting guesses toward that point.</p>
+<p>Subtract the update from the exact fixed-point equation. The error propagates as \(e^{(k+1)}=Ge^{(k)}\), where \(G=M^{-1}N=I-M^{-1}A\). If \(G\) is diagonalizable, expansion of the initial error in its eigenvectors gives a factor \(\lambda_i^k\) per mode after \(k\) steps. The spectral radius below one gives convergence from every initial vector. A mode with magnitude close to one decays slowly. For a nonnormal matrix the eigenvectors may be nearly parallel, so several early error norms can rise even when the ultimate decay is assured.</p>
+</section>
+<section>
+<h2 id="update-a-two-node-network">Update a two-node network</h2>
+<p>Let \(A=\left(\begin{smallmatrix}2&amp;-1\\-1&amp;2\end{smallmatrix}\right)\) and \(b=(1,1)^T\), with exact solution \((1,1)^T\). Jacobi uses \(M=\operatorname{diag}(A)\). The updates are \(x_1^{new}=(1+x_2^{old})/2\) and \(x_2^{new}=(1+x_1^{old})/2\). Starting at zero gives \((0.5,0.5)\), then \((0.75,0.75)\). Here the initial error lies in the symmetric eigenvector, with factor \(+0.5\). An initial antisymmetric error would change sign each step with factor \(-0.5\). Both shrink at the same magnitude despite different histories.</p>
+<p>Gauss–Seidel includes the lower triangular part of \(A\) in \(M\). It uses the just-computed \(x_1^{new}\) in the second equation. From zero, the first sweep gives \((0.5,0.75)\) and the next gives \((0.875,0.9375)\). The error propagation matrix for this ordering is \(\left(\begin{smallmatrix}0&amp;1/2\\0&amp;1/4\end{smallmatrix}\right)\), whose eigenvalues are zero and one quarter. A sweep uses recent information, but introduces a sequential dependence that plain Jacobi avoids.</p>
+</section>
+<section>
+<h2 id="why-a-good-smoother-can-be-a-poor-solver">Why a good smoother can be a poor solver</h2>
+<p>On a uniform one-dimensional Dirichlet grid with \(N\) intervals, each Jacobi correction for the Poisson equation replaces the error by its neighbours’ average. Substitute the sine-shaped error \(e_i=\sin(j\pi i/N)\). The addition identity shows that its amplification is \(\cos(j\pi/N)\). Low-frequency modes vary gently between neighbours, so averaging barely changes them. As the grid is refined the slowest factor tends to one. An iteration count measured on a coarse problem therefore gives little indication of fine-grid cost.</p>
+<p>Weighted Jacobi mixes one ordinary Jacobi sweep with the old iterate. The factor becomes \(1-\omega+\omega\cos(j\pi/N)\). Choosing \(\omega=2/3\) sends a very oscillatory mode with cosine near minus one to approximately minus one third. The unweighted scheme would retain almost all of its magnitude with alternating sign. For a smooth mode with cosine near one, both updates do little. A multigrid method exploits this distinction: several weighted sweeps remove much of the local oscillation, and a coarser representation corrects the remaining long-scale error. Always evaluate a smoother by its effect on selected frequencies and a standalone solver by the slowest remaining mode.</p>
+<figure class="paper-figure"><img src="/assets/lecture-figures/jacobi-modes.png" width="1264" height="720" loading="lazy" alt="The unweighted Jacobi factor approaches minus one for rapidly oscillating modes; the weighted factor approaches minus one third."><figcaption>Modal smoothing on a uniform one-dimensional Poisson grid. A sign change reverses the error pattern; its absolute factor determines how quickly the amplitude decays.</figcaption></figure>
+</section>
+<section>
+<h2 id="estimate-the-cost-before-extrapolating-a-timing">Estimate the cost before extrapolating a timing</h2>
+<p>For the slowest sine error on a grid of \(N\) intervals, \(\cos(\pi/N)=1-\pi^2/(2N^2)+O(N^{-4})\). To reduce this component by a factor of ten, solve \(\cos(\pi/N)^k\leq0.1\) using logarithms. For large \(N\) this gives \(k\simeq 2N^2\ln(10)/\pi^2\). Doubling the number of intervals therefore roughly quadruples the sweep count for ordinary Jacobi. The work in a one-dimensional sweep also doubles. A timing extrapolated solely from the cost of one sweep misses this additional factor of four.</p>
+<p>This estimate starts with an error containing the first sine mode. If a benchmark uses a carefully chosen high-frequency error, a weighted Jacobi run may look much faster. The two measurements describe different aspects of the iteration. Repeating the comparison with both a smooth and a rapidly alternating initial error makes that dependence observable in a short experiment.</p>
+</section>
+<section>
+<h2 id="convergence-can-begin-with-a-large-increase">Convergence can begin with a large increase</h2>
+<p>Write an affine stationary iteration as \(x_{k+1}=Tx_k+c\). Subtracting its fixed-point equation shows that \(e_k=T^ke_0\) for the error in either consistently chosen sign convention. Every initial error decays in finite dimension exactly when the spectral radius of \(T\) is smaller than one. Diagonalising a normal \(T\) then gives \(\|T^k\|_2=\rho(T)^k\). For a nonnormal matrix its eigenvectors need not be orthogonal and this norm identity fails. A shrinking asymptotic factor can coexist with substantial early error growth.</p>
+<p>Consider \(T=rI+N\) with \(N^2=0\) and \(0&lt;r&lt;1\). Since \(I\) and \(N\) commute, the binomial expansion leaves \(T^k=r^kI+kr^{k-1}N\). The second term eventually vanishes because exponential decay dominates a polynomial factor. Initially it can be large if the off-diagonal coupling in \(N\) is large. This is a precise way to distinguish eventual convergence from contractivity in a specified physical norm. Monitoring only the eigenvalue magnitude hides the size of short-term excursions experienced by the components.</p>
+</section>
+<section>
+<h2 id="a-coupled-recurrence-that-delivers-the-wrong-early-verdict">A coupled recurrence that delivers the wrong early verdict</h2>
+<p>Take \(r=1/2,\ N=\left(\begin{smallmatrix}0&amp;8\\0&amp;0\end{smallmatrix}\right)\), and start from error \(e_0=(0,1)^T\). The exact formula gives \(e_1=(8,1/2)^T\), \(e_2=(8,1/4)^T\), \(e_3=(6,1/8)^T\), and \(e_4=(4,1/16)^T\). An investigator who compares the first error norm with its initial value would conclude that the procedure is unstable. Yet both eigenvalues are one half and the formula assures eventual decay. At ten steps the first component is \(80/512=0.15625\). This slow recovery after a rapid early amplification is a property of the coupling.</p>
+<p>A second experiment starts from \(e_0=(1,0)^T\). The nilpotent part annihilates that direction and the first component decays as \(2^{-k}\) from the very beginning. Thus observing a successful trajectory from just one initial condition can also conceal the largest early amplification. In a simulation that uses this solve inside another algorithm, those intermediate excursions may violate physical admissibility even if the mathematical linear system would eventually be solved to high accuracy.</p>
+<p>Scaling the first coordinate by a factor of sixteen reduces the numerical off-diagonal entry in the scaled iteration from eight to one half. The infinity norm of that scaled matrix is then one; a slightly stronger scaling makes it strictly contractive. This does not change any eigenvalue or physical trajectory. It changes how coordinate errors are measured. An engineer should specify whether the chosen scaled tolerance actually controls both components to their required physical accuracies before using contractivity in that norm as a practical stopping guarantee.</p>
+<p>A related diagnostic is to distinguish the one-step map norm from its spectral radius numerically. Here applying \(T\) to the unit vector \(e_2\) gives length \(\sqrt{64+1/4}&gt;8\), so its two-norm is at least eight. No calculation of eigenvalues can give a comparable lower bound on this one-step gain in a nonnormal problem. Computing a largest singular value would measure exactly that worst initial norm amplification.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/03-least-squares/">Chapter 3 · Least squares and orthogonal factorisation</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/problem-sheets/2/">Problem sheet 2 · Fitting and relaxation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

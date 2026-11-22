@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charge, potential and field energy · OneSimulation</title>
+<meta name="description" content="Reconstruct both the local electric field and the total energy of a charged body from the same continuous charge distribution.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/01-charge-and-potential/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Charge, potential and field energy · OneSimulation">
+<meta property="og:description" content="Reconstruct both the local electric field and the total energy of a charged body from the same continuous charge distribution.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/01-charge-and-potential/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Charge, potential and field energy</h1><p class="lead">Reconstruct both the local electric field and the total energy of a charged body from the same continuous charge distribution.</p><p class="byline">Chapter 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#enclose-the-source-before-integrating-the-field">Enclose the source before integrating the field</a><a href="#match-the-interior-and-exterior-solutions">Match the interior and exterior solutions</a><a href="#assemble-the-sphere-and-account-for-the-work">Assemble the sphere and account for the work</a><a href="#interpret-three-probe-readings">Interpret three probe readings</a><a href="#insert-a-dielectric-into-a-spherical-capacitor">Insert a dielectric into a spherical capacitor</a><a href="#decide-where-a-small-amount-of-dielectric-matters-most">Decide where a small amount of dielectric matters most</a><a href="#worked-plot">Infer a charge distribution from a radial field scan</a></nav></aside><article class="prose reference"><section><h2 id="enclose-the-source-before-integrating-the-field">Enclose the source before integrating the field</h2>
+<p>Imagine an insulating sphere charged uniformly throughout its volume. A probe outside it measures the field of a point charge, yet that representation fails at its centre. Our first objective is to see how a local charge distribution determines which measurements can distinguish the two sources. Use electrostatics in vacuum, with a sphere of radius \(R\) and total free charge \(Q\). A conductor in electrostatic equilibrium would distribute its excess charge differently.</p>
+<p>Gauss’s law states that the electric flux through any closed surface is the enclosed charge divided by \(\epsilon_0\). Flux is the integral of the component normal to the surface. Pulling the field magnitude outside that integral requires symmetry in addition to the law itself. For this sphere rotational symmetry forces the field to be radial and of equal magnitude everywhere on a concentric spherical surface. The test surface can pass through the charged material, since it is a geometrical construction and does not insert a conductor.</p>
+</section>
+<section><h2 id="match-the-interior-and-exterior-solutions">Match the interior and exterior solutions</h2>
+<p>The uniform density is \(\rho=3Q/(4\pi R^3)\). At a radius \(r&lt;R\) the enclosed charge is \(Q(r/R)^3\). At \(r&gt;R\) the surface encloses all of \(Q\). Substitution in \(4\pi r^2 E_r=Q_{\rm encl}/\epsilon_0\) gives an interior field \(E_r=Qr/(4\pi\epsilon_0 R^3)\) and an exterior field \(E_r=Q/(4\pi\epsilon_0r^2)\). The field vanishes at the centre and is continuous at the surface. A finite change in volume density changes the slope there. A true surface sheet of charge could instead create a finite jump in the normal field.</p>
+<p>Since a static field has zero curl, a scalar potential can be chosen such that \(\mathbf E=-\nabla V\). Take \(V(\infty)=0\) and integrate the radial field inward. The exterior potential equals \(Q/(4\pi\epsilon_0r)\). To reach an interior point, continue the integral from the surface with the interior field. This gives</p>
+<div class="math display">\[V(r)=\frac{Q}{8\pi\epsilon_0 R}\left(3-\frac{r^2}{R^2}\right),\qquad 0\le r\le R.\]</div>
+<p>Matching at the surface supplies the additive constant which an interior integration alone cannot fix. A zero electric field at the centre means that the slope of the potential vanishes there. Its value need not vanish.</p>
+</section>
+<section><h2 id="assemble-the-sphere-and-account-for-the-work">Assemble the sphere and account for the work</h2>
+<p>Build the charge by adding successive spherical shells while holding the final density fixed. When the assembly reaches radius \(r\), its charge is \(q(r)=Q(r/R)^3\). Bringing a small additional shell \(dq=3Qr^2dr/R^3\) from infinity costs \(dW=q(r)dq/(4\pi\epsilon_0 r)\). Integration gives \(W=3Q^2/(20\pi\epsilon_0 R)\). This positive work is stored in the electrostatic configuration. The shell’s interaction with itself is higher order in the infinitesimal added charge.</p>
+<p>A complementary description uses the energy density \(\epsilon_0 E^2/2\). Integration over the exterior alone gives \(Q^2/(8\pi\epsilon_0R)\), which is five sixths of the total. The remainder resides inside the charge distribution. A thin spherical conducting shell of equal radius and charge produces the same outside field, yet it has no interior field in its empty cavity. Its total energy is therefore lower.</p>
+</section>
+<section><h2 id="interpret-three-probe-readings">Interpret three probe readings</h2>
+<p>For \(R=0.10\) m and \(Q=2.0\) nC, the surface field is \(1.80\times10^3\) V/m. At half the radius the field halves to about 899 V/m. At twice the radius it is roughly 449 V/m. The surface potential is 180 V, while the centre is near 270 V. Their difference predicts the work per unit charge required to carry a small positive test charge from surface to centre. A sufficiently large test charge would disturb the source distribution and violate the assumed measurement model.</p>
+<p>The assembly energy is only \(2.16\times10^{-7}\) J. Doubling \(Q\) multiplies the field and potential by two but multiplies the stored energy by four. A comparison of fields outside two spherical samples probes their total charge. A measurement of assembly work at fixed radius can reveal how that charge was distributed inside them.</p>
+<p>If the charge is reduced gradually while its spatial shape is preserved, the surface voltage is proportional to total charge. The incremental work needed to assemble the next element therefore grows with charge already present. Integrating that growth explains the familiar factor of one half in electrostatic self-energy expressions.</p>
+</section>
+<section><h2 id="insert-a-dielectric-into-a-spherical-capacitor">Insert a dielectric into a spherical capacitor</h2>
+<p>An enclosed-charge construction also works when different radial regions store different electric energies. Put a conducting sphere of radius \(a\) inside a concentric thin conducting shell of radius \(b\). Give the inner sphere free charge \(+Q\) and the outer shell \(-Q\). Fill \(a&lt;r&lt;c\) with a linear dielectric of permittivity \(\epsilon_1\) and \(c&lt;r&lt;b\) with \(\epsilon_2\). There is no free charge at the interface. Assume the shells and both materials share a common centre so that a spherical Gaussian surface has uniform radial displacement.</p>
+<p>Gauss's law for free charge gives \(D_r=Q/(4\pi r^2)\) throughout the gap. The electric field in material \(i\) is \(D_r/\epsilon_i\). Thus the normal field can jump at \(c\) even though normal displacement is continuous. To predict the measured voltage, integrate the radial field outward from \(a\) to \(b\); the positive quantity obtained is the inner voltage minus the outer voltage. This yields</p>
+<div class="math display">\[\frac1C=\frac{V_a-V_b}{Q}=\frac1{4\pi}\left[\frac{1/a-1/c}{\epsilon_1}+\frac{1/c-1/b}{\epsilon_2}\right].\]</div>
+<p>The sum is naturally a sum of inverse capacitances since the same flux passes through both layers and their voltage drops add. Replacing the two dielectric constants by a simple average would weight every radial thickness equally, despite the field being stronger near the small inner sphere. Setting the two permittivities equal cancels the arbitrary interface location, a useful check on the integration.</p>
+</section>
+<section><h2 id="decide-where-a-small-amount-of-dielectric-matters-most">Decide where a small amount of dielectric matters most</h2>
+<p>Choose \(a=10.0\) mm, \(c=20.0\) mm, \(b=40.0\) mm, \(\epsilon_1=4\epsilon_0\) and \(\epsilon_2=\epsilon_0\). The radial contributions after factoring out \(1/(4\pi\epsilon_0)\) are \((100-50)/4=12.5\) m⁻¹ and \(50-25=25.0\) m⁻¹. Hence \(C=4\pi\epsilon_0/(37.5\,{\rm m}^{-1})=2.97\) pF. A charge of \(0.300\) nC produces about 101 V, one third across the inner material and two thirds across the outer one. An all-vacuum device of the same radii has \(C=1.48\) pF.</p>
+<p>For a further check integrate local energy density \(u=\mathbf E\cdot\mathbf D/2\) over each layer. The integration element \(4\pi r^2dr\) reduces the energy integral to \(Q^2(1/r_{\rm in}-1/r_{\rm out})/(8\pi\epsilon_i)\). The two contributions are again in the ratio one to two, summing to \(Q^2/(2C)=15.2\) nJ. Moving dielectric towards the inner conductor usually has a larger effect per unit volume because the undisturbed energy density is higher there. Near metal contact surfaces roughness or air pockets can make precisely this region differ from its intended permittivity.</p>
+<p>At the interface voltage is continuous but radial field just inside the outer material is four times its value just inside the inner material for these permittivities. A finite jump in voltage would imply an infinitely strong field over zero thickness, absent any imposed dipole sheet. Inserting these interfacial fields into the constitutive law gives identical normal displacement from either side. This is a more local test than comparing the terminal capacitance: a calculation can accidentally reproduce a similar integrated voltage while placing the field discontinuity on the wrong side of the boundary.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Infer a charge distribution from a radial field scan</h2>
+<p>Two spheres of equal radius have the same positive total charge. One has uniform volume density, the other stores charge in a thin spherical shell. Apply Gauss’s law to spheres of varying radius and scale the result by \(Q/(4\pi\epsilon_0R^2)\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/electrodynamics/01-charge-and-potential.png" alt="Infer a charge distribution from a radial field scan. Horizontal axis: Radius / sphere radius. Vertical axis: Field / surface field. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At half radius the filled sphere has half the surface field and the shell has zero. All exterior readings coincide. Even a perfect exterior scan cannot distinguish these two spherically symmetric charge distributions.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/electrodynamics/01-charge-and-potential.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Field / surface field at selected values of Radius / sphere radius.</caption><thead><tr><th scope="col">Radius / sphere radius</th><th scope="col">Uniform volume charge</th><th scope="col">Thin surface charge</th></tr></thead><tbody><tr><th scope="row">0.01</th><td>0.01</td><td>0</td></tr><tr><th scope="row">0.76</th><td>0.76</td><td>0</td></tr><tr><th scope="row">1.51</th><td>0.43858</td><td>0.43858</td></tr><tr><th scope="row">2.25</th><td>0.19753</td><td>0.19753</td></tr><tr><th scope="row">3</th><td>0.11111</td><td>0.11111</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/electrodynamics/01-charge-and-potential.csv" download>Download all 300 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/">Course contents</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/02-boundary-value-problems/">Chapter 2 · Conductors and boundary-value problems</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

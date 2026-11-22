@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filling electronic states and measuring the Fermi surface · OneSimulation</title>
+<meta name="description" content="Use exclusion and state counting to predict carrier energies, thermal response and the effect of dimensionality.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/condensed-matter/chapters/03-fermions-and-density-of-states/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Filling electronic states and measuring the Fermi surface · OneSimulation">
+<meta property="og:description" content="Use exclusion and state counting to predict carrier energies, thermal response and the effect of dimensionality.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/condensed-matter/chapters/03-fermions-and-density-of-states/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/condensed-matter/">Condensed matter and band theory</a></p><h1>Filling electronic states and measuring the Fermi surface</h1><p class="lead">Use exclusion and state counting to predict carrier energies, thermal response and the effect of dimensionality.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#count-occupied-states-at-zero-temperature">Count occupied states at zero temperature</a><a href="#the-density-of-states-is-a-derivative">The density of states is a derivative</a><a href="#why-only-a-shell-contributes-to-heat-capacity">Why only a shell contributes to heat capacity</a><a href="#separate-two-low-temperature-contributions">Separate two low-temperature contributions</a><a href="#count-charges-and-electronic-compressibility-in-two-dimensions">Count charges and electronic compressibility in two dimensions</a><a href="#measure-which-capacitance-limits-a-device">Measure which capacitance limits a device</a><a href="#worked-plot">Count states added by raising the Fermi level</a></nav></aside><article class="prose reference"><section><h2 id="count-occupied-states-at-zero-temperature">Count occupied states at zero temperature</h2>
+<p>Consider a cubic box of volume \(V\) with periodic boundaries and free electrons of effective model mass \(m\). Allowed wavevectors occupy a volume \((2\pi)^3/V\) per state for each spin. At zero temperature each state below the chemical potential is filled. For \(\epsilon=\hbar^2 k^2/2m\) the filled region is a sphere and each \(k\) has two spin states. Hence</p>
+<div class="math display">\[N=2\frac{V}{(2\pi)^3}\frac{4\pi k_F^3}{3},\qquad k_F=(3\pi^2 n)^{1/3},\qquad E_F=\frac{\hbar^2 k_F^2}{2m}.\]</div>
+<p>With \(n=8.5\times10^{28}\) m⁻³ and the free electron mass, \(k_F\) is about \(1.36\times10^{10}\) m⁻¹ and \(E_F\) about 7.0 eV. The corresponding temperature \(E_F/k_B\) is roughly 81,000 K. Ordinary room temperature therefore changes occupation only near the outer surface of this sea in a simple metal. This is a model estimate; anisotropic bands and multiple pockets change its interpretation.</p>
+</section>
+<section><h2 id="the-density-of-states-is-a-derivative">The density of states is a derivative</h2>
+<p>Replacing \(k_F\) by \(k(E)=\sqrt{2mE}/\hbar\) gives the integrated state count below energy \(E\). Its derivative is</p>
+<div class="math display">\[D(E)=\frac{V}{2\pi^2}\left(\frac{2m}{\hbar^2}\right)^{3/2}\sqrt E,\qquad D(E_F)=\frac{3N}{2E_F}.\]</div>
+<p>Check dimensions by integrating \(D(E)\,dE\) to recover a count. In two dimensions the occupied area grows as \(k^2\) and the density per energy is constant for a parabolic band. In one dimension the count grows as \(k\) and the density has an integrable \(E^{-1/2}\) singularity at its bottom. A large density of states means many states fit in a narrow energy window. It does not imply a large group velocity: a flat dispersion may create the large density.</p>
+</section>
+<section><h2 id="why-only-a-shell-contributes-to-heat-capacity">Why only a shell contributes to heat capacity</h2>
+<p>At finite temperature the occupation is \(f(E)=[1+e^{(E-\mu)/k_BT}]^{-1}\). Heating can promote an electron only into a vacant state. Deep in the filled sea all nearby destinations are occupied. The active shell has width of order \(k_BT\), involving about \(D(E_F)k_BT\) states; the typical energy change is another factor \(k_BT\). Thus the thermal energy increases quadratically and the heat capacity rises linearly with \(T\).</p>
+<p>A coefficient follows by expanding the smooth density of states across that shell. At fixed particle number, the relevant excess energy to leading order is \(\int (E-E_F)D(E_F)[f(E)-\Theta(E_F-E)]\,dE\). The filled and empty sides contribute equally to this order. Substituting \(x=|E-E_F|/k_BT\) and using \(\int_0^\infty x/(e^x+1)\,dx=\pi^2/12\) gives \(C_{\rm el}=(\pi^2/3)D(E_F)k_B^2T\). This expansion requires the density to be smooth on the thermal scale; a band edge at the chemical potential needs separate treatment.</p>
+</section>
+<section><h2 id="separate-two-low-temperature-contributions">Separate two low-temperature contributions</h2>
+<p>In a three-dimensional simple metal combine \(C_\mathrm{el}=\gamma T\) with the phonon result \(C_\mathrm{ph}=\beta T^3\). Plot \(C/T\) against \(T^2\); the intercept estimates \(\gamma\), and the slope estimates \(\beta\). If two points are \((4,3)\) and \((16,6)\) in K² and mJ mol⁻¹ K⁻², respectively, \(\beta=0.25\) mJ mol⁻¹ K⁻⁴ and \(\gamma=2.0\) mJ mol⁻¹ K⁻². Curvature across the fitted interval would be evidence against this two-term description. To go beyond a free sphere we next retain the periodic potential of the ions.</p>
+</section>
+<section><h2 id="count-charges-and-electronic-compressibility-in-two-dimensions">Count charges and electronic compressibility in two dimensions</h2>
+<p>A two-dimensional electron layer illustrates how changing available spatial dimensions alters the density of states and an electrical measurement. Assume one parabolic subband \(E=E_c+\hbar^2(k_x^2+k_y^2)/(2m^*)\), spin degeneracy two and no valley degeneracy. A square sample of area \(A\) with periodic boundary conditions supplies one state per spin per reciprocal area \((2\pi)^2/A\). Counting the disk up to \(k_F\) gives areal density \(n_s=k_F^2/(2\pi)\), hence</p>
+<div class="math display">\[E_F-E_c=\frac{\pi\hbar^2n_s}{m^*},\qquad D_A(E)=\frac{dn_s}{dE_F}=\frac{m^*}{\pi\hbar^2}\]</div>
+<p>above the subband edge at zero temperature. Unlike the square-root density in three dimensions, each occupied parabolic two-dimensional subband contributes a constant step. When an additional subband begins to fill it supplies another step, possibly with different degeneracy or mass. Temperature and disorder broaden the step in a real measurement.</p>
+<p>An electrostatic gate must both create a field across the insulating spacer and raise the layer’s chemical potential. For areal capacitance \(C_g'\) of the spacer and increment of sheet charge magnitude \(dQ'=e\,dn_s\), the required voltage is \(dV=dQ'/C_g'+dE_F/e\). The second term defines the quantum capacitance \(C_q'=e^2D_A\). Their inverse capacitances add in series. For a small density of states the electronic contribution measurably lowers the total capacitance even when the geometric dimensions are known precisely.</p>
+</section>
+<section><h2 id="measure-which-capacitance-limits-a-device">Measure which capacitance limits a device</h2>
+<p>Take \(m^*=0.067m_e\) and \(n_s=2.00\times10^{15}\) m⁻². Then \(k_F=\sqrt{2\pi n_s}=1.12\times10^8\) m⁻¹ and \(E_F-E_c=7.15\) meV. At 4 K the thermal scale \(k_BT=0.345\) meV is smaller than this separation, supporting the degenerate estimate. The electronic capacitance per area is \(0.0448\) F/m². For a spacer with \(C_g'=0.0100\) F/m², the measured series value is \((1/0.0100+1/0.0448)^{-1}=0.00818\) F/m².</p>
+<p>Over a gate area of \(100\) μm², the predicted capacitance is \(0.818\) pF rather than the purely geometric \(1.00\) pF. Treating that measured value as a change of dielectric thickness would misidentify an electronic effect. In the limit of a very high density of states, the quantum capacitance becomes large and the geometric value is recovered. Near depletion the assumptions of a sharp occupied subband and uniform layer require scrutiny. Comparing capacitance with an independent sheet-density measurement can test whether a low reading reflects depleted electronic states or simply a different insulating spacer.</p>
+<p>Using the series result, a small gate swing can be split into two measurable energy changes. A 10.0 mV swing at the stated operating point changes sheet charge magnitude by \(8.18\times10^{-5}\) C/m², or sheet density by \(5.10\times10^{14}\) m⁻². The geometric voltage increment is \(8.18\) mV and the chemical-potential contribution is \(1.82\) mV, corresponding to a Fermi-level shift of 1.82 meV. Their sum recovers the imposed swing. This decomposition assumes the layer remains in the same subband and equilibrates through its electrical contact on the capacitance measurement timescale.</p>
+<p>A slow measurement with significant leakage instead mixes capacitance with conductance and can corrupt both estimated voltage contributions.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Count states added by raising the Fermi level</h2>
+<p>For a parabolic band, states within a radius \(k\) fill a length, area or volume in reciprocal space. Since \(k\) scales as \(\sqrt E\), the integrated count varies as \(E^{d/2}\). Normalise at one energy to compare exponents independently of the sample dimensions.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/condensed-matter/03-fermions-and-density-of-states.png" alt="Count states added by raising the Fermi level. Horizontal axis: Energy above band bottom / reference energy. Vertical axis: Integrated count / count at reference energy. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Doubling the Fermi energy raises the count by √2, 2 or 2√2. The local slope gives the density of states. Its behaviour at the band edge is quite different even when the three integrated counts agree at the reference energy.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/condensed-matter/03-fermions-and-density-of-states.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Integrated count / count at reference energy at selected values of Energy above band bottom / reference energy.</caption><thead><tr><th scope="col">Energy above band bottom / reference energy</th><th scope="col">One dimension</th><th scope="col">Two dimensions</th><th scope="col">Three dimensions</th></tr></thead><tbody><tr><th scope="row">0.02</th><td>0.14142</td><td>0.02</td><td>0.0028284</td></tr><tr><th scope="row">0.56749</th><td>0.75332</td><td>0.56749</td><td>0.4275</td></tr><tr><th scope="row">1.115</th><td>1.0559</td><td>1.115</td><td>1.1773</td></tr><tr><th scope="row">1.6525</th><td>1.2855</td><td>1.6525</td><td>2.1243</td></tr><tr><th scope="row">2.2</th><td>1.4832</td><td>2.2</td><td>3.2631</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/condensed-matter/03-fermions-and-density-of-states.csv" download>Download all 220 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/condensed-matter/problem-sheets/1/">Problem sheet 1 · Identifying a lattice and its mechanical modes</a></span><span>Next<br><a href="/fundamentals/physics/condensed-matter/chapters/04-bloch-bands/">Chapter 4 · Bloch waves, band edges and effective mass</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

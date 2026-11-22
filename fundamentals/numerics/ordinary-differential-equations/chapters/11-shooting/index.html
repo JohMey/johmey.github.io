@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shooting for two-point boundary values · OneSimulation</title>
+<meta name="description" content="Turn a missing initial slope into a scalar root, measure the sensitivity of endpoint matching and recognise an unstable propagation direction.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/11-shooting/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shooting for two-point boundary values · OneSimulation">
+<meta property="og:description" content="Turn a missing initial slope into a scalar root, measure the sensitivity of endpoint matching and recognise an unstable propagation direction.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/11-shooting/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Shooting for two-point boundary values</h1><p class="lead">Turn a missing initial slope into a scalar root, measure the sensitivity of endpoint matching and recognise an unstable propagation direction.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#replace-a-missing-slope-by-a-parameter">Replace a missing slope by a parameter</a><a href="#a-well-defined-solution-with-a-fragile-shooting-trajectory">A well-defined solution with a fragile shooting trajectory</a><a href="#match-shorter-intervals">Match shorter intervals</a><a href="#separate-root-iteration-error-from-integration-error">Separate root iteration error from integration error</a><a href="#use-shooting-to-locate-an-eigenvalue">Use shooting to locate an eigenvalue</a><a href="#bracket-a-mode-and-check-its-identity-inside-the-interval">Bracket a mode and check its identity inside the interval</a><a href="#worked-plot">Measure the conditioning of a shooting residual</a></nav></aside><article class="prose reference"><section>
+<h2 id="replace-a-missing-slope-by-a-parameter">Replace a missing slope by a parameter</h2>
+<p>Consider \(y''=f(t,y,y')\), \(y(0)=a,\ y(T)=b\). Integrate as an initial-value problem with trial slope \(s=y'(0)\) and define \(R(s)=y(T;s)-b\). A root enforces the second boundary. If the initial-value solution is smooth in \(s\), its derivative satisfies \(v''=f_yv+f_{y'}v'\) with \(v(0)=0,\ v'(0)=1\). The derivative of the shooting residual is \(v(T)\). Newton therefore updates the missing slope by \(-R/v(T)\); a vanishing endpoint sensitivity calls for a different parameterisation or further analysis of existence and uniqueness.</p>
+<p>Consider \(y''=-y,\ y(0)=0,\ y(T)=1\), for which \(y(t;s)=s\sin t\). At \(T=\pi/2\) the solution has \(s=1\). At \(T=\pi\) no slope reaches the required endpoint. Changing the terminal boundary to zero at the same time admits every slope. An integrator returning a tiny nonzero value for \(\sin\pi\) might suggest an enormous numerical slope, so inspect endpoint sensitivity and the mathematical boundary conditions before trusting a root.</p>
+</section>
+<section>
+<h2 id="a-well-defined-solution-with-a-fragile-shooting-trajectory">A well-defined solution with a fragile shooting trajectory</h2>
+<p>For \(y''=k^2y,\ y(0)=1,\ y(1)=0\), direct propagation gives \(y(t)=\cosh(kt)+(s/k)\sinh(kt)\), with exact slope \(-k\coth k\). The required boundary-value solution is equivalently \(\sinh(k(1-t))/\sinh k\), a bounded positive curve. A slope perturbation \(\delta s\) produces endpoint error \(\sinh(k)\delta s/k\). For \(k=10\), this multiplier is approximately 1101.32. A slope error of \(10^{-5}\) thus creates endpoint error 0.0110 even though the exact profile stays between zero and one.</p>
+<p>This large number describes forward amplification of slope error. The inverse sensitivity of the fitted slope to the terminal boundary value is its reciprocal. At large \(k\), direct propagation must subtract two growing numbers to recover the small endpoint. Tight initial-value tolerances can postpone the resulting loss of accuracy, while leaving the underlying direction of exponential growth intact.</p>
+</section>
+<section>
+<h2 id="match-shorter-intervals">Match shorter intervals</h2>
+<p>In multiple shooting introduce independent state guesses at intermediate nodes. Integrate each segment and impose matching equations equating its terminal state to the next guess. Together with the boundary conditions these equations form a sparse coupled nonlinear system. On a half interval the growing factor for \(k=10\) is \(e^5\) instead of \(e^{10}\). Requiring continuity couples the segments while reducing the range of each forward propagation. Cancelling all the intermediate states algebraically can reintroduce the original long product.</p>
+<p>Check the final curve against both endpoint conditions, the maximum matching defect and the differential equation. Small endpoint mismatch alone says little about the interiors of independently matched segments. For highly unstable propagation a simultaneous boundary-value discretisation or collocation method can be a more suitable formulation.</p>
+</section>
+<section>
+<h2 id="separate-root-iteration-error-from-integration-error">Separate root iteration error from integration error</h2>
+<p>Suppose the propagated terminal state carries absolute numerical error at most \(\epsilon\). Near a simple shooting root the induced slope uncertainty is approximately \(\epsilon/|R'(s)|\). For the oscillator with \(T=\pi/6\), the sensitivity is one half, so endpoint uncertainty \(10^{-5}\) leaves slope uncertainty roughly \(2\times10^{-5}\). Solving the numerical shooting equation to a terminal residual of \(10^{-12}\) would not establish twelve accurate digits of slope. Change the propagation tolerance independently and compare the recovered slopes before interpreting the outer root solver's convergence.</p>
+</section>
+<section>
+<h2 id="use-shooting-to-locate-an-eigenvalue">Use shooting to locate an eigenvalue</h2>
+<p>For a string fixed at both ends, the eigenvalue problem \(-u''=\lambda u,\ u(0)=u(L)=0\) has the trivial solution for every parameter. A shooting formulation that merely adjusts the initial slope while allowing it to vanish can therefore converge to an uninformative zero mode. Fix the amplitude scale instead by prescribing \(u'(0)=1\). For each trial positive \(\lambda\) define the residual \(R(\lambda)=u(L;\lambda)\). A root then enforces the far boundary for a nonzero solution because the prescribed starting slope excludes the trivial state.</p>
+<p>On the unit interval the solution is \(u(t;\lambda)=\sin(\sqrt\lambda\,t)/\sqrt\lambda\), so the residual vanishes at \(\lambda_j=j^2\pi^2,\ j=1,2,\ldots\). The limiting solution at zero is \(u=t\), which fails the far boundary. At \(\lambda&lt;0\) the sine becomes a hyperbolic sine and again cannot vanish away from the origin. These facts locate the whole physical spectrum before considering numerical root searches. For a variable material coefficient the simple formula disappears, but amplitude normalisation and endpoint residual remain well-defined.</p>
+</section>
+<section>
+<h2 id="bracket-a-mode-and-check-its-identity-inside-the-interval">Bracket a mode and check its identity inside the interval</h2>
+<p>It is convenient to solve for wave number \(k=\sqrt\lambda&gt;0\). At \(k=3\) the residual is \(\sin3/3\approx0.04704\), and at \(k=3.2\) it is \(\sin3.2/3.2\approx-0.01824\), bracketing the first eigenvalue. Its derivative is \((k\cos k-\sin k)/k^2\). Starting with \(k=\pi\) in the exact formula gives \(R'= -1/\pi\). An absolute integration error of \(10^{-5}\) in the endpoint displacement can therefore shift the fitted wave number by roughly \(3.14\times10^{-5}\). Propagating through \(\lambda=k^2\) gives eigenvalue uncertainty about \(1.97\times10^{-4}\).</p>
+<p>A residual search on \(k\in[2,7]\) could instead overlook both \(k=\pi\) and \(2\pi\), since the residuals at the endpoints have the same positive sign. Counting interior nodes provides an independent mode label. With normalisation \(u'(0)=1\), the first eigenfunction has no internal zero and the second has exactly one at \(t=1/2\). Check these zero locations on the computed trajectory at a resolution sufficient to distinguish oscillations. A small endpoint residual alone confirms neither the desired mode index nor the absence of missed modes.</p>
+<p>For high modes the physical wavelength decreases and the initial-value integrator must resolve phase over many cycles. A frequency estimate can drift substantially even while the trajectory's amplitude remains bounded. Refining the propagation tolerance, refining the scalar root tolerance and counting the interior nodes are three different checks. Changing all three simultaneously can hide which part of an apparent convergence failure needs attention.</p>
+<p>A second normalisation issue appears when comparing eigenfunctions with sensor data. Multiplying any computed eigenfunction by a nonzero constant or by minus one leaves both homogeneous boundary conditions and the eigenvalue unchanged. Matching raw amplitudes or signs between two independently found modes can therefore suggest an error where only conventions differ. Normalise both functions in the same mass-weighted norm and align their signs before checking their shapes; keep the nodal count as a separate check on the mode index.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Measure the conditioning of a shooting residual</h2>
+<p>For \(y&#x27;&#x27;=\kappa^2 y\) with fixed initial position, perturb the initial slope by one. The resulting change at distance \(L\) is \(\sinh(\kappa L)/\kappa\). Compare one shooting integration with a single segment of a multiple-shooting formulation.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/ordinary-differential-equations/11-shooting.png" alt="Measure the conditioning of a shooting residual. Horizontal axis: Growth parameter κ. Vertical axis: Sensitivity of end value to initial slope. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At κ = 10 a slope error of 10⁻⁶ becomes roughly 1.10×10⁻³ across the full interval, versus 7.42×10⁻⁶ over one half. Multiple shooting still has to solve its matching equations; the half-interval curve measures only the local propagation.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/ordinary-differential-equations/11-shooting.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Sensitivity of end value to initial slope at selected values of Growth parameter κ.</caption><thead><tr><th scope="col">Growth parameter κ</th><th scope="col">Integrate across full unit interval</th><th scope="col">One half interval</th></tr></thead><tbody><tr><th scope="row">0.1</th><td>1.0017</td><td>0.50021</td></tr><tr><th scope="row">3.575</th><td>4.9883</td><td>0.81218</td></tr><tr><th scope="row">7.05</th><td>81.763</td><td>2.406</td></tr><tr><th scope="row">10.525</th><td>1768.9</td><td>9.1667</td></tr><tr><th scope="row">14</th><td>42950</td><td>39.165</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/ordinary-differential-equations/11-shooting.csv" download>Download all 241 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/5/">Problem sheet 5 · Long trajectories and sensitivities</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/12-algebraic-constraints/">Chapter 12 · Differential–algebraic equations and consistency</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fourier projection and sampled frequencies · OneSimulation</title>
+<meta name="description" content="Recover periodic modes by projection and identify signals which become indistinguishable on a uniform sample grid.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/09-fourier/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fourier projection and sampled frequencies · OneSimulation">
+<meta property="og:description" content="Recover periodic modes by projection and identify signals which become indistinguishable on a uniform sample grid.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/09-fourier/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Fourier projection and sampled frequencies</h1><p class="lead">Recover periodic modes by projection and identify signals which become indistinguishable on a uniform sample grid.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#orthogonality-on-a-period">Orthogonality on a period</a><a href="#a-resolvable-frequency-and-an-invisible-one">A resolvable frequency and an invisible one</a><a href="#radix-two-fft">Factor the discrete Fourier transform into short transforms</a><a href="#smoothness-and-endpoint-matching">Smoothness and endpoint matching</a><a href="#the-special-frequency-at-half-the-sample-rate">The special frequency at half the sample rate</a><a href="#average-partial-fourier-sums-to-obtain-a-positive-kernel">Average partial Fourier sums to obtain a positive kernel</a><a href="#compare-the-reconstructed-amplitudes-at-fixed-bandwidth">Compare the reconstructed amplitudes at fixed bandwidth</a><a href="#worked-plot">Make two different waves agree at every sample</a></nav></aside><article class="prose reference"><section>
+<h2 id="orthogonality-on-a-period">Orthogonality on a period</h2>
+<p>For a square-integrable \(2\pi\)-periodic signal define \(\langle f,g\rangle=(2\pi)^{-1}\int_0^{2\pi} f(x)\overline{g(x)}\,dx\). The exponentials \(e^{ikx}\) are orthonormal for integer \(k\). Integrating their product gives one when the frequencies coincide and zero otherwise because a nonconstant exponential completes an integer number of cycles. Minimising the squared mean discrepancy over modes \(|k|\leq m\) therefore gives \(c_k=\langle f,e^{ikx}\rangle\). The residual is orthogonal to every retained mode.</p>
+<p>Orthogonality also splits energy. The squared norm of the original signal equals the sum of the retained squared coefficient magnitudes plus the remaining squared error. This identity gives the truncation error exactly for a finite trigonometric series. For a general square-integrable periodic signal the projections converge in the mean-square norm. That statement concerns an integral; a narrow region of large pointwise error can contribute little to it.</p>
+</section>
+<section>
+<h2 id="a-resolvable-frequency-and-an-invisible-one">A resolvable frequency and an invisible one</h2>
+<p>Take \(f(x)=2+\cos(2x)+0.4\sin(5x)\). Projecting onto frequencies through three retains the constant and cosine. The remaining mean-square error is \(0.4^2/2=0.08\), so its root mean square is about 0.28284. Now sample at \(x_j=2\pi j/8\). At those points \(5x_j\) differs from \(-3x_j\) by \(2\pi j\). Thus the data are equally compatible with \(2+\cos(2x)-0.4\sin(3x)\). A discrete fit through frequency three can have zero sample residual yet disagree between nodes.</p>
+<p>At \(x=\pi/8\), the two sine contributions are \(0.4\sin(5\pi/8)\) and \(-0.4\sin(3\pi/8)\). Their difference is about 0.7391. This unsampled point exposes the false low-frequency reconstruction. More generally the finite sum of \(e^{2\pi i(k-l)j/N}\) vanishes unless \(k-l\) is divisible by \(N\). This geometric-series argument explains frequency equivalence on the grid and also supplies the discrete orthogonality behind a Fourier transform.</p>
+</section>
+<section><h2 id="radix-two-fft">Factor the discrete Fourier transform into short transforms</h2>
+<p>The discrete Fourier transform (DFT) maps \(N\) equally spaced samples \(x_n\) to \(X_k=\sum_{n=0}^{N-1}x_n W_N^{kn}\), with \(W_N=e^{-2\pi i/N}\). In this convention the forward transform has no normalization. The discrete Fourier coefficients are \(X_k/N\). Computing every sum directly uses order \(N^2\) operations. There is redundant work because the sample weights are powers of the same root of unity.</p>
+<p>For even \(N\), separate \(n=2j\) and \(n=2j+1\). Since \(W_N^2=W_{N/2}\), the two partial sums are the length-\(N/2\) transforms \(E_k,O_k\) of the even and odd samples. Increasing \(k\) by \(N/2\) leaves both short transforms unchanged and reverses the sign of \(W_N^k\). A single product therefore supplies two entries:</p>
+<div class="math display">\[X_k=E_k+W_N^kO_k,\qquad X_{k+N/2}=E_k-W_N^kO_k,\qquad 0\leq k&lt;N/2.\]</div>
+<p>For the four samples \((1,2,3,4)\), the even subsequence \((1,3)\) gives \((4,-2)\), while the odd subsequence \((2,4)\) gives \((6,-2)\). The multipliers are 1 and \(-i\). Combining the two pairs produces \((10,-2+2i,-2,-2-2i)\) in frequency order. The zero-frequency term recovers the sum of the samples. Conjugate symmetry holds because the samples are real. The Nyquist entry is real as it must be.</p>
+<p>For \(N=2^m\), repeat the split down to length one. Each of the \(m\) stages contains \(N/2\) paired combinations, often called butterflies. The work scales as \(N\log_2 N\). The FFT computes exactly the same mathematical transform as the direct formula, up to rounding. An aliased high frequency still occupies the same discrete bin. Padding an already sampled record can interpolate its displayed spectrum but cannot supply independent measurements at the missing times.</p>
+<p class="source-note">Practise on sheet 5 · <a href="/fundamentals/numerics/approximation-and-quadrature/problem-sheets/5/#fft-repeated-record">Find the zeros in an eight-sample spectrum without eight long sums</a>. Further reading · <a href="https://ocw.mit.edu/courses/2-161-signal-processing-continuous-and-discrete-fall-2008/2b3897bb64743815afae1543066ed4ff_fft.pdf">MIT · 2.161 Signal Processing, Continuous and Discrete · The Fast Fourier Transform · The radix-2 FFT with decimation in time</a>.</p>
+</section>
+<section>
+<h2 id="smoothness-and-endpoint-matching">Smoothness and endpoint matching</h2>
+<p>Integrating a Fourier coefficient by parts divides by its frequency. The boundary term vanishes for a smooth periodic continuation. Repeating the operation shows faster coefficient decay when successive derivatives also match at the endpoints and remain sufficiently regular. A mismatch when a finite record is periodically repeated creates a jump. Near a jump partial sums develop oscillations, and adding modes confines them to a narrower region while a peak overshoot persists.</p>
+<p>Start a numerical study by refining the sample grid with a fixed retained bandwidth. Then hold that refined grid and enlarge the bandwidth. The first experiment probes whether the coefficient estimates are polluted by unresolved modes. The second probes how much physical detail a deliberately truncated representation omits. A single refinement that changes both quantities makes these explanations difficult to distinguish.</p>
+</section>
+<section>
+<h2 id="the-special-frequency-at-half-the-sample-rate">The special frequency at half the sample rate</h2>
+<p>With eight equally spaced samples the mode \(\cos(4x)\) gives \(1,-1,1,-1,\ldots\), whereas \(\sin(4x)\) gives zero at every point. A phase shift of a sinusoid at precisely this frequency therefore changes its observed amplitude and can hide the entire oscillation. This explains the special treatment of the highest coefficient in an even-length real Fourier transform. Ten samples over the same period distinguish both sine and cosine components at frequency four because their sample values are now linearly independent.</p>
+</section>
+<section>
+<h2 id="average-partial-fourier-sums-to-obtain-a-positive-kernel">Average partial Fourier sums to obtain a positive kernel</h2>
+<p>Ordinary Fourier projection cuts sharply from a retained coefficient to a discarded one. Instead average the first \(m+1\) symmetric partial sums, counting the constant-only projection as the first. Mode \(k\) then appears in \(m+1-|k|\) of those sums for \(|k|\le m\). Its coefficient is multiplied by \(1-|k|/(m+1)\). This triangular weighting is called a Fejér mean. Its convolution kernel is the squared modulus of the finite geometric sum \(\sum_{j=0}^m e^{ijx}\), divided by \(m+1\). Expanding that squared modulus counts exactly the same number of pairs with each index difference \(k\).</p>
+<p>The resulting kernel is nonnegative and has unit integral when measured with the normalised period measure \(dx/(2\pi)\). The reconstructed value is thus a weighted average of the true values. If a real continuous signal lies between zero and one everywhere, this averaged approximation remains in the same interval. For continuous periodic functions the averages converge uniformly: continuity makes nearby signal values uniformly close, while away from the origin the geometric-sum formula bounds the kernel by a constant divided by \(m+1\). Splitting the convolution into these two regions makes the approximation argument explicit.</p>
+</section>
+<section>
+<h2 id="compare-the-reconstructed-amplitudes-at-fixed-bandwidth">Compare the reconstructed amplitudes at fixed bandwidth</h2>
+<p>Take \(f(x)=\cos x+2\cos(3x)\), retaining bandwidth through three. Ordinary projection reproduces this finite Fourier series exactly. Averaging the four partial sums of orders 0 through 3 retains the first cosine with weight \(3/4\) and the third with weight \(1/4\). The reconstruction is \(0.75\cos x+0.5\cos(3x)\). At zero it predicts 1.25 instead of three. Since the omitted amplitudes are 0.25 and 1.5, orthogonality gives squared mean error \((0.25^2+1.5^2)/2=1.15625\). The loss is substantial precisely because the real signal contains strong energy near the edge of the chosen band.</p>
+<p>For a periodic piecewise-constant indicator, on the other hand, preservation of the interval between zero and one can be more important than full transmission of high modes. At an isolated jump separating two flat values, symmetry of the kernel assigns equal weight to sufficiently close points on either side of the jump. As the bandwidth grows, the averaged limit at a jump is the midpoint of its one-sided limits under these conditions. It cannot reproduce both sides at the mathematical point of discontinuity, regardless of the convention used to label that point in a data file.</p>
+<p>These guarantees concern the continuous kernel and accurate coefficients. Aliased coefficients computed from an insufficient grid represent a different periodic function; applying triangular weights after such sampling cannot recover the missing distinctions between frequencies. Separate the choice of smoothing weights from the acquisition resolution when comparing a nonnegative reconstruction with actual measurements.</p>
+<p>The smoothing window also supplies a direct frequency-response test. Feeding the averaging routine a unit cosine at frequency two with bandwidth three should return half its original amplitude. Feeding a constant should return the constant unchanged. Together these probes distinguish a correctly normalised triangular response from an accidental averaging operation that also attenuates the mean.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Make two different waves agree at every sample</h2>
+<p>Sample each continuous signal eight times per second at \(t=j/8\). At these instants the phases of the two components differ by \(2\pi j\). A discrete Fourier transform of those measurements cannot determine which continuous waveform produced them.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/approximation-and-quadrature/09-fourier.png" alt="Make two different waves agree at every sample. Horizontal axis: Time (s). Vertical axis: Signal. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At t = 1/8 s both waves equal one, but between recorded times the ten-hertz signal executes an extra cycle. Increasing the acquisition rate with an appropriate analogue bandwidth is different from interpolating more display points.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/approximation-and-quadrature/09-fourier.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Signal at selected values of Time (s).</caption><thead><tr><th scope="col">Time (s)</th><th scope="col">Two cycles per second</th><th scope="col">Ten cycles per second</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>0</td></tr><tr><th scope="row">0.25</th><td>1.2246e−16</td><td>6.1232e−16</td></tr><tr><th scope="row">0.5</th><td>−2.4493e−16</td><td>−1.2246e−15</td></tr><tr><th scope="row">0.75</th><td>3.6739e−16</td><td>5.3897e−15</td></tr><tr><th scope="row">1</th><td>−4.8986e−16</td><td>−2.4493e−15</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/approximation-and-quadrature/09-fourier.csv" download>Download all 401 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/problem-sheets/4/">Problem sheet 4 · Data and uniform error</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/10-orthogonal-projection/">Chapter 10 · Weighted projections and Legendre polynomials</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

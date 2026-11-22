@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Principal axes and torque-free precession · OneSimulation</title>
+<meta name="description" content="Use the inertia tensor to distinguish rotation about a principal axis from the precession of a freely rotating symmetric body.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/09-rigid-body-rotation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Principal axes and torque-free precession · OneSimulation">
+<meta property="og:description" content="Use the inertia tensor to distinguish rotation about a principal axis from the precession of a freely rotating symmetric body.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/09-rigid-body-rotation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a></p><h1>Principal axes and torque-free precession</h1><p class="lead">Use the inertia tensor to distinguish rotation about a principal axis from the precession of a freely rotating symmetric body.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#describe-rotation-around-a-moving-centre">Describe rotation around a moving centre</a><a href="#apply-the-moving-frame-derivative">Apply the moving-frame derivative</a><a href="#predict-what-two-observers-see">Predict what two observers see</a><a href="#steady-heavy-top">Balance torque and angular momentum in a heavy top</a><a href="#stability-of-rotation-about-a-principal-axis">Stability of rotation about a principal axis</a><a href="#estimate-the-onset-of-a-visible-tumble">Estimate the onset of a visible tumble</a></nav></aside><article class="prose reference"><section><h2 id="describe-rotation-around-a-moving-centre">Describe rotation around a moving centre</h2>
+<p>Take a rigid body with a freely moving centre of mass and no applied torque about that centre. Remove the uniform translation and label material positions \(\mathbf r\) relative to the centre. Each material point has velocity \(\boldsymbol\omega\times\mathbf r\). Integrating \(\mathbf r\times(\boldsymbol\omega\times\mathbf r)\,dm\) gives \(\mathbf L=\mathbf I\boldsymbol\omega\), where \(I_{ij}=\int(r^2\delta_{ij}-r_i r_j)dm\). The inertia tensor is symmetric, so a set of orthogonal body axes diagonalises it.</p>
+<p>In its principal axes the rotational kinetic energy is \(\sum_i I_i\omega_i^2/2\). This expression follows by integrating the kinetic energy of individual mass elements. A body containing mass far from an axis usually has large moment of inertia about that axis. Unless the components seeing different moments vanish, angular momentum and angular velocity point in different directions. A body can therefore rotate freely even when the angular velocity changes direction relative to painted marks on its surface.</p>
+</section>
+<section><h2 id="apply-the-moving-frame-derivative">Apply the moving-frame derivative</h2>
+<p>The laboratory angular momentum is constant in the absence of torque. Its components in the body basis satisfy \((d\mathbf L/dt)_{\rm body}+\boldsymbol\omega\times\mathbf L=0\). For axial symmetry put \(I_1=I_2=I_\perp\) and call \(I_3\) the moment about the symmetry axis. Then \(\dot\omega_3=0\), \(\dot\omega_1=-(I_3-I_\perp)\omega_2\omega_3/I_\perp\) and \(\dot\omega_2=(I_3-I_\perp)\omega_1\omega_3/I_\perp\). These last two equations describe uniform rotation of the pair of transverse components in body coordinates.</p>
+<p>The signed angular rate of that rotation is \(\Omega_b=(I_3-I_\perp)\omega_3/I_\perp\). A body-mounted sensor sees its transverse spin vector execute a circle, even though a laboratory observer sees a constant angular-momentum vector. For a spherical inertia tensor the transverse components also become constant. The possible motion then simplifies because \(\mathbf L\) is parallel to \(\boldsymbol\omega\) for any spin direction.</p>
+</section>
+<section><h2 id="predict-what-two-observers-see">Predict what two observers see</h2>
+<p>The symmetry-axis unit vector \(\mathbf e_3\) has laboratory derivative \(\dot{\mathbf e}_3=\boldsymbol\omega\times\mathbf e_3\). Express the angular velocity as \(\mathbf L/I_\perp\) plus a term parallel to \(\mathbf e_3\), which drops out of the cross product. The result is \(\dot{\mathbf e}_3=(\mathbf L/I_\perp)\times\mathbf e_3\). Thus in the laboratory the symmetry axis sweeps around fixed \(\mathbf L\) at rate \(L/I_\perp\) and constant tilt. This rate differs from the spin-vector rotation observed in body coordinates because the two measurements track different vectors relative to different frames.</p>
+<p>Let \(I_\perp=0.020\) kg·m², \(I_3=0.030\) kg·m², \(\omega_3=40\) rad/s and initial transverse angular speed 6.0 rad/s. The body-frame rate is 20 rad/s. The magnitude of momentum is \(\sqrt{(0.020\times6)^2+(0.030\times40)^2}=1.206\) kg·m²/s. Laboratory precession is about 60.3 rad/s. The tilt obeys \(\tan\theta=0.120/1.20=0.10\), giving 5.71°. Two cameras recording these distinct angular rates need not disagree on the mechanics.</p>
+<p>For three distinct moments the two transverse equations no longer form this simple uniform circle. The stability of individual principal-axis spins then becomes an additional question. Recording both energy and angular momentum helps discriminate conservative tumbling from external bearing drag.</p>
+<p>One can also infer a moment of inertia without opening the rotor. Measure angular momentum by applying a calibrated torque for a known duration and integrating the torque impulse. During free motion, track the body axis with an external camera and find its precession frequency about the fixed angular momentum. For the symmetric rotor their ratio estimates the transverse moment \(I_1\). A second measurement of the axial component of angular momentum and spin gives \(I_3\).</p>
+</section>
+<section><h2 id="steady-heavy-top">Balance torque and angular momentum in a heavy top</h2>
+<p>Support a symmetric top at one fixed point on its symmetry axis, a distance \(\ell\) below its centre of mass when upright. Unlike free rotation about the centre, gravity now exerts a torque about the pivot. Use principal moments about the pivot, \(I_1=I_2\) and \(I_3\), and let \(\theta\) be the tilt from upward vertical. In steady precession \(\theta\) is constant, the azimuth increases at rate \(\Omega\), and the body’s total angular-velocity component along its symmetry axis is \(\omega_3=\dot\psi+\Omega\cos\theta\).</p>
+<p>The rotational kinetic energy in Euler angles is \(I_1(\dot\theta^2+\dot\phi^2\sin^2\theta)/2+I_3(\dot\psi+\dot\phi\cos\theta)^2/2\). Insert \(U=mg\ell\cos\theta\) into the \(\theta\) equation, differentiating before imposing constant tilt. For \(\sin\theta\ne0\) this yields</p>
+<div class="math display">\[I_1\cos\theta\,\Omega^2-I_3\omega_3\Omega+mg\ell=0.\]</div>
+<p>The slower root for rapid spin tends to \(mg\ell/(I_3\omega_3)\). This is the rate required for gravity to turn the nearly axial angular momentum. The full quadratic distinguishes that rate from a second, fast precession and gives the spin threshold for a tilted steady solution when \(\cos\theta&gt;0\). Initial conditions outside such a solution produce a varying tilt, called nutation.</p>
+<p>For \(m=0.200\) kg, \(\ell=0.0450\) m, \(I_1=0.00180\) kg m², \(I_3=0.000800\) kg m², \(\omega_3=200\) rad/s and \(\theta=30^\circ\), the slow-root approximation is \(0.0883/0.160=0.552\) rad/s. Substituting the quadratic coefficients gives \(0.555\) rad/s, a precession period of about 11.3 s. The other root is about 102 rad/s. A camera measuring only rotation of a mark painted on the body cannot generally separate axial spin, precession and nutation without also tracking the axis.</p>
+<p class="source-note">Practise on sheet 5 · <a href="/fundamentals/physics/classical-mechanics/problem-sheets/5/#exercise-heavy-top">Test whether a steady precession exists</a>. Further reading · <a href="https://davidtong.org/pdfs/teaching/classical-dynamics/clas3.pdf">University of Cambridge · David Tong, Classical Dynamics · §3.6 The Heavy Symmetric Top</a>.</p>
+</section>
+<section><h2 id="stability-of-rotation-about-a-principal-axis">Stability of rotation about a principal axis</h2>
+<p>A symmetric rotor can precess steadily. A body with three different principal moments has a striking additional possibility. Suppose \(I_1&lt;I_2&lt;I_3\) and no torque acts about the centre of mass. In body coordinates Euler’s equations can be written \(I_1\dot\omega_1=(I_2-I_3)\omega_2\omega_3\), with cyclic permutations for the other components. A pure rotation about any one principal axis is an exact solution. Stability asks what happens to a small transverse disturbance of that solution, a question about neighbouring trajectories rather than the exact rotation itself.</p>
+<p>Consider nominal rotation about axis 2 at rate \(\Omega\). Write \(\omega_1=u\) and \(\omega_3=w\), both initially small. The change of \(\omega_2\) is a product of two small quantities and can be discarded to first order. The first and third equations give \(\dot u=-(I_3-I_2)\Omega w/I_1\) and \(\dot w=-(I_2-I_1)\Omega u/I_3\). Differentiating the first and substituting the second produces</p>
+<div class="math display">\[\ddot u=\Omega^2\frac{(I_3-I_2)(I_2-I_1)}{I_1I_3}\,u .\]</div>
+<p>A positive coefficient gives hyperbolic solutions with an exponentially growing component for a generic disturbance. Repeating the calculation about the smallest or the largest moment reverses the sign of the product, giving bounded oscillatory disturbances. Energy and angular momentum remain conserved throughout. A nearby angular-velocity direction can change substantially while moving along the intersection of the two invariant surfaces.</p>
+</section>
+<section><h2 id="estimate-the-onset-of-a-visible-tumble">Estimate the onset of a visible tumble</h2>
+<p>Take moments \(I_1=0.020\), \(I_2=0.030\) and \(I_3=0.040\) kg m² and a nominal intermediate-axis rotation \(\Omega=20.0\) rad/s. The small-perturbation growth rate is \(20.0\sqrt{0.010\times0.010/(0.020\times0.040)}=7.07\) s⁻¹. Prepare an initial transverse component of \(0.020\) rad/s in the growing eigenmode. Reaching \(0.200\) rad/s then takes \(\ln(10)/7.07=0.326\) s, still within the small-angle range. A perturbation prepared with zero initial derivative instead contains both growing and decaying contributions and follows a hyperbolic cosine initially.</p>
+<p>These estimates predict the early departure, not the duration of a full flip. When transverse components approach the nominal spin, the nonlinear terms that preserved the dominant spin to first order can no longer be dropped. As two adjacent moments approach equality the growth rate tends to zero, recovering the absence of this isolated intermediate-axis instability in a symmetric rotor. A motion-capture experiment that records all three body components can test the exponential interval and independently check whether external torques or aerodynamic drag have changed the conserved angular momentum.</p>
+<p>There is also a camera-independent prediction for the orientation of the early disturbance in body coordinates. A growing solution has \(\dot u=\lambda u\). From the first linearized equation this requires \(w/u=-I_1\lambda/[(I_3-I_2)\Omega]\). In the numerical example that ratio is \(-0.707\): the small components point in opposite signed directions. A disturbance with the reverse sign projects partly onto the decaying solution. The eventual growth rate can be the same while the visibility of the first few cycles differs greatly. Recording both components avoids assigning a disagreement in initial conditions to the underlying instability rate.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/problem-sheets/4/">Problem sheet 4 · Orbits and scattering data</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/chapters/10-driven-vibration/">Chapter 10 · Forced, damped vibration</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

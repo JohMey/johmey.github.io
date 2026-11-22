@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Constraints and Lagrange’s equations · OneSimulation</title>
+<meta name="description" content="Eliminate an unknown tension with a generalised coordinate and identify how a pulley’s rotational inertia changes an acceleration.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/03-constraints-and-lagrange/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Constraints and Lagrange’s equations · OneSimulation">
+<meta property="og:description" content="Eliminate an unknown tension with a generalised coordinate and identify how a pulley’s rotational inertia changes an acceleration.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/03-constraints-and-lagrange/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a></p><h1>Constraints and Lagrange’s equations</h1><p class="lead">Eliminate an unknown tension with a generalised coordinate and identify how a pulley’s rotational inertia changes an acceleration.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#count-independent-motions">Count independent motions</a><a href="#construct-the-stationarity-equation">Construct the stationarity equation</a><a href="#noether-continuous-symmetry">Find a conserved quantity from a continuous symmetry</a><a href="#add-every-energy-contribution">Add every energy contribution</a><a href="#verify-the-reactions-by-restoring-the-constraints">Verify the reactions by restoring the constraints</a><a href="#rolling-without-slipping-and-the-force-enforcing-it">Rolling without slipping and the force enforcing it</a><a href="#decide-whether-a-solid-cylinder-will-actually-roll">Decide whether a solid cylinder will actually roll</a></nav></aside><article class="prose reference"><section><h2 id="count-independent-motions">Count independent motions</h2>
+<p>Two hanging masses and a massive pulley appear to introduce two translations, a rotation and several forces. Yet an inextensible taut string and rolling contact without slip leave just one independent motion. Let mass \(m_2\) descend a distance \(q\) while mass \(m_1\) rises by the same distance. For a fixed axle and pulley radius \(R\), the rotation is \(\theta=q/R\) relative to its initial value. Assume the masses stay clear of the pulley, the string is light, the axle friction is negligible and the pulley’s moment of inertia about the axle is \(I\).</p>
+<p>A constraint relates permitted displacements before any force balance is written. The fact that both ends move the same distance follows from length conservation. It does not require equal tensions. A massive accelerating pulley needs a net torque, so replacing the tensions by a common value would remove its angular acceleration from the model. This example is a useful test of when a constraint allows us to remove coordinates and when it also allows us to remove forces.</p>
+</section>
+<section><h2 id="construct-the-stationarity-equation">Construct the stationarity equation</h2>
+<p>For ideal time-independent constraints the reaction forces do no total work on allowed virtual displacements. Form the Lagrangian \(\mathcal L=K-U\) using the independent coordinates. Consider two paths with the same initial and final values of \(q\), differing by a small variation \(\delta q(t)\). The first variation of the action is \(\int(\partial_q\mathcal L\,\delta q+\partial_{\dot q}\mathcal L\,\delta\dot q)dt\). Integrate the second term by parts. The endpoint term vanishes and stationarity for arbitrary interior variations requires</p>
+<div class="math display">\[\frac{d}{dt}\frac{\partial\mathcal L}{\partial\dot q}-\frac{\partial\mathcal L}{\partial q}=0.\]</div>
+<p>This equation supplies one independent balance for each independent coordinate. If an applied nonconservative force does work \(\delta W=Q\,\delta q\), its generalised force \(Q\) enters the right-hand side. For an angular coordinate \(Q\) has units of torque; for this translational coordinate it has units of force. It must be calculated using the same sign choice as the coordinate.</p>
+</section>
+<section><h2 id="noether-continuous-symmetry">Find a conserved quantity from a continuous symmetry</h2>
+<p>Constraints identify which coordinates can vary independently. A symmetry asks a different question: which small change of those coordinates leaves the action unchanged? Let \(q_i\mapsto q_i+\varepsilon\xi_i(q,t)\) at fixed time and \(p_i=\partial L/\partial\dot q_i\). Along a solution the Euler–Lagrange equations turn the variation into a total derivative,</p>
+<div class="math display">\[\frac{\delta L}{\varepsilon}=\sum_i\left(\dot p_i\xi_i+p_i\dot\xi_i\right)=\frac{d}{dt}\sum_i p_i\xi_i .\]</div>
+<p>If the left side vanishes for every path, \(Q=\sum_i p_i\xi_i\) is conserved on solutions. More generally, a change \(\delta L=\varepsilon\,dB/dt\) changes only endpoint terms in the action, and \(Q=\sum_i p_i\xi_i-B\) is conserved. This is Noether's theorem for this fixed-time transformation. Separate conservation of mechanical energy requires time-translation symmetry.</p>
+<p>Consider a bead of mass \(m\) on a smooth horizontal table. A light string attached to the bead passes through a central hole. Pulling the string prescribes the radius \(r(t)\). Its tension has no azimuthal component. Rotation of the entire trajectory through a constant azimuth leaves \(L=m(\dot r^2+r^2\dot\phi^2)/2\) unchanged. Therefore \(mr^2\dot\phi\) is constant even when a pulling device supplies work. For \(m=0.250\) kg, \(r_i=0.400\) m and \(\dot\phi_i=3.00\) rad/s, \(Q=0.120\) kg m²/s. Halving the radius raises angular speed to \(12.0\) rad/s. With zero radial speed at each endpoint, kinetic energy rises from \(0.180\) to \(0.720\) J. A central force can do work while exerting no torque about the centre.</p>
+<p class="source-note">Practise on sheet 2 · <a href="/fundamentals/physics/classical-mechanics/problem-sheets/2/#exercise-noether">Recognize translation symmetry on a moving pair</a>. Further reading · <a href="https://davidtong.org/pdfs/teaching/classical-dynamics/clas2.pdf">University of Cambridge · David Tong, Classical Dynamics · §2.4.1 Noether’s Theorem</a>.</p>
+</section>
+<section><h2 id="add-every-energy-contribution">Add every energy contribution</h2>
+<p>Both hanging masses move at speed \(|\dot q|\). The pulley contributes rotational kinetic energy \(I(\dot q/R)^2/2\). Raising the first mass increases its gravitational potential, while lowering the second decreases it. Omitting an arbitrary constant gives \(U=(m_1-m_2)gq\). The full kinetic energy is \(K=(m_1+m_2+I/R^2)\dot q^2/2\). Substitution yields</p>
+<div class="math display">\[(m_1+m_2+I/R^2)\ddot q=(m_2-m_1)g.\]</div>
+<p>The quantity \(I/R^2\) enters like an additional translational mass. It stores kinetic energy without changing the gravitational driving force. A constant opposing axle torque of magnitude \(\tau_f\) would give a generalised resisting force \(\tau_f/R\) while the second mass descends. Applying a single constant sign across a reversal would incorrectly model dry friction.</p>
+</section>
+<section><h2 id="verify-the-reactions-by-restoring-the-constraints">Verify the reactions by restoring the constraints</h2>
+<p>Take \(m_1=1.00\) kg, \(m_2=1.50\) kg, \(R=0.100\) m and \(I=0.0050\) kg·m². The effective mass is 3.00 kg and the unbalanced weight is 4.905 N. Thus \(\ddot q=1.635\) m/s². From rest, a descent of 0.300 m produces a speed \(\sqrt{2(1.635)(0.300)}=0.990\) m/s. The drop in potential energy is 1.472 J, equal to the gain in translational and rotational energy together.</p>
+<p>Now isolate each hanging body. Upward acceleration on the lighter side requires \(T_1=m_1(g+\ddot q)=11.45\) N. The heavier side gives \(T_2=m_2(g-\ddot q)=12.26\) N. The tension difference times radius is about 0.082 N·m. The pulley independently requires \(I\ddot q/R=0.0818\) N·m. Agreement checks both the direction convention and the contribution of pulley inertia. The energy description solved for observable motion first. The separate body balances recovered forces that a mount or a string must actually withstand.</p>
+<p>A useful check is to let one inertia become dominant. If the pulley’s moment of inertia is made very large while its radius and both hanging masses stay fixed, the effective inertia in the denominator grows and acceleration approaches zero. The two string tensions then approach their respective hanging weights, which can remain unequal despite the tiny acceleration. The finite difference supplies torque to a very large rotational inertia. Equality of tension throughout a string that wraps around a massive pulley is therefore an additional physical assumption that must be justified.</p>
+</section>
+<section><h2 id="rolling-without-slipping-and-the-force-enforcing-it">Rolling without slipping and the force enforcing it</h2>
+<p>A constraint can remove an unknown contact force from the equation of motion while leaving a definite physical condition for its realization. Consider a cylinder of mass \(m\), radius \(R\) and moment of inertia \(I\) about its centre, rolling straight down a plane inclined at angle \(\alpha\). Let \(x\) increase down the plane, and take the spin angle \(\theta\) positive for forward rolling. A stationary contact point on the plane requires \(\dot x=R\dot\theta\). In this straight-line geometry the velocity constraint integrates directly to \(x-R\theta=\mathrm{constant}\). General rolling on a surface with changing direction requires more care because the analogous constraints need not integrate to coordinate relations.</p>
+<p>Use \(x\) as the sole coordinate. The centre falls through \(x\sin\alpha\) and kinetic energy contains both translation and rotation. The reduced Lagrangian is</p>
+<div class="math display">\[L=\tfrac12(m+I/R^2)\dot x^2+mgx\sin\alpha .\]</div>
+<p>The Euler–Lagrange equation gives \(\ddot x=g\sin\alpha/(1+I/(mR^2))\). For a body released from rest, the speed follows by integrating \(\dot x\,d\dot x/dx=\ddot x\). Different mass distributions at fixed radius and mass therefore arrive at different times even if their initial gravitational energies are equal. Some of that energy appears in spin, whose contribution grows with \(I\).</p>
+<p>To determine the unknown friction, return to the original translational and rotational balances. If \(f\) points up the plane, \(m\ddot x=mg\sin\alpha-f\) and \(I\ddot\theta=fR\). Combining with the rolling constraint gives \(f=(I/R^2)\ddot x\). The absence of \(f\) from the reduced Lagrangian came from zero virtual work under an admissible rolling displacement. It did not imply zero force.</p>
+</section>
+<section><h2 id="decide-whether-a-solid-cylinder-will-actually-roll">Decide whether a solid cylinder will actually roll</h2>
+<p>A uniform solid cylinder has \(I=mR^2/2\). Let \(m=2.00\) kg, \(R=0.100\) m and \(\alpha=30.0^\circ\). Predicted acceleration is \(9.81(0.5)/(1.5)=3.27\) m/s². The required upward friction is \((m/2)\ddot x=3.27\) N, while the normal force is \(mg\cos30^\circ=17.0\) N. Static friction can maintain rolling only for \(\mu_s\ge f/N=0.192\). This comparison tests an assumption that could not be checked from the acceleration equation alone.</p>
+<p>After travelling 1.00 m from rest a rolling cylinder reaches \(2.56\) m/s and spins at \(25.6\) rad/s. Translational energy is \(6.54\) J and rotational energy is \(3.27\) J, accounting for the \(9.81\) J released by gravity. In the limit \(I/(mR^2)\to0\), nearly all energy goes into translation, acceleration tends to \(g\sin\alpha\) and the required friction tends to zero. A surface with a measured coefficient below the threshold instead permits slipping. The translation and rotation must then be solved independently using the sliding contact law.</p>
+<p>Rolling tests can be run without knowing the cylinder’s mass distribution in advance. Obtain acceleration from two light gates at known positions and use \(I/(mR^2)=g\sin\alpha/\ddot x-1\) to infer a dimensionless inertia. Repeat at a shallower inclination. A genuine moment of inertia has the same inferred value in both runs, whereas slipping can appear only above a limiting angle. The most direct test tracks a painted mark on the rim as well as the centre. Admissible rolling requires the increase in centre displacement to equal radius times accumulated spin angle in each time interval.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/problem-sheets/1/">Problem sheet 1 · Impulses and energy landscapes</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/chapters/04-normal-modes/">Chapter 4 · Normal modes and energy exchange</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

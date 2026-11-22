@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regulate a state and estimate it from data · OneSimulation</title>
+<meta name="description" content="Calculate an optimal feedback policy and decide when filtering or sensor placement limits its implementation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/5/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Regulate a state and estimate it from data · OneSimulation">
+<meta property="og:description" content="Calculate an optimal feedback policy and decide when filtering or sensor placement limits its implementation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/5/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Regulate a state and estimate it from data</h1><p class="lead">Calculate an optimal feedback policy and decide when filtering or sensor placement limits its implementation.</p><p class="byline">Problem sheet 5 · Chapters 9 and 10</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#1-energy-and-effort-on-an-integrator">1. Energy and effort on an integrator</a><a href="#2-a-scalar-filter-through-a-missed-measurement">2. A scalar filter through a missed measurement</a><a href="#3-an-apparently-quiet-but-unreliable-sensor">3. An apparently quiet but unreliable sensor</a></nav></aside><article class="prose reference"><section><h2 id="1-energy-and-effort-on-an-integrator">1. Energy and effort on an integrator</h2>
+<p>For \(\dot x=u\), minimise \(\int_0^\infty(9x^2+4u^2)\,dt\). (a) Find the stabilising Riccati solution and feedback gain. (b) For \(x_0=2\) calculate the optimal cost directly from the exponential trajectory. (c) If \(|u|\le2\), identify a region where the unconstrained policy is feasible.</p>
+<details><summary>Check the cost with a direct integral</summary>
+<p>The algebraic equation \(9-P^2/4=0\) gives \(P=6\); \(u=-1.5x\). Then \(x=2e^{-1.5t}\) and the integrand is \(72e^{-3t}\). Its integral 24 agrees with \(Px_0^2\). Feasibility is guaranteed for \(|x_0|\le4/3\) since the magnitude then decreases monotonically. The initial state 2 is outside this region.</p>
+</details>
+</section>
+<section><h2 id="2-a-scalar-filter-through-a-missed-measurement">2. A scalar filter through a missed measurement</h2>
+<p>A random-walk model has initial predicted mean 8, variance 4, and measurement variance 1. A reading of 10 arrives. (a) Calculate the corrected mean and variance. (b) Predict one step with process variance 0.5. (c) One reading is then lost. Find the gain at the following available reading.</p>
+<details><summary>Follow the prediction and correction chronology</summary>
+<p>The first gain is \(4/5\), so the corrected mean is 9.6 and variance 0.8. The next prior mean is 9.6 and variance 1.3. With no reading there is no correction; another prediction raises variance to 1.8. The next available reading obtains gain \(1.8/2.8=0.643\). Setting a missed reading equal to its prediction and carrying out a normal update would falsely shrink the variance.</p>
+</details>
+</section>
+<section><h2 id="3-an-apparently-quiet-but-unreliable-sensor">3. An apparently quiet but unreliable sensor</h2>
+<p>A scalar innovation sequence is \(2.0,2.0,1.8,2.2,2.0\) in sensor units, with predicted innovation standard deviation 0.5. (a) Compute the standardised mean and range. (b) Compare two mechanisms that could generate the trace. (c) Propose a test that separates the mechanisms.</p>
+<details><summary>Use sign and time structure as well as magnitude</summary>
+<p>The standardised values are \(4,4,3.6,4.4,4\), with mean 4 and range 3.6 to 4.4. A biased sensor and a missing nearly constant load can both produce a sustained signed discrepancy. During a known calibration hold compare the device with an independent sensor. Then vary the load while holding sensor conditions fixed; innovations that follow the load implicate the model. Simply increasing the assumed noise variance could hide both effects.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/10-stochastic-estimation/">Chapter 10 · Estimating hidden states from noisy measurements</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/11-multivariable-loops/">Chapter 11 · Interacting actuators, pairing and decoupling</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

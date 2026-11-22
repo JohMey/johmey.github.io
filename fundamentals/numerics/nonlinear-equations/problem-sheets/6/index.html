@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Misfit and one-sided equilibrium · OneSimulation</title>
+<meta name="description" content="Distinguish a stationary residual fit from an exact root and identify which unilateral constraints carry load.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/problem-sheets/6/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Misfit and one-sided equilibrium · OneSimulation">
+<meta property="og:description" content="Distinguish a stationary residual fit from an exact root and identify which unilateral constraints carry load.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/problem-sheets/6/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Misfit and one-sided equilibrium</h1><p class="lead">Distinguish a stationary residual fit from an exact root and identify which unilateral constraints carry load.</p><p class="byline">Problem sheet 6 · Chapters 11 and 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#fit-incompatible-sensors">Fit incompatible sensors</a><a href="#a-stationary-point-with-a-poor-model">A stationary point with a poor model</a><a href="#locate-the-switching-load">Locate the switching load</a><a href="#course-synthesis">Locate and follow the two equilibria of a fold</a></nav></aside><article class="prose reference"><section>
+<h2 id="fit-incompatible-sensors">Fit incompatible sensors</h2>
+<p>Two dimensionless residuals are \(r_1=x-2,\ r_2=2x-3\). Compute the exact least-squares state, both residuals and their dot product with the Jacobian. How many undamped Gauss–Newton steps suffice from zero?</p>
+<details><summary>Worked solution</summary>
+<p>The gradient is \((x-2)+2(2x-3)=5x-8\), giving \(x=1.6\). The residual is \((-0.4,0.2)^T\) and the dot product with \((1,2)^T\) is zero.</p>
+<p>The residual is affine, so its linear model is exact everywhere. One step from zero produces 1.6 even though neither individual observation is exactly satisfied.</p>
+</details>
+</section>
+<section>
+<h2 id="a-stationary-point-with-a-poor-model">A stationary point with a poor model</h2>
+<p>For the scalar residual \(r=x^2-1\), evaluate the residual, gradient and curvature of \(\Phi=r^2/2\) at zero. Analyse the undamped Gauss–Newton linear least-squares subproblem there, and compare it with a trial step to \(x=0.1\).</p>
+<details><summary>Worked solution</summary>
+<p>At zero \(r=-1\), \(J=0\) and \(Jr=0\). Exact curvature \(J^2+rr''=-2\) identifies a strict local maximum.</p>
+<p>The model \(r+Js=-1\) has the same size for every step, so cannot select a descent direction. Directly testing \(x=0.1\) gives \(\Phi=0.99^2/2=0.49005\), below 0.5. A small gradient alone cannot certify a minimum.</p>
+</details>
+</section>
+<section>
+<h2 id="locate-the-switching-load">Locate the switching load</h2>
+<p>Use \(K=\left(\begin{smallmatrix}3&amp;-1\\-1&amp;2\end{smallmatrix}\right)\), \(f=(t,2)^T\), \(u,w\ge0\), \(w=Ku-f\), \(u_iw_i=0\). Assume the first gap is closed. Determine the range of \(t\) for which that assumption holds and solve the case \(t=0\).</p>
+<details><summary>Worked solution</summary>
+<p>With \(u_1=0\), the open second gap has \(2u_2=2\), so \(u_2=1\). The first reaction is \(-1-t\), nonnegative precisely for \(t\le-1\). At the threshold the closed coordinate has zero reaction.</p>
+<p>At \(t=0\) release the first gap. Solving \(3u_1-u_2=0\), \(-u_1+2u_2=2\) gives \((0.4,1.2)^T\) with both reactions zero. The positive gaps verify the new active set.</p>
+</details>
+</section>
+<section class="course-synthesis"><h2 id="course-synthesis">Locate and follow the two equilibria of a fold</h2>
+<p>Consider equilibria of the dimensionless evolution u′ = λ − u². For λ = 0.04 find both roots, classify their stability, and estimate the movement of the positive root when λ increases by 0.002. Then find out why stepping in λ fails near zero and construct a continuation step through the fold.</p>
+<details><summary>Worked solution</summary>
+<p>The equilibria are u = ±0.2. A small perturbation obeys δu′ ≈ −2u δu, so +0.2 attracts while −0.2 repels. Both are perfectly valid zeros of the steady residual. A solver’s ability to converge to either root has no direct implication for dynamical stability.</p>
+<p>Differentiating u²−λ = 0 gives du/dλ = 1/(2u). At the positive root the predicted change is +0.005. The exact change is √0.042 − 0.2 ≈ 0.00494. At the negative root the sign reverses. As the fold approaches, sensitivity diverges even though the equilibrium curve itself is the smooth parabola λ = u².</p>
+<p>At (u,λ) = (0,0) choose the tangent along increasing u. An arclength predictor of length 0.05 gives (0.05,0). Keep the correction normal to that tangent by imposing u = 0.05 together with the residual. The corrected point is (0.05,0.0025). The two-equation Jacobian remains invertible there and at the fold. A parameter sweep fixing λ below zero would have no real point to correct to.</p>
+</details></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/12-complementarity/">Chapter 12 · Inequalities and active constraints</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

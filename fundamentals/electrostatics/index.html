@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why can a thin air gap take up half the voltage? · OneSimulation</title>
+<meta name="description" content="Use Gauss’s law to determine how two insulating layers share the voltage between capacitor plates.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/electrostatics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why can a thin air gap take up half the voltage? · OneSimulation">
+<meta property="og:description" content="Use Gauss’s law to determine how two insulating layers share the voltage between capacitor plates.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/electrostatics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/course/#fields">Electric and magnetic fields</a> / Electrostatics</p><h1>Why can a thin air gap take up half the voltage?</h1><p class="lead">Use Gauss’s law to determine how two insulating layers share the voltage between capacitor plates.</p><p class="prerequisites"><strong>Prerequisites</strong> Gauss’s law and electric potential.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">The electric field at a dielectric interface</a><a href="#boundary">From fields to voltage drops</a><a href="#worked">A 0.10 mm gap at 20 volts</a><a href="#tutorial">Tutorial · Changing the gap</a><a href="#numerical">Numerical comparison · A curved air gap</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">The electric field at a dielectric interface</h2>
+<p>Two metal plates enclose a solid insulator. A thin air gap opens between one plate and the solid. Which layer takes the larger voltage drop? Treat the plates as much wider than their separation. Their surfaces are equipotentials, so the field between them points perpendicular to the layers away from the plate edges. Assume linear materials and no mobile charge in either layer.</p>
+<p>Imagine a short Gaussian cylinder straddling the air–solid interface. The side wall contributes no flux. The two end faces carry equal and opposite outward flux because the interface holds no free charge. Gauss’s law for electric displacement therefore gives \(D_{\rm air}=D_{\rm solid}=D\), with \(D=Q/A\) for plate charge magnitude \(Q\) and area \(A\). Since \(E=D/\epsilon\), the material with the lower permittivity has the stronger field.</p>
+</section>
+<section>
+<h2 id="boundary">From fields to voltage drops</h2>
+<p>Write \(g\) for the air thickness, \(d\) for the solid thickness and \(\epsilon_r\) for the solid’s relative permittivity. Moving from the positive plate to the negative plate, the voltage falls by the field magnitude times the distance in each layer. Integrating across both gives</p>
+<div class="math display">\[V=E_{\rm air}g+E_{\rm solid}d=\frac{D}{\epsilon_0}\left(g+\frac{d}{\epsilon_r}\right).\]</div>
+<p>Consequently \(C=Q/V=\epsilon_0 A/(g+d/\epsilon_r)\). The air takes a fraction \(g/(g+d/\epsilon_r)\) of the voltage. The potential is continuous at the interface, but its slope changes there. A sketch of potential against distance should show two straight segments, with the steeper one in air.</p>
+<p class="source-note">Further study · <a href="https://openstax.org/books/university-physics-volume-2/pages/8-4-capacitor-with-a-dielectric">Capacitor with a Dielectric</a> (OpenStax, University Physics II §8.4).</p>
+</section>
+<section>
+<h2 id="worked">A 0.10 mm gap at 20 volts</h2>
+<p>Take \(d=2.0\) mm of solid with \(\epsilon_r=20\), followed by \(g=0.10\) mm of air. The equivalent air thickness of the solid is \(d/\epsilon_r=0.10\) mm. Hence the gap and the solid each take 10 V. Their fields are \(10\,\mathrm V/(0.10\,\mathrm{mm})=100\,\mathrm{kV/m}\) in air and \(5.0\,\mathrm{kV/m}\) in the solid. The gap occupies less than 5% of the separation.</p>
+<p>For plates with \(A=0.010\,\mathrm{m^2}\), the capacitance is \(8.85\times10^{-12}\times0.010/(2.0\times10^{-4})=443\) pF. Then \(Q=CV=8.85\) nC. Dividing by the plate area recovers \(D=0.885\,\mathrm{\mu C/m^2}\), equal to \(\epsilon_0 E_{\rm air}\).</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial · Changing the gap</h2>
+<ol>
+<li><p>Keep the 20 V supply connected and the solid unchanged. Move the plates apart until the air gap is 0.20 mm. Before calculating, predict whether the air voltage and air field will both rise.</p>
+<details><summary>Worked solution</summary><p>The air now takes \(0.20/(0.20+0.10)=2/3\) of the voltage, or 13.3 V. Its field is \(13.3\,\mathrm V/(0.20\,\mathrm{mm})=66.7\,\mathrm{kV/m}\). The voltage across air rises, while its field falls because the same applied voltage is spread over a larger effective thickness.</p></details></li>
+<li><p>Return to the original geometry. Disconnect the supply at 20 V and then open the gap to 0.20 mm. Predict the air field, the terminal voltage and the change in stored energy. Assume negligible leakage.</p>
+<details><summary>Worked solution</summary><p>The isolated plates retain their charge, hence \(D=Q/A\) stays fixed. The fields remain 100 and 5.0 kV/m. The air now takes 20 V and the solid takes 10 V, giving 30 V in total. From \(U=QV/2\), the energy rises from 88.5 to 133 nJ. The extra energy comes from mechanical work pulling the attracting plates apart.</p></details></li>
+</ol>
+</section>
+<section>
+<h2 id="numerical">Numerical comparison · A curved air gap</h2>
+<p>A curved delamination changes the direction of the field along its surface. In this example the plates stand 80 mm apart at 1 V, so the undisturbed field is \(E_0=12.5\,\mathrm{V/m}\). A 0.10 mm circular air shell of outer radius 5 mm separates a dielectric core from the surrounding material, both with \(\epsilon_r=20\). The coated-cylinder solution in an unbounded medium predicts a core field of \(0.8484E_0=10.61\,\mathrm{V/m}\). The resolved finite-plate calculation gives \(0.8466E_0=10.58\,\mathrm{V/m}\). Use the field in the core for this comparison. The local field in the air is a separate quantity. <a href="/blog/thin_low_permittivity_gap_capacitor/">Inspect the OneSimulation field calculation</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/fundamentals/magnetostatics/">When does the long-solenoid formula work?</a></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

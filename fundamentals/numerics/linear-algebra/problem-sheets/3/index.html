@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search directions and modes · OneSimulation</title>
+<meta name="description" content="Use trial directions, preconditioners and shifted inverses to control which components of a discrete model survive an iteration.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/3/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Search directions and modes · OneSimulation">
+<meta property="og:description" content="Use trial directions, preconditioners and shifted inverses to control which components of a discrete model survive an iteration.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/3/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Search directions and modes</h1><p class="lead">Use trial directions, preconditioners and shifted inverses to control which components of a discrete model survive an iteration.</p><p class="byline">Problem sheet 3 · Chapters 5 and 6</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#one-exact-line-minimisation">One exact line minimisation</a><a href="#select-a-preconditioner">Select a preconditioner</a><a href="#locate-a-vibration-mode">Locate a vibration mode</a><a href="#transfer-qr-shifts">Compare two shifts on the same symmetric operator</a></nav></aside><article class="prose reference"><section>
+<h2 id="one-exact-line-minimisation">One exact line minimisation</h2>
+<p>For \(A=\operatorname{diag}(2,8)\), \(b=(2,2)^T\) and \(x_0=0\), find the first CG step and residual. Verify residual orthogonality and determine the final exact solution without performing another matrix-vector product.</p>
+<details><summary>Worked solution</summary>
+<p>With \(p_0=(2,2)^T\), \(p_0^Tr_0=8\) and \(p_0^TAp_0=40\), so \(\alpha_0=0.2\). Then \(x_1=(0.4,0.4)^T\) and \(r_1=(1.2,-1.2)^T\). Its dot product with \(p_0\) is zero, as minimisation along that direction requires.</p>
+<p>The exact solution follows by division: \(x_\star=(1,0.25)^T\). One remaining conjugate search direction suffices because two distinct eigenvalues occur. From this starting vector both eigendirections are present.</p>
+</details>
+</section>
+<section>
+<h2 id="select-a-preconditioner">Select a preconditioner</h2>
+<p>Let \(A=\left(\begin{smallmatrix}100&amp;5\\5&amp;1\end{smallmatrix}\right)\). Show that it is positive definite. With the diagonal preconditioner \(M=\operatorname{diag}(100,1)\), form the symmetric transformed matrix and find its condition number. Is diagonal scaling an exact inverse in this case?</p>
+<details><summary>Worked solution</summary>
+<p>The leading minors are 100 and 75, both positive. Multiplying left and right by \(\operatorname{diag}(0.1,1)\) gives \(\left(\begin{smallmatrix}1&amp;0.5\\0.5&amp;1\end{smallmatrix}\right)\). Its symmetric and antisymmetric modes have eigenvalues 1.5 and 0.5, giving condition number 3.</p>
+<p>The scaling removes the difference between diagonal stiffnesses while retaining the off-diagonal coupling. The transformed matrix is distinct from the identity; a general right-hand side can therefore require two CG steps in exact arithmetic.</p>
+</details>
+</section>
+<section>
+<h2 id="locate-a-vibration-mode">Locate a vibration mode</h2>
+<p>A mass-normalised operator has eigenvalues 9, 16 and 25 s⁻². Which natural angular frequencies do they represent? With shift \(15\ \mathrm{s^{-2}}\), give the transformed eigenvalues for inverse iteration and identify the selected mode for a generic initial vector. Finally, specify the units and meaning of a unit-vector Rayleigh residual of 0.01 s⁻².</p>
+<details><summary>Worked solution</summary>
+<p>Taking square roots gives angular frequencies 3, 4 and 5 rad/s. The transformed eigenvalues are \(1/(9-15)=-1/6\), \(1/(16-15)=1\) and \(1/(25-15)=1/10\) in s². The middle mode has the largest magnitude and dominates if it has nonzero initial overlap.</p>
+<p>For a symmetric operator at least one squared frequency lies within 0.01 s⁻² of the Rayleigh quotient. Near \(16\ \mathrm{s^{-2}}\), the corresponding frequency uncertainty is about \(0.01/(2\cdot4)=0.00125\) rad/s, from differentiating the square root. This last expression is a local linear estimate.</p>
+</details>
+</section>
+<section>
+<h2 id="transfer-qr-shifts">Compare two shifts on the same symmetric operator</h2>
+<p>For \(A=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\end{smallmatrix}\right)\), compute one unshifted QR step using a positively oriented orthogonal basis. Then use shift one and choose any orthonormal completion if the shifted matrix loses rank. Explain why a singular shifted matrix causes no division by an eigenvalue in this method.</p>
+<details><summary>Worked solution</summary>
+<p>The first unshifted column gives \(q_1=(2,1)^T/\sqrt5,\ q_2=(-1,2)^T/\sqrt5\). Their Rayleigh values are \(14/5\) and \(6/5\), and \(q_2^TAq_1=3/5\). The trailing coordinate still has residual 0.6.</p>
+<p>With shift one the first shifted column is \((1,1)^T\). Its normalised direction and the perpendicular direction are already the two eigenvectors. The updated matrix is diagonal with entries 3 and 1, so deflation is exact. A zero last pivot in the QR factor is allowed because the algorithm multiplies factors and never solves with the singular matrix \(A-I\).</p>
+</details>
+<p class="source-note">Revisit chapter 6 · <a href="/fundamentals/numerics/linear-algebra/chapters/06-spectral/#qr-spectrum">Follow the whole spectrum by QR iteration</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/06-spectral/">Chapter 6 · Eigenvalues, modes and spectral gaps</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/07-householder/">Chapter 7 · Householder reflections and practical QR</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

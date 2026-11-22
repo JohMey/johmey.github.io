@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pump curves, pipe networks and operating points · OneSimulation</title>
+<meta name="description" content="Construct a hydraulic system curve and solve the operating point of a pump connected to serial or parallel flow paths.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/10-pump-networks/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pump curves, pipe networks and operating points · OneSimulation">
+<meta property="og:description" content="Construct a hydraulic system curve and solve the operating point of a pump connected to serial or parallel flow paths.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/10-pump-networks/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Pump curves, pipe networks and operating points</h1><p class="lead">Construct a hydraulic system curve and solve the operating point of a pump connected to serial or parallel flow paths.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#system">Why a pump does not prescribe a unique flow</a><a href="#branches">Combine resistances by their physical constraints</a><a href="#operating-point">Open a parallel return line</a><a href="#pressure-node">Determine which side of a branch controls the flow</a><a href="#pressure-wave">Derive the first pressure change in a rapidly closed line</a><a href="#valve-time">Compare closure schedules against a pressure allowance</a><a href="#rough-pipe">Calculate a pipe resistance from roughness and flow rate</a><a href="#worked-plot">Read the new operating point after throttling</a></nav></aside><article class="prose reference"><section><h2 id="system">Why a pump does not prescribe a unique flow</h2>
+<p>A centrifugal pump at fixed speed can deliver different combinations of flow and head. The connected network selects an operating point by requiring the head gained through the machine to match the static lift and losses elsewhere. For two large reservoirs, surface speeds are negligible and equal surface pressures cancel. A steady mechanical energy balance then gives \(H_{\rm pump}=\Delta z+h_L\). With turbulent pipe resistance represented locally by constant loss coefficients, the losses can be written \(h_L=KQ^2\) for positive flow.</p>
+<p>This quadratic law is an approximation over a specified operating range. It follows because fittings and pipe friction have head losses proportional to velocity squared when the relevant coefficients vary little. In laminar pipe flow, the pressure loss at fixed viscosity is instead proportional to flow. A system curve extrapolated far outside its underlying Reynolds-number range can give a misleading operating point.</p>
+</section>
+<section><h2 id="branches">Combine resistances by their physical constraints</h2>
+<p>In series the same flow passes through each component and head losses add. Thus two quadratic loss coefficients combine as \(K_s=K_1+K_2\). Parallel branches between the same nodes have equal head loss while their flow rates add. For two branches with forward flow, \(Q_i=\sqrt{h/K_i}\), giving</p>
+<div class="math display">\[Q=\sqrt h\,(K_1^{-1/2}+K_2^{-1/2}),\qquad K_{\parallel}=(K_1^{-1/2}+K_2^{-1/2})^{-2}.\]</div>
+<p>A second identical branch divides the flow equally and reduces the quadratic coefficient of that section to one quarter of the single-branch value. Any upstream or downstream common pipe is still in series with the equivalent section and carries total flow.</p>
+</section>
+<section><h2 id="operating-point">Open a parallel return line</h2>
+<p>Use \(Q\) in litres per second and head in metres. A pump has \(H_p=30-0.20Q^2\); two open reservoirs differ in elevation by 6 m. Initially one pipe connects them with loss \(0.40Q^2\). Equating the heads gives \(30-0.20Q^2=6+0.40Q^2\), so \(Q=\sqrt{40}=6.32\,\mathrm{L/s}\) and \(H_p=22.0\,\mathrm m\). Hydraulic power delivered to water is \(\rho gQ H_p=1000(9.81)(0.00632)(22)=1.36\,\mathrm{kW}\).</p>
+<p>Now add a second identical parallel pipe over the whole route. The system curve becomes \(6+0.10Q^2\). The new flow is \(\sqrt{80}=8.94\,\mathrm{L/s}\) and pump head 14.0 m. Each pipe takes only 4.47 L/s, less than the original single-pipe flow. Total delivery increases by about 41% while hydraulic power falls to 1.23 kW. The input shaft power also depends on the efficiency at each operating point. If a flow controller holds the original delivery after the second branch opens, its valve or speed controller changes the operating curve and the free-running comparison no longer predicts the duty.</p>
+</section>
+<section><h2 id="pressure-node">Determine which side of a branch controls the flow</h2>
+<p>A check valve on a return line permits only positive branch flow. If an added elevated reservoir imposes a static threshold of 5 m on that branch, the forward branch law becomes \(Q_b=\sqrt{(H-5)/K_b}\) only for driving head \(H&gt;5\) m. Below that threshold the flow is zero. The resulting system curve changes form as the valve opens, so a single constant equivalent coefficient cannot describe both regimes.</p>
+</section>
+<section><h2 id="pressure-wave">Derive the first pressure change in a rapidly closed line</h2>
+<p>The operating point of a pump and pipe network is a steady state. A valve closure can generate a much higher transient pressure while the flow far upstream has barely changed. Consider a straight horizontal liquid-filled pipe of area \(A\) and initially uniform forward speed \(V\). A rapid downstream closure sends a compression wave upstream at wave speed \(a\). During a short interval \(dt\), the wave reaches approximately \(a\,dt\) of pipe, bringing the fluid behind it to rest. Neglect friction over this short wavefront and take \(a\gg V\).</p>
+<p>The stopped mass is \(\rho A a\,dt\), losing momentum \(\rho A a\,dt\,V\). The pressure difference across the front supplies an impulse \(A\Delta p\,dt\). Balancing magnitudes yields the Joukowsky rise \(\Delta p=\rho a V\); for a partial rapid speed change use its magnitude \(\rho a|\Delta V|\) with sign determined by whether the wave compresses or relieves the pipe. Small fluid compressibility and wall compliance both enter the actual wave speed. In a rigid tube \(a\simeq\sqrt{K/\rho}\), but an expanding elastic pipe stores some of the volume change and lowers that speed.</p>
+<p>Reflections matter after the wave has travelled to a boundary and back. For a reservoir a distance \(L\) away the first round-trip time is approximately \(2L/a\). A valve that completes closure before the returning wave acts can produce the full first rise. A much slower closure allows incoming reflections to alter the pressure during the manoeuvre and requires a time-dependent network calculation.</p>
+</section>
+<section><h2 id="valve-time">Compare closure schedules against a pressure allowance</h2>
+<p>A water line is 300 m long with measured wave speed \(a=1000\,\mathrm{m/s}\), initial speed 1.5 m/s, density 1000 kg/m³ and initial valve gauge pressure 0.40 MPa. Rapid full closure predicts \(\Delta p=1000(1000)(1.5)=1.50\,\mathrm{MPa}\), bringing the first local peak to about 1.90 MPa gauge. A valve closing in 0.15 s completes its action well inside the 0.60 s round-trip interval. A static energy estimate based only on \(\rho V^2/2=1.13\,\mathrm{kPa}\) would miss the pipe-length momentum transient by orders of magnitude.</p>
+<p>Suppose an operating specification allows a first-wave rise of 0.45 MPa. The maximum abrupt decrement in line speed consistent with it is \(450000/[1000(1000)]=0.45\,\mathrm{m/s}\). This provides a useful bound on a single rapid speed change. Dividing the full stop into several identical steps does not automatically satisfy the total pressure limit: reflected waves can add if the steps are poorly timed. A proposed 3 s controlled closure is slow compared with \(2L/a\), so the full instantaneous formula no longer estimates its actual peak. Model the valve characteristic, boundary reflections, pump coast-down and possible sub-atmospheric pressure before choosing a schedule. Measuring pressure at the valve and a second station allows wave speed to be identified from the arrival-time difference.</p>
+</section>
+<section><h2 id="rough-pipe">Calculate a pipe resistance from roughness and flow rate</h2>
+<p>For fully developed turbulent flow in a round pipe the pressure gradient depends on both the roughness height and the viscous scale of the near-wall flow. Force balance on a length \(L\) gives \(\Delta p\,\pi D^2/4=\tau_w\pi DL\). Define the Darcy factor by \(f_D=8\tau_w/(\rho U^2)\), where \(U\) is the cross-sectional mean velocity. Combining the equations gives \(h_f=f_D(L/D)U^2/(2g)\). Use the same Darcy convention throughout. The Fanning factor is \(f_D/4\).</p>
+<p>For a straight, uniform, turbulent pipe the empirical Colebrook equation relates \(f_D\) to \(Re=UD/\nu\) and equivalent sand roughness \(\epsilon/D\). Setting \(x=1/\sqrt{f_D}\) turns the implicit equation into a simple iteration:</p>
+<div class="math display">\[x_{n+1}=-2\log_{10}\left(\frac{\epsilon}{3.7D}+\frac{2.51x_n}{Re}\right).\]</div>
+<p>When roughness dominates the second term, the friction factor becomes nearly independent of Reynolds number. The smooth limit retains a Reynolds-number dependence. For fully developed laminar flow the separate law \(f_D=64/Re\) applies. Near transition a roughness estimate and a single turbulent curve alone cannot resolve the flow regime.</p>
+<p>A building cooling loop carries \(Q=4.00\,\mathrm{L\,s^{-1}}\) of water through \(L=40.0\,\mathrm m\) of straight pipe with \(D=50.0\,\mathrm{mm}\), \(\nu=1.00\times10^{-6}\,\mathrm{m^2\,s^{-1}}\) and \(\epsilon=0.050\,\mathrm{mm}\). Continuity gives \(U=4Q/(\pi D^2)=2.037\,\mathrm{m\,s^{-1}}\) and \(Re=1.019\times10^5\). Starting at \(x_0=7\), iteration converges to \(x=6.721\), hence \(f_D=0.02214\) and \(h_f=3.75\,\mathrm m\). If deposits raise equivalent roughness to \(0.200\,\mathrm{mm}\) at unchanged bore and flow, the same calculation gives \(f_D=0.02948\) and \(h_f=4.99\,\mathrm m\). Thus the pump needs 1.24 m additional head for this pipe segment alone. At fixed pump speed the operating flow would generally change. That requires solving the pump and system curves together.</p>
+<p class="source-note">Practise on sheet 5 · <a href="/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/5/#practice-rough-pipe">Infer an equivalent roughness from two pressure taps</a>. Further reading · <a href="https://engineering.purdue.edu/~wassgren/teaching/ME30900/NotesAndReading/PipeFlows_PipeSystems_LectureNotes.pdf">Purdue University · ME 30900 Introduction to Fluid Mechanics · Pipe Flows – Pipe Systems, “Colebrook Formula” and the Moody plot</a>.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Read the new operating point after throttling</h2>
+<p>Approximate a pump curve and the piping resistance by parabolas in flow measured in litres per second. Static lift is 6 m. Throttling raises the coefficient of the flow-squared loss, while speed and pump geometry stay fixed.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/fluid-mechanics/10-pump-networks.png" alt="Read the new operating point after throttling. Horizontal axis: Volume flow (L/s). Vertical axis: Head (m). Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>The original intersection is 28.5 L/s at 17.4 m. With the valve throttled the intersection is 21.9 L/s at 23.3 m. Computing the new loss at the old flow would miss the movement of the operating point.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/fluid-mechanics/10-pump-networks.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Head (m) at selected values of Volume flow (L/s).</caption><thead><tr><th scope="col">Volume flow (L/s)</th><th scope="col">Pump curve</th><th scope="col">Open system</th><th scope="col">Throttled system</th></tr></thead><tbody><tr><th scope="row">0</th><td>32</td><td>6</td><td>6</td></tr><tr><th scope="row">8.6667</th><td>30.648</td><td>7.0516</td><td>8.704</td></tr><tr><th scope="row">17.5</th><td>26.488</td><td>10.287</td><td>17.025</td></tr><tr><th scope="row">26.333</th><td>19.518</td><td>15.708</td><td>30.964</td></tr><tr><th scope="row">35</th><td>9.95</td><td>23.15</td><td>50.1</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/fluid-mechanics/10-pump-networks.csv" download>Download all 211 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/09-drag-lift/">Chapter 9 · Pressure integration, lift and drag</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/5/">Problem sheet 5 · Surface forces and system curves</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

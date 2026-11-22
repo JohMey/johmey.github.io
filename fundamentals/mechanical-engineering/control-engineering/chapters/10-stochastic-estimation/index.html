@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimating hidden states from noisy measurements · OneSimulation</title>
+<meta name="description" content="Propagate both the state estimate and its uncertainty, and derive how much of an unexpected sensor reading to trust.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/10-stochastic-estimation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Estimating hidden states from noisy measurements · OneSimulation">
+<meta property="og:description" content="Propagate both the state estimate and its uncertainty, and derive how much of an unexpected sensor reading to trust.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/10-stochastic-estimation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Estimating hidden states from noisy measurements</h1><p class="lead">Propagate both the state estimate and its uncertainty, and derive how much of an unexpected sensor reading to trust.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-prediction-and-an-observation-carry-different-information">A prediction and an observation carry different information</a><a href="#minimise-posterior-variance">Minimise posterior variance</a><a href="#recover-velocity-from-a-position-reading">Recover velocity from a position reading</a><a href="#test-innovations-during-commissioning">Test innovations during commissioning</a><a href="#correlated-sensors">Fuse two measurements with a shared error source</a><a href="#correlated-update">Update one state without counting a common disturbance twice</a><a href="#worked-plot">Watch repeated observations change the Kalman gain</a></nav></aside><article class="prose reference"><section><h2 id="a-prediction-and-an-observation-carry-different-information">A prediction and an observation carry different information</h2>
+<p>Consider a sampled model \(x_{k+1}=Ax_k+Bu_k+w_k\), \(y_k=Cx_k+v_k\). Model disturbances \(w_k\) describe unmeasured forcing or model error, while \(v_k\) describes measurement error. Suppose they are independent, zero mean and white, with known covariances \(W,V\), and independent of the initial estimation error. Start each update with a predicted mean \(\hat x^-\) and covariance \(P^-\). The innovation \(y-C\hat x^-\) is the part of the reading that the model did not predict. Its covariance is \(S=CP^-C^\mathsf{T}+V\). Units are those of the sensor squared; a large innovation in volts is meaningful only relative to this scale.</p>
+</section>
+<section><h2 id="minimise-posterior-variance">Minimise posterior variance</h2>
+<p>Update the estimate by \(\hat x^+=\hat x^-+K(y-C\hat x^-)\). In the scalar direct-measurement case the squared error has expected value \(P^+=(1-K)^2P^-+K^2V\). Differentiating with respect to \(K\) yields \(K=P^-/(P^-+V)\). A precise sensor raises the gain; a precise prior prediction lowers it. The same covariance minimisation gives the matrix update</p>
+<div class="math display">\[K=P^-C^\mathsf{T}S^{-1},\quad P^+=(I-KC)P^-(I-KC)^\mathsf{T}+KVK^\mathsf{T}.\]</div>
+<p>The displayed covariance formula retains positive-semidefinite structure in computation better than a raw subtraction of nearly equal matrices. For the next prediction use \(\hat x^-_{k+1}=A\hat x^+_k+Bu_k\) and \(P^-_{k+1}=AP^+_kA^\mathsf{T}+W\). The control input affects the mean; assumed known exactly, it adds no direct covariance term. With Gaussian assumptions the recursion gives the conditional mean and covariance, and with just second moments it gives the optimal linear estimate under the stated model.</p>
+</section>
+<section><h2 id="recover-velocity-from-a-position-reading">Recover velocity from a position reading</h2>
+<p>Suppose the prior covariance for position and velocity is \(\left(\begin{smallmatrix}4&amp;1.5\\1.5&amp;1\end{smallmatrix}\right)\) in compatible metre and second units. A position sensor has variance 1. Then \(S=5\), \(K=(0.8,0.3)^\mathsf{T}\). If measured position exceeds prediction by 2 m, the updated position increases by 1.6 m and velocity by 0.6 m/s. The sensor did not measure velocity directly: the nonzero cross-covariance makes a position surprise informative about velocity. The posterior covariance is \(\left(\begin{smallmatrix}0.8&amp;0.3\\0.3&amp;0.55\end{smallmatrix}\right)\). A robust implementation would obtain the gain by solving with \(S\) instead of constructing a matrix inverse.</p>
+</section>
+<section><h2 id="test-innovations-during-commissioning">Test innovations during commissioning</h2>
+<p>Under a correct linear Gaussian model the standardised innovations should have mean zero, appropriate variance and little serial correlation. A persistent offset points toward a biased sensor or missing force. A succession of innovations of the same sign during accelerations suggests unmodelled dynamics or too little process uncertainty. Simply enlarging \(V\) to suppress the innovations in the correction makes the filter trust the model more; it does not remove a systematic error. Compare held-out records that include manoeuvres and quiet intervals. When observer and regulator are combined, estimation and control share the quality of the underlying dynamic model.</p>
+</section>
+<section><h2 id="correlated-sensors">Fuse two measurements with a shared error source</h2>
+<p>Two temperature sensors mounted on one test head can share calibration drift or electromagnetic interference. Treating their errors as independent exaggerates the information gained by averaging. Suppose they measure the same scalar state at a single instant, \(y_1=x+v_1,\ y_2=x+v_2\), with zero-mean errors, variances \(r_1,r_2\) and covariance \(c\). Seek an unbiased linear estimate \(\hat x=w y_1+(1-w)y_2\), initially without a separate prior. Its error variance is \(J(w)=w^2r_1+(1-w)^2r_2+2w(1-w)c\). Known covariance makes this a scalar optimisation rather than a heuristic choice of weights.</p>
+<p>Differentiating and setting \(J'(w)=0\) gives</p>
+<div class="math display">\[w=\frac{r_2-c}{r_1+r_2-2c},\qquad R_{\rm fused}=\frac{r_1r_2-c^2}{r_1+r_2-2c}.\]</div>
+<p>The denominator is exactly the variance of the sensor difference. If their errors are identical, this difference contains no information for estimating a weighting and the duplicate measurement cannot improve precision. Positive semidefiniteness of the covariance requires \(c^2\le r_1r_2\). Negative weights can appear when one error contains a predictable correlated component that can be subtracted. Such weights require a well-supported covariance model, especially when the denominator is small.</p>
+</section>
+<section><h2 id="correlated-update">Update one state without counting a common disturbance twice</h2>
+<p>Take sensor standard deviations 2 K and 3 K and covariance \(c=3\,\mathrm K^2\), corresponding to correlation 0.50. The first sensor’s optimal weight is \((9-3)/(4+9-6)=6/7\), with \(1/7\) on the second. Readings of 305 and 308 K give a fused reading of 305.429 K and variance \((36-9)/7=3.857\,\mathrm K^2\). The independent-sensor formula would instead claim \(36/13=2.769\,\mathrm K^2\), materially overstating the improvement. Each sensor may appear repeatable by itself while both shift in the same direction between experiments.</p>
+<p>Suppose a prior estimate from a thermal model is 302 K with variance 4 K², independent of both current measurement errors. One scalar Kalman update using the fused measurement has gain \(4/(4+3.857)=0.5091\). Its estimate is \(302+0.5091(305.429-302)=303.745\,\mathrm K\) and its posterior variance is \((1-0.5091)4=1.964\,\mathrm K^2\). The same answer follows from a two-row measurement matrix and the full covariance matrix with its off-diagonal terms. If the model has already incorporated sensor 1 at this same instant, reusing the fused reading as an independent update counts some evidence twice. Synchronisation and calibration history therefore determine which covariance belongs in the estimator, as well as the arithmetic of its gain.</p>
+<p>Sensor disagreement provides a second diagnostic that does not require knowing the true temperature. Because the two sensors observe the same instantaneous state, their difference \(y_1-y_2\) should have variance \(r_1+r_2-2c=7\,\mathrm K^2\). The observed difference of −3 K corresponds to about \(-3/\sqrt7=-1.13\) standard deviations. A long sequence of such differences tests the assumed relative-error covariance without a calibrated thermal reference. It cannot identify a common offset, since that cancels from every difference. If both instruments warm their local mounting head or use the same drifting reference voltage they may agree closely while being wrong together. Periodic comparison against an independent standard is needed before interpreting small disagreement as strong evidence of absolute accuracy.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Watch repeated observations change the Kalman gain</h2>
+<p>A scalar random walk has initial predicted variance 4 and independent measurement variance 1. At each reading use \(K=P^-/(P^-+1)\), then update \(P^+=(1-K)P^-\) and predict \(P^-_{\rm next}=P^++Q\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/control-engineering/10-stochastic-estimation.png" alt="Watch repeated observations change the Kalman gain. Horizontal axis: Measurement number. Vertical axis: Correction gain. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>All three filters start with gain 0.8. Without process uncertainty the gain steadily shrinks, while Q = 1 approaches about 0.618. A stable nonzero gain means that uncertainty is replenished between readings.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/control-engineering/10-stochastic-estimation.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Correction gain at selected values of Measurement number.</caption><thead><tr><th scope="col">Measurement number</th><th scope="col">Process variance Q = 0</th><th scope="col">Process variance Q = 0.1</th><th scope="col">Process variance Q = 1</th></tr></thead><tbody><tr><th scope="row">1</th><td>0.8</td><td>0.8</td><td>0.8</td></tr><tr><th scope="row">5</th><td>0.19048</td><td>0.29438</td><td>0.61811</td></tr><tr><th scope="row">9</th><td>0.10811</td><td>0.27204</td><td>0.61803</td></tr><tr><th scope="row">12</th><td>0.081633</td><td>0.27044</td><td>0.61803</td></tr><tr><th scope="row">16</th><td>0.061538</td><td>0.27018</td><td>0.61803</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/control-engineering/10-stochastic-estimation.csv" download>Download all 16 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/09-optimal-state-feedback/">Chapter 9 · Optimal state feedback and the Riccati equation</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/problem-sheets/5/">Problem sheet 5 · Regulate a state and estimate it from data</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newton’s method for coupled balances · OneSimulation</title>
+<meta name="description" content="Assemble a Jacobian from two coupled residuals, solve for a simultaneous correction and interpret how scaling changes the meaning of a norm.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/04-coupled-newton/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Newton’s method for coupled balances · OneSimulation">
+<meta property="og:description" content="Assemble a Jacobian from two coupled residuals, solve for a simultaneous correction and interpret how scaling changes the meaning of a norm.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/04-coupled-newton/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Newton’s method for coupled balances</h1><p class="lead">Assemble a Jacobian from two coupled residuals, solve for a simultaneous correction and interpret how scaling changes the meaning of a norm.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#linearise-the-whole-model-at-one-state">Linearise the whole model at one state</a><a href="#intersect-an-energy-constraint-with-a-matching-condition">Intersect an energy constraint with a matching condition</a><a href="#frozen-jacobian">Quantify the cost of freezing a Jacobian</a><a href="#select-scales-and-verify-a-derivative-action">Select scales and verify a derivative action</a><a href="#separate-state-sensitivity-from-linearisation-error">Separate state sensitivity from linearisation error</a><a href="#analyse-the-basins-of-a-coupled-two-dimensional-problem">Analyse the basins of a coupled two-dimensional problem</a><a href="#predict-a-basin-and-trace-a-boundary-failure">Predict a basin and trace a boundary failure</a></nav></aside><article class="prose reference"><section>
+<h2 id="linearise-the-whole-model-at-one-state">Linearise the whole model at one state</h2>
+<p>Two unknown physical quantities may influence both measured balances. Changing one to erase one residual can disrupt the other. The vector Taylor expansion \(F(x+s)=F(x)+J(x)s+O(\|s\|^2)\) collects the simultaneous first-order response. Entry \(J_{ij}\) is the derivative of residual \(i\) with respect to unknown \(j\) while holding the other unknowns fixed. A Newton step solves the linear system \(J(x)s=-F(x)\) and sets \(x_{new}=x+s\). Factor or iteratively solve that system rather than explicitly computing an inverse.</p>
+<p>Suppose \(J\) is Lipschitz with constant \(L\) near a root, and the inverses in that neighbourhood satisfy \(\|J^{-1}\|\leq K\). Integrate \(J\) along the line from the current point to the root. The error left by replacing \(J\) with its value at the start is bounded by \(L\|x-r\|^2/2\). Multiplying by the inverse yields the local Newton bound \(KL\|x-r\|^2/2\). This derivation makes explicit which objects must stay well behaved: derivative variation and amplification by the linear solve.</p>
+</section>
+<section>
+<h2 id="intersect-an-energy-constraint-with-a-matching-condition">Intersect an energy constraint with a matching condition</h2>
+<p>Take the dimensionless equations \(F_1=x^2+y^2-1,\ F_2=x-y\), and choose the positive branch. The linearised system at \((0.8,0.6)\) has \(F=(0,0.2)\) and rows \((1.6,1.2),(1,-1)\). The point already lies on the unit circle but violates matching. Newton requires \(s_y=s_x+0.2\); substituting in the first row gives \(2.8s_x=-0.24\). Thus \(s_x=-0.0857143,\ s_y=0.114286\) and the new state is \((5/7,5/7)\).</p>
+<p>The linear constraint is now exact. The circle residual is \(2(5/7)^2-1=1/49\), a second-order consequence of moving along its tangent rather than along the circle itself. At the next iteration the two corrections are equal. Solving \((20/7)s=-1/49\) gives \(s=-1/140\), hence \(x=y=99/140=0.707143\). The desired value is \(1/\sqrt2=0.707107\). A different initial state could lead to the negative intersection. Physical admissibility must therefore supplement the algebraic equations.</p>
+</section>
+<section>
+<h2 id="frozen-jacobian">Quantify the cost of freezing a Jacobian</h2>
+<p>A new Jacobian factorisation at every iterate can dominate the work of solving a coupled equilibrium. Fix \(B=J(x_0)\), factor it once, and take \(x_{k+1}=x_k-B^{-1}F(x_k)\). Near a simple root \(r\) write \(e=x-r\). Taylor expansion gives \(e_+=(I-B^{-1}J(r))e+O(\|e\|^2)\). With a current exact Jacobian the first-order term vanishes. A frozen Jacobian normally retains it, so convergence is generally linear and even local convergence requires control of this iteration matrix. A sufficient condition on a neighbourhood is \(\sup_x\|I-B^{-1}J(x)\|&lt;1\), together with an invariant neighbourhood.</p>
+<p>Consider \(F(x,y)=(x^2+y-3,x-y)^T\), starting at \((1,1)\). The fixed matrix has rows \((2,1)\) and \((1,-1)\). The second residual remains zero if both coordinates change equally. On that line the correction satisfies \(3s=-(x^2+x-3)\). The first increment is \(1/3\). The new first residual is \(1/9\). Reusing the factors gives the next increment \(-1/27\) and the state \(x=y=35/27\approx1.29630\). Refactoring at \(4/3\) would instead give increment \(-1/33\), reaching \(43/33\approx1.30303\). The exact positive root is \((\sqrt{13}-1)/2\approx1.30278\).</p>
+<p>The local error multiplier along this line is \(1-\sqrt{13}/3\approx-0.202\), predicting alternating errors for the frozen calculation. Reusing a poor factorisation indefinitely can cost more residual evaluations than it saves. Compare actual reduction against the expected local factor and refresh the Jacobian when model changes make reuse ineffective.</p>
+<p class="source-note">Practise on sheet 2 · <a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/2/#transfer-frozen-refresh">Decide when a reused slope is still informative</a>. Further reading · <a href="https://people.math.ethz.ch/~grsam/NCSE21/NumCSE_Lecture_Document.pdf#page=625">ETH Zürich · Numerical Methods for Computational Science and Engineering · Remark 8.5.1.43, Simplified Newton method, and Code 8.5.1.44, p. 625</a>.</p>
+</section>
+<section>
+<h2 id="select-scales-and-verify-a-derivative-action">Select scales and verify a derivative action</h2>
+<p>Changing units from metres to millimetres multiplies the displayed displacement by 1000 without changing the model. Yet an unscaled Euclidean norm of a state mixing displacement and temperature can then change radically. Choose characteristic scales in a positive diagonal matrix \(D_x\) and residual scales \(D_F\). Form the dimensionless unknown \(z=D_x^{-1}x\) and residual \(G=D_F^{-1}F(D_xz)\). By the chain rule \(J_G=D_F^{-1}J_FD_x\). For an exact undamped Newton solve this produces the same physical correction, but stopping tests, trust regions and finite differences now acquire interpretable scales.</p>
+<p>To check a programmed Jacobian, choose a direction \(d\) with nonzero entries in multiple unknowns and compare \(Jd\) with \([F(x+sd)-F(x)]/s\) over several \(s\). For the circle constraint the discrepancy is exactly \(s(d_x^2+d_y^2)\), while for the linear matching condition it is zero in exact arithmetic. A one-direction check can miss a coding error orthogonal to that direction. Try additional directions emphasizing different couplings, keeping clear of nonsmooth switches. This test inspects the local derivative independently of the solver’s final residual.</p>
+</section>
+<section>
+<h2 id="separate-state-sensitivity-from-linearisation-error">Separate state sensitivity from linearisation error</h2>
+<p>Suppose the matching constraint in the intersection example is perturbed to \(x-y=\epsilon\), while the unit-circle measurement remains exact. About the positive root \(x=y=1/\sqrt2\), differentiating the circle implies \(\delta x+\delta y=0\). Differentiating the matching constraint gives \(\delta x-\delta y=\epsilon\). Thus a measurement offset of 0.02 moves the coordinates by approximately \(+0.01\) and \(-0.01\), even if the perturbed nonlinear equations are solved to roundoff.</p>
+<p>Geometrically, uncertainty becomes much larger when the two constraint curves meet almost tangentially. Their Jacobian rows then point in nearly the same direction, leaving a poorly resolved transverse displacement. Reducing the Newton tolerance improves the algebraic solution of the supplied measurements, but cannot increase their independence. Inspecting singular directions of the scaled Jacobian near the converged state helps distinguish this physical uncertainty from difficulties caused by a poor initial guess.</p>
+</section>
+<section>
+<h2 id="analyse-the-basins-of-a-coupled-two-dimensional-problem">Analyse the basins of a coupled two-dimensional problem</h2>
+<p>Identify a real state \((x,y)\) with \(z=x+iy\). Solving \(z^2-1=0\) is equivalent to solving \(x^2-y^2-1=0,\ 2xy=0\) for two real unknowns. The real Jacobian has rows \((2x,-2y)\) and \((2y,2x)\), with determinant \(4(x^2+y^2)\). It is nonsingular away from the origin. Complex division by \(2z\) implements exactly the real Newton correction for this system. Therefore the full update is \(N(z)=(z+1/z)/2\), and both roots \(+1\) and \(-1\) have local quadratic convergence.</p>
+<p>To determine which root is selected, set \(w=(z-1)/(z+1)\), excluding the already solved point \(-1\). Direct substitution shows \(N(z)-1=(z-1)^2/(2z)\) and \(N(z)+1=(z+1)^2/(2z)\). Dividing yields \(w_{\rm new}=w^2\). Hence \(w_k=w_0^{2^k}\) as long as the updates remain defined. If \(|w_0|&lt;1\), this tends to zero and \(z=(1+w)/(1-w)\) tends to one. The condition means the starting point is closer to \(+1\) than to \(-1\), precisely the open right half-plane. The left half-plane similarly converges to the other root.</p>
+</section>
+<section>
+<h2 id="predict-a-basin-and-trace-a-boundary-failure">Predict a basin and trace a boundary failure</h2>
+<p>Start at \(z_0=1+i\), so \(1/z_0=(1-i)/2\). The first update is \(z_1=0.75+0.25i\). Its inverse equals \(1.2-0.4i\), giving \(z_2=0.975-0.075i\). The iterates moved from above to below the real axis, but both remained in the basin of \(+1\). In transformed coordinates \(w_0=i/(2+i)=(1+2i)/5\), of magnitude \(1/\sqrt5\); after two steps the magnitude is \(1/25\). This quantifies progress without estimating the distance from \(z_1\) to either root by visual inspection.</p>
+<p>The basin boundary is completely different. For \(z_0=i\), the first update is zero and the next Jacobian is singular. More generally a purely imaginary nonzero start remains purely imaginary for as long as the map is defined, because both \(z\) and \(1/z\) have zero real part. It cannot converge to either real root while staying on this line. Infinitesimal perturbations toward opposite sides of the line select different roots. A solver reporting a converged root from a point numerically very close to this boundary should identify which initial or rounding perturbations could change that result.</p>
+<p>This example makes global multiplicity observable in a system whose local steps are cheap and whose Jacobian is invertible almost everywhere. A small final residual confirms that the reported state solves the equations. It says little about whether the originally intended physical branch was selected. Additional physical conditions or a continuation path from a known state can supply information that the equations and a nominal starting vector alone do not specify.</p>
+<p>Initial guesses only \(10^{-6}\) to the right and left of the imaginary axis can therefore give final real parts differing by two. That discontinuity concerns the map from starting guess to selected solution, not a discontinuity of the original polynomial equations. It is one reason to report how physical branch selection was imposed when several roots correspond to substantially different states, even when every final residual is small.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/03-tangent-and-secant/">Chapter 3 · Newton and secant updates</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/2/">Problem sheet 2 · Tangents and Jacobians</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

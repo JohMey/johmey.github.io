@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finite volumes and moving fronts · OneSimulation</title>
+<meta name="description" content="Derive an upwind transport update by conservation, interpret the Courant number as a fraction of cell contents and determine what conservation says about front speed.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/chapters/03-conservation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Finite volumes and moving fronts · OneSimulation">
+<meta property="og:description" content="Derive an upwind transport update by conservation, interpret the Courant number as a fraction of cell contents and determine what conservation says about front speed.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/chapters/03-conservation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Finite volumes and moving fronts</h1><p class="lead">Derive an upwind transport update by conservation, interpret the Courant number as a fraction of cell contents and determine what conservation says about front speed.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#store-quantities-over-cells">Store quantities over cells</a><a href="#identify-the-source-of-artificial-spreading">Identify the source of artificial spreading</a><a href="#choose-a-flux-when-speed-depends-on-the-state">Choose a flux when speed depends on the state</a><a href="#move-the-control-surface-instead-of-the-grid">Move the control surface instead of the grid</a><a href="#distinguish-a-conservative-jump-from-the-physical-weak-solution">Distinguish a conservative jump from the physical weak solution</a><a href="#choose-the-correct-interface-flux-for-two-opposite-riemann-data">Choose the correct interface flux for two opposite Riemann data</a><a href="#worked-plot">Measure numerical spreading in a conservative transport step</a></nav></aside><article class="prose reference"><section>
+<h2 id="store-quantities-over-cells">Store quantities over cells</h2>
+<p>Consider a passive concentration satisfying \(u_t+(au)_x=0\) with positive constant speed \(a\) on a periodic line. Let \(\bar u_i=h^{-1}\int_{x_{i-1/2}}^{x_{i+1/2}}u\,dx\) be its cell mean. Integrating the conservation law in space and time shows that every change in cell inventory comes from fluxes through its two faces. If neighbouring cells use the same face flux, summing all updates cancels every internal transfer exactly. On a periodic line the total stays fixed, even for a discontinuous concentration.</p>
+<p>For positive speed, material reaching the right face during a short step comes from the cell to its left. Approximate the outgoing state by that cell’s mean, giving \(F_{i+1/2}=a\bar u_i\). Forward Euler in time yields \(\bar u_i^{n+1}=(1-C)\bar u_i^n+C\bar u_{i-1}^n\), where \(C=a\Delta t/h\). For \(0\leq C\leq1\) this is a convex average, preserving the range of neighbouring values. At \(C=1\) the entire array shifts exactly by one cell per step. If \(a&lt;0\), information comes from the other side of the face and the upwind direction must reverse.</p>
+</section>
+<section>
+<h2 id="identify-the-source-of-artificial-spreading">Identify the source of artificial spreading</h2>
+<p>Start with one cell mean equal to one and zeros everywhere else. With \(C=1/2\), one step gives adjacent means \(1/2,1/2\). A second step gives \(1/4,1/2,1/4\), while the total remains one. Exact advection over two such steps shifts the original pulse by one cell with no change in shape. The scheme has conserved mass yet broadened the pulse. Peak height or variance therefore tests information not supplied by a global balance.</p>
+<p>For smooth \(u\), Taylor-expand the upwind update in space and time. Replace the leading \(u_{tt}\) using the exact transport equation, \(u_{tt}=a^2u_{xx}\). The leading modified equation is \(u_t+a u_x=[ah(1-C)/2]u_{xx}+\cdots\). The bracket acts as numerical diffusivity. It is positive for the monotone range and vanishes at \(C=1\). This local smooth expansion helps interpret observed spreading, but the Taylor expansion itself does not hold across a jump.</p>
+</section>
+<section>
+<h2 id="choose-a-flux-when-speed-depends-on-the-state">Choose a flux when speed depends on the state</h2>
+<p>For a nonlinear conservation law \(u_t+f(u)_x=0\), characteristics can intersect and create a discontinuity. Enclose a moving jump in a thin control volume. The net flux imbalance fixes its speed \(s=(f(u_R)-f(u_L))/(u_R-u_L)\). For Burgers flux \(f=u^2/2\) with left state 2 and right state 0, this gives \(s=1\). The faster characteristics on the left overtake the slower ones to form a shock. Reversing these states produces a spreading fan under the entropy condition even though the algebraic jump formula alone would still supply a speed.</p>
+<p>A numerical face flux must be consistent when the two cells agree and must incorporate information from both sides when a nonlinear wave can travel either way. A conservative method that converges can reproduce the weak jump balance, while selection of a physically admissible solution also requires an entropy criterion. For practical assessment, monitor total inventory, motion of the front, overshoot and the number of cells over which it is smeared. The four measurements address distinct properties, and reducing one defect need not reduce all of them.</p>
+</section>
+<section>
+<h2 id="move-the-control-surface-instead-of-the-grid">Move the control surface instead of the grid</h2>
+<p>Across a front moving with speed \(s\), flux in the front’s own frame is \(f(u)-su\). The jump relation enforces equality of this quantity on both sides. For the Burgers jump from 2 to 0 with speed one, the left flux in the moving frame is \(2-1\cdot2=0\), and the right flux is also zero. The laboratory flux differs across the front because a moving interface is sweeping conserved material through stationary space.</p>
+<p>This distinction helps when checking a simulation by counting material in a region that tracks a front. Differentiating an integral over moving endpoints adds boundary-motion terms. In a periodic fixed window the update should conserve total amount without those extra terms. In a moving measurement window, physical transport through the window and motion of the window both influence the recorded inventory, even under a perfectly conservative scheme.</p>
+</section>
+<section>
+<h2 id="distinguish-a-conservative-jump-from-the-physical-weak-solution">Distinguish a conservative jump from the physical weak solution</h2>
+<p>For inviscid Burgers flow \(u_t+(u^2/2)_x=0\), integrating conservation across a moving jump gives the Rankine–Hugoniot speed \(s=[f]/[u]=(u_L+u_R)/2\). It uses only balance, so a discontinuity with that speed satisfies the weak conservation equation for either orientation of its left and right states. To select the physically relevant solution one needs an entropy condition. For a compressive shock characteristic speeds enter it from both sides: \(u_L&gt;s&gt;u_R\). If \(u_L&lt;u_R\), the characteristics separate and a continuous rarefaction fan fills the gap.</p>
+<p>For example the entropy \(\eta(u)=u^2/2\) has entropy flux \(q(u)=u^3/3\), because \(q'=\eta'f'\). A jump produces distributional entropy \([q]-s[\eta]\), which must be nonpositive for a dissipative solution. At equal-magnitude opposite states the entropy jump \([\eta]\) is zero, so orientation alone changes the sign of the entropy production. A conservative scheme can preserve every cell total correctly yet converge to an inadmissible expansion shock if it fails this additional condition.</p>
+</section>
+<section>
+<h2 id="choose-the-correct-interface-flux-for-two-opposite-riemann-data">Choose the correct interface flux for two opposite Riemann data</h2>
+<p>Take \(u_L=-1,\ u_R=1\). Both endpoint fluxes equal one half, and the jump-speed formula gives zero. Holding this discontinuity fixed would conserve the cell totals. Its entropy production, however, is \(1/3-(-1/3)=2/3&gt;0\). The admissible Riemann solution is the self-similar fan: at coordinate \(\xi=x/t\), \(u=-1\) for \(\xi\le-1\), \(u=\xi\) between minus one and one, and \(u=1\) for \(\xi\ge1\). At the interface \(\xi=0\), the flux is therefore zero. Using an arithmetic average of the two endpoint fluxes would instead maintain the inadmissible jump.</p>
+<p>For a finite-volume update with \(\Delta t/\Delta x=0.5\) and initially constant states on either side, the neighbouring left cell changes from \(-1\) to \(-1-0.5(0-0.5)=-0.75\). The right cell changes from one to \(1-0.5(0.5-0)=0.75\). Their sum remains zero. A direct integration of the fan gives the same cell averages: the disturbance occupies half of each cell and linearly brings that half from its far-state value toward zero. Thus both conservation and the local wave pattern can be verified independently.</p>
+<p>Reverse the initial states to \(u_L=1,\ u_R=-1\). The zero-speed jump now has entropy production \(-2/3\), and both families of characteristics enter it. Its correct interface flux is one half. The same numerical update then leaves both neighbouring cell averages unchanged, exactly as required for a stationary shock. Testing both orientations is more revealing than testing a single conserved jump: they have identical endpoint flux magnitudes and the same Rankine–Hugoniot speed but different physically admissible interface states.</p>
+<p>A further integration test shifts the interface by precisely one cell and reruns the update. On a uniform periodic grid with unchanged physical states, the new solution should be a one-cell translation of the old one. A difference between the two calculations could reveal an indexing error in the face flux even when a global conservation diagnostic remains identically zero.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Measure numerical spreading in a conservative transport step</h2>
+<p>Start with all mass in one cell. For positive velocity the explicit upwind update keeps fraction \(1-C\) and transfers fraction \(C\) to the next cell each step. Thirty updates produce a binomial distribution on an unbounded uniform grid.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/partial-differential-equations/03-conservation.png" alt="Measure numerical spreading in a conservative transport step. Horizontal axis: Cell offset from initial pulse. Vertical axis: Fraction of total pulse mass. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Each profile sums to one. Its centre moves 30C cells and its variance is 30C(1−C) cells². Conservation and the correct mean travel distance can coexist with artificial broadening of a pulse that should translate without changing shape.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/partial-differential-equations/03-conservation.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Fraction of total pulse mass at selected values of Cell offset from initial pulse.</caption><thead><tr><th scope="col">Cell offset from initial pulse</th><th scope="col">Courant number 0.25</th><th scope="col">Courant number 0.5</th><th scope="col">Courant number 0.85</th></tr></thead><tbody><tr><th scope="row">0</th><td>0.00017858</td><td>9.3132e−10</td><td>1.9175e−25</td></tr><tr><th scope="row">8</th><td>0.15931</td><td>0.005451</td><td>1.1933e−12</td></tr><tr><th scope="row">15</th><td>0.0019305</td><td>0.14446</td><td>5.9335e−6</td></tr><tr><th scope="row">22</th><td>3.3308e−8</td><td>0.005451</td><td>0.042007</td></tr><tr><th scope="row">30</th><td>8.6736e−19</td><td>9.3132e−10</td><td>0.0076308</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/partial-differential-equations/03-conservation.csv" download>Download all 31 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/problem-sheets/1/">Problem sheet 1 · Flux balances and virtual work</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/04-parabolic-equations/">Chapter 4 · Time-dependent diffusion</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

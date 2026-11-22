@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear response and split flows · OneSimulation</title>
+<meta name="description" content="Separate errors caused by a changing source from errors caused by composing noncommuting dynamics.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/4/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linear response and split flows · OneSimulation">
+<meta property="og:description" content="Separate errors caused by a changing source from errors caused by composing noncommuting dynamics.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/4/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Linear response and split flows</h1><p class="lead">Separate errors caused by a changing source from errors caused by composing noncommuting dynamics.</p><p class="byline">Problem sheet 4 · Chapters 7 and 8</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#preserve-an-input-equilibrium">Preserve an input equilibrium</a><a href="#a-ramp-with-no-decay">A ramp with no decay</a><a href="#reverse-the-shears">Reverse the shears</a></nav></aside><article class="prose reference"><section>
+<h2 id="preserve-an-input-equilibrium">Preserve an input equilibrium</h2>
+<p>Take \(y'=-8y+12\), \(y(0)=0\), step \(h=0.5\). Compute a first exponential Euler and backward Euler step. Check the equilibrium under both methods and compare their decay multipliers to it.</p>
+<details><summary>Worked solution</summary>
+<p>The equilibrium is 1.5. The exponential step gives \(1.5(1-e^{-4})\approx1.47253\). Backward Euler solves \(5y_1=6\) and gives 1.2.</p>
+<p>Starting exactly at 1.5 leaves both methods there. An initial perturbation is multiplied by \(e^{-4}\approx0.01832\) for the first method and \(1/5=0.2\) for the second. Agreement on steady state leaves a sizable difference in transient damping.</p>
+</details>
+</section>
+<section>
+<h2 id="a-ramp-with-no-decay">A ramp with no decay</h2>
+<p>Take the limit of exponential Euler for \(y'=t\), starting at \(t=0,y=0\). Compute one step and the exact result. Then apply two half steps and derive the general global error on \([0,T]\) for uniform step \(h=T/N\).</p>
+<details><summary>Worked solution</summary>
+<p>With \(A=0\), \(\varphi_1(0)=1\). Freezing the input at zero gives zero after one step of length \(h\); the exact value is \(h^2/2\). Two half steps instead give \(0+(h/2)(h/2)=h^2/4\).</p>
+<p>Over the fixed interval the method sums \(h\sum_{j=0}^{N-1}jh=h^2N(N-1)/2\). Subtracting this from \(T^2/2\) gives \(Th/2\). A quadratic local discrepancy has accumulated into a first-order final error.</p>
+</details>
+</section>
+<section>
+<h2 id="reverse-the-shears">Reverse the shears</h2>
+<p>For \(q'=p,\ p'=-q\) start at \((0,1)\), \(h=0.4\). Compute drift–kick, kick–drift and symmetric kick–drift–kick. Compare their momentum to the exact value and identify which two first-order errors have opposite signs.</p>
+<details><summary>Worked solution</summary>
+<p>Drift–kick gives \((0.4,0.84)\); kick–drift gives \((0.4,1)\). The half kick initially has no effect, then the drift gives \(q=0.4\), and the second half kick gives \(p=0.92\).</p>
+<p>Exact momentum is \(\cos(0.4)\approx0.921061\). The first two momentum errors are about −0.0811 and +0.0789; the symmetric error is about −0.00106. All three positions agree in this initial state, which makes momentum the more discriminating one-step test.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/08-splitting/">Chapter 8 · Operator splitting and noncommuting flows</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/09-verlet/">Chapter 9 · Störmer–Verlet and a discrete invariant</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

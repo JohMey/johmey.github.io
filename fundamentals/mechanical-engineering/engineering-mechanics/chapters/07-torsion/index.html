@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torsional stiffness of shafts and closed sections · OneSimulation</title>
+<meta name="description" content="Derive torque–twist relations and explain the large difference in stiffness between an intact tube and an open strip.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/07-torsion/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Torsional stiffness of shafts and closed sections · OneSimulation">
+<meta property="og:description" content="Derive torque–twist relations and explain the large difference in stiffness between an intact tube and an open strip.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/07-torsion/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Torsional stiffness of shafts and closed sections</h1><p class="lead">Derive torque–twist relations and explain the large difference in stiffness between an intact tube and an open strip.</p><p class="byline">Chapter 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#kinematics">Rotate two adjacent sections</a><a href="#distribution">Follow a torque through a stepped shaft</a><a href="#flow">Carry torque around a single closed cell</a><a href="#angle">Distinguish two section properties</a><a href="#multicell">Determine torque sharing between two closed cells</a><a href="#unequal-cells">Compute the stress in an internal dividing web</a><a href="#worked-plot">Compare a tube and a shaft at equal material area</a></nav></aside><article class="prose reference"><section><h2 id="kinematics">Rotate two adjacent sections</h2>
+<p>A torque meter measures twist between two stations on a shaft. To infer torque, first ask how material between the stations deforms. A straight circular shaft in uniform, small-deformation torsion has cross-sections that rotate as rigid discs. Two discs separated by \(dx\) rotate relative to one another by \(d\theta\). A fibre at radius \(r\) moves sideways by \(r\,d\theta\), giving shear strain \(\gamma=r\,d\theta/dx\). With elastic shear modulus \(G\), the shear stress increases linearly from the centre to the surface.</p>
+<p>Each area element transmits a torque \(r\tau\,dA\). Integrating produces the polar second moment of area \(J\), whose dimensions are length to the fourth power. With constant torque and cross-section, integration along the shaft then converts twist per length into total relative angle.</p>
+<div class="math display">\[T=\int_A r\tau\,dA=G\theta'\int_A r^2dA,\qquad J=\frac{\pi}{2}(r_o^4-r_i^4),\qquad \theta=\frac{TL}{GJ}.\]</div>
+</section>
+<section><h2 id="distribution">Follow a torque through a stepped shaft</h2>
+<p>A 0.75 m aluminium tube of outer radius 15 mm and inner radius 12 mm transmits 45 N m. For \(G=26\,\mathrm{GPa}\), \(J=4.695\times10^{-8}\,\mathrm{m^4}\). Its twist is \(45(0.75)/(26\times10^9J)=0.02765\,\mathrm{rad}=1.58^\circ\). Surface shear is \(45(0.015)/J=14.4\,\mathrm{MPa}\). The inside surface still carries 80% of this stress. Drilling a central hole removes the least highly stressed material first.</p>
+<p>Twist can also identify an unknown joint compliance. If an instrument measures 2.00° across this tube plus its end couplings, and all parts carry the same torque, the couplings contribute about 0.42°. Their combined torsional compliance is approximately \(0.42\pi/[180(45)]=1.6\times10^{-4}\,\mathrm{rad/(N\,m)}\). Such a comparison assumes that the gauges do not include a second shaft segment and that the torque is transmitted without slip.</p>
+</section>
+<section><h2 id="flow">Carry torque around a single closed cell</h2>
+<p>For a long, thin-walled closed tube with a single cell, use the shear flow \(q=\tau t\), the force per unit length of wall. Longitudinal equilibrium makes this flow approximately constant around the perimeter if no intermediate longitudinal force is introduced. A length \(ds\) carries tangential force \(q\,ds\). Its moment about an arbitrary origin is \(q\) times twice the triangular area swept by the radius vector. Around the median wall contour this gives \(T=2A_mq\).</p>
+<p>For a rectangular cell with median dimensions 80 by 40 mm, a torque of 320 N m gives \(q=320000/[2(80)(40)]=50\,\mathrm{N/mm}\). A 2 mm wall carries 25 MPa while a 4 mm wall carries 12.5 MPa. A slender longitudinal slit interrupts the closed path. The constant circulating flow solution then ceases to apply. A seam that reconnects the two lips must transmit the longitudinal shear flow if the component is to recover its closed-section behaviour.</p>
+</section>
+<section><h2 id="angle">Distinguish two section properties</h2>
+<p>For a noncircular closed tube, the polar area moment and torsion constant generally differ. Compatibility around a single thin-walled cell gives \(\theta'=T\oint ds/(Gt)/(4A_m^2)\). Making only a short wall segment very thin substantially increases this integral. A wall segment can therefore control angle of twist even when equilibrium fixes the same shear flow everywhere around the cell.</p>
+</section>
+<section><h2 id="multicell">Determine torque sharing between two closed cells</h2>
+<p>A single closed cell supports one constant circulating shear flow. In an aircraft-style box or a partitioned machine boom, adjacent cells share a web. Torque balance alone cannot tell how much flow each cell carries. The missing equation is twist compatibility: because the cells are bonded along the common web, their twist per unit length must agree. Assume a long, thin-walled prismatic box of one material carrying Saint-Venant torsion with negligible distortion. Use median-line areas and length-to-thickness ratios throughout.</p>
+<p>Assign positive clockwise circulations \(q_1,q_2\) to both cells. They oppose each other on the common web, where physical flow becomes \(q_1-q_2\) measured in the first cell’s direction. Let \(S_1,S_2\) denote \(\int ds/t\) over the exterior walls of each cell and \(S_w\) that quantity along their common web. The torque and the two contour compatibility relations become</p>
+<div class="math display">\[T=2A_1q_1+2A_2q_2,\quad 2A_1G\theta'=(S_1+S_w)q_1-S_wq_2,\quad 2A_2G\theta'=(S_2+S_w)q_2-S_wq_1 .\]</div>
+<p>These equations express the same shear-strain compatibility that leads to \(J_t=4A_m^2/\oint ds/t\) for one cell. If both cells and exterior wall thicknesses are mirror images, symmetry requires equal circulations and zero common-web flow under pure torque. The common web may still carry transverse shear from a separate load case. A missing web flow under pure torque is therefore a property of that loading and symmetry.</p>
+</section>
+<section><h2 id="unequal-cells">Compute the stress in an internal dividing web</h2>
+<p>Take adjacent median rectangles 40 mm high, 60 and 30 mm wide, with every wall 2 mm thick. Then \(A_1=2400,\ A_2=1200\,\mathrm{mm^2}\). Their three exterior walls give \(S_1=(60+40+60)/2=80\) and \(S_2=(30+40+30)/2=50\), while \(S_w=20\). Equal twist requires \((100q_1-20q_2)/2400=(70q_2-20q_1)/1200\), giving \(140q_1=160q_2\). Thus \(q_2=0.875q_1\), larger than one might expect from the smaller area alone.</p>
+<p>Applying \(T=345\,\mathrm{N\,m}=345000\,\mathrm{N\,mm}\) gives \(345000=4800q_1+2400(0.875)q_1\), so \(q_1=50.0\) and \(q_2=43.75\,\mathrm{N/mm}\). The dividing web carries only 6.25 N/mm, or 3.13 MPa. The primary exterior walls carry 25.0 and 21.9 MPa. Using \(G=27000\,\mathrm{MPa}\), either contour gives \(\theta'=(100\times50-20\times43.75)/(2\times2400\times27000)=3.18\times10^{-5}\,\mathrm{rad/mm}\), about 1.82° per metre. Checking the other contour independently catches a reversed sign on the shared wall. If a weld along that wall fails, equal twist and the closed paths that led to these flows can no longer be assumed.</p>
+<p>Individual cell torque contributions are informative when interpreting a section cut. The larger cell contributes \(2(2400)(50)=240\,\mathrm{N\,m}\), and the smaller contributes \(2(1200)(43.75)=105\,\mathrm{N\,m}\). Their 345 N m sum is independent of the coordinate origin. These are bookkeeping circulations rather than two torques applied independently to separate tubes. Cutting through the common web changes the compatibility and available flow paths, so using the original partition after a cut is not justified. Surface strain measurements on the upper exterior walls and the shared web would distinguish the predicted 50, 43.75 and 6.25 N/mm flows more effectively than measuring a single outer-wall strain alone.</p>
+<p>A comparison with a thin unpartitioned box is possible without changing outer dimensions. For the outer median rectangle 90 by 40 mm, \(A_m=3600\,\mathrm{mm^2}\) and \(\oint ds/t=2(90+40)/2=130\). Its single-cell torsion constant is \(4A_m^2/130=398769\,\mathrm{mm^4}\). The partitioned solution implies \(J_t=T/(G\theta')=345000/[27000(3.183\times10^{-5})]\simeq401500\,\mathrm{mm^4}\). Under this specific pure torque the additional web therefore raises torsional stiffness by less than one percent. It experiences little shear because the neighbouring circulations are similar. Its contribution to transverse load sharing, panel buckling resistance or local attachment stiffness can nevertheless be important and needs separate calculations.</p>
+<p>Move the web to the centre, producing identical cells of median width 45 mm. Pure torque then gives equal circulations, zero shear flow on the common web and precisely the single outer-cell twist in this idealisation. This limiting case is a demanding model check. A numerical section calculation that predicts double the torsional stiffness simply because there are now two cells has likely treated the common web as two independent exterior walls.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Compare a tube and a shaft at equal material area</h2>
+<p>Hold length, material, torque and cross-sectional area fixed while hollowing a circular shaft and increasing its outer radius. For radius ratio \(r\), area conservation gives \(R/R_s=1/\sqrt{1-r^2}\). Substitute in \(J=\pi R^4(1-r^4)/2\) and \(\tau_{\max}=TR/J\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/engineering-mechanics/07-torsion.png" alt="Compare a tube and a shaft at equal material area. Horizontal axis: Inner / outer radius. Vertical axis: Ratio to equal-area solid shaft. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At inner/outer radius 0.6 the torsional stiffness is 2.125 times the solid-shaft value, while peak shear is about 0.588 times as large. This comparison requires 25% greater outer radius; under a fixed envelope it would answer a different design question.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/engineering-mechanics/07-torsion.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Ratio to equal-area solid shaft at selected values of Inner / outer radius.</caption><thead><tr><th scope="col">Inner / outer radius</th><th scope="col">Torsional stiffness</th><th scope="col">Maximum shear stress</th></tr></thead><tbody><tr><th scope="row">0</th><td>1</td><td>1</td></tr><tr><th scope="row">0.2125</th><td>1.0946</td><td>0.93494</td></tr><tr><th scope="row">0.425</th><td>1.4409</td><td>0.76671</td></tr><tr><th scope="row">0.6375</th><td>2.3693</td><td>0.54781</td></tr><tr><th scope="row">0.85</th><td>6.2072</td><td>0.30582</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/engineering-mechanics/07-torsion.csv" download>Download all 181 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/3/">Problem sheet 3 · Strength and stability</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/08-transverse-shear/">Chapter 8 · Transverse shear and connections in built-up beams</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

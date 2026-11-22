@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finite-amplitude oscillations and model validity · OneSimulation</title>
+<meta name="description" content="Use conservation of energy and a frequency approximation to quantify when a small-angle pendulum model loses timing accuracy.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/12-nonlinear-vibration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Finite-amplitude oscillations and model validity · OneSimulation">
+<meta property="og:description" content="Use conservation of energy and a frequency approximation to quantify when a small-angle pendulum model loses timing accuracy.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/12-nonlinear-vibration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Finite-amplitude oscillations and model validity</h1><p class="lead">Use conservation of energy and a frequency approximation to quantify when a small-angle pendulum model loses timing accuracy.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#exact">Retain the actual restoring moment</a><a href="#energy">Derive an integral valid at finite amplitude</a><a href="#clock">Estimate a measurable timing error</a><a href="#quadrature">Check the scale of the neglected term</a><a href="#hardening">Derive an amplitude-dependent resonance relation</a><a href="#sweep">Identify a hardening spring from two release amplitudes</a><a href="#worked-plot">Set an amplitude limit for a pendulum-based timing model</a></nav></aside><article class="prose reference"><section><h2 id="exact">Retain the actual restoring moment</h2>
+<p>A pendulum gives a practical test of a linear model because its length and release angle are easy to set while its period can be measured over many cycles. Approximate the moving body first by a point mass \(m\) at distance \(l\) from a frictionless pivot. With \(\theta\) measured from vertically downwards, gravity produces torque \(-mgl\sin\theta\). Dividing the rotational balance by \(ml^2\) leaves \(\ddot\theta+(g/l)\sin\theta=0\). The linear small-angle frequency \(\omega_0=\sqrt{g/l}\) follows only after replacing \(\sin\theta\) by \(\theta\) in radians.</p>
+<p>The leading correction has a definite sign: \(\sin\theta\simeq\theta-\theta^3/6\). At a large positive angle the restoring force magnitude is smaller than the linear extrapolation. The pendulum should take longer to complete its swing. A sign test like this is useful before calculating a period correction.</p>
+</section>
+<section><h2 id="energy">Derive an integral valid at finite amplitude</h2>
+<p>For release from rest at amplitude \(A&lt;\pi\), conservation of mechanical energy gives \(\tfrac12ml^2\dot\theta^2+mgl(1-\cos\theta)=mgl(1-\cos A)\). During one quarter of the orbit the angle travels between zero and \(A\). Substitute \(\sin(\theta/2)=\sin(A/2)\sin\psi\) into the time integral. Cancelling common square roots gives</p>
+<div class="math display">\[T=4\sqrt{l/g}\int_0^{\pi/2}\frac{d\psi}{\sqrt{1-k^2\sin^2\psi}},\qquad k=\sin(A/2).\]</div>
+<p>For modest amplitudes expand the integrand as \(1+\tfrac12 k^2\sin^2\psi+\cdots\). The average of \(\sin^2\psi\) over the quarter interval is one half. Therefore \(T/T_0\simeq1+k^2/4\simeq1+A^2/16\) through second order in amplitude. The oscillation period depends on energy, while in the linear spring model all amplitudes share the same period.</p>
+</section>
+<section><h2 id="clock">Estimate a measurable timing error</h2>
+<p>Take \(l=0.80\,\mathrm m\), \(g=9.81\,\mathrm{m/s^2}\) and release at \(A=30^\circ=0.5236\,\mathrm{rad}\). The small-angle period is \(T_0=2\pi\sqrt{0.80/9.81}=1.794\,\mathrm s\). The leading correction is 1.71%, giving about 1.825 s. Over ten full oscillations the predicted delay relative to the small-angle model is roughly 0.31 s. Reducing the release angle to 15° reduces the leading relative correction by a factor of four.</p>
+<p>A timing series from a damped experimental pendulum may show the period drifting towards \(T_0\) as its amplitude decays. Measuring only the first release angle while averaging many later periods mixes different amplitudes. To test the finite-amplitude law, use consecutive same-direction crossings to measure each local period and estimate its associated amplitude from neighbouring turning points. The correction above is an expansion around zero amplitude. As \(A\) approaches the inverted equilibrium, the exact integral grows without bound and a low-order polynomial is no longer an adequate approximation.</p>
+</section>
+<section><h2 id="quadrature">Check the scale of the neglected term</h2>
+<p>Retaining one further term in the integrand gives \(1+\tfrac12 k^2\sin^2\psi+\tfrac38 k^4\sin^4\psi\). The quarter-interval average of the fourth power of sine is \(3/8\), so \(T/T_0\simeq1+k^2/4+9k^4/64\). At 30° this gives 1.01738, while the leading expansion in amplitude gave 1.01713. The small difference is measurable only if the uncertainty in pendulum length, release angle and crossing times supports the comparison.</p>
+</section>
+<section><h2 id="hardening">Derive an amplitude-dependent resonance relation</h2>
+<p>A pendulum softens as its amplitude grows because the sine restoring law rises more slowly than its linear tangent. A mechanical flexure can instead harden through geometry. A simple modal model is \(m\ddot x+c\dot x+kx+\beta x^3=F\cos\omega t\). For positive \(\beta\) the restoring stiffness increases with excursion. Assume one dominant harmonic and take \(x\approx A\cos(\omega t-\phi)\). Expanding the cubic gives \(x^3=A^3[3\cos(\omega t-\phi)+\cos(3\omega t-3\phi)]/4\). Keeping only the fundamental turns the cubic term into an amplitude-dependent in-phase force.</p>
+<p>Balance in-phase and quadrature components against the input, square and add to eliminate \(\phi\). The first-harmonic amplitude estimate satisfies</p>
+<div class="math display">\[F^2=A^2\left[\left(k+\tfrac34\beta A^2-m\omega^2\right)^2+(c\omega)^2\right].\]</div>
+<p>In a lightly damped free motion the same approximation gives a backbone frequency \(\omega_b^2\approx[k+(3/4)\beta A^2]/m\). This is an amplitude-dependent estimate of conservative oscillation frequency, not a new eigenvalue of the linearised equilibrium. At very small amplitude it recovers \(\sqrt{k/m}\), while a negative cubic coefficient tilts the relation towards lower frequencies. If the cubic approximation is only a local expansion, do not extrapolate it until it predicts an unphysical loss of global stiffness.</p>
+</section>
+<section><h2 id="sweep">Identify a hardening spring from two release amplitudes</h2>
+<p>A test component has moving mass 1.0 kg and small-amplitude stiffness 400 N/m. Low-level ring-down gives \(\omega_0=20\,\mathrm{rad/s}\). At measured oscillation amplitude 20 mm the dominant free frequency is approximately 22 rad/s. Under the weakly nonlinear one-harmonic model, \(\beta\simeq4m(22^2-20^2)/[3(0.020)^2]=2.80\times10^5\,\mathrm{N/m^3}\). At 10 mm the inferred backbone is \(\sqrt{400+0.75(2.8\times10^5)(0.010)^2}=20.52\,\mathrm{rad/s}\), a direct third reading against which to test the fit.</p>
+<p>Now drive near 22 rad/s with viscous coefficient \(c=0.80\,\mathrm{N\,s/m}\). At the 20 mm backbone amplitude the spring and inertia fundamentals cancel, so maintaining this motion takes forcing \(F=c\omega A=0.352\,\mathrm N\) in quadrature with displacement. The neglected cubic third-harmonic force amplitude is \(\beta A^3/4=0.56\,\mathrm N\); its displacement effect can nevertheless be small because the oscillator is driven far from its fundamental resonance at 66 rad/s. A separate mode near that frequency would invalidate this simplification. In a forced frequency sweep the amplitude equation can admit several positive roots near resonance. Its algebra does not establish their stability; slow upward and downward sweeps, each with sufficient settling time, can reveal different stable responses and jump transitions.</p>
+<p>An initial static measurement tests the sign of the fitted coefficient independently. At a displacement of 20 mm the linear restoring force is \(400(0.020)=8.0\,\mathrm N\); the cubic contribution is \(2.8\times10^5(0.020)^3=2.24\,\mathrm N\). The predicted static force is therefore 10.24 N, and the tangent stiffness is \(400+3(2.8\times10^5)(0.020)^2=736\,\mathrm{N/m}\). This tangent stiffness applies to small vibrations around a held biased equilibrium. Using it directly for an oscillation centred at zero would overestimate the measured amplitude-dependent frequency because the instantaneous stiffness changes during each cycle. Static bias and free oscillation amplitude are physically different tests of the same nonlinear restoring law.</p>
+<p>Repeating a decay test around a deliberately shifted equilibrium distinguishes the two experimentally.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Set an amplitude limit for a pendulum-based timing model</h2>
+<p>For a rigid pendulum released from rest the exact period ratio is \(2K(\sin^2(\theta_0/2))/\pi\), where the complete elliptic integral here uses its parameter rather than its modulus. Compare it with the first amplitude correction \(1+\theta_0^2/16\), with angle in radians.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/machine-dynamics/12-nonlinear-vibration.png" alt="Set an amplitude limit for a pendulum-based timing model. Horizontal axis: Release amplitude (degrees). Vertical axis: Period / small-angle period. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At 90° the exact period is about 1.180 times the linear prediction; the leading expansion gives 1.154. The series is useful at modest amplitudes, but it cannot reproduce the divergence on approach to an upright release.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/machine-dynamics/12-nonlinear-vibration.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Period / small-angle period at selected values of Release amplitude (degrees).</caption><thead><tr><th scope="col">Release amplitude (degrees)</th><th scope="col">Exact energy integral</th><th scope="col">Leading expansion</th></tr></thead><tbody><tr><th scope="row">0</th><td>1</td><td>1</td></tr><tr><th scope="row">37.5</th><td>1.0274</td><td>1.0268</td></tr><tr><th scope="row">75</th><td>1.119</td><td>1.1071</td></tr><tr><th scope="row">112.5</th><td>1.3132</td><td>1.241</td></tr><tr><th scope="row">150</th><td>1.7622</td><td>1.4284</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/machine-dynamics/12-nonlinear-vibration.csv" download>Download all 301 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/11-modal-forcing/">Chapter 11 · Modal participation and absorber tuning</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/6/">Problem sheet 6 · Modal selectivity and finite amplitude</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

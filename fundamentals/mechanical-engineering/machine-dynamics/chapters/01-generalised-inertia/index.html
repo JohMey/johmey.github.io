@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coordinates, energy and equivalent inertia · OneSimulation</title>
+<meta name="description" content="Reduce a constrained drive to one coordinate and use a power balance to check its equation of motion.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/01-generalised-inertia/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Coordinates, energy and equivalent inertia · OneSimulation">
+<meta property="og:description" content="Reduce a constrained drive to one coordinate and use a power balance to check its equation of motion.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/01-generalised-inertia/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Coordinates, energy and equivalent inertia</h1><p class="lead">Reduce a constrained drive to one coordinate and use a power balance to check its equation of motion.</p><p class="byline">Chapter 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#coordinates">Follow the motion through a mechanism</a><a href="#work">Reflect mass and forces to a common shaft</a><a href="#gearing">Calculate a motor torque</a><a href="#interpret">Identify which approximation controls the answer</a><a href="#sizing">Is the largest reduction always preferable?</a><a href="#cyclic-work">Derive speed ripple from a torque diagram</a><a href="#press-drive">Size a flywheel for a repeating work demand</a></nav></aside><article class="prose reference"><section><h2 id="coordinates">Follow the motion through a mechanism</h2>
+<p>A motor accelerating a load feels inertia from components that turn at different speeds. Simply adding their physical moments of inertia would treat all of those speeds as equal. Instead, choose one independent coordinate and express every kinetic energy in terms of it. No-slip belts, rigid gears and inextensible cables give useful constraints when their compliance and backlash are negligible over the motion of interest.</p>
+<p>Consider a drum of radius \(R\) winding a cable carrying a vertically guided mass \(m\). Choose the drum angle \(\theta\) positive when the mass rises. If the effective winding radius is constant, displacement, velocity and acceleration satisfy \(x=R\theta\), \(\dot x=R\dot\theta\) and \(\ddot x=R\ddot\theta\). These equalities are kinematic. A torque relation requires force balance or work in addition. When the cable builds successive layers on a spool, the effective radius varies with angle and the constant-ratio assumption must be revisited.</p>
+</section>
+<section><h2 id="work">Reflect mass and forces to a common shaft</h2>
+<p>Let \(J_d\) be the drum inertia. Its rotational kinetic energy and the load’s translational kinetic energy sum to \(K=(J_d+mR^2)\dot\theta^2/2\). The equivalent inertia seen at the drum is \(J_{\rm eq}=J_d+mR^2\). A small positive angle raises the mass through \(R\,d\theta\), changing its potential energy by \(mgR\,d\theta\). Thus gravity contributes a resisting torque \(mgR\). A positive applied torque \(T_d\) contributes power \(T_d\dot\theta\).</p>
+<div class="math display">\[\frac{d}{dt}\left(\tfrac12J_{\rm eq}\dot\theta^2+mgR\theta\right)=T_d\dot\theta,\qquad J_{\rm eq}\ddot\theta=T_d-mgR.\]</div>
+<p>The second expression also holds at zero speed by force balance. It separates steady effort, needed to hold or raise the load against gravity, from the extra effort needed to accelerate the two inertias. With the motor disconnected, an ideal light cable does not make the mass accelerate quite at \(g\), since the drum must gain rotational kinetic energy too.</p>
+</section>
+<section><h2 id="gearing">Calculate a motor torque</h2>
+<p>A drum with \(R=0.10\) m and \(J_d=0.15\,\mathrm{kg\,m^2}\) lifts 25 kg. A reduction gear gives \(\dot\theta_m=4\dot\theta\). The rotor has inertia \(J_m=0.020\,\mathrm{kg\,m^2}\). Refer the train to the motor coordinate. The drum-plus-load inertia becomes \((0.15+25(0.10)^2)/4^2=0.025\,\mathrm{kg\,m^2}\), so the total at the motor is 0.045 kg·m². Gravity contributes \(25(9.81)(0.10)/4=6.13\) N·m at that shaft.</p>
+<p>Demand upward acceleration 0.80 m/s². The drum must accelerate at 8.0 rad/s² and the motor at 32 rad/s². The motor supplies \(6.13+0.045(32)=7.57\) N·m. A separate check at load speed 1.0 m/s gives motor speed 40 rad/s. Its 303 W then divide into about 245 W raising the weight and 57.6 W increasing kinetic energy. Ideal gearing changes torque and angular speed inversely while preserving transmitted power.</p>
+</section>
+<section><h2 id="interpret">Identify which approximation controls the answer</h2>
+<p>At constant lifting speed the inertial torque vanishes. At constant angular acceleration, doubling the transmission ratio decreases reflected load inertia by four but also doubles the motor acceleration for the same load motion. The rotor’s own inertia remains at the motor and eventually dominates. A gear ratio therefore cannot reduce every part of acceleration torque indefinitely. Bearings, cables and gears also dissipate energy or store it elastically. Include their effects when a measured transient shows a repeatable lag, oscillation or loss that an ideal rigid constraint cannot explain.</p>
+</section>
+<section><h2 id="sizing">Is the largest reduction always preferable?</h2>
+<p>For a prescribed drum acceleration \(\alpha_d\) and reduction \(n=\omega_m/\omega_d\), collect gravity and load-side acceleration into the drum demand \(T_d=mgR+(J_d+mR^2)\alpha_d\). The motor torque becomes \(T_m=T_d/n+J_mn\alpha_d\). The first term falls as reduction rises, while rotor acceleration grows. Differentiating with respect to \(n\) gives an ideal minimum at \(n=\sqrt{T_d/(J_m\alpha_d)}\). For the stated lift \(T_d=27.73\) N m and \(\alpha_d=8\) rad/s², giving \(n=13.2\) approximately. This torque minimum assumes the motor can achieve the associated speed. At a drum speed of 10 rad/s it would turn at 132 rad/s, over three times its speed with the original reduction. Shaft-speed and voltage limits can therefore select a different practical ratio.</p>
+</section>
+<section><h2 id="cyclic-work">Derive speed ripple from a torque diagram</h2>
+<p>A crank-driven machine can require very different torque at different angles even when the average load is constant. A flywheel stores kinetic energy when driving torque exceeds resisting torque, then releases it when the load peaks. Refer all inertias and torques to the same shaft and suppose the equivalent inertia \(J\) is constant. The signed difference \(M(\theta)=T_{\rm drive}-T_{\rm load}\) gives \(J\dot\omega=M\). For continuous positive rotation write \(\dot\omega=\omega\,d\omega/d\theta\). Integration between two angular positions gives an exact work–energy relation.</p>
+<div class="math display">\[\tfrac12 J[\omega_b^2-\omega_a^2]=\int_{\theta_a}^{\theta_b}M(\theta)\,d\theta .\]</div>
+<p>A periodic steady sequence requires zero net area under the torque-difference curve over a whole revolution. Its cumulative area nevertheless has a maximum and a minimum. Their difference \(\Delta E\) is the energy that must swing into and out of the rotating inertia. Define mean speed in the ripple specification as the arithmetic mean of the two extreme speeds \(\bar\omega=(\omega_{\max}+\omega_{\min})/2\) and fluctuation coefficient \(C_s=(\omega_{\max}-\omega_{\min})/\bar\omega\). Factoring the difference of squared speeds gives \(J=\Delta E/(\bar\omega^2 C_s)\). A time-average tachometer reading approximates this mean for small ripple, but the definitions are distinct for a strongly pulsating shaft.</p>
+</section>
+<section><h2 id="press-drive">Size a flywheel for a repeating work demand</h2>
+<p>A laboratory indexing machine runs at a nominal 300 rpm. A motor supplies approximately constant 30 N m. The resisting torque is 70 N m for the first quarter revolution and a lower constant value for the remaining three quarters. Equate total input and output work over each revolution: \(30(2\pi)=70(\pi/2)+T_l(3\pi/2)\), giving \(T_l=16.67\,\mathrm{N\,m}\). The first quarter produces a 40 N m deficit, so the cumulative energy falls by \(40(\pi/2)=62.83\,\mathrm J\). The remaining 13.33 N m surplus restores exactly that energy.</p>
+<p>For a maximum peak-to-peak speed variation of 2% and \(\bar\omega=31.42\,\mathrm{rad/s}\), total inertia required is \(62.83/[31.42^2(0.02)]=3.18\,\mathrm{kg\,m^2}\). If the machine already has 1.00 kg m² on this shaft, an extra 2.18 kg m² is required. A thin-ring estimate at mean radius 0.30 m gives mass \(2.18/0.30^2=24.2\,\mathrm{kg}\). A solid disc of the same radius needs twice the mass because its material lies closer to the shaft. At half speed the same torque-versus-angle work deficit requires four times the total inertia for the same fractional ripple. Startup torque or bearing load may therefore limit an inertia-based solution even when steady motor power suffices.</p>
+<p>The torque balance also predicts where a shaft encoder should record the two speed extremes. The energy derivative with respect to angle equals the torque difference, so the maximum occurs just before the high resisting plateau begins and the minimum where that plateau ends. The maximum torque itself persists over a finite angular interval, while minimum speed occurs only at its end. This distinction matters when timing a torque pulse from a speed record: the sign of the speed derivative, rather than the absolute value of speed, identifies when the flywheel is discharging.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/">Course contents</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/02-free-vibration/">Chapter 2 · Free vibration, energy loss and ring-down data</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

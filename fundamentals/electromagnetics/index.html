@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How far does an alternating magnetic field penetrate a metal? · OneSimulation</title>
+<meta name="description" content="Relate magnetic diffusion to skin depth and predict the attenuation and phase lag inside a conductor.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/electromagnetics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How far does an alternating magnetic field penetrate a metal? · OneSimulation">
+<meta property="og:description" content="Relate magnetic diffusion to skin depth and predict the attenuation and phase lag inside a conductor.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/electromagnetics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/course/#fields">Electric and magnetic fields</a> / Electromagnetic induction</p><h1>How far does an alternating magnetic field penetrate a metal?</h1><p class="lead">Relate magnetic diffusion to skin depth and predict the attenuation and phase lag inside a conductor.</p><p class="prerequisites"><strong>Prerequisites</strong> Faraday’s law and complex exponentials.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Magnetic diffusion into a conductor</a><a href="#boundary">The length scale selected by frequency</a><a href="#worked">A 5 kHz field in aluminium</a><a href="#tutorial">Tutorial · Attenuation and heating</a><a href="#numerical">Numerical comparison · A cylindrical workpiece</a></nav></aside><article class="prose reference"><section>
+<h2 id="theory">Magnetic diffusion into a conductor</h2>
+<p>A coil produces an alternating magnetic field next to a block of aluminium. Why does a probe just inside the surface see a larger signal than one several millimetres deeper? An increasing magnetic field induces an electric field. In a conductor this drives currents whose magnetic field opposes the change. Over a cycle the interior field both weakens and lags behind the surface field.</p>
+<p>Let \(x\) be depth into a uniform stationary conductor, and let the magnetic field \(H_z(x,t)\) lie parallel to its flat surface. Assume constant conductivity \(\sigma\) and permeability \(\mu\). When \(\sigma\gg\omega\epsilon\), conduction current dominates displacement current. Ampère’s law gives \(J_y=-\partial H_z/\partial x\). Ohm’s law gives \(E_y=J_y/\sigma\). Substitute these into Faraday’s law \(\partial E_y/\partial x=-\mu\,\partial H_z/\partial t\) to obtain</p>
+<div class="math display">\[\frac{\partial H_z}{\partial t}=\frac{1}{\mu\sigma}\frac{\partial^2 H_z}{\partial x^2}.\]</div>
+</section>
+<section>
+<h2 id="boundary">The length scale selected by frequency</h2>
+<p>Impose \(H_z(0,t)=H_s\cos(\omega t)\) and take the conductor to extend to large positive \(x\). In sinusoidal steady state write \(H_z=\mathrm{Re}\{\hat H(x)e^{i\omega t}\}\). The diffusion equation becomes \(\hat H''=i\omega\mu\sigma\hat H\). Choosing the root that decays into the material gives</p>
+<div class="math display">\[\hat H(x)=H_s e^{-(1+i)x/\delta},\qquad \delta=\sqrt{\frac{2}{\omega\mu\sigma}}=\frac{1}{\sqrt{\pi f\mu\sigma}}.\]</div>
+<p>At one skin depth the amplitude is \(e^{-1}\) of its surface value and the phase lags by one radian. Since \(\hat J_y=-d\hat H/dx\), current density has the same decay length. This plane-surface approximation works near a curved surface when its radius of curvature and the distance to its far side are both large compared with \(\delta\).</p>
+<p class="source-note">Further study · <a href="https://ocw.mit.edu/courses/res-6-001-electromagnetic-fields-and-energy-spring-2008/resources/chapter-10-7-1/">Skin Effect</a> (MIT OpenCourseWare demonstration).</p>
+</section>
+<section>
+<h2 id="worked">A 5 kHz field in aluminium</h2>
+<p>Use \(\sigma=3.5\times10^7\,\mathrm{S/m}\) and \(\mu=\mu_0\approx4\pi\times10^{-7}\,\mathrm{H/m}\). Substitution of \(f=5000\,\mathrm{Hz}\) gives \(\delta=1.20\,\mathrm{mm}\). At \(x=3.0\,\mathrm{mm}\), the field amplitude is \(e^{-3.0/1.203}=0.083\) times the surface amplitude. A 2.0 mT surface signal gives about 0.17 mT there. The delay in phase is \(3.0/1.203=2.49\) radians, about 143°.</p>
+<p>At 50 Hz the same metal has \(\delta=12.0\) mm. A cylinder of 10 mm radius then has no interior region many skin depths from the surface, so its axis and curvature must enter a quantitative calculation.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial · Attenuation and heating</h2>
+<ol>
+<li><p>At 5 kHz, how far into the planar block must one go for the field amplitude to reach 10% of its surface value? Repeat at 20 kHz.</p>
+<details><summary>Worked solution</summary><p>Taking logarithms of \(e^{-x/\delta}=0.10\) gives \(x=\delta\ln 10=2.77\) mm. Quadrupling \(f\) halves \(\delta\), so the same attenuation occurs after 1.39 mm. For a semi-infinite block the fractional attenuation depends only on depth measured in skin depths.</p></details></li>
+<li><p>Is more or less than half of the resistive heating produced in the first skin depth? Find the fraction, treating the surface as flat.</p>
+<details><summary>Worked solution</summary><p>For peak current phasors the cycle-averaged heating per volume is \(|\hat J|^2/(2\sigma)\), so it varies with \(e^{-2x/\delta}\). Integrating from zero to \(\delta\) and dividing by the integral over all depths yields \(1-e^{-2}=0.865\). Roughly 86.5% of the heat is released in that first layer.</p></details></li>
+</ol>
+</section>
+<section>
+<h2 id="numerical">Numerical comparison · A cylindrical workpiece</h2>
+<p>A long coil with 1000 turns per metre and 2 A peak current surrounds an aluminium cylinder of radius 10 mm. At 50 Hz, 500 Hz and 5 kHz, the skin depths are respectively 12.0, 3.80 and 1.20 mm. Follow the computed radial field in that order and identify where the field begins to concentrate near the surface. Integrating the computed Joule heating over the cross-section gives 0.0406, 0.770 and 2.802 W per metre in the published case, checked against the cylindrical solution. <a href="/blog/eddy_currents_cylinder_in_coil/">Inspect the OneSimulation field and loss profiles</a>.</p>
+</section>
+<nav class="lecture-onward" aria-label="Continue studying">Next lecture · <a href="/fundamentals/magnetohydrodynamics/">Why does a magnetic field flatten duct flow?</a></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

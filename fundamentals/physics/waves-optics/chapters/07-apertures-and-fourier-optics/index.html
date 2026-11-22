@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffraction as a Fourier transform · OneSimulation</title>
+<meta name="description" content="Derive the far-field pattern from a finite aperture and identify which features control its scale and its sidelobes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/waves-optics/chapters/07-apertures-and-fourier-optics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Diffraction as a Fourier transform · OneSimulation">
+<meta property="og:description" content="Derive the far-field pattern from a finite aperture and identify which features control its scale and its sidelobes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/waves-optics/chapters/07-apertures-and-fourier-optics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/waves-optics/">Waves and optics</a></p><h1>Diffraction as a Fourier transform</h1><p class="lead">Derive the far-field pattern from a finite aperture and identify which features control its scale and its sidelobes.</p><p class="byline">Chapter 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#where-a-geometrical-shadow-breaks-down">Where a geometrical shadow breaks down</a><a href="#add-the-contributions-of-a-uniform-slit">Add the contributions of a uniform slit</a><a href="#measure-width-in-a-focal-plane">Measure width in a focal plane</a><a href="#observe-an-aperture-before-its-far-field-forms">Observe an aperture before its far field forms</a><a href="#predict-successive-axial-extrema">Predict successive axial extrema</a><a href="#from-fresnel-zones-to-a-diffractive-lens">From Fresnel zones to a diffractive lens</a><a href="#worked-plot">Which interference orders disappear under diffraction?</a></nav></aside><article class="prose reference"><section><h2 id="where-a-geometrical-shadow-breaks-down">Where a geometrical shadow breaks down</h2>
+<p>Illuminate a thin screen at normal incidence with a monochromatic plane wave of vacuum wavelength \(\lambda\) in air. Light transmitted through different parts of an opening reaches a distant observation point along slightly different paths. Their phases matter even where geometrical rays would draw a hard shadow. Use scalar diffraction, suited to features much larger than the wavelength and modest angles. Represent the complex field just beyond the screen by an aperture function \(A(x,y)\), incorporating amplitude and phase.</p>
+<p>For a far-away observation direction \(\mathbf n\), the propagation distance from aperture point \(\mathbf r'\) is \(r-\mathbf n\cdot\mathbf r'\) to first order. Replacing the inverse distance in the wave amplitude with \(1/r\) while retaining this linear phase yields</p>
+<div class="math display">\[U(\theta_x,\theta_y)\propto\iint A(x,y)e^{-ik(x\sin\theta_x+y\sin\theta_y)}\,dx\,dy .\]</div>
+<p>The angular field samples a spatial Fourier transform. The neglected quadratic path term produces a phase of order \(\pi a^2/(\lambda r)\) for aperture half-width \(a\). The free-space far-field approximation requires this quantity to be small. A lens supplies a quadratic phase that creates the Fourier pattern in its back focal plane even at a practical laboratory distance.</p>
+</section>
+<section><h2 id="add-the-contributions-of-a-uniform-slit">Add the contributions of a uniform slit</h2>
+<p>For a very tall slit of width \(w\), study the horizontal cross-section. Uniform amplitude across the width gives an integral of the exponential between \(-w/2\) and \(w/2\). The result is \(w\sin u/u\) with \(u=\pi w\sin\theta/\lambda\). Taking squared magnitude and normalizing at the origin yields</p>
+<div class="math display">\[I(\theta)/I(0)=\left(\frac{\sin u}{u}\right)^2 .\]</div>
+<p>The first zeros satisfy \(\sin\theta=\pm\lambda/w\). A broader opening makes the central spot narrower because a smaller angular change suffices to accumulate a full cycle across it. The oscillating tails arise from the abrupt edges. A gradual transmission taper reduces those sidelobes at the cost of a wider central maximum. Peak brightness additionally depends on the transmitted amplitude and collection geometry.</p>
+</section>
+<section><h2 id="measure-width-in-a-focal-plane">Measure width in a focal plane</h2>
+<p>Illuminate a \(120\) μm slit with 600 nm light and use a focal-length 200 mm lens. In the paraxial focal plane \(X\simeq f\sin\theta\). The first minima occur at \(X=\pm1.00\) mm, giving a central width of 2.00 mm. At half that distance \(u=\pi/2\), so the intensity is \(4/\pi^2=0.405\) of its central value. These two measurements separately test angular scale and profile shape.</p>
+<p>If the slit is moved sideways, the Fourier shift theorem supplies only a phase factor in the far field, and the intensity pattern remains centred in this ideal arrangement. If it is illuminated at a small angle instead, the incident field carries a linear phase across the slit and the whole pattern moves. This distinction becomes useful when diagnosing whether a displaced focal-plane spot comes from a decentered opening or a tilted incoming beam.</p>
+<p>A narrow receiving slit or detector pixel also integrates across part of the pattern. If it straddles a predicted zero, it collects light from either side and reports a positive count even for perfect diffraction. Reducing detector width tests this averaging interpretation.</p>
+</section>
+<section><h2 id="observe-an-aperture-before-its-far-field-forms">Observe an aperture before its far field forms</h2>
+<p>A finite opening can produce bright and dark features even on its axis as the detector moves away. Consider a uniformly illuminated circular aperture of radius \(a\) in an opaque thin screen. Use a monochromatic scalar plane wave and a paraxial on-axis detector at distance \(z\) large compared with \(a\), yet not necessarily large compared with \(a^2/\lambda\). At aperture radius \(r\) the extra path is \(\sqrt{z^2+r^2}-z\simeq r^2/(2z)\). The Fraunhofer approximation drops this quadratic phase; Fresnel propagation keeps it.</p>
+<p>Relative to the unobstructed advancing plane wave, the on-axis field is proportional to \(\int_0^a (2\pi r/i\lambda z)e^{i\pi r^2/(\lambda z)}\,dr\). The factor \(r\,dr\) makes the substitution \(u=\pi r^2/(\lambda z)\) immediate. Using the free propagation normalization gives</p>
+<div class="math display">\[\frac{U(0,z)}{U_{\rm free}(0,z)}=1-e^{i\pi N_F},\qquad \frac{I(0,z)}{I_{\rm free}}=4\sin^2\left(\frac{\pi N_F}{2}\right),\qquad N_F=\frac{a^2}{\lambda z}.\]</div>
+<p>Successive annuli adding half a wavelength of path alternately reinforce and cancel on axis. An even integer Fresnel number gives perfect cancellation in the ideal model. An odd integer makes the on-axis intensity four times the unobstructed value. There is no excess total power: interference redistributes light in the transverse plane. The result concerns local on-axis intensity at a specified distance rather than integrated transmission.</p>
+</section>
+<section><h2 id="predict-successive-axial-extrema">Predict successive axial extrema</h2>
+<p>Choose \(a=0.500\) mm and \(\lambda=500\) nm. Then \(a^2/\lambda=0.500\) m. A detector at \(z=0.250\) m sees \(N_F=2.00\), predicting an axial null. Moving it to \(z=0.500\) m gives \(N_F=1.00\) and a fourfold maximum. The aperture-to-distance ratio is at most 0.002 in these two measurements, supporting the small-angle path expansion even though the far-field criterion is not satisfied.</p>
+<p>At \(z=5.00\) m the Fresnel number is 0.100 and the exact Fresnel expression gives \(I/I_{\rm free}=0.0979\). Its far-field expansion is \((\pi N_F)^2=0.0987\), now within about one percent. This limit recovers the inverse-square on-axis intensity at fixed opening and incident irradiance. A real photodiode averages several transverse points, which can fill an axial null, and a broadband source averages slightly different Fresnel numbers. Repeating the axial scan with a smaller active area or a narrower spectral band tests which averaging effect dominates the observed minimum.</p>
+<p>A complementary screen can help verify that the observed oscillations arise from aperture interference. Within the same scalar boundary approximation, replacing the circular opening by an opaque disk makes the two complex transmitted fields add to the unobstructed field. On axis the disk's normalized field is therefore \(e^{i\pi N_F}\) in this model, with unit intensity and a distance-dependent phase. A bright point behind an opaque disk may seem surprising from geometric rays, but neighbouring angles still redistribute the blocked power. Finite coherence, source size and a detector averaging over the narrow central feature can strongly reduce its measured contrast.</p>
+</section>
+<section><h2 id="from-fresnel-zones-to-a-diffractive-lens">From Fresnel zones to a diffractive lens</h2>
+<p>The axial null from a clear circular opening results from destructive addition of neighbouring half-period zones. A zone plate reverses that outcome by deliberately blocking every other annulus. At desired focal distance \(f\), a ray from the edge of zone number \(m\) has path excess \(m\lambda/2\) relative to the centre. Solving \(\sqrt{f^2+r_m^2}-f=m\lambda/2\) gives</p>
+<div class="math display">\[r_m^2=m\lambda f+\frac{m^2\lambda^2}{4}\simeq m\lambda f .\]</div>
+<p>The approximation requires the outer zone radius to remain small compared with focal distance. Consecutive radii therefore grow approximately as the square root of zone number, and outermost zones are narrowest. Leaving odd zones transparent and even zones opaque removes contributions with the opposite phase at the design focus. Power is also distributed into other diffraction orders and an undiffracted background, so this simple plate does not concentrate all incident light into one focus.</p>
+<p>Set \(\lambda=500\) nm and design for \(f=0.200\) m with twenty zones. The radius of the first zone is \(\sqrt{\lambda f}=0.316\) mm, and the twentieth radius is \(1.414\) mm. The width of that outer zone is \(\sqrt{\lambda f}(\sqrt{20}-\sqrt{19})=35.8\) μm, setting a fabrication scale substantially finer than the overall aperture. If the plate is used at 600 nm without changing its radii, its first-order focal length becomes \(r_1^2/\lambda=0.167\) m. This shortening with increasing wavelength follows from the required relative phase and is an observable distinction from simply changing the clear aperture of a refracting lens. Scanning on-axis intensity at two colours tests both the zone layout and its predicted chromatic shift.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Which interference orders disappear under diffraction?</h2>
+<p>Two uniformly illuminated slits have width \(a\) and centre spacing \(3a\). The Fraunhofer field is the product of the single-aperture transform and a two-source phase sum. Normalise intensity at zero angle and use \(u=a\sin\theta/\lambda\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/waves-optics/07-apertures-and-fourier-optics.png" alt="Which interference orders disappear under diffraction?. Horizontal axis: Slit width × sin(angle) / wavelength. Vertical axis: Intensity / central intensity. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>The nominal third interference maximum occurs at u = 1 and is extinguished by the first zero of the slit envelope. A missing order diagnoses the width-to-spacing ratio; it need not indicate missing or blocked illumination.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/waves-optics/07-apertures-and-fourier-optics.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Intensity / central intensity at selected values of Slit width × sin(angle) / wavelength.</caption><thead><tr><th scope="col">Slit width × sin(angle) / wavelength</th><th scope="col">Two identical slits, d/a = 3</th><th scope="col">Single-slit envelope</th></tr></thead><tbody><tr><th scope="row">−3</th><td>1.5196e−33</td><td>1.5196e−33</td></tr><tr><th scope="row">−1.5</th><td>1.3676e−32</td><td>0.045032</td></tr><tr><th scope="row">0</th><td>1</td><td>1</td></tr><tr><th scope="row">1.5</th><td>1.3676e−32</td><td>0.045032</td></tr><tr><th scope="row">3</th><td>1.5196e−33</td><td>1.5196e−33</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/waves-optics/07-apertures-and-fourier-optics.csv" download>Download all 601 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/waves-optics/problem-sheets/3/">Problem sheet 3 · Polarisation and coherence</a></span><span>Next<br><a href="/fundamentals/physics/waves-optics/chapters/08-imaging-through-a-pupil/">Chapter 8 · Images through a finite pupil</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

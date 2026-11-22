@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flux balances and virtual work · OneSimulation</title>
+<meta name="description" content="Choose the correct conductance at an interface, test pure-flux compatibility and assemble a rod with unequal stiffnesses.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/1/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flux balances and virtual work · OneSimulation">
+<meta property="og:description" content="Choose the correct conductance at an interface, test pure-flux compatibility and assemble a rod with unequal stiffnesses.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/1/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Flux balances and virtual work</h1><p class="lead">Choose the correct conductance at an interface, test pure-flux compatibility and assemble a rod with unequal stiffnesses.</p><p class="byline">Problem sheet 1 · Chapters 1 and 2</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#preserve-heat-flow-across-unequal-layers">Preserve heat flow across unequal layers</a><a href="#check-a-pure-flux-problem">Check a pure-flux problem</a><a href="#assemble-two-rods-in-series">Assemble two rods in series</a><a href="#transfer-boundary-nullspace">A longer rod with a clamped or insulated left end</a><a href="#transfer-stretched-triangle">Two triangles of the same area</a></nav></aside><article class="prose reference"><section>
+<h2 id="preserve-heat-flow-across-unequal-layers">Preserve heat flow across unequal layers</h2>
+<p>A wall has two layers, 0.02 m at \(k=2\) W/(m·K) and 0.06 m at \(k=12\) W/(m·K). The outer faces are held at 350 K and 320 K, respectively. Find the common flux, the interface temperature and the effective conductivity over the full thickness.</p>
+<details><summary>Worked solution</summary>
+<p>The resistances per unit area are \(0.02/2=0.01\) and \(0.06/12=0.005\) m²·K/W. Total resistance is 0.015, so the flux magnitude is \(30/0.015=2000\) W/m² from hot to cold. The first drop is \(2000(0.01)=20\) K, giving an interface temperature of 330 K.</p>
+<p>The effective conductivity is \(0.08/0.015=5.333\) W/(m·K). Equal-width averaging would ignore the different thicknesses. Substituting this conductivity across the full wall reproduces the same flux.</p>
+</details>
+</section>
+<section>
+<h2 id="check-a-pure-flux-problem">Check a pure-flux problem</h2>
+<p>On \(0\leq x\leq2\), the steady flux obeys \(q'=3\) in consistent units. The prescribed endpoint fluxes, both positive along increasing \(x\), are \(q(0)=2\) and \(q(2)=7\). Is a steady state possible? Correct the right flux. For \(k=1\), find a compatible temperature with mean temperature zero.</p>
+<details><summary>Worked solution</summary>
+<p>Integrating requires \(q(2)-q(0)=\int_0^2 3\,dx=6\). The supplied difference is 5, so no steady solution satisfies both data. Take \(q(2)=8\), giving \(q=2+3x\).</p>
+<p>Because \(q=-T'\), \(T=C-2x-1.5x^2\). Its average over the interval is \(C-2-2=C-4\), hence \(C=4\). The mean fixes the otherwise arbitrary temperature offset while leaving flux unchanged.</p>
+</details>
+</section>
+<section>
+<h2 id="assemble-two-rods-in-series">Assemble two rods in series</h2>
+<p>Two equal elements of unit length have \(EA=2\) and \(EA=6\) in consistent units. Fix the left node, apply a unit tensile load on the right and omit distributed load. Assemble the reduced matrix, solve for displacements and verify the axial forces and strain energy.</p>
+<details><summary>Worked solution</summary>
+<p>Assembly gives \(K=\left(\begin{smallmatrix}8&amp;-6\\-6&amp;6\end{smallmatrix}\right)\), \(b=(0,1)^T\). The second row gives \(u_2-u_1=1/6\). The first then gives \(2u_1=1\), hence \(u_1=1/2,\ u_2=2/3\).</p>
+<p>The forces are \(2(1/2)=1\) and \(6(1/6)=1\). The stored energies sum to \(2(1/2)^2/2+6(1/6)^2/2=1/3\), also \(u^Tb/2=(2/3)/2\). This verifies both continuity of axial force and consistency of the assembled work.</p>
+</details>
+</section>
+<section>
+<h2 id="transfer-boundary-nullspace">A longer rod with a clamped or insulated left end</h2>
+<p>For a rod of length \(2\), use \(k=4\), a unit distributed load, zero temperature on the left and insulation on the right. Compute the exact derivative norm and its coercivity bound. Then insulate the left end too. Which compatibility condition fails, and what further information would be needed if it held?</p>
+<details><summary>Worked solution</summary>
+<p>The flux condition gives \(u'=(2-x)/4\), so \(\|u'\|_2^2=(1/16)\int_0^2(2-x)^2dx=1/6\), giving \(0.40825\). The load norm is \(\sqrt2\). The estimate gives \(2\sqrt2/(\sqrt2\,4)=0.5\). The anchored solution therefore satisfies the bound.</p>
+<p>Testing a two-insulated-end balance with the constant test function \(1\) requires \(\int_0^2 f\,dx=0\). The present load integrates to \(2\). A zero-net load would restore compatibility, but \(u+C\) would solve for every constant \(C\). A prescribed mean temperature, for example, selects one representative.</p>
+</details>
+<p class="source-note">Revisit chapter 1 · <a href="/fundamentals/numerics/partial-differential-equations/chapters/01-flux-differences/#coercive-weak-problem">Why fixing one boundary value controls the solution</a>.</p>
+</section>
+<section>
+<h2 id="transfer-stretched-triangle">Two triangles of the same area</h2>
+<p>Stretch the reference triangle to vertices \((0,0),(4,0),(0,1/4)\). Find the gradients associated with its two axis vertices and their diagonal stiffness entries. Compare their ratio with the reference triangle, and explain why a fixed area does not ensure comparable directional stiffness.</p>
+<details><summary>Worked solution</summary>
+<p>Here \(J=\operatorname{diag}(4,1/4)\) has determinant one. The physical gradients are \((1/4,0)\) and \((0,4)\). Multiplying their squared lengths by the cell area \(1/2\) gives \(K_{11}=1/32\) and \(K_{22}=8\).</p>
+<p>The ratio \(K_{22}/K_{11}=256\). On the reference triangle both entries are \(1/2\). A unit change in nodal value over the short altitude gives a much larger derivative. Area fixes the product of stretches, while gradient amplification depends on inverse stretches in each direction. This ratio describes these entries. The unrestricted element also has a constant null mode.</p>
+</details>
+<p class="source-note">Revisit chapter 2 · <a href="/fundamentals/numerics/partial-differential-equations/chapters/02-weak-form/#reference-triangle-map">Assemble a physical triangle from a reference element</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/02-weak-form/">Chapter 2 · Weak forms and finite elements</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/03-conservation/">Chapter 3 · Finite volumes and moving fronts</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

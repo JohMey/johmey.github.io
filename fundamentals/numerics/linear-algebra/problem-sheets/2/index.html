@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fitting and relaxation · OneSimulation</title>
+<meta name="description" content="Use orthogonality to judge a fit and spectral factors to predict what successive relaxation sweeps remove.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/2/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fitting and relaxation · OneSimulation">
+<meta property="og:description" content="Use orthogonality to judge a fit and spectral factors to predict what successive relaxation sweeps remove.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Fitting and relaxation</h1><p class="lead">Use orthogonality to judge a fit and spectral factors to predict what successive relaxation sweeps remove.</p><p class="byline">Problem sheet 2 · Chapters 3 and 4</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#reweight-an-unreliable-reading">Reweight an unreliable reading</a><a href="#rotate-into-a-better-fitting-basis">Rotate into a better fitting basis</a><a href="#calculate-a-smoothing-factor">Calculate a smoothing factor</a></nav></aside><article class="prose reference"><section>
+<h2 id="reweight-an-unreliable-reading">Reweight an unreliable reading</h2>
+<p>Fit a constant to the readings 1, 2 and 8. First minimise the unweighted sum of squared deviations. Next suppose the third reading has standard deviation twice that of the others, with independent zero-mean errors. Write the weighted objective, find its minimiser, and explain the change.</p>
+<details><summary>Worked solution</summary>
+<p>For equal weights, differentiating \(\sum(y_i-c)^2\) gives \(3c=11\), so \(c=11/3\). With independent errors, weighting by inverse variance gives relative weights \(1,1,1/4\). Differentiate \((1-c)^2+(2-c)^2+(8-c)^2/4\) to get \(2.25c=5\), or \(c=20/9\).</p>
+<p>The high reading has less leverage because its prescribed uncertainty is larger. The weighted residual sum vanishes at the answer: \(\sum w_i(y_i-c)=0\). This argument depends on the uncertainty model, and a common calibration offset cannot be removed by treating measurements as independent.</p>
+</details>
+</section>
+<section>
+<h2 id="rotate-into-a-better-fitting-basis">Rotate into a better fitting basis</h2>
+<p>For sample positions \(s=999,1000,1001\), consider columns \(1\) and \(s\). Compute their dot product. Replace the second column by \(s-1000\), compute the new two-by-two Gram matrix, and express the original intercept and slope for a centred fit \(5+0.2(s-1000)\). Which intercept most directly represents the experiment?</p>
+<details><summary>Worked solution</summary>
+<p>The original column dot product is 3000. The centred positions sum to zero and have squared norm two. The new Gram matrix is diagonal with entries 3 and 2, so the fitted mean and trend separate in the normal equations.</p>
+<p>Expanding gives intercept \(5-200=-195\) and slope 0.2. The centred intercept is 5 at a measured position. The original intercept extrapolates roughly a thousand position units from the data, so a small slope error can change it considerably.</p>
+</details>
+</section>
+<section>
+<h2 id="calculate-a-smoothing-factor">Calculate a smoothing factor</h2>
+<p>On an eight-interval Dirichlet grid take Jacobi error modes \(j=1\) and \(j=7\). Find both amplification factors for ordinary Jacobi and for weighted Jacobi with weight \(2/3\). Predict the magnitude of the high-frequency component after three weighted sweeps if its initial amplitude is one.</p>
+<details><summary>Worked solution</summary>
+<p>Ordinary Jacobi gives \(\cos(\pi/8)=0.92388\) and \(\cos(7\pi/8)=-0.92388\). The weighted factors are \(1/3+(2/3)(0.92388)=0.94925\) and \(1/3-(2/3)(0.92388)=-0.28259\).</p>
+<p>Three weighted sweeps leave magnitude \(0.28259^3\simeq0.0226\) of the high-frequency error. The smooth error retains \(0.94925^3\simeq0.855\) of its amplitude. A coarse-grid correction should therefore target the smooth component.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/04-stationary-iterations/">Chapter 4 · Stationary iterations and smoothing</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/05-krylov/">Chapter 5 · Krylov subspaces and preconditioning</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

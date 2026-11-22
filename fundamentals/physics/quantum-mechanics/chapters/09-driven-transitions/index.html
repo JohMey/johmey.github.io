@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transitions under a timed drive · OneSimulation</title>
+<meta name="description" content="Derive the line shape of a weak finite-duration drive and distinguish Fourier width from a system’s intrinsic lifetime.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/chapters/09-driven-transitions/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transitions under a timed drive · OneSimulation">
+<meta property="og:description" content="Derive the line shape of a weak finite-duration drive and distinguish Fourier width from a system’s intrinsic lifetime.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/chapters/09-driven-transitions/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a></p><h1>Transitions under a timed drive</h1><p class="lead">Derive the line shape of a weak finite-duration drive and distinguish Fourier width from a system’s intrinsic lifetime.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#how-a-time-dependent-perturbation-transfers-population">How a time-dependent perturbation transfers population</a><a href="#a-rectangular-pulse">A rectangular pulse</a><a href="#calibrate-a-pulse">Calibrate a pulse</a><a href="#golden-rule-continuum">From a finite pulse to Fermi’s golden rule</a><a href="#separate-phase-accumulation-from-the-drive-pulses">Separate phase accumulation from the drive pulses</a><a href="#measure-a-small-reference-frequency-error">Measure a small reference-frequency error</a><a href="#worked-plot">Separate detuning from shortened observation time</a></nav></aside><article class="prose reference"><section><h2 id="how-a-time-dependent-perturbation-transfers-population">How a time-dependent perturbation transfers population</h2>
+<p>For a time-independent Hamiltonian \(H_0\) the energy components of a state accumulate phases without changing populations. Let a weak applied perturbation \(V(t)\) act for a known interval. Prepare the unperturbed eigenstate \(|i\rangle\) at \(t=0\) and write \(|\psi(t)\rangle=\sum_n c_n(t)e^{-iE_nt/\hbar}|n\rangle\). The interaction-picture amplitudes isolate changes beyond the free phases. Substitution into Schrödinger’s equation and projection onto \(|f\rangle\) give</p>
+<div class="math display">\[i\hbar\dot c_f=\sum_n V_{fn}(t)e^{i\omega_{fn}t}c_n,\qquad \omega_{fn}=(E_f-E_n)/\hbar .\]</div>
+<p>At first order retain \(c_i=1\) on the right-hand side. For \(f\ne i\) the resulting amplitude is the Fourier component of the perturbation at the transition frequency, \(c_f(T)=-(i/\hbar)\int_0^T V_{fi}(t)e^{i\omega_{fi}t}\,dt\). An energetically resonant drive still fails to populate a state if the coupling matrix element vanishes by symmetry. The operator describing the drive is as important as its frequency.</p>
+</section>
+<section><h2 id="a-rectangular-pulse">A rectangular pulse</h2>
+<p>Let \(V_{fi}(t)=V_{fi}\cos(\omega t)\) for \(0&lt;t&lt;T\), with an upward transition so \(\omega_{fi}&gt;0\). Splitting the cosine into exponentials gives frequencies \(\omega_{fi}-\omega\) and \(\omega_{fi}+\omega\). Near resonance, for a pulse lasting many carrier cycles, the rapidly oscillating sum-frequency term contributes little. With detuning \(\Delta=\omega_{fi}-\omega\) the remaining integral gives</p>
+<div class="math display">\[P_{i\to f}\simeq \frac{|V_{fi}|^2T^2}{4\hbar^2}\left[\frac{\sin(\Delta T/2)}{\Delta T/2}\right]^2 .\]</div>
+<p>At exact resonance all contributions build with the same phase, so for a weak short pulse probability grows quadratically in time. The first zeros occur at \(|\Delta|=2\pi/T\), or ordinary-frequency detuning \(1/T\). The line shape measures coherent addition over the finite observation time. It can be broad even when the isolated energy levels have negligible natural width.</p>
+</section>
+<section><h2 id="calibrate-a-pulse">Calibrate a pulse</h2>
+<p>Take a 2.00 ms rectangular pulse with \(|V_{fi}|/\hbar=200\) rad/s. The resonant transition probability is \((200\times0.002/2)^2=0.0400\). At 250 Hz detuning the sinc argument is \(\pi/2\), leaving probability \(0.0162\). The first zeros lie 500 Hz on either side. Doubling pulse duration at the same coupling predicts four times the peak probability and half the first-zero spacing within the weak-drive approximation. A measurement can test both the area dependence and frequency scaling.</p>
+<p>Once the predicted population is no longer small, depletion of the initial level removes the first-order approximation. For an isolated resonantly driven two-state system the rotating-wave solution is \(\sin^2(|V_{fi}|T/(2\hbar))\), describing coherent population transfer and return. Lifetime decay or field fluctuations introduce still other envelopes. Varying pulse duration at fixed drive strength distinguishes finite-time broadening from linewidths that persist as the pulse is lengthened.</p>
+<p>The pulse envelope provides an additional independent control. Replacing the sudden rectangular turn-on and turn-off with smooth edges reduces spectral sidelobes because the Fourier transform of the smoother envelope falls faster away from resonance. Peak transfer at resonance, in the weak-drive regime, depends on the time integral of the drive envelope. Two pulses of different shapes can therefore have the same low-power resonant transition probability yet excite a nearby unwanted level with different probabilities. Specifying duration alone would be insufficient to reproduce such a measurement.</p>
+</section>
+<section><h2 id="golden-rule-continuum">From a finite pulse to Fermi’s golden rule</h2>
+<p>An isolated resonant final state initially collects amplitude proportional to time. A dense set of final states can instead produce a nearly constant total transition rate. To see the change, let a weak drive connect one initial state to levels around energy \(E_\star=E_i+\hbar\omega\). Denote the matrix element of the resonant Fourier component by \(M\). For a cosine drive it contains the factor of one half. First-order time integration over a square pulse gives a phase times \((Mt/\hbar)\,\mathrm{sinc}[(E-E_\star)t/(2\hbar)]\), where \(\mathrm{sinc}(u)=\sin(u)/u\).</p>
+<p>The different final states are orthogonal, so their probabilities add. If the density \(\rho(E)\) counts accessible final states per unit energy, and \(\rho\) and \(M\) vary slowly over the line width,</p>
+<div class="math display">\[P(t)\simeq \frac{|M|^2t^2}{\hbar^2}\int \rho(E)\,\mathrm{sinc}^2\!\left(\frac{(E-E_\star)t}{2\hbar}\right)\,dE.\]</div>
+<p>Set \(u=(E-E_\star)t/(2\hbar)\). Away from a band edge one can extend the integral across the line and use \(\int_{-\infty}^{\infty}\mathrm{sinc}^2u\,du=\pi\). One power of time cancels against the narrowing energy interval, leaving \(P(t)\simeq\Gamma t\) with \(\Gamma=2\pi |M|^2\rho(E_\star)/\hbar\). This intermediate-time result assumes many final levels within the line and little depletion of the initial state. For a small isolated system the long-time dynamics can resolve individual levels again.</p>
+<p>As a numerical example, use \(M=0.500\,\mathrm{\mu eV}=0.000500\,\mathrm{meV}\), \(\rho=1000\,\mathrm{meV^{-1}}\) and \(\hbar=0.6582\,\mathrm{meV\,ps}\). The rate is \(0.00239\,\mathrm{ps^{-1}}\), or a transition probability of \(0.0239\) after \(10.0\,\mathrm{ps}\). The first zero lies \(2\pi\hbar/t=0.414\,\mathrm{meV}\) from resonance, spanning about 414 level spacings on each side for a locally uniform density. The small transition probability and dense spectrum are distinct checks on the approximation.</p>
+<p class="source-note">Practise on sheet 5 · <a href="/fundamentals/physics/quantum-mechanics/problem-sheets/5/#compare-two-continuum-channels">Compare two continua competing for one initial state</a>. Further reading · <a href="https://ocw.mit.edu/courses/8-06-quantum-physics-iii-spring-2016/0c27511c09675d8d385577023328248b_MIT8_06S16_chap2.pdf">Massachusetts Institute of Technology · 8.06 Quantum Physics III · Chapter 2, Time-dependent approximation methods, §§2.1–2.3, Incoherent light, Spontaneous emission and The photoelectric effect</a>.</p>
+</section>
+<section><h2 id="separate-phase-accumulation-from-the-drive-pulses">Separate phase accumulation from the drive pulses</h2>
+<p>A single spectroscopy pulse ties spectral resolution to its own duration. The Ramsey method separates two short coherent pulses by an interval of free evolution. Work with two isolated states \(|g\rangle,|e\rangle\) in the rotating frame of a stable reference. Approximate each pulse as short compared with the free interval and strong enough to rotate the Bloch vector by \(\pi/2\) about the same transverse axis. Ignore relaxation and pulse detuning during the rotations. Starting in \(|g\rangle\), the first pulse prepares \((|g\rangle-i|e\rangle)/\sqrt2\) for the chosen pulse phase.</p>
+<p>Over free interval \(T\) the excited component gains relative phase \(e^{-i\Delta T}\), with \(\Delta=\omega_{eg}-\omega_{\rm ref}\). The second pulse mixes both paths to \(|e\rangle\). Using the rotation matrix \(R_x(\pi/2)=(I-i\sigma_x)/\sqrt2\) gives</p>
+<div class="math display">\[c_e=-\frac i2(1+e^{-i\Delta T}),\qquad P_e=\frac{1+\cos(\Delta T)}2 .\]</div>
+<p>A controllable phase on the second pulse shifts these fringes; on exact resonance two aligned pulses complete a \(\pi\) rotation and transfer all population. For a statistical mixture with the same half populations after pulse one, the two contributions to the final probability have no mutual phase and give one half regardless of delay. Thus the separated-pulse signal measures phase retained between pulses, even when no energy transfer takes place during most of the sequence.</p>
+</section>
+<section><h2 id="measure-a-small-reference-frequency-error">Measure a small reference-frequency error</h2>
+<p>Take a free interval of 2.00 ms. Adjacent maxima occur at ordinary detunings separated by \(1/T=500\) Hz. The first minimum on either side occurs at 250 Hz. The separation of the two half-height points immediately surrounding resonance is \(1/(2T)=250\) Hz. These three figures refer to different linewidth or spacing conventions and should be identified before comparing experimental reports.</p>
+<p>Set the second pulse phase so that the calibrated signal near zero detuning is \(P_e=[1+\sin(2\pi\delta\nu T)]/2\). A measured \(P_e=0.600\) gives \(\delta\nu=\arcsin(0.200)/(2\pi T)=16.0\) Hz on the branch nearest the reference. This setting is more sensitive to small signed frequency errors than the top of a fringe, where the first derivative vanishes. A first scan or a shorter free interval is needed to identify which repeated fringe is being tracked.</p>
+<p>If the transverse coherence decays during free evolution, observed fringe amplitude is multiplied by the coherence factor, often approximated by \(e^{-T/T_2}\). Extending the delay narrows fringe spacing but eventually reduces contrast. Measuring two phase settings in quadrature can separate an actual phase shift from a loss of visibility due to decoherence or pulse-area errors.</p>
+<p>The frequency sensitivity per detected particle can also be estimated. At half population an ensemble of \(N\) independent measurements has standard error \(1/(2\sqrt N)\) in the estimated excited fraction. On the central quadrature slope \(dP_e/d\delta\nu=\pi T\), giving frequency uncertainty approximately \(1/(2\pi T\sqrt N)\) for ideal contrast. With the 2.00 ms delay and ten thousand independent detections this is about 0.80 Hz for a single ensemble. Imperfect contrast reduces the slope, and an unknown phase offset adds a systematic error that collecting more particles alone cannot remove.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Separate detuning from shortened observation time</h2>
+<p>Start a two-level system in its ground state, apply a monochromatic drive of resonant Rabi frequency \(\Omega\), and neglect relaxation. In the rotating-wave approximation detuning \(\delta\) changes the oscillation frequency to \(\sqrt{\Omega^2+\delta^2}\) and reduces its maximum transfer.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/quantum-mechanics/09-driven-transitions.png" alt="Separate detuning from shortened observation time. Horizontal axis: Time / resonant Rabi period. Vertical axis: Excited-state probability. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At detuning equal to the resonant Rabi frequency the largest excited population is one half and its oscillation is √2 times faster. Sampling only at the nominal resonant π-pulse time confounds both effects.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/quantum-mechanics/09-driven-transitions.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Excited-state probability at selected values of Time / resonant Rabi period.</caption><thead><tr><th scope="col">Time / resonant Rabi period</th><th scope="col">Detuning / coupling = 0</th><th scope="col">Detuning / coupling = 0.5</th><th scope="col">Detuning / coupling = 1</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>0</td><td>0</td></tr><tr><th scope="row">0.75</th><td>0.5</td><td>0.18881</td><td>0.01794</td></tr><tr><th scope="row">1.5</th><td>1</td><td>0.57699</td><td>0.069184</td></tr><tr><th scope="row">2.25</th><td>0.5</td><td>0.79809</td><td>0.14638</td></tr><tr><th scope="row">3</th><td>1.3498e−31</td><td>0.64338</td><td>0.23844</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/quantum-mechanics/09-driven-transitions.csv" download>Download all 361 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/quantum-mechanics/problem-sheets/4/">Problem sheet 4 · Energy bounds and semiclassical actions</a></span><span>Next<br><a href="/fundamentals/physics/quantum-mechanics/chapters/10-exchange-of-identical-particles/">Chapter 10 · Exchange and two-particle energies</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

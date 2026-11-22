@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adaptive integration and error estimates · OneSimulation</title>
+<meta name="description" content="Construct a local error estimate from nested Simpson panels, allocate an absolute error budget and recognise signals that defeat sampling-based adaptivity.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/06-adaptive-integration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adaptive integration and error estimates · OneSimulation">
+<meta property="og:description" content="Construct a local error estimate from nested Simpson panels, allocate an absolute error budget and recognise signals that defeat sampling-based adaptivity.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/06-adaptive-integration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Adaptive integration and error estimates</h1><p class="lead">Construct a local error estimate from nested Simpson panels, allocate an absolute error budget and recognise signals that defeat sampling-based adaptivity.</p><p class="byline">Chapter 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#use-two-resolutions-to-estimate-a-missing-integral">Use two resolutions to estimate a missing integral</a><a href="#build-a-global-tolerance-from-local-decisions">Build a global tolerance from local decisions</a><a href="#inspect-one-accepted-panel-and-one-failure">Inspect one accepted panel and one failure</a><a href="#choose-an-independent-comparison">Choose an independent comparison</a><a href="#build-an-independent-certificate-for-an-accepted-panel">Build an independent certificate for an accepted panel</a><a href="#a-peak-that-agrees-at-every-initial-sample">A peak that agrees at every initial sample</a><a href="#allocate-a-certified-global-simpson-budget">Allocate a certified global Simpson budget</a><a href="#worked-plot">Construct a false convergence test for adaptive quadrature</a></nav></aside><article class="prose reference"><section>
+<h2 id="use-two-resolutions-to-estimate-a-missing-integral">Use two resolutions to estimate a missing integral</h2>
+<p>Suppose a composite rule on a smooth integrand has \(Q_h=I+Ch^p+O(h^{p+2})\). Halving the uniform spacing gives \(Q_{h/2}=I+Ch^p/2^p+\cdots\). Subtract the two approximations to eliminate \(I\). The fine-grid error satisfies \(I-Q_{h/2}\simeq(Q_{h/2}-Q_h)/(2^p-1)\). The sign of this estimate matters if correcting the numerical answer. Its magnitude supplies an error indicator. The relation assumes the same leading power operates on both grids and that the error exceeds the noise in the data.</p>
+<p>For Simpson’s rule \(p=4\). On a parent interval compare one Simpson panel \(S\) with two half-panels whose sum is \(S_2\). The fine estimate of the local integral error is \(|S_2-S|/15\), and an extrapolated value is \(S_2+(S_2-S)/15\). The comparison needs only two new function evaluations because the endpoints and original midpoint are reused. If the indicator is too large, split the interval and apply the same test to each child separately.</p>
+</section>
+<section>
+<h2 id="build-a-global-tolerance-from-local-decisions">Build a global tolerance from local decisions</h2>
+<p>Let the total absolute tolerance be \(\epsilon\). Begin with the whole interval assigned that budget. When a panel splits, a simple allocation gives half its budget to each child. By induction the sum of all final panel budgets equals the original tolerance. If each local <em>actual</em> error lies within its budget, the triangle inequality bounds the global error by \(\epsilon\). In practice the indicators estimate those actual errors, so this last statement is conditional. Around a discontinuity the fourth-order expansion can fail, and tiny intervals can run into evaluation noise or floating-point spacing.</p>
+<p>For signed integrals with strong cancellation, relative error alone is hard to interpret. A large positive area and nearly equal negative area may give a tiny sum that changes sign under rounding. Use an absolute tolerance meaningful for the physical output, possibly combined with a relative term based on a stable scale. Reusing shared endpoint values helps both reproducibility and cost, especially when each evaluation invokes a constitutive model or a simulation.</p>
+</section>
+<section>
+<h2 id="inspect-one-accepted-panel-and-one-failure">Inspect one accepted panel and one failure</h2>
+<p>On \([0,1]\) use \(f(x)=x^4\). One Simpson panel gives \(S=0.20833333\), and two panels give \(S_2=0.20052083\). Their difference divided by 15 is \(-0.00052083\). The corrected result is 0.2, exactly the known integral up to the printed rounding. Here the fourth derivative is constant and there are no higher powers in the integrand, so cancellation removes the entire leading error. An estimated error of \(5.21\times10^{-4}\) would pass a local tolerance of \(10^{-3}\) while \(10^{-4}\) would trigger another split.</p>
+<p>Now consider a narrow triangular pulse entirely between 0.10 and 0.11 of the interval, with height one. Its exact area is 0.005. The five points initially used by adaptive Simpson are \(0,0.25,0.5,0.75,1\). Every sampled ordinate is zero. The algorithm would accept zero with a zero indicator, even with a very small tolerance. This failure follows from lack of information, and it applies to any finite deterministic sample set when arbitrary narrow features are permitted. If event times or material interfaces are known, partition at them before sampling. If smoothness bounds are available, they supply an independent scale for an initial mesh. A small estimated local error should be interpreted together with those physical and mathematical assumptions.</p>
+</section>
+<section>
+<h2 id="choose-an-independent-comparison">Choose an independent comparison</h2>
+<p>A practical confirmation is to integrate the same signal using a different initial split and a different set of quadrature nodes. If a narrow pulse missed on one mesh is intersected on the other, their discrepancy reveals that the earlier indicator was misleading. Agreement between both estimates improves confidence but still cannot rule out an arbitrarily narrow feature absent from both sample sets.</p>
+<p>When a physical bound \(|f'|\leq B\) is known, it supplies complementary information. Across an unsampled gap of width \(h\) whose endpoint values are both zero, a possible positive pulse is bounded by two straight ramps of slopes \(+B\) and \(-B\). Integrating the triangular envelope gives a maximum hidden area \(Bh^2/4\). A credible slope bound therefore turns a statement about unsampled behaviour into a quantitative reason to reduce the largest gap.</p>
+</section>
+<section>
+<h2 id="build-an-independent-certificate-for-an-accepted-panel">Build an independent certificate for an accepted panel</h2>
+<p>Adaptive extrapolation estimates error by comparing sampled values. A rigorous alternative is available when the model supplies a valid bound \(M\) on the fourth derivative throughout an interval. For a single Simpson panel of full width \(H\), the absolute error is bounded by \(M H^5/2880\). One derivation uses the cubic Hermite interpolant through both endpoint values and the midpoint value with its derivative at the midpoint. Its remainder is \(f^{(4)}(\xi)(x-a)(x-m)^2(x-b)/24\) for \(m=(a+b)/2\), assuming sufficient smoothness. The factor multiplying the derivative has one sign throughout the interval.</p>
+<p>Integrating that polynomial factor in absolute value gives \(H^5/120\), and dividing by 24 gives the stated denominator 2880. Simpson quadrature integrates the cubic interpolant exactly and sees precisely the same three values as the original function. The midpoint derivative enters this argument as a mathematical device but never has to be measured. With independent derivative bounds on separate panels, summing their absolute bounds gives a global certificate without assuming that leading error terms cancel. Such bounds can be conservative, especially when worst allowed curvature occurs only over a tiny region.</p>
+</section>
+<section>
+<h2 id="a-peak-that-agrees-at-every-initial-sample">A peak that agrees at every initial sample</h2>
+<p>On \([0,1]\) consider \(f(x)=x^2(1-x)^2\), with zero endpoints and midpoint value \(1/16\). Its single Simpson estimate is \(1/24\). The exact integral is \(1/3-1/2+1/5=1/30\), hence the overestimate is \(1/120\). The fourth derivative is exactly 24. Substituting \(M=24,H=1\) gives the same bound \(1/120\), attained in this case because the fourth derivative has constant sign and magnitude. Dividing into two equal Simpson panels lowers the total bound to \(2(1/2)^5/120=1/1920\).</p>
+<p>A different candidate integrand makes the danger of relying on the sampled discrepancy explicit. Let \(g(x)=1-\cos(8\pi x)\). The original three samples and the two additional quarter-point samples are all zero. Both the coarse and refined Simpson estimates are therefore zero, so the usual difference indicator vanishes. Yet its exact integral on the unit interval is one. An independently known derivative bound \(M=(8\pi)^4\) gives a positive a priori certificate; the coarse computation cannot legitimately claim a small guaranteed error from those samples.</p>
+<p>For equal panels the total fourth-derivative bound here is \(M/(2880 n^4)\) for \(n\) Simpson panels. To ensure an absolute error below 0.01 using only this information requires \(n>(M/28.8)^{1/4}\), about 10.85, so eleven panels suffice. The guarantee costs more evaluations than an indicator that happens to stop immediately, but it addresses a different question. Before using it for noisy measured data, check whether a fourth derivative is physically bounded at all and account for sampling error in addition to quadrature.</p>
+<p>On the oscillatory example an offset sample at \(x=1/8\) gives value two, exposing the failure immediately. That single observation is powerful diagnostically, but its inclusion alone does not provide an accuracy bound for every other admissible integrand. The derivative certificate applies to the whole class with the stated derivative limit and therefore answers a stronger question.</p>
+</section>
+<section>
+<h2 id="allocate-a-certified-global-simpson-budget">Allocate a certified global Simpson budget</h2>
+<p>Suppose two smooth regions have lengths \(L_i\) and known bounds \(M_i\) on the fourth derivative. Give region \(i\) exactly \(n_i\) equal Simpson panels. Its contribution to the absolute error bound is \(M_iL_i^5/(2880n_i^4)\). For a fixed total panel count the best continuous allocation minimises the sum of these two expressions. Differentiating with a multiplier gives \(M_iL_i^5/n_i^5\) constant across regions, hence \(n_i\) proportional to \(L_i M_i^{1/5}\). The exponent is one fifth because each extra panel reduces the fourth-power global error at a rate proportional to the inverse fifth power of the local panel count.</p>
+<p>For two half intervals with \(M_1=1,M_2=32\) and twelve panels in total, this gives four panels first and eight second. Cancelling their common factor \(L^5/2880\), the uniform six–six design has bound \(33/6^4\). The proposed four–eight design gives \(1/4^4+32/8^4=3/256\), about 46 percent of the uniform bound. Both designs use the same number of panels, integrate through the common interface, and rely on the same two derivative certificates. This does not guarantee that the actual integral error is reduced by the same factor, because the worst allowed derivatives need not occur everywhere. It quantifies the improved guarantee before sampling begins, entirely independently of a potentially aliased adaptive indicator.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Construct a false convergence test for adaptive quadrature</h2>
+<p>Integrate \(\sin^2(4\pi x)\) from zero to one using a trial Simpson panel and its two half-panels. All five evaluation points are multiples of 1/4. Predict the two estimates and the error inferred from their difference.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/approximation-and-quadrature/06-adaptive-integration.png" alt="Construct a false convergence test for adaptive quadrature. Horizontal axis: Position in integration interval. Vertical axis: Integrand. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Both estimates and their difference vanish in exact arithmetic. The actual integral is one half, visible between the nodes. Changing the initial partition or adding independent samples tests the unresolved oscillations that a nested difference could not detect.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/approximation-and-quadrature/06-adaptive-integration.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Integrand at selected values of Position in integration interval.</caption><thead><tr><th scope="col">Position in integration interval</th><th scope="col">True integrand</th><th scope="col">Interpolant from five trial samples</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>0</td></tr><tr><th scope="row">0.25</th><td>1.4998e−32</td><td>0</td></tr><tr><th scope="row">0.5</th><td>5.999e−32</td><td>0</td></tr><tr><th scope="row">0.75</th><td>1.3498e−31</td><td>0</td></tr><tr><th scope="row">1</th><td>2.3996e−31</td><td>0</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/approximation-and-quadrature/06-adaptive-integration.csv" download>Download all 401 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/05-gaussian-rules/">Chapter 5 · Gaussian quadrature and exactness</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/problem-sheets/3/">Problem sheet 3 · Accuracy with few evaluations</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

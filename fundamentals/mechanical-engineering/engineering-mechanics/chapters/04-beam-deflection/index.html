@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elastic curves and virtual work · OneSimulation</title>
+<meta name="description" content="Predict a specified displacement from the bending-moment field and distinguish a stiffness limit from a stress limit.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/04-beam-deflection/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elastic curves and virtual work · OneSimulation">
+<meta property="og:description" content="Predict a specified displacement from the bending-moment field and distinguish a stiffness limit from a stress limit.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/04-beam-deflection/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Elastic curves and virtual work</h1><p class="lead">Predict a specified displacement from the bending-moment field and distinguish a stiffness limit from a stress limit.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#shape">When a beam is strong enough but too flexible</a><a href="#integrate">Work through a tip reading</a><a href="#measurement">Calculate both position and slope</a><a href="#unit-load">Obtain one displacement directly</a><a href="#reciprocity">Exchange the load and the gauge</a><a href="#shear-energy">Quantify the deformation omitted by a bending-only model</a><a href="#overhang-test">Interpret a short cantilever stiffness test</a></nav></aside><article class="prose reference"><section><h2 id="shape">When a beam is strong enough but too flexible</h2>
+<p>A tool rail may stay below its elastic limit while its cutting head moves outside a position tolerance. The maximum bending stress depends on the largest moment at one section. Deflection accumulates the effect of curvature over a length. A displacement sensor near an unloaded end can therefore move even if the nearby bending moment is zero. To predict it, identify both the point and direction of the required displacement.</p>
+<p>Consider a straight, slender Euler–Bernoulli beam. Cross-sections remain plane and perpendicular to the deformed centreline. Take \(w\) positive upward and \(M\) positive in sagging. For small slopes the signed curvature is \(w''\), with \(\kappa=M/(EI)\). Integrate once to find the slope and once more to find the displacement. Each constant of integration has physical meaning. A clamp fixes displacement and rotation. A simple support fixes its vertical displacement while permitting rotation. At an ordinary join without a hinge, both displacement and slope are continuous.</p>
+</section>
+<section><h2 id="integrate">Work through a tip reading</h2>
+<p>Clamp a beam at \(x=0\). Apply a downward point load \(P\) at \(x=a\) on a beam of total length \(L&gt;a\). The signed moment in \(0&lt;x&lt;a\) is \(-P(a-x)\). For \(x&gt;a\) the free segment has no external force and no moment. Taking constant stiffness and using the clamp conditions gives</p>
+<div class="math display">\[EI w'(x)=-P(ax-x^2/2),\qquad EI w(x)=-P(ax^2/2-x^3/6),\quad 0\le x\le a.\]</div>
+<p>At the load point the displacement is \(-Pa^3/(3EI)\) and the slope is \(-Pa^2/(2EI)\). The free extension beyond it is straight but tilted. Use those values as initial conditions for the unloaded segment: \(w(L)=w(a)+(L-a)w'(a)=-Pa^2(3L-a)/(6EI)\). This expression correctly vanishes when the force is applied at the clamp and reduces to the standard end-load expression when \(a=L\).</p>
+</section>
+<section><h2 id="measurement">Calculate both position and slope</h2>
+<p>Let \(EI=8400\,\mathrm{N\,m^2}\), \(L=1.20\) m, \(a=0.80\) m and \(P=100\) N. Under the load the downward displacement is 2.03 mm and the rotation magnitude is \(100(0.80)^2/[2(8400)]=0.00381\) rad. The 0.40 m overhang contributes another 1.52 mm at the tip, for a total downward reading of 3.56 mm. The slope is small compared with a radian, consistent with the linear curvature assumption. A gauge at the load and one at the tip would give different stiffness estimates if their positions were omitted.</p>
+</section>
+<section><h2 id="unit-load">Obtain one displacement directly</h2>
+<p>There is another way to compute a single sensor reading. Introduce a fictitious force \(Q\) at the sensor in its desired positive direction. The moment becomes \(M_P+Qm\), where \(m\) is the moment per unit sensor force. The bending energy is \(U=\int(M_P+Qm)^2/(2EI)\,dx\). Differentiating with respect to \(Q\) gives the displacement conjugate to that force. Set \(Q=0\) afterwards to recover the original beam.</p>
+<div class="math display">\[\delta=\int_0^L\frac{M_P(x)m(x)}{E(x)I(x)}\,dx.\]</div>
+<p>For a downward unit force at the free tip, \(m=-(L-x)\). Only the portion up to \(a\) contributes because \(M_P=0\) further along. The integral gives \(Pa^2(3L-a)/(6EI)\), the positive downward reading obtained above. This form is especially useful for stepped sections: split the integral where either stiffness or loading changes. Its positive self-flexibility for a load and a sensor pointing the same way is a useful sign check.</p>
+</section>
+<section><h2 id="reciprocity">Exchange the load and the gauge</h2>
+<p>The unit-load formula supplies a test that can be made on the same beam without knowing its exact stiffness distribution. Put the same 100 N force at the tip and move the displacement sensor to \(x=0.80\) m. The new integral has exactly the previous pair of moment fields with their roles exchanged. Since their product is unchanged, the new reading is also 3.56 mm downwards. This Maxwell–Betti reciprocity applies to these work-conjugate forces and displacements in a linear elastic structure with unchanged restraints. A slipping clamp, a support that lifts off or motion large enough to change the load geometry can cause discrepancies between reciprocal tests. Swapping load and sensor positions is therefore also a practical check of the assumed support behaviour.</p>
+</section>
+<section><h2 id="shear-energy">Quantify the deformation omitted by a bending-only model</h2>
+<p>The straight-normal assumption of Euler–Bernoulli theory omits transverse shear distortion. For a slender beam this is often small, but for a deep beam or a material with a small effective shear modulus it can dominate a displacement measurement. In a simple Timoshenko description let \(\kappa_s GA\) be the effective shear stiffness. The dimensionless shear correction factor \(\kappa_s\) accounts for the nonuniform cross-sectional shear field when a single transverse shear resultant \(V\) is used. For the illustration use \(\kappa_s=5/6\) for a homogeneous rectangular section.</p>
+<p>For an end-loaded cantilever the bending moment magnitude is \(P(L-x)\) and the shear force magnitude is \(P\) throughout the span. Add the elastic shear energy to the bending energy. Differentiating with respect to the end force yields the total deflection under that force:</p>
+<div class="math display">\[U=\int_0^L\left[\frac{P^2(L-x)^2}{2EI}+\frac{P^2}{2\kappa_sGA}\right]dx,\qquad \delta=\frac{PL^3}{3EI}+\frac{PL}{\kappa_sGA}.\]</div>
+<p>The shear contribution grows linearly with span while the bending contribution grows cubically. Their ratio is \(3EI/(\kappa_s GA L^2)\). Writing \(I/A=h^2/12\) for a rectangle gives \([E/(4\kappa_sG)](h/L)^2\). This form identifies both the geometric slenderness and material stiffness ratio required for a sensible model choice. A fixed rule based on span-to-depth alone can be poor for a sandwich section with a compliant core.</p>
+</section>
+<section><h2 id="overhang-test">Interpret a short cantilever stiffness test</h2>
+<p>An aluminium fixture projects 120 mm from a rigid clamp. Its cross-section is 20 mm wide and 40 mm deep in the bending direction. Take \(E=70{,}000\,\mathrm{MPa}\), \(G=26{,}000\,\mathrm{MPa}\), and an end load of 500 N. The area is 800 mm² and the bending second moment is \(20(40)^3/12=106667\,\mathrm{mm^4}\). In consistent N–mm units the bending deflection is \(500(120)^3/[3(70000)(106667)]=0.0386\,\mathrm{mm}\). The shear deflection is \(500(120)/[(5/6)(26000)(800)]=0.00346\,\mathrm{mm}\). A dial indicator would measure about 0.0420 mm under these ideal assumptions.</p>
+<p>Fitting a bending-only formula to this reading suggests an apparent modulus of about \(70(0.0386/0.0420)=64.2\,\mathrm{GPa}\). The discrepancy arises from omitted shear deformation despite a perfectly elastic material. Repeat the test at twice the overhang while keeping the force unchanged: bending deflection rises by eight, shear deflection by two. The fractional shear error falls to one quarter of its original value. Measuring several spans can therefore separate an incorrect modulus from a shear correction. Clamp compliance is another candidate in a real experiment. A clamp rotation produces a term with a different span dependence, and a gauge mounted close to the fixture can reveal that motion independently.</p>
+<p>For equal applied loads at spans \(L\) and \(2L\), express measured compliances as \(C_1=B+S\) and \(C_2=8B+2S\), where \(B\) and \(S\) are the original bending and shear contributions per unit load. Then \(B=(C_2-2C_1)/6\) and \(S=C_1-B\). A negative inferred \(S\) signals measurement uncertainty or an omitted boundary deformation, since the assumed elastic shear energy must be positive. This inversion makes the two-span proposal a quantitative model test.</p>
+<p>Taking three spans instead of two permits a residual check, because the third measured displacement is then predicted without adjusting either fitted contribution.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/03-beam-actions/">Chapter 3 · Shear force and bending moment</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/2/">Problem sheet 2 · Beam actions and deformations</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

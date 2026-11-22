@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adaptive steps and event locations · OneSimulation</title>
+<meta name="description" content="Estimate local integration error with a low–high order pair, choose a dimensionally consistent tolerance and bracket a zero of an event function in time.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/05-adaptive-steps/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adaptive steps and event locations · OneSimulation">
+<meta property="og:description" content="Estimate local integration error with a low–high order pair, choose a dimensionally consistent tolerance and bracket a zero of an event function in time.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/05-adaptive-steps/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Adaptive steps and event locations</h1><p class="lead">Estimate local integration error with a low–high order pair, choose a dimensionally consistent tolerance and bracket a zero of an event function in time.</p><p class="byline">Chapter 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#ask-different-parts-of-a-trajectory-for-different-resolutions">Ask different parts of a trajectory for different resolutions</a><a href="#scale-the-estimate-and-choose-a-step">Scale the estimate and choose a step</a><a href="#step-doubling">Estimate error using one full step and two half steps</a><a href="#locate-events-between-stored-states">Locate events between stored states</a><a href="#test-the-event-interpolant-with-a-known-direction">Test the event interpolant with a known direction</a><a href="#relate-state-accuracy-to-event-time-accuracy">Relate state accuracy to event-time accuracy</a><a href="#time-two-crossings-around-the-top-of-a-trajectory">Time two crossings around the top of a trajectory</a><a href="#worked-plot">Choose the next step when a local error estimate misses its target</a></nav></aside><article class="prose reference"><section>
+<h2 id="ask-different-parts-of-a-trajectory-for-different-resolutions">Ask different parts of a trajectory for different resolutions</h2>
+<p>A cooling transient changes rapidly at first and slowly near equilibrium. A uniform step small enough for the beginning can waste effort later. An adaptive controller proposes a step, estimates its error and accepts or rejects it. To estimate the error without the exact solution, two formulas can share function evaluations. With Euler and Heun, compute \(k_1=f(t_n,y_n)\), predict \(y_E=y_n+hk_1\), then evaluate \(k_2=f(t_n+h,y_E)\) and \(y_H=y_n+h(k_1+k_2)/2\).</p>
+<p>Their difference \(y_H-y_E=h(k_2-k_1)/2\) estimates the leading local error of the lower-order Euler step. It normally scales as \(h^2\) in smooth regions. An embedded difference does not equal the local error of the higher-order accepted value; the higher-order value generally has a smaller error starting from accurate data. Nor does a local tolerance directly bound the error at the end of the whole run. Previous accepted steps already carry accumulated trajectory error.</p>
+</section>
+<section>
+<h2 id="scale-the-estimate-and-choose-a-step">Scale the estimate and choose a step</h2>
+<p>For a scalar use \(w=\mathrm{atol}+\mathrm{rtol}\max(|y_n|,|y_H|)\) and the dimensionless estimate \(E=|y_H-y_E|/w\). Accept when \(E\leq1\). If the next difference scales as \(h^2\), a proposed change is \(h_{new}=0.9h E^{-1/2}\). The factor 0.9 leaves a margin for changes in curvature. Practical implementations limit the ratio between successive steps and handle a zero difference by bounded growth. A rejected step is retried from the same original state and time.</p>
+<p>For \(y'=-2y,\ y_n=1,\ h=0.1\), Euler gives 0.8 and Heun gives 0.82, a difference 0.02. With absolute tolerance 0.005 and zero relative tolerance for this demonstration, \(E=4\). The step is rejected and a revised step is \(0.9(0.1)/2=0.045\). Re-evaluation from the original state gives \(y_E=0.91,\ y_H=0.91405\), with difference 0.00405 and \(E=0.81\). The accepted state corresponds to time 0.045, not 0.145. Advancing time on rejection would skip the unresolved portion.</p>
+</section>
+<section>
+<h2 id="step-doubling">Estimate error using one full step and two half steps</h2>
+<p>A solver without an embedded pair can estimate its local error by applying the same order-\(p\) stepper twice from a common starting state: take one full step for \(Y_c\), and separately two successive half steps for \(Y_f\). Suppose the local error for one smooth step, numerical minus exact, is \(C h^{p+1}+O(h^{p+2})\). The two half-step errors accumulate to \(2C(h/2)^{p+1}+O(h^{p+2})\) because propagating the first over the short second half changes its leading coefficient only at higher order. Thus \(Y_f\) carries approximately \(2^{-p}\) of the full-step error.</p>
+<p>Subtracting the two approximations gives an estimate of the correction to \(Y_f\): \((Y_f-Y_c)/(2^p-1)\). Adding it gives a Richardson-extrapolated value. The exponent in a local step controller remains \(1/(p+1)\) because the correction estimate scales as \(h^{p+1}\). The denominator \(2^p-1\) comes from taking <em>two</em> shorter steps to the same endpoint. Confusing that denominator with a single half-step local error factor introduces a systematic error in the estimate.</p>
+<p>Take Heun's second-order method on \(y'=-y\), starting from one with \(h=0.4\). The full-step amplification is \(1-0.4+0.4^2/2=0.68\). Each half step has amplification \(0.82\), so \(Y_f=0.6724\). The fine correction is \((0.6724-0.68)/3\approx-0.0025333\). The extrapolated value is 0.6698667. The exact endpoint \(e^{-0.4}\approx0.6703200\) requires correction \(-0.0020800\) to \(Y_f\). The estimated sign and scale are correct while higher-order terms are still visible. Discontinuous forcing, a skipped event or inconsistent internal solver tolerances can spoil this comparison even when the two output times agree.</p>
+<p class="source-note">Practise on sheet 3 · <a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/#transfer-double-an-euler-step">Accept or retry a nonautonomous Euler step</a>. Further reading · <a href="https://personal.math.ubc.ca/~feldman/math/vble.pdf">University of British Columbia · Numerical Solution of Ordinary Differential Equations, Joel Feldman · Variable Step Size Methods, Euler and Euler–2step, pp. 1–4</a>.</p>
+</section>
+<section>
+<h2 id="locate-events-between-stored-states">Locate events between stored states</h2>
+<p>An event is a zero of \(g(t,y(t))\), such as crossing a chosen temperature threshold. When its endpoint values have opposite signs, continuity brackets at least one event. Use a dense approximation to the trajectory or refine the time interval to locate the crossing. A linear interpolation between endpoints may be adequate for a smooth signal away from a turning point. If a value changes by a small amount near a flat crossing, a small field error can produce a much larger error in event time.</p>
+<p>For \(y=e^{-t}\), readings at 0.6 and 0.8 are 0.54881 and 0.44933. A straight interpolation to 0.5 gives \(t\simeq0.69813\), while the exact time is \(\ln2=0.69315\). The discrepancy arises from the curved trajectory even if the endpoints are exact. A tangential event such as \((t-1)^2=0\) never changes sign, and two crossings in one step can also be missed. Declare the crossing direction, the required timing accuracy and the physical effect of reaching it. After an event that changes the model, start the next segment using the event state and preserve the time at which the transition actually occurred.</p>
+</section>
+<section>
+<h2 id="test-the-event-interpolant-with-a-known-direction">Test the event interpolant with a known direction</h2>
+<p>At a crossing where a scalar signal has nonzero derivative, an approximate amplitude error \(\delta y\) produces a first-order timing error \(\delta t\simeq-\delta y/y'\). For \(e^{-t}=0.5\), the derivative is \(-0.5\) per second. A signal that is 0.002 too high near the crossing therefore appears to reach the threshold about 0.004 s late. This local estimate converts a solver tolerance on a state into a physically interpretable timing requirement.</p>
+<p>A source that switches precisely at the threshold makes the event time part of the subsequent model. A timing error then affects all later states even if ordinary integration error within each regime is small. When comparing grids, compare both the located event times and the post-event states at shared physical times. Two traces that agree before a switch can diverge later purely because one entered the new law sooner.</p>
+</section>
+<section>
+<h2 id="relate-state-accuracy-to-event-time-accuracy">Relate state accuracy to event-time accuracy</h2>
+<p>Let an event be defined by \(G(t,y(t))=0\) and write the scalar event signal as \(g(t)\). Its derivative along a smooth trajectory is \(g'=G_t+G_y f\). At a simple crossing \(g'(t_\star)\ne0\), an error \(\delta g\) in evaluating the signal displaces the reported time by approximately \(-\delta g/g'(t_\star)\). More rigorously, if the true signal derivative has magnitude at least \(m\) throughout the final bracket, the mean value theorem bounds time error by the event-signal error divided by \(m\), in addition to any error left by the scalar root search.</p>
+<p>Thus an event locator can solve its interpolated scalar equation to a tiny tolerance while returning a poor physical time. Errors in the interpolated state, uncertain event threshold and flat slope all propagate into the time estimate. At a tangential contact the derivative vanishes and the first-order estimate ceases to apply. Two simple events can merge into one contact or disappear altogether under a perturbation that would merely shift a steep isolated crossing by a small amount.</p>
+</section>
+<section>
+<h2 id="time-two-crossings-around-the-top-of-a-trajectory">Time two crossings around the top of a trajectory</h2>
+<p>Take vertical position \(y(t)=10t-5t^2\) metres, with time in seconds. Its maximum is 5 m at one second. A detector at 4.8 m records two crossings, since \(5-5(t-1)^2=4.8\) gives \(t=1\pm0.2\), namely 0.8 and 1.2 s. The respective vertical velocities are \(+2\) and \(-2\) m/s. A small threshold increase of 0.01 m therefore moves the rising crossing about 0.005 s later and the falling crossing about 0.005 s earlier.</p>
+<p>Check the exact effect at 4.81 m. The half-separation becomes \(\sqrt{0.19/5}=\sqrt{0.038}\approx0.194936\) s. The actual time shifts have magnitude approximately 0.005064 s, so the local slope estimate is already informative. At a threshold of 4.999 m the speed is instead only \(10\sqrt{0.001/5}\approx0.14142\) m/s. Another increase of 0.01 m moves the threshold above the maximum and removes both crossings. Applying the previous linear timing estimate at this near-tangent setting would predict a displacement for an event that no longer exists.</p>
+<p>A direction flag distinguishes the rising and falling events if each is bracketed, but it cannot recover two crossings hidden inside one large step with endpoint signals of the same sign. In this model the velocity event \(y'=0\) identifies the turning point and splits the time interval into monotone pieces. On each piece check the threshold against its attainable position range before starting a time root search. This strategy uses knowledge of the dynamics to ensure the event actually exists.</p>
+<p>For example, a single step from 0.7 to 1.3 s gives position 4.55 m at both endpoints and therefore no sign difference relative to the 4.8 m detector. Inserting the peak at 1 s gives a positive signal there and immediately produces two valid brackets. Decreasing only the scalar root tolerance would have found neither event on the original unsplit step.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Choose the next step when a local error estimate misses its target</h2>
+<p>Suppose the local estimator behaves as \(E\simeq C h^p\). Matching the next error to tolerance by rescaling \(h\), then applying a safety factor 0.9, predicts \(h_{\rm next}/h=0.9(\mathrm{tol}/E)^{1/p}\). Treat \(p\) as the power of this estimator.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/ordinary-differential-equations/05-adaptive-steps.png" alt="Choose the next step when a local error estimate misses its target. Horizontal axis: Estimated local error / target. Vertical axis: Proposed next step / current step. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>With E eight times the target, a cubic estimator requests a new step 0.45 times the old one. The formula proposes a length; an acceptance test must separately decide whether to retry the current step. Sudden events can invalidate the assumed scaling.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/ordinary-differential-equations/05-adaptive-steps.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Proposed next step / current step at selected values of Estimated local error / target.</caption><thead><tr><th scope="col">Estimated local error / target</th><th scope="col">Local error power 2</th><th scope="col">Local error power 3</th><th scope="col">Local error power 5</th></tr></thead><tbody><tr><th scope="row">0.03</th><td>5.1962</td><td>2.8965</td><td>1.8148</td></tr><tr><th scope="row">0.16907</th><td>2.1888</td><td>1.6276</td><td>1.2842</td></tr><tr><th scope="row">0.9798</th><td>0.90923</td><td>0.90614</td><td>0.90368</td></tr><tr><th scope="row">5.678</th><td>0.3777</td><td>0.50448</td><td>0.63592</td></tr><tr><th scope="row">32</th><td>0.1591</td><td>0.28348</td><td>0.45</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/ordinary-differential-equations/05-adaptive-steps.csv" download>Download all 251 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/2/">Problem sheet 2 · Damping and multistep memory</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/06-geometric-integration/">Chapter 6 · Energy and geometric integration</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

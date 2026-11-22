@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multistep formulas and parasitic modes · OneSimulation</title>
+<meta name="description" content="Derive Adams–Bashforth and BDF formulas from interpolation, test a characteristic polynomial and determine whether starting errors survive refinement.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/04-multistep/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multistep formulas and parasitic modes · OneSimulation">
+<meta property="og:description" content="Derive Adams–Bashforth and BDF formulas from interpolation, test a characteristic polynomial and determine whether starting errors survive refinement.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/04-multistep/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Multistep formulas and parasitic modes</h1><p class="lead">Derive Adams–Bashforth and BDF formulas from interpolation, test a characteristic polynomial and determine whether starting errors survive refinement.</p><p class="byline">Chapter 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#reuse-information-from-earlier-steps">Reuse information from earlier steps</a><a href="#differentiate-a-polynomial-at-the-new-point">Differentiate a polynomial at the new point</a><a href="#inspect-zero-stability-before-trusting-the-order">Inspect zero stability before trusting the order</a><a href="#change-the-step-without-silently-changing-the-order">Change the step without silently changing the order</a><a href="#after-an-abrupt-change-of-forcing">After an abrupt change of forcing</a><a href="#an-implicit-formula-is-only-as-accurate-as-its-correction-solve">An implicit formula is only as accurate as its correction solve</a><a href="#compare-a-predictor-one-correction-and-an-exact-implicit-step">Compare a predictor, one correction and an exact implicit step</a></nav></aside><article class="prose reference"><section>
+<h2 id="reuse-information-from-earlier-steps">Reuse information from earlier steps</h2>
+<p>A Runge–Kutta method constructs within-step stage values and can usually start from a single known initial state. A multistep method instead keeps a short history of states or slopes. Once the history exists, it can attain higher order with fewer new function evaluations per step. Startup, changes of step size and discontinuities need special care because the coefficients embody assumptions about where past data lie.</p>
+<p>For a uniform step \(h\), approximate \(f\) on \([t_n,t_{n+1}]\) by the line through \(f_{n-1}\) and \(f_n\). In the forward interval the line is \(f_n+s(f_n-f_{n-1})/h\), with \(s=t-t_n\). Integrating from zero to \(h\) gives \(y_{n+1}=y_n+h(3f_n-f_{n-1})/2\), the two-step Adams–Bashforth method. The negative weight results from extrapolating a straight line beyond its data. The formula integrates a linearly varying right-hand side exactly if the previous states and slopes are exact.</p>
+</section>
+<section>
+<h2 id="differentiate-a-polynomial-at-the-new-point">Differentiate a polynomial at the new point</h2>
+<p>A backward differentiation formula instead interpolates the recent state values. Differentiating the quadratic through \(y_{n-1},y_n,y_{n+1}\) at \(t_{n+1}\) gives \((3y_{n+1}-4y_n+y_{n-1})/(2h)\). Equating this to \(f(t_{n+1},y_{n+1})\) defines BDF2. To check the coefficients without constructing the full polynomial, substitute the constants, linear and quadratic monomials centred at \(t_{n+1}\). Their derivatives at the evaluation point are \(0,1,0\), respectively, which gives three linear conditions for the three weights.</p>
+<p>For \(y'=-y\) with step 0.2 and exact starts \(y_0=1,y_1=e^{-0.2}=0.81873\), BDF2 gives \(y_2=(4y_1-y_0)/(3+0.4)=0.66910\). Adams–Bashforth gives \(y_2=y_1+0.1(-3y_1+1)=0.67311\). The exact value at 0.4 is 0.67032. Exact starting data isolate the behaviour of the multistep formula. In a practical code, a single-step method of adequate order creates the first value. The starting error becomes an input disturbance for the recurrence.</p>
+</section>
+<section>
+<h2 id="inspect-zero-stability-before-trusting-the-order">Inspect zero stability before trusting the order</h2>
+<p>For \(y'=0\) with no new forcing, BDF2 obeys \(3y_{n+1}-4y_n+y_{n-1}=0\). Try a sequence \(y_n=\zeta^n\); the characteristic roots are \(1,1/3\). One root represents the constant physical solution, and the other is a decaying parasitic component. In a general constant-step linear multistep formula all characteristic roots must satisfy \(|\zeta|\leq1\) and those on the unit circle must be simple for zero stability. A repeated root at one would admit a term proportional to \(n\) and hence unbounded amplification of a fixed initial mismatch as \(h\) decreases at fixed physical time.</p>
+<p>Zero stability controls propagation over many small steps near \(h=0\). Absolute stability addresses a given finite \(h\lambda\) for a dynamical test mode. A formula may satisfy the first and still require a restrictive explicit step for the second. With consistency and a Lipschitz right-hand side, zero stability is the condition that converts small local defects and sufficiently accurate starts into convergence on fixed intervals. After a state reset or a discontinuity, reconstruct the history from the new side rather than extrapolating slopes belonging to a different evolution law.</p>
+</section>
+<section>
+<h2 id="change-the-step-without-silently-changing-the-order">Change the step without silently changing the order</h2>
+<p>If the preceding step had length \(h_p\) and the proposed step has length \(h\), the slope of the line through the two old right-hand sides is \((f_n-f_{n-1})/h_p\). Integrating that line over the proposed interval gives \(h f_n+h^2(f_n-f_{n-1})/(2h_p)\). The constant-step coefficients \(3/2,-1/2\) are recovered only when \(h=h_p\). For \(h=h_p/2\), the new weights multiplying \(h\) are \(5/4,-1/4\).</p>
+<p>As a numerical check, integrate \(y'=t\) starting at \(t_n=1\) with \(h_p=0.2,\ h=0.1\). Slopes are 1 and 0.8, so the variable-step formula predicts an increment \(0.1(1.25-0.25\cdot0.8)=0.105\), exactly \(\int_1^{1.1}t\,dt\). Reusing constant-step coefficients would give 0.11. Adjusting only the time interval in the integrator while leaving coefficients fixed can therefore introduce a measurable error even on linear forcing.</p>
+</section>
+<section>
+<h2 id="after-an-abrupt-change-of-forcing">After an abrupt change of forcing</h2>
+<p>Suppose an input is switched from zero to one exactly at a recorded time. A two-step formula mixing a pre-switch derivative with the new value is extrapolating across a discontinuity. On the first step wholly after the switch, the true integral of the input is exactly \(h\), whereas the old and new samples in Adams–Bashforth give \(3h/2\). Restarting with a suitable one-step update reconstructs a history belonging to the new smooth segment.</p>
+</section>
+<section>
+<h2 id="an-implicit-formula-is-only-as-accurate-as-its-correction-solve">An implicit formula is only as accurate as its correction solve</h2>
+<p>An implicit linear multistep method has an equation \(y_{n+1}=a+h\beta f(t_{n+1},y_{n+1})\), where \(a\) includes old states and old slopes. A predictor supplies a first iterate \(v_0\). Functional correction uses \(v_{j+1}=a+h\beta f(t_{n+1},v_j)\). If \(f\) is Lipschitz in its state with constant \(L\), differences contract whenever \(h|\beta|L&lt;1\). Under that condition \(j\) corrections reduce an initial error by at least the corresponding geometric factor. This is a restriction on a particular inner solver and can be much more severe than the stability condition for the time formula itself.</p>
+<p>For \(f=\lambda y\), the fixed-point correction has error multiplier \(h\beta\lambda\), even though solving the implicit time equation exactly produces a rational amplification factor. A single correction from an explicit predictor replaces that rational response by a polynomial. Accordingly, tables of stability regions for exactly solved formulas cannot be quoted unchanged when an implementation uses a fixed small number of functional corrections. Newton or a direct solve can restore the intended implicit update, provided its own arithmetic error is sufficiently controlled.</p>
+</section>
+<section>
+<h2 id="compare-a-predictor-one-correction-and-an-exact-implicit-step">Compare a predictor, one correction and an exact implicit step</h2>
+<p>Consider \(y'=-4y,\ y_n=1,\ h=1\). The trapezoidal implicit equation is \(y_{n+1}=1-2(1+y_{n+1})\), giving \(3y_{n+1}=-1\) and \(y_{n+1}=-1/3\). For comparison the true value after the interval is \(e^{-4}\approx0.0183\). The exactly solved trapezoidal update remains bounded but oscillatory. Forward Euler prediction gives \(v_0=1-4=-3\). One functional trapezoidal correction yields \(v_1=-1-2(-3)=5\), and another gives \(v_2=-1-10=-11\).</p>
+<p>Relative to the implicit solution the correction errors are \(-8/3,\ 16/3,\ -32/3\). Their absolute magnitudes double after every correction, precisely as predicted by \(|h\lambda|/2=2\). The linear residual of the intended equation at the once-corrected value five is \(3(5)+1=16\). Reporting this as the result of an implicit stable solver would hide a far larger failure than the known phase error of the exactly solved trapezoidal rule. The inner iteration has failed to find the state required by the time method.</p>
+<p>At \(h=0.1\) the correction multiplier instead becomes −0.2. The implicit update is \(2/3\), while the explicit predictor is 0.6. One correction gives \(0.8-0.2(0.6)=0.68\), and another gives 0.664. Monitoring the actual implicit-equation residual now documents successful contraction. For nonlinear multistep implementations use the same principle: record whether each implicit equation was solved to accuracy compatible with the local time error before interpreting convergence under time refinement.</p>
+<p>One can also solve the scalar implicit equation by Newton iteration. Here its derivative with respect to the unknown is the constant three at \(h=1\), so one Newton correction from any starting guess recovers \(-1/3\) exactly. The comparison demonstrates a failure of a particular nonlinear iteration, while the mathematical time formula itself is well defined and has a unique implicit solution. More generally stiffness makes the choice of inner solver central to total runtime and reliability.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/03-stiffness/">Chapter 3 · Absolute stability and stiffness</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/2/">Problem sheet 2 · Damping and multistep memory</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

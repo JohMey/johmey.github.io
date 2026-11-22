@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Static and couple balance of rotors · OneSimulation</title>
+<meta name="description" content="Represent rotating imbalance as a vector and determine the corrections needed to cancel both net force and rocking moment.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/09-rotor-balance/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Static and couple balance of rotors · OneSimulation">
+<meta property="og:description" content="Represent rotating imbalance as a vector and determine the corrections needed to cancel both net force and rocking moment.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/09-rotor-balance/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Static and couple balance of rotors</h1><p class="lead">Represent rotating imbalance as a vector and determine the corrections needed to cancel both net force and rocking moment.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#unbalance">Translate a mass offset into a periodic bearing load</a><a href="#correction">Split one known unbalance between two planes</a><a href="#measurement">Identify what a single-plane test can miss</a><a href="#tolerance">Interpret correction accuracy</a><a href="#influence-coefficient">Derive a balance correction from a trial mass</a><a href="#trial-run">Convert measured shaft phase into a physical correction</a><a href="#gyroscopic-torque">A balanced rotor can load its bearings during a turn</a><a href="#worked-plot">How accurately must a balance mass be placed?</a></nav></aside><article class="prose reference"><section><h2 id="unbalance">Translate a mass offset into a periodic bearing load</h2>
+<p>A rotor can have its total mass centre on the shaft axis and still shake its housing. The reason is spatial: two equal and opposite centrifugal force vectors in separate transverse planes form a rotating couple. First describe one small excess mass \(m\) at radial offset \(e\) and clock angle \(\phi\). At constant angular speed \(\omega\), its required radial acceleration has magnitude \(e\omega^2\). The equal and opposite reaction transmitted to the rotating assembly has magnitude \(me\omega^2\).</p>
+<p>Represent its radial unbalance by a complex number \(U=me(\cos\phi+i\sin\phi)\). This is shorthand for two transverse components at a reference shaft orientation, not a complex physical force. Multiplication by \(e^{i\omega t}\) rotates all vectors together. Since both \(\omega^2\) and this rotation are common to all masses, cancellation can be carried out using \(U\) alone.</p>
+<div class="math display">\[\sum U_j=0,\qquad \sum z_jU_j=0.\]</div>
+<p>Here \(z\) is axial location from a chosen reference plane. The second condition cancels the rotating transverse moment; its vector direction includes a common quarter-turn from the cross product that drops out of the zero condition. If the first condition holds, shifting the axial origin leaves the second condition unchanged.</p>
+</section>
+<section><h2 id="correction">Split one known unbalance between two planes</h2>
+<p>A rigid rotor has an 18 g excess mass at radius 40 mm, angle 0°, and axial location 120 mm between two correction planes at \(z_A=0\) and \(z_B=300\,\mathrm{mm}\). Its unbalance is \(720\,\mathrm{g\,mm}\) along the reference direction. Moment balance gives \(300 U_B=-120(720)\), hence \(U_B=-288\,\mathrm{g\,mm}\). Force balance then gives \(U_A=-432\,\mathrm{g\,mm}\). Both corrections point at 180° because the original mass lies between the planes.</p>
+<p>At correction radius 60 mm these vectors require added masses 4.80 g in plane B and 7.20 g in plane A. If material is removed instead, the equivalent removed masses lie at the original 0° clock position. At 1800 rpm the original force amplitude was \(0.000720(188.5)^2=25.6\,\mathrm N\). Doubling speed quadruples that force, yet the same mass corrections still balance the assumed rigid rotor.</p>
+</section>
+<section><h2 id="measurement">Identify what a single-plane test can miss</h2>
+<p>Consider instead two unbalances \(+400\) and \(-400\,\mathrm{g\,mm}\) in planes 200 mm apart. Their resultant force is zero at every speed. On ideal low-friction supports there is no preferred heavy side in a static test. Their couple magnitude at 1800 rpm is \(0.000400(0.200)(188.5)^2=2.84\,\mathrm{N\,m}\), sufficient to generate equal opposing reactions at bearings. Measurements in two support planes can distinguish this pattern from a net shaking force. Near a flexible rotor’s bending critical speed, shaft deflection changes the mass distribution and response phase; the rigid-body correction formulas then require a modal or measured influence-coefficient model.</p>
+</section>
+<section><h2 id="tolerance">Interpret correction accuracy</h2>
+<p>An angular placement error also leaves a residual vector. A correction of the correct magnitude set one degree away leaves a residual approximately \(U\pi/180\) for small angle, since the tip of the vector follows a circle. At large operating speed even this residual produces a force scaling with the square of speed.</p>
+</section>
+<section><h2 id="influence-coefficient">Derive a balance correction from a trial mass</h2>
+<p>An assembled rotor rarely reveals the angular location of its excess mass directly. A once-per-revolution vibration measurement supplies an amplitude and phase referred to a shaft mark. At fixed operating speed and linear support conditions, represent the measured complex vibration \(V\) by \(V=\alpha U\), where \(U\) is the complex unbalance in one plane and \(\alpha\) is the response per unit unbalance. This coefficient includes bearing compliance, dynamic amplification and the sensor’s phase lag. The phase of largest displacement is therefore not necessarily the angle where correction mass should be added.</p>
+<p>Record the original vibration \(V_0\), add a known trial unbalance \(U_t\) and measure \(V_t\) at the same speed with the same phase reference. Subtraction cancels the original signal and gives</p>
+<div class="math display">\[\alpha=(V_t-V_0)/U_t,\qquad U_c=-V_0/\alpha .\]</div>
+<p>Remove the trial before installing the calculated total correction. If the trial remains attached, install only \(U_c-U_t\) as further correction. Subtract complex vectors, not their magnitudes. A trial too small to resolve above measurement noise makes the inferred phase and correction unreliable; an unnecessarily large trial can take the rotor outside the measured linear range. A repeat baseline after removing the mass can expose a changing thermal or mounting condition.</p>
+</section>
+<section><h2 id="trial-run">Convert measured shaft phase into a physical correction</h2>
+<p>At fixed speed a laser reports an original synchronous displacement \(V_0=(30+40i)\,\mathrm{\mu m}\). Add a 5.0 g trial mass at a 40 mm radius at the reference angle, so \(U_t=200\,\mathrm{g\,mm}\). The new reading is \(V_t=(50+60i)\,\mathrm{\mu m}\). The influence coefficient is \((20+20i)/200=0.10+0.10i\) micrometres per g mm. The required correction is</p>
+<div class="math display">\[U_c=-\frac{30+40i}{0.10+0.10i}=-(350+50i)\,\mathrm{g\,mm}.\]</div>
+<p>Its magnitude is \(353.6\,\mathrm{g\,mm}\) and angle is 188.1° from the trial reference in the same positive rotational convention. With a correction radius of 50 mm, add about 7.07 g after removing the trial. Multiplying the correction vector by the measured coefficient gives \(-30-40i\) micrometres, cancelling the baseline in the linear model. If the trial must stay, the extra vector is \(-550-50i\) g mm. Installing the full correction in addition to the trial would leave its trial response as a predictable residual.</p>
+<p>Single-plane correction minimises one measured response at one speed. For a long rotor with a separate couple unbalance, a response measured at one support may vanish while the opposite support continues to vibrate. Measuring both supports under trial masses in two planes produces a two-by-two complex influence matrix. Nearly proportional measured columns mean that the two trial planes cannot be distinguished reliably at those sensor locations, a conditioning issue that no amount of arithmetic precision can cure.</p>
+<p>The initial amplitude in the example is 50 micrometres; the trial amplitude is 78.1 micrometres. Their scalar difference, 28.1 micrometres, happens to be close to the actual complex response increment’s magnitude of 28.3 micrometres, but the scalar comparison contains no correction angle. Even apparently favourable numbers cannot replace the shaft reference.</p>
+</section>
+<section><h2 id="gyroscopic-torque">A balanced rotor can load its bearings during a turn</h2>
+<p>After a rotor is balanced, its spin angular momentum still has to change direction whenever its supporting structure turns. Consider an axisymmetric flywheel rotating rapidly at \(\omega_s\) about unit vector \(e_s\), with polar inertia \(I_s\). If its axis is steered at angular rate \(\Omega\), then \(\dot e_s=\Omega\times e_s\). Isolate the spin part of angular momentum and differentiate in an inertial frame:</p>
+<div class="math display">\[H_s=I_s\omega_s e_s,\qquad M_s=I_s\dot\omega_s e_s+\Omega\times H_s.\]</div>
+<p>The first term spins the rotor up or down. The second turns its axis without changing its spin energy to leading order. For steady orthogonal steering the moment magnitude is \(I_s|\omega_s\Omega|\). Components of \(\Omega\) parallel to the spin axis do not turn the angular momentum. For slow regular precession of a fast rotor this spin-dominated relation also gives \(\Omega\simeq M/H_s\) for a transverse applied moment. Rapid steering acceleration, strong nutation or significant transverse angular momentum requires the full tensor equations.</p>
+<p>A horizontally mounted flywheel on a turntable has \(I_s=0.12\,\mathrm{kg\,m^2}\), spins in the positive \(x\) direction at 3000 rpm and is turned about positive \(z\) at 0.40 rad/s. Angular momentum is \(0.12(3000)(2\pi/60)=37.7\,\mathrm{kg\,m^2/s}\) along \(x\). Since \(e_z\times e_x=e_y\), the bearings must exert 15.1 N m along positive \(y\) on the rotor. A 0.30 m support separation along \(x\) requires a pair of equal opposite vertical bearing forces of 50.3 N to deliver this moment, in addition to weight and ordinary radial loads. Reversing the steering reverses the couple immediately at a given speed. A rigid imbalance force at fixed shaft speed does not reverse just because steering changes direction. That distinction is a practical way to diagnose the origin of a load measured on a moving platform.</p>
+<p class="source-note">Practise on sheet 5 · <a href="/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/5/#practice-gyroscopic-torque">Balance the steering moment of a two-flywheel instrument</a>. Further reading · <a href="https://ocw.mit.edu/courses/16-07-dynamics-fall-2009/99f271d601bb3d9d04e8b8ce0c73cb7a_MIT16_07F09_Lec30.pdf">MIT · 16.07 Dynamics · Lecture L30, 3D Rigid Body Dynamics: Tops and Gyroscopes, steady precession</a>.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">How accurately must a balance mass be placed?</h2>
+<p>A single-plane correction should cancel the original unbalance vector. If its magnitude ratio is \(k\) and its angle differs from perfect opposition by \(\delta\), vector addition leaves the normalised magnitude \(\sqrt{1+k^2-2k\cos\delta}\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/machine-dynamics/09-rotor-balance.png" alt="How accurately must a balance mass be placed?. Horizontal axis: Angular placement error (degrees). Vertical axis: Residual / original unbalance. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Even an otherwise exact correction leaves 0.174 of the original unbalance for a 10° angular error. A magnitude tolerance creates a nonzero floor at zero angle. The plotted ratio also scales the residual centrifugal force at any chosen speed.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/machine-dynamics/09-rotor-balance.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Residual / original unbalance at selected values of Angular placement error (degrees).</caption><thead><tr><th scope="col">Angular placement error (degrees)</th><th scope="col">Correction magnitude 0.85 × ideal</th><th scope="col">Correction magnitude 1 × ideal</th><th scope="col">Correction magnitude 1.15 × ideal</th></tr></thead><tbody><tr><th scope="row">−60</th><td>0.93408</td><td>1</td><td>1.0828</td></tr><tr><th scope="row">−30</th><td>0.50026</td><td>0.51764</td><td>0.57501</td></tr><tr><th scope="row">0</th><td>0.15</td><td>0</td><td>0.15</td></tr><tr><th scope="row">30</th><td>0.50026</td><td>0.51764</td><td>0.57501</td></tr><tr><th scope="row">60</th><td>0.93408</td><td>1</td><td>1.0828</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/machine-dynamics/09-rotor-balance.csv" download>Download all 241 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/4/">Problem sheet 4 · Mechanism kinematics and impact</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/10-lagrange-equations/">Chapter 10 · Energy coordinates and Lagrange’s equation</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

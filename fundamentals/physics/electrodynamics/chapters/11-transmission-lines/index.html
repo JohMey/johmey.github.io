@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pulses on a transmission line · OneSimulation</title>
+<meta name="description" content="Use charge and flux conservation to predict the first voltages seen when a pulse meets a mismatched load.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/11-transmission-lines/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pulses on a transmission line · OneSimulation">
+<meta property="og:description" content="Use charge and flux conservation to predict the first voltages seen when a pulse meets a mismatched load.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/11-transmission-lines/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Pulses on a transmission line</h1><p class="lead">Use charge and flux conservation to predict the first voltages seen when a pulse meets a mismatched load.</p><p class="byline">Chapter 11 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-line-resolves-the-travel-time">A line resolves the travel time</a><a href="#how-the-load-launches-a-return-wave">How the load launches a return wave</a><a href="#locate-and-characterize-a-mismatch">Locate and characterize a mismatch</a><a href="#match-unequal-impedances-with-a-finite-line-segment">Match unequal impedances with a finite line segment</a><a href="#design-a-section-and-test-its-bandwidth">Design a section and test its bandwidth</a><a href="#worked-plot">Recover the load from a reflected pulse</a></nav></aside><article class="prose reference"><section><h2 id="a-line-resolves-the-travel-time">A line resolves the travel time</h2>
+<p>A cable can store energy all along its length. When a change of source voltage travels an appreciable fraction of the cable during its rise time, a single lumped capacitor cannot encode both its arrival and its reflection. Model a uniform two-conductor line using inductance \(L'\) and capacitance \(C'\) per unit length. Omit conductor resistance and dielectric leakage initially. Let \(V(z,t)\) be voltage between conductors and \(I(z,t)\) current toward increasing \(z\).</p>
+<p>A short section \(dz\) experiences an inductive voltage difference \(L'dz\,\partial_t I\). Its net incoming current charges \(C'dz\) at the rate \(\partial_t V\). Accounting for the positive current direction gives the pair</p>
+<div class="math display">\[\partial_z V=-L'\partial_t I,\qquad \partial_z I=-C'\partial_t V.\]</div>
+<p>Differentiating once more gives wave equations with \(v=1/\sqrt{L'C'}\). Substitution of a travelling waveform shows that a forward wave has \(I_+=V_+/Z_0\), while a backward wave has \(I_-=-V_-/Z_0\), where \(Z_0=\sqrt{L'/C'}\). The characteristic impedance thus describes the voltage-to-current ratio of one travelling component. A resistance meter at the end of a finite DC cable ordinarily measures something different.</p>
+</section>
+<section><h2 id="how-the-load-launches-a-return-wave">How the load launches a return wave</h2>
+<p>At a resistive termination \(R_L\) the total voltage equals \(R_L\) times total current. Write \(V_-= \Gamma V_+\) and use the opposite current signs above. Rearrangement gives</p>
+<div class="math display">\[\Gamma=\frac{R_L-Z_0}{R_L+Z_0},\qquad V_L=(1+\Gamma)V_+ .\]</div>
+<p>An open end doubles voltage and cancels current. A shorted end cancels voltage and doubles current. With positive real \(Z_0\) the reflected fraction of incoming wave power is \(\Gamma^2\). A voltage reflection of either sign carries energy back toward the source. A matched resistor absorbs all the incident energy, a condition also useful for interpreting the first step in a time-domain voltage trace.</p>
+</section>
+<section><h2 id="locate-and-characterize-a-mismatch">Locate and characterize a mismatch</h2>
+<p>A line with \(L'=250\) nH/m and \(C'=100\) pF/m has \(v=2.00\times10^8\) m/s and \(Z_0=50.0\) Ω. A 2.00 V source step with series resistance 50.0 Ω launches 1.00 V into a 30.0 m cable. Initially the source sees the characteristic impedance because no reflection has had time to return. At 150 ns the leading edge reaches a 150 Ω load, where \(\Gamma=0.500\). The load rises to 1.50 V and draws 10.0 mA.</p>
+<p>The return step of 0.50 V reaches the source at 300 ns. The source resistance is matched, so it absorbs the returning wave with no further reflection and the source-end voltage becomes 1.50 V. The result agrees with the final DC divider. A measured return time locates the discontinuity through \(d=vt_{\rm return}/2\), while its signed amplitude identifies an impedance increase or decrease. Distributed losses must be estimated before using this amplitude ratio on a long real cable.</p>
+<p>Changing the source resistance leaves the first arrival time unchanged while altering the incident amplitude. It also changes what happens when the first reflection returns. At a source whose internal resistance differs from the line impedance, part of that returning pulse is launched outward again. Repeated round trips then generate a staircase of voltages separated by twice the propagation time.</p>
+</section>
+<section><h2 id="match-unequal-impedances-with-a-finite-line-segment">Match unequal impedances with a finite line segment</h2>
+<p>A resistive load can be matched at a selected frequency even when its resistance differs from the feeding line’s characteristic impedance. Insert a uniform lossless section of impedance \(Z_t\) and length \(\ell\) between the original line \(Z_0\) and the load \(R_L\). Inside the added section decompose voltage into forward and backward waves. With the load plane at \(z=0\), a convenient phasor convention gives \(V(z)=V_+e^{-i\beta z}+V_-e^{i\beta z}\) and \(I(z)=(V_+e^{-i\beta z}-V_-e^{i\beta z})/Z_t\). At \(z=0\) use \(V(0)/I(0)=R_L\) to remove the unknown reflection coefficient.</p>
+<p>Evaluate the ratio at the input plane \(z=-\ell\). Collecting the exponentials into cosines and sines gives</p>
+<div class="math display">\[Z_{\rm in}=Z_t\frac{R_L\cos(\beta\ell)+iZ_t\sin(\beta\ell)}{Z_t\cos(\beta\ell)+iR_L\sin(\beta\ell)}.\]</div>
+<p>For an electrically short segment the input simply approaches the load. At a quarter wavelength \(\beta\ell=\pi/2\) and \(Z_{\rm in}=Z_t^2/R_L\). Setting this equal to \(Z_0\) gives \(Z_t=\sqrt{Z_0R_L}\). Reflections still occur inside the added section, but their summed contribution at its input cancels at the design frequency. This is a phase-dependent match, so its behaviour under a suddenly applied step differs from a resistor matched at every frequency.</p>
+</section>
+<section><h2 id="design-a-section-and-test-its-bandwidth">Design a section and test its bandwidth</h2>
+<p>A 50.0 Ω source line drives a 100 Ω resistor at 100 MHz. Available cable has phase speed \(2.00\times10^8\) m/s. The required matching impedance is \(70.7\) Ω and the length is \(v/(4f)=0.500\) m. At design frequency the input impedance equals 50.0 Ω, whereas directly attaching the resistor would produce reflection amplitude \((100-50)/(100+50)=1/3\) and reflect 11.1 percent of the incident power.</p>
+<p>To test the frequency limit without dividing by a nearly infinite tangent, evaluate the sine–cosine form at 50.0 MHz. The electrical length is \(\pi/4\), so the trigonometric factors cancel. Substituting the three real impedances gives \(Z_{\rm in}=66.7-23.6i\) Ω. The feeding-line reflection magnitude \(|(Z_{\rm in}-50)/(Z_{\rm in}+50)|\) is about \(0.243\), reflecting \(5.9\) percent of incident power. At 200 MHz the section is half a wavelength and the input again equals the bare load. A frequency sweep should therefore show a matched centre frequency and increasing reflected power away from it. Loss or an appreciably reactive load changes both the depth and position of that minimum.</p>
+<p>A frequency-domain match can also be understood through a short series of time-domain reflections. The impedance first rises from 50.0 to 70.7 ohms and then rises again from 70.7 to 100 ohms. The two interface reflections have the same sign when considered locally. At a quarter wavelength, propagation through the matching section and back adds a half-cycle phase, making the returning contributions cancel after all internal reflections are summed. An abrupt step arrives at those interfaces at different times, so the earliest observed reflected step need not vanish. A narrowband sinusoid and a broadband step perform different tests of the same lossless device.</p>
+<p>An actual connector of finite electrical length introduces another discontinuity that may be visible in either test.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Recover the load from a reflected pulse</h2>
+<p>Send a voltage step down a lossless line into a real load. Continuity gives \(\Gamma=(Z_L-Z_0)/(Z_L+Z_0)\). Use the original wave impedance for both incident and backward power, which makes reflected power scale as \(\Gamma^2\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/electrodynamics/11-transmission-lines.png" alt="Recover the load from a reflected pulse. Horizontal axis: Resistive load / line impedance. Vertical axis: Amplitude coefficient or power fraction. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Loads one half and twice the line impedance both reflect 1/9 of the incident power. Their reflected voltages have opposite signs. Measuring polarity as well as magnitude separates those two possibilities.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/electrodynamics/11-transmission-lines.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Amplitude coefficient or power fraction at selected values of Resistive load / line impedance.</caption><thead><tr><th scope="col">Resistive load / line impedance</th><th scope="col">Voltage reflection coefficient</th><th scope="col">Reflected power fraction</th></tr></thead><tbody><tr><th scope="row">0.05</th><td>−0.90476</td><td>0.81859</td></tr><tr><th scope="row">1.0408</th><td>0.019993</td><td>0.00039974</td></tr><tr><th scope="row">2.0316</th><td>0.34028</td><td>0.11579</td></tr><tr><th scope="row">3.0092</th><td>0.50115</td><td>0.25115</td></tr><tr><th scope="row">4</th><td>0.6</td><td>0.36</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/electrodynamics/11-transmission-lines.csv" download>Download all 300 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/problem-sheets/5/">Problem sheet 5 · Metal penetration and guide cutoff</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/12-field-forces/">Chapter 12 · Force carried by a field</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

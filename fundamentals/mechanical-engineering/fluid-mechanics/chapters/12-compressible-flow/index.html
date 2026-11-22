@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compressible nozzles and choking · OneSimulation</title>
+<meta name="description" content="Relate area change to Mach number and calculate the limiting mass flow through a converging nozzle.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/12-compressible-flow/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Compressible nozzles and choking · OneSimulation">
+<meta property="og:description" content="Relate area change to Mach number and calculate the limiting mass flow through a converging nozzle.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/12-compressible-flow/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Compressible nozzles and choking</h1><p class="lead">Relate area change to Mach number and calculate the limiting mass flow through a converging nozzle.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#density">Incorporate expansion work and mass conservation</a><a href="#critical">Obtain the throat state from the reservoir</a><a href="#supply">Estimate a choked discharge</a><a href="#supply-temperature">Predict changes at a choked throat</a><a href="#normal-shock">Derive the admissible jump from conservation laws</a><a href="#diffuser-shock">Calculate a diffuser’s stagnation-pressure loss</a><a href="#worked-plot">Find the two states that share a nozzle area ratio</a></nav></aside><article class="prose reference"><section><h2 id="density">Incorporate expansion work and mass conservation</h2>
+<p>Gas accelerates through a nozzle by converting enthalpy into kinetic energy. At sufficiently high speeds, density changes appreciably and a constant-density volume balance fails. For steady one-dimensional adiabatic flow without shaft work or appreciable elevation change, \(h+V^2/2=h_0\). A calorically perfect gas has \(h=c_pT\); its local sound speed is \(a=\sqrt{\gamma RT}\), and Mach number is \(M=V/a\). Evaluate \(a\) at local static temperature, rather than at the upstream reservoir temperature.</p>
+<p>Assume the acceleration is reversible, so \(dp=a^2d\rho\) along the isentrope. Differential momentum balance gives \(dp=-\rho VdV\), hence \(d\rho/\rho=-M^2dV/V\). Inserting this in continuity \(d\rho/\rho+dV/V+dA/A=0\) gives the area–velocity relation</p>
+<div class="math display">\[\frac{dA}{A}=(M^2-1)\frac{dV}{V}.\]</div>
+<p>A subsonic stream accelerates through a converging passage. A supersonic stream accelerates through a diverging one. A smooth transition through sonic conditions requires a stationary area, conventionally a minimum-area throat for acceleration from subsonic to supersonic speed. A converging nozzle supplied from rest can first reach Mach one at its smallest area, the exit.</p>
+</section>
+<section><h2 id="critical">Obtain the throat state from the reservoir</h2>
+<p>In the upstream reservoir the flow is essentially at rest, so its static pressure and temperature are stagnation values \(p_0,T_0\). Combining \(c_p(T_0-T)=V^2/2\) with \(c_p=\gamma R/(\gamma-1)\) gives \(T/T_0=[1+(\gamma-1)M^2/2]^{-1}\). Apply the ideal-gas isentropic pressure–temperature relation to find the critical pressure and temperature ratios at \(M=1\).</p>
+<div class="math display">\[T^*/T_0=2/(\gamma+1),\qquad p^*/p_0=[2/(\gamma+1)]^{\gamma/(\gamma-1)} .\]</div>
+<p>With exit area fixed, lowering back pressure increases mass flow until the exit becomes sonic. Further reduction in back pressure does not change the ideal throat state for fixed reservoir conditions. Expansion downstream can then adjust the emerging jet to its surroundings.</p>
+</section>
+<section><h2 id="supply">Estimate a choked discharge</h2>
+<p>An insulated converging air nozzle has throat area \(50\,\mathrm{mm^2}\) and reservoir conditions 300 kPa absolute and 300 K. Use \(R=287\,\mathrm{J/(kg\,K)}\) and \(\gamma=1.40\). The critical temperature is \(300(2/2.4)=250\,\mathrm K\), critical pressure \(300(2/2.4)^{3.5}=158.5\,\mathrm{kPa}\), density \(158500/(287\times250)=2.21\,\mathrm{kg/m^3}\) and critical speed \(\sqrt{1.4(287)(250)}=317\,\mathrm{m/s}\).</p>
+<p>Atmospheric back pressure of 100 kPa lies below the critical pressure, so the ideal mass flow is \(\rho^*a^*A^*=2.21(317)(50\times10^{-6})=0.0350\,\mathrm{kg/s}\). A back pressure of 210 kPa would leave this converging nozzle unchoked, and the exit state must then be calculated from that back pressure. Real contraction and boundary-layer losses can reduce the flow through a calibrated orifice compared with the ideal nozzle prediction; a measured discharge coefficient accounts for those effects within its tested range.</p>
+</section>
+<section><h2 id="supply-temperature">Predict changes at a choked throat</h2>
+<p>At fixed reservoir pressure, the critical temperature is proportional to \(T_0\), critical density to \(1/T_0\) and critical speed to \(\sqrt{T_0}\). Their product shows that the choked mass flow scales as \(p_0A^*/\sqrt{T_0}\) for the same gas. Warming the original reservoir from 300 to 360 K at unchanged absolute pressure therefore reduces the ideal mass flow by \(\sqrt{300/360}=0.913\), to about 0.0320 kg/s. Increasing throat area or reservoir pressure has a direct linear effect while the downstream pressure stays low enough to maintain choking.</p>
+</section>
+<section><h2 id="normal-shock">Derive the admissible jump from conservation laws</h2>
+<p>Supersonic gas in a duct can decelerate abruptly through a normal shock. The shock is thin compared with the duct dimensions, so treat it as a stationary discontinuity of unchanged area. Take a calorically perfect gas, no heat or shaft work and negligible elevation change. Mass, streamwise momentum and stagnation enthalpy are conserved:</p>
+<div class="math display">\[\rho_1V_1=\rho_2V_2,\quad p_1+\rho_1V_1^2=p_2+\rho_2V_2^2,\quad c_pT_1+V_1^2/2=c_pT_2+V_2^2/2 .\]</div>
+<p>Entropy increases through the shock, so the two end states cannot be joined with the isentropic pressure–temperature relation. Set \(r=\rho_2/\rho_1=V_1/V_2\). Momentum gives \(p_2/p_1=1+\gamma M_1^2(1-1/r)\) and the gas law gives \(T_2/T_1=(p_2/p_1)/r\). Substitution into the energy equation yields two roots, one for unchanged flow and the compression solution</p>
+<div class="math display">\[r=\frac{(\gamma+1)M_1^2}{2+(\gamma-1)M_1^2},\qquad M_2^2=\frac{1+(\gamma-1)M_1^2/2}{\gamma M_1^2-(\gamma-1)/2}.\]</div>
+<p>For \(M_1&gt;1\) this second state has higher density and lower Mach number. As \(M_1\to1^+\), every state ratio tends to unity. For very large upstream Mach number the compression ratio approaches \((\gamma+1)/(\gamma-1)\) in the constant-specific-heat approximation, although real-gas changes eventually limit that approximation.</p>
+</section>
+<section><h2 id="diffuser-shock">Calculate a diffuser’s stagnation-pressure loss</h2>
+<p>Air upstream of a normal shock has \(M_1=2.0,\ p_1=80\,\mathrm{kPa}\) absolute and \(T_1=250\,\mathrm K\). Use \(\gamma=1.4,\ R=287\,\mathrm{J/(kg\,K)}\). The density ratio is \(2.4(4)/(2+0.4(4))=2.667\), and \(p_2/p_1=1+1.4(4)(1-1/2.667)=4.50\). Hence \(p_2=360\,\mathrm{kPa}\) and \(T_2=250(4.50/2.667)=421.9\,\mathrm K\). The downstream Mach number is \(\sqrt{1.8/(5.6-0.2)}=0.577\). Upstream speed is approximately 634 m/s and mass conservation gives about 238 m/s downstream.</p>
+<p>The stagnation temperature upstream is \(250[1+0.2(4)]=450\,\mathrm K\); downstream it is \(421.9[1+0.2(0.577)^2]=450\,\mathrm K\) as required by energy conservation. Evaluate stagnation pressure separately from each local state by a hypothetical isentropic deceleration on its own side. Upstream \(p_{01}=80(1.8)^{3.5}=626\,\mathrm{kPa}\), whereas downstream \(p_{02}=360(1.0667)^{3.5}=451\,\mathrm{kPa}\). Recovery \(p_{02}/p_{01}=0.721\) shows that a large static pressure rise can accompany a 28% loss of stagnation pressure. For the same stagnation temperature the entropy rise is \(-R\ln(0.721)=94\,\mathrm{J/(kg\,K)}\), a positive value consistent with the irreversible deceleration.</p>
+<p>A pitot tube facing the upstream supersonic flow forms its own shock ahead of the tip. The final stagnation pressure measured there corresponds ideally to isentropic deceleration after the probe’s shock, about 451 kPa here, rather than to the upstream isentropic stagnation pressure of 626 kPa. A conventional subsonic pitot reduction applied to the reading would therefore infer an incorrect upstream speed. By contrast, a static pressure tap placed sufficiently far upstream can still report the 80 kPa static state. The ratio \(451/80=5.64\) illustrates why the probe configuration must be stated when comparing a pressure ratio with a compressible-flow prediction.</p>
+<p>The downstream temperature calculation can also be checked using mass flux. The upstream density is \(80000/[287(250)]=1.12\,\mathrm{kg/m^3}\) and the measured downstream static values imply \(360000/[287(421.9)]=2.97\,\mathrm{kg/m^3}\). Multiplication by the corresponding velocities gives roughly \(707\,\mathrm{kg/(m^2s)}\) on both sides. A calculation conserving stagnation pressure instead would generally fail one of these basic balances even if its pressure trend looked plausible.</p>
+<p>The shock also changes the area needed to choke a downstream passage. For a given gas the choked mass flow scales as \(A^*p_0/\sqrt{T_0}\). Stagnation temperature is unchanged but stagnation pressure drops to 72.1% of its upstream value. Passing the same mass flow therefore requires a downstream critical area larger by \(1/0.721=1.39\). This does not mean the physical duct jumps in area at the normal shock. The critical area is the sonic reference area for an isentropic stream tube drawn from each side, and the two hypothetical reference conditions differ because entropy has increased.</p>
+<p>A converging test section downstream that was sized from the upstream stagnation pressure may consequently choke earlier than expected. The entropy and critical-area tests point to the same lost capacity from different directions: one uses the gas state, the other its maximum deliverable mass flux. Together with conservation of actual mass flux at the shock, they make it possible to distinguish a real shock loss from a simple mismatch between static and total pressure instrumentation.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Find the two states that share a nozzle area ratio</h2>
+<p>For steady isentropic flow of a calorically perfect gas, combine continuity with stagnation enthalpy and the isentropic pressure law. The critical area \(A^*\) is the area giving Mach one for the same mass flow and stagnation state.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/fluid-mechanics/12-compressible-flow.png" alt="Find the two states that share a nozzle area ratio. Horizontal axis: Mach number. Vertical axis: Area / sonic area. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At γ = 1.4 and A/A* = 2 the two solutions are approximately Mach 0.306 and 2.20. Geometry alone does not choose the branch. Reservoir and downstream conditions, and possible shock formation, complete the physical specification.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/fluid-mechanics/12-compressible-flow.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Area / sonic area at selected values of Mach number.</caption><thead><tr><th scope="col">Mach number</th><th scope="col">Heat-capacity ratio 1.3</th><th scope="col">Heat-capacity ratio 1.4</th><th scope="col">Heat-capacity ratio 1.667</th></tr></thead><tbody><tr><th scope="row">0.15</th><td>3.9522</td><td>3.9103</td><td>3.8063</td></tr><tr><th scope="row">0.8125</th><td>1.0344</td><td>1.0333</td><td>1.0305</td></tr><tr><th scope="row">1.475</th><td>1.1714</td><td>1.1597</td><td>1.135</td></tr><tr><th scope="row">2.1375</th><td>2.0248</td><td>1.8977</td><td>1.6749</td></tr><tr><th scope="row">2.8</th><td>4.1165</td><td>3.5001</td><td>2.6222</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/fluid-mechanics/12-compressible-flow.csv" download>Download all 321 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/11-turbomachinery/">Chapter 11 · Angular momentum and work in a rotor</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/6/">Problem sheet 6 · Rotor work and compressible discharge</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

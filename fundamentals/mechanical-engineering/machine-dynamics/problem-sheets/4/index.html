@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mechanism kinematics and impact · OneSimulation</title>
+<meta name="description" content="Recover constrained point accelerations and close two impact balances with appropriate contact conditions.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/4/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mechanism kinematics and impact · OneSimulation">
+<meta property="og:description" content="Recover constrained point accelerations and close two impact balances with appropriate contact conditions.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/4/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Mechanism kinematics and impact</h1><p class="lead">Recover constrained point accelerations and close two impact balances with appropriate contact conditions.</p><p class="byline">Problem sheet 4 · Chapters 7 and 8</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#arm">A point on a rotating arm</a><a href="#carts">Observe a collision</a><a href="#latch">A particle sticks to a pinned bar</a><a href="#practice-inertia-tensor">Predict the reaction moment from a tilted mass arrangement</a></nav></aside><article class="prose reference"><section><h2 id="arm">A point on a rotating arm</h2>
+<p>Point A on a planar body has velocity (0.8, 0.1) m/s and acceleration (1, −2) m/s². Point B is 0.30 m to the right and 0.10 m above A. The body rotates counterclockwise at 4 rad/s with clockwise angular acceleration 3 rad/s². Find the velocity and acceleration of B. Which term survives at constant angular speed?</p>
+<details><summary>Reveal the worked solution</summary>
+<p>The relative velocity is \(4(-0.10,0.30)=(-0.4,1.2)\), hence \(v_B=(0.4,1.3)\,\mathrm{m/s}\). The relative tangential acceleration is \((-3)(-0.10,0.30)=(0.3,-0.9)\); the centripetal term is \(-16(0.30,0.10)=(-4.8,-1.6)\). Adding A gives \(a_B=(-3.5,-4.5)\,\mathrm{m/s^2}\). Even with zero angular acceleration the centripetal term remains.</p>
+</details>
+</section>
+<section><h2 id="carts">Observe a collision</h2>
+<p>On a horizontal line a 2 kg cart moving at 3 m/s collides with a stationary 1 kg cart. The restitution coefficient is 0.60. Find their final velocities, impulse on the target and energy lost. State what allows linear momentum conservation here.</p>
+<details><summary>Reveal the worked solution</summary>
+<p>Horizontal external impulse is negligible. Thus \(2v_1+v_2=6\) and \(v_2-v_1=0.60(3)=1.8\). Solving gives \(v_1=1.4,\ v_2=3.2\,\mathrm{m/s}\). Target impulse is 3.2 N s. Initial energy is 9 J and final energy \(1.4^2+3.2^2/2=7.08\,\mathrm J\), giving loss 1.92 J.</p>
+</details>
+</section>
+<section><h2 id="latch">A particle sticks to a pinned bar</h2>
+<p>A 0.20 kg clay mass strikes perpendicular to a 0.50 m slender bar at 4 m/s and sticks to its free end. The bar mass is 1.2 kg and its other end is pinned. Find final angular speed and energy lost. Why is angular momentum about the pin the convenient balance?</p>
+<details><summary>Reveal the worked solution</summary>
+<p>The incoming angular momentum is \(0.20(4)(0.50)=0.40\,\mathrm{kg\,m^2/s}\). Combined inertia about the pin is \(1.2(0.50)^2/3+0.20(0.50)^2=0.150\,\mathrm{kg\,m^2}\). Thus \(\omega=2.667\,\mathrm{rad/s}\). Final energy is \(0.150(2.667)^2/2=0.533\,\mathrm J\), versus 1.60 J initially. The ideal pin impulse has no moment about the pin, although it can change total linear momentum.</p>
+</details>
+</section>
+<section><h2 id="practice-inertia-tensor">Predict the reaction moment from a tilted mass arrangement</h2>
+<p>Two 0.25 kg trim masses sit at \((0.12,0,0.08)\) m and its negative relative to a shaft centre. The shaft rotates steadily about positive \(z\) at 30 rad/s. Find \(I_{xz}\), angular momentum, required external moment on the rotor and the moment at twice the speed.</p>
+<details><summary>Show the worked solution</summary>
+<p>Here \(I_{xz}=-2(0.25)(0.12)(0.08)=-0.0048\,\mathrm{kg\,m^2}\), and \(I_{zz}=2(0.25)(0.12)^2=0.0072\,\mathrm{kg\,m^2}\). Therefore \(H=(-0.144,0,0.216)\) kg m²/s. The torque \((0,0,30)\times H=(0,-4.32,0)\) N m. Doubling speed doubles angular momentum and its rotation rate, so the required moment magnitude grows fourfold to 17.28 N m. The frame feels the equal and opposite moment.</p>
+</details>
+<p class="source-note">Revisit chapter 7 · <a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/07-rigid-kinematics/#inertia-tensor">Construct angular momentum when the rotation axis is not principal</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/08-impulse-impact/">Chapter 8 · Impulse, angular momentum and impact</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/09-rotor-balance/">Chapter 9 · Static and couple balance of rotors</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

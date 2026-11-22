@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solving Newton equations inexactly · OneSimulation</title>
+<meta name="description" content="Allocate work between the inner linear iteration and outer nonlinear iteration, and estimate the accuracy needed from a Jacobian action.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/10-inexact-newton/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solving Newton equations inexactly · OneSimulation">
+<meta property="og:description" content="Allocate work between the inner linear iteration and outer nonlinear iteration, and estimate the accuracy needed from a Jacobian action.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/10-inexact-newton/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Solving Newton equations inexactly</h1><p class="lead">Allocate work between the inner linear iteration and outer nonlinear iteration, and estimate the accuracy needed from a Jacobian action.</p><p class="byline">Chapter 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#the-linear-defect-survives-into-the-next-residual">The linear defect survives into the next residual</a><a href="#observe-the-uncancelled-term">Observe the uncancelled term</a><a href="#apply-a-jacobian-without-storing-it">Apply a Jacobian without storing it</a><a href="#dual-number-actions">Produce a Jacobian action by forward differentiation</a><a href="#scale-the-forcing-ratio-for-coupled-balances">Scale the forcing ratio for coupled balances</a><a href="#budget-a-matrix-free-central-derivative-separately">Budget a matrix-free central derivative separately</a><a href="#compare-the-derivative-error-with-the-requested-inner-accuracy">Compare the derivative error with the requested inner accuracy</a></nav></aside><article class="prose reference"><section>
+<h2 id="the-linear-defect-survives-into-the-next-residual">The linear defect survives into the next residual</h2>
+<p>For a differentiable system \(F(x)=0\), an exact Newton step cancels the first two terms in the Taylor expansion \(F(x+s)=F(x)+J(x)s+R(s)\). If the Jacobian is Lipschitz continuous with constant \(L\) on the segment, integrating its variation gives \(\|R(s)\|\leq L\|s\|^2/2\). For a computed step define the linear defect \(d=F(x)+J(x)s\). An inner iterative solver can stop once \(\|d\|\leq\eta_k\|F(x)\|\). Its dimensionless forcing factor \(\eta_k\) controls how much of the old residual may survive the linear solve.</p>
+<p>Near a simple root assume \(\|J^{-1}\|\le M\) and full steps. Then \(\|s\|\le M(1+\eta_k)\|F(x)\|\), because \(Js=-F+d\). Substitution gives</p>
+<div class="math display">\[\|F(x+s)\|\leq\eta_k\|F(x)\|+\tfrac12 LM^2(1+\eta_k)^2\|F(x)\|^2.\]</div>
+<p>A forcing factor bounded below one permits local linear convergence. A factor tending to zero gives superlinear convergence, and \(\eta_k=O(\|F(x)\|)\) restores a quadratic local bound when units and scaling have been fixed. Solving early linear systems to near machine precision may waste work because model curvature dominates the outer error.</p>
+</section>
+<section>
+<h2 id="observe-the-uncancelled-term">Observe the uncancelled term</h2>
+<p>For \(f(x)=x^2-2\), start at \(x=1.5\), where \(f=0.25\) and \(J=3\). The exact step is \(-1/12\); its new residual equals \(s^2=1/144\). If the computed step is \(-0.075\), the defect is \(0.25-0.225=0.025\), a forcing factor of 0.1. The actual residual at 1.425 is \(0.030625=0.025+0.005625\). Most of this residual now comes from the inner solve. Halving the step simply for caution would increase the linear defect again; a line search and an inner tolerance address different questions.</p>
+</section>
+<section>
+<h2 id="apply-a-jacobian-without-storing-it">Apply a Jacobian without storing it</h2>
+<p>A Krylov solver can request a directional action through \(Jv\approx [F(x+hv)-F(x)]/h\). With normalised \(v\), a smooth residual and absolute evaluation uncertainty \(\epsilon\), the error behaves like \(C_1 h+C_2\epsilon/h\). Minimising that model gives a scale proportional to \(\sqrt\epsilon\), with units and scales supplied by \(x\), \(v\) and \(F\). Automatic directional differentiation can avoid this differencing error when the residual implementation permits it.</p>
+<p>An inner iteration using approximate products may report a small residual for its own approximate linear model. Verify a candidate full step by evaluating the actual nonlinear function, and compare the measured reduction with the forcing prediction. Once errors in evaluating \(F\) exceed the requested outer tolerance, neither decreasing the forcing factor nor making difference steps smaller can supply the claimed accuracy.</p>
+</section>
+<section>
+<h2 id="dual-number-actions">Produce a Jacobian action by forward differentiation</h2>
+<p>A matrix-free Newton solve asks for \(J(x)v\). Finite differences subtract two complete residual evaluations. Forward-mode automatic differentiation instead propagates a directional derivative alongside each intermediate value. Represent an intermediate by \(a+\dot a\varepsilon\), with \(\varepsilon^2=0\). Addition combines the two components separately. Multiplication gives \(ab+(a\dot b+\dot a b)\varepsilon\). A smooth scalar operation \(\phi\) gives \(\phi(a)+\phi'(a)\dot a\varepsilon\). Applying these rules to the operations of the original residual program is just repeated use of the chain rule.</p>
+<p>Seed each independent input with its component of \(v\). The final values give \(F(x)\). The accompanying derivative components give \(J(x)v\) in the same sweep. There is no differencing increment to select. Errors in ordinary floating-point arithmetic and the accuracy of the underlying residual program still matter. A branch switch or an absolute value at zero can leave the mathematical derivative undefined. Differentiating the particular executed branch cannot supply the missing derivative. For a full dense Jacobian the method generally requires a separate direction for each independent column.</p>
+<p>For example use the shared intermediate \(s=x+y\) in \(F=(s e^y-1,s^2+x-4)^T\). At \((2,0)\) propagate direction \((1,-2)\). The pairs for \(x,y\) are \((2,1)\) and \((0,-2)\). \(s\) becomes \((2,-1)\), and \(e^y\) becomes \((1,-2)\). The first output is therefore \((1,-5)\), the second \((2,-3)\). Thus \(F=(1,2)^T\) and the Krylov product is \((-5,-3)^T\). As a separate check the analytic Jacobian at this point has rows \((1,3)\) and \((5,4)\), whose dot products with the seed give the same two numbers.</p>
+<p class="source-note">Practise on sheet 5 · <a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/5/#transfer-directional-arithmetic">Differentiate a reciprocal with a shared input</a>. Further reading · <a href="https://ocw.mit.edu/courses/18-s096-matrix-calculus-for-machine-learning-and-beyond-january-iap-2023/mit18_s096iap23_lec_full.pdf#page=53">Massachusetts Institute of Technology · 18.S096 Matrix Calculus for Machine Learning and Beyond · Chapter 8, Forward and Reverse-Mode Automatic Differentiation, §8.1.3 Dual numbers</a>.</p>
+</section>
+<section>
+<h2 id="scale-the-forcing-ratio-for-coupled-balances">Scale the forcing ratio for coupled balances</h2>
+<p>Consider two model balances expressed in newtons and millimetres. A raw Euclidean norm compares numerical values in these unrelated units. Changing the length unit alone can then make an inner solve appear more or less successful. Introduce a diagonal row scaling \(W\) based on meaningful force and length scales, and test \(\|W(F+Js)\|\le\eta\|WF\|\). With characteristic magnitudes 1000 N and 0.1 mm, physical defects of 1 N and 0.001 mm become dimensionless defects 0.001 and 0.01. The second equation is now the larger unmet balance, even though its dimensional number is smaller.</p>
+</section>
+<section>
+<h2 id="budget-a-matrix-free-central-derivative-separately">Budget a matrix-free central derivative separately</h2>
+<p>When the linearised equation is solved through matrix-vector actions, the inner solver works with estimates of \(Jv\). For a unit search direction \(v\), set \(\psi(t)=F(x+tv)\). The centred difference \([\psi(h)-\psi(-h)]/(2h)\) cancels even Taylor terms and has truncation error bounded by \(M h^2/6\) if the third directional derivative has norm at most \(M\) on the segment. If each residual evaluation carries absolute error bounded by \(\epsilon\), subtraction and division can contribute up to \(\epsilon/h\). This is a worst-case model; paired evaluations with strongly correlated errors can behave differently.</p>
+<p>Minimising \(M h^2/6+\epsilon/h\) gives \(h=(3\epsilon/M)^{1/3}\) for positive \(M\). This balance is specific to the centred, second-order formula and requires evaluating the residual twice for each direction. A derivative already available by an analytic action or automatic differentiation has a different accuracy and cost model. Moreover \(M\) depends on both the operating state and the direction; a single unscaled absolute step is rarely well calibrated for a system mixing quantities with strongly different units.</p>
+</section>
+<section>
+<h2 id="compare-the-derivative-error-with-the-requested-inner-accuracy">Compare the derivative error with the requested inner accuracy</h2>
+<p>For \(f(x)=x^3-2\) at \(x=1\), the true derivative is three and the exact centred estimate at step \(h\) is \(3+h^2\), so \(M=6\). Let each function evaluation have absolute uncertainty at most \(2\times10^{-9}\). The worst-case derivative error is bounded by \(h^2+2\times10^{-9}/h\), minimised at \(h=0.001\). The truncation contribution is then \(10^{-6}\) and the evaluation contribution is \(2\times10^{-6}\), giving a combined bound of \(3\times10^{-6}\). Reducing the step to \(10^{-5}\) makes the evaluation contribution \(2\times10^{-4}\), about sixty-seven times the previously balanced total error.</p>
+<p>The exact Newton correction at this state is \(s=1/3\). If the inner solver uses the approximate scalar derivative \(3+e\), it can solve its own equation exactly by taking \(s=1/(3+e)\). The true linear defect is then \(-1+3/(3+e)=-e/(3+e)\). For the balanced derivative bound this can be about \(10^{-6}\) in size. An inner residual display near machine zero therefore need not establish a true forcing ratio of \(10^{-8}\). The derivative action, rather than the Krylov stopping tolerance, has become the limiting approximation.</p>
+<p>A practical way to expose this discrepancy is to repeat a few directional actions over a geometric sequence of \(h\) values, looking first for the expected quadratic truncation trend and then for deterioration. Such comparisons estimate sensitivity to evaluation and discretisation errors; they are not a rigorous lower bound on what all directions achieve. Recompute the actual nonlinear residual after an accepted step to discover whether the reduced model accuracy still suffices for useful outer progress.</p>
+<p>If the finite-difference increment represents a physical parameter change that crosses a material switch, the required third derivative need not exist on the segment. A tidy numerical plateau across several step sizes can then obscure a change of branch. Verify that both directional evaluations use the same smooth model region before interpreting the calculated optimum increment.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/09-broyden/">Chapter 9 · Secant information for systems</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/5/">Problem sheet 5 · What an approximate Jacobian knows</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

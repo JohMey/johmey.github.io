@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crack driving force and fracture assessment · OneSimulation</title>
+<meta name="description" content="Use an energy balance and a stress-intensity model to distinguish crack-controlled fracture from yielding of the gross section.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/12-fracture/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Crack driving force and fracture assessment · OneSimulation">
+<meta property="og:description" content="Use an energy balance and a stress-intensity model to distinguish crack-controlled fracture from yielding of the gross section.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/12-fracture/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Crack driving force and fracture assessment</h1><p class="lead">Use an energy balance and a stress-intensity model to distinguish crack-controlled fracture from yielding of the gross section.</p><p class="byline">Chapter 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#scale">A sharp crack changes the question</a><a href="#energy">Relate compliance to an energy release rate</a><a href="#assessment">Infer a critical flaw size</a><a href="#sensitivity">Interpret a crack-length uncertainty</a><a href="#paris-law">Integrate stable fatigue growth up to inspection</a><a href="#inspection-window">Compare two inspection thresholds on the same plate</a><a href="#worked-plot">Which flaw sizes make fracture the controlling limit?</a></nav></aside><article class="prose reference"><section><h2 id="scale">A sharp crack changes the question</h2>
+<p>An uncracked tensile coupon can often be assessed by comparing nominal stress with a yield stress. A sharp pre-existing crack concentrates the stress into a small region near its tip. Within linear elastic fracture mechanics the leading opening-mode field has magnitude proportional to \(K_I/\sqrt{2\pi r}\) at distance \(r\) ahead of the tip. The unbounded mathematical stress signals the limits of the elastic tip description. A material toughness measured under comparable conditions instead sets a threshold for crack extension.</p>
+<p>A common representation is \(K_I=Y\sigma\sqrt{\pi a}\), where \(a\) is the specified crack dimension, \(\sigma\) is a stated remote stress, and \(Y\) describes the geometry and loading. For a central crack in a sufficiently wide plate \(a\) is the half-length and \(Y\) approaches one. For a short edge crack in a wide plate \(a\) is its depth and a common approximation is \(Y\approx1.12\). Finite width, bending or a different crack shape changes the factor.</p>
+</section>
+<section><h2 id="energy">Relate compliance to an energy release rate</h2>
+<p>In a linear test specimen let load \(P\), opening displacement \(u\), and compliance \(C(a)=u/P\) refer to the same load point. At fixed load the stored elastic energy is \(P^2C/2\). The external load does work \(P\,du=P^2\,dC\) as the crack extends. The released potential energy is the difference, \(P^2 dC/2\). For a through crack with one advancing front and specimen thickness \(B\), its projected area increases by \(B\,da\), giving</p>
+<div class="math display">\[G=\frac{P^2}{2B}\frac{dC}{da}=\frac{K_I^2}{E'},\qquad E'=E\ {\rm (plane\ stress)},\quad E'=E/(1-\nu^2)\ {\rm (plane\ strain)}.\]</div>
+<p>The compliance argument explains how a distant load–displacement measurement can identify energy available at a crack. Define the crack area consistently: a symmetric specimen in which two tips advance together changes projected area twice as quickly for the same increment of half-length.</p>
+</section>
+<section><h2 id="assessment">Infer a critical flaw size</h2>
+<p>Take a wide plate with an edge crack of depth 3.0 mm, tensile remote stress 160 MPa and illustrative applicable toughness \(K_c=35\,\mathrm{MPa\sqrt m}\). The estimate \(K_I=1.12(160)\sqrt{\pi(0.003)}=17.4\,\mathrm{MPa\sqrt m}\) uses metres for crack depth. Holding geometry factor and stress fixed, the critical depth is \(a_c=[35/(1.12\times160)]^2/\pi=0.0121\,\mathrm m\), about 12.1 mm.</p>
+<p>At twice the stress this depth falls by a factor of four, to approximately 3.0 mm. Before using that extrapolation, check remaining net section, applicability of the wide-plate geometry and whether plasticity near the crack is small compared with crack and ligament dimensions. Toughness depends on temperature, constraint and loading rate. An inspection interval would additionally require a crack-growth law, a load history and a detection limit. The calculated critical depth describes one load state and cannot by itself predict the number of cycles remaining.</p>
+</section>
+<section><h2 id="sensitivity">Interpret a crack-length uncertainty</h2>
+<p>At fixed remote stress and geometry factor a small relative error in crack depth gives approximately half that relative error in stress intensity, because \(dK/K=da/(2a)\). A 0.3 mm uncertainty on a 3 mm measurement therefore changes this estimated intensity by about five percent.</p>
+</section>
+<section><h2 id="paris-law">Integrate stable fatigue growth up to inspection</h2>
+<p>Fracture toughness characterises an instability at a given load. Damage tolerance also asks how long a detected crack takes to reach an inspection or retirement size under repeated loading. For illustration, suppose tests for the service material and stress ratio support a Paris relation \(da/dN=C(\Delta K)^m\) in its intermediate stable growth range. Use crack depth \(a\) in metres and intensities in MPa√m. The coefficient \(C\) must correspond to those units, stress ratio and environment. This empirical law generally changes near threshold and near final instability.</p>
+<p>For constant stress range \(\Delta\sigma\), fixed geometry factor \(Y\) and exponent \(m=3\), substitute \(\Delta K=Y\Delta\sigma\sqrt{\pi a}\). Crack advance per cycle then scales as \(a^{3/2}\); the same stress history grows a larger crack faster. Separate variables between measured depth \(a_i\) and removal depth \(a_f\). Integrating yields</p>
+<div class="math display">\[N=\frac{2(a_i^{-1/2}-a_f^{-1/2})}{C(Y\Delta\sigma)^3\pi^{3/2}} .\]</div>
+<p>This prediction decreases to zero as the two depths approach each other. It scales with the inverse cube of stress range at fixed bounds. If the geometry factor changes appreciably with crack depth, retain \(Y(a)\) inside the integral. The maximum stress in the cycle is needed separately to compare \(K_{\max}\) with applicable toughness, because it is the range that drives the adopted fatigue law.</p>
+</section>
+<section><h2 id="inspection-window">Compare two inspection thresholds on the same plate</h2>
+<p>Consider a wide plate with \(Y=1.12\), \(\Delta\sigma=80\,\mathrm{MPa}\), \(\sigma_{\max}=140\,\mathrm{MPa}\), \(m=3\), and illustrative \(C=2.0\times10^{-12}\,(\mathrm{m/cycle})/(\mathrm{MPa}\sqrt{\mathrm m})^3\). Suppose the measured growth-law range includes depths between 2 and 8 mm for this loading. At 2 mm, \(\Delta K=1.12(80)\sqrt{\pi(0.002)}=7.10\,\mathrm{MPa\sqrt m}\); at 8 mm it doubles to 14.2. The growth rate at the upper limit is consequently eight times the lower-limit rate.</p>
+<p>The integral denominator is \(2.0\times10^{-12}(89.6)^3\pi^{3/2}=8.01\times10^{-6}\) in the stated units, and the numerator is \(2(22.36-11.18)=22.36\,\mathrm{m^{-1/2}}\). The estimated interval is \(2.79\times10^6\) cycles. If the smallest reliably detected crack were 4 mm, the available interval to 8 mm would fall to \(2(15.81-11.18)/(8.01\times10^{-6})=1.16\times10^6\) cycles. Improving early detection has a measurable value in this model. At retirement depth \(K_{\max}=24.9\,\mathrm{MPa\sqrt m}\); compare that independently with the applicable toughness. Uncertainty in detection, loading, environment and growth coefficients would enter an actual inspection decision rather than treating this calculated mean growth interval as a guaranteed service interval.</p>
+<p>A useful sensitivity check is to increase the entire stress range by ten percent while keeping the inspection depths and coefficient fixed. The Paris estimate falls by \(1/1.1^3=0.751\), reducing the 2.79 million-cycle interval to about 2.10 million cycles. If the maximum stress also rises by ten percent, retirement intensity increases by the same ten percent to 27.4 MPa√m. Those two changes affect different checks and cannot be combined into a single linear safety multiplier. A record of both stress range and stress maximum is therefore more informative than a peak-only reading for planning inspections.</p>
+<p>Both quantities can be recovered from the two measured stress extremes if the counting convention and gauge reference are retained.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Which flaw sizes make fracture the controlling limit?</h2>
+<p>Consider a wide plate with a small edge crack, geometry factor \(Y=1.12\) and conditional toughness \(K_c=35\,\mathrm{MPa}\sqrt{\mathrm m}\). Rearrange \(K=Y\sigma\sqrt{\pi a}\) and compare with a 320 MPa yield scale. Convert the crack length to metres.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/engineering-mechanics/12-fracture.png" alt="Which flaw sizes make fracture the controlling limit?. Horizontal axis: Crack length a (mm). Vertical axis: Nominal tensile stress (MPa). Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>The two estimates intersect near a = 3.04 mm. As cracks grow, the estimated fracture stress falls as the inverse square root. Applying this simple comparison to a real component requires geometry-specific factors, valid toughness data and a check on plastic-zone size.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/engineering-mechanics/12-fracture.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Nominal tensile stress (MPa) at selected values of Crack length a (mm).</caption><thead><tr><th scope="col">Crack length a (mm)</th><th scope="col">Toughness limit, Kc = 35 MPa√m</th><th scope="col">Yield comparison</th></tr></thead><tbody><tr><th scope="row">0.25</th><td>1115.1</td><td>320</td></tr><tr><th scope="row">3.1875</th><td>312.28</td><td>320</td></tr><tr><th scope="row">6.125</th><td>225.28</td><td>320</td></tr><tr><th scope="row">9.0625</th><td>185.2</td><td>320</td></tr><tr><th scope="row">12</th><td>160.95</td><td>320</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/engineering-mechanics/12-fracture.csv" download>Download all 301 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/11-plastic-bending/">Chapter 11 · Yield fronts and plastic bending capacity</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/6/">Problem sheet 6 · Plastic deformation and crack driving force</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nonlinear equations · OneSimulation</title>
+<meta name="description" content="Bracket and certify roots, derive Newton and secant updates for coupled equations, and follow branches and active constraints as parameters change.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nonlinear equations · OneSimulation">
+<meta property="og:description" content="Bracket and certify roots, derive Newton and secant updates for coupled equations, and follow branches and active constraints as parameters change.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a></p><h1>Nonlinear equations</h1><p class="lead">Bracket and certify roots, derive Newton and secant updates for coupled equations, and follow branches and active constraints as parameters change.</p><p class="prerequisites"><strong>Prerequisites</strong> Derivatives and Taylor expansion.</p><nav class="study-links" aria-label="Course materials"><a href="/fundamentals/numerics/nonlinear-equations/chapters/01-bracketing/">Start chapter 1</a><a href="#exercises">Problem sheets</a><a href="/fundamentals/numerics/nonlinear-equations/full-notes/">Complete course</a><a href="#experiment">Numerical experiment</a><a href="#further-reading">Further reading</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#chapters">Chapters</a><a href="#exercises">Problem sheets</a><a href="#case-study">Applied study</a><a href="#further-reading">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="chapters">Chapters</h2><ol class="course-readings"><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/01-bracketing/">Existence, brackets and error certificates</a><p>Decide whether a scalar balance has a root, isolate it with a sign-changing interval and translate an equation residual into a bound in physical units.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/02-contraction/">Fixed-point iteration and contraction</a><p>Select an iteration map for a nonlinear balance, prove convergence on an invariant interval and use an observed increment to bound the remaining error.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/03-tangent-and-secant/">Newton and secant updates</a><p>Derive derivative-based and derivative-free updates, measure their convergence near a simple zero and explain why a repeated zero changes the convergence order.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/04-coupled-newton/">Newton’s method for coupled balances</a><p>Assemble a Jacobian from two coupled residuals, solve for a simultaneous correction and interpret how scaling changes the meaning of a norm.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/05-globalisation/">Line searches and trust regions</a><p>Diagnose a cycling Newton sequence, compute a merit-function decrease and explain how damping and trust regions change the step while preserving the root.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/06-continuation/">Continuation and folds</a><p>Track a family of equilibria through parameter changes, identify the failure of ordinary parameter continuation at a fold and build a predictor–corrector step.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/07-polynomial-roots/">Polynomial roots and coefficient sensitivity</a><p>Evaluate a polynomial and its derivative in one sweep, then estimate how far a coefficient error can move a simple root.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/08-interval-newton/">Root enclosures with interval Newton</a><p>Combine interval bounds and a single function evaluation to exclude roots or isolate one with a verifiable enclosure.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/09-broyden/">Secant information for systems</a><p>Derive Broyden&#x27;s rank-one Jacobian update and decide whether the direction it learned is sufficient for the next step.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/10-inexact-newton/">Solving Newton equations inexactly</a><p>Allocate work between the inner linear iteration and outer nonlinear iteration, and estimate the accuracy needed from a Jacobian action.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/11-nonlinear-least-squares/">Gauss–Newton and residual curvature</a><p>Derive Gauss–Newton from a local residual model and locate when omitted curvature or insufficient information changes the step.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/12-complementarity/">Inequalities and active constraints</a><p>Translate one-sided equilibrium into complementarity equations, identify an active set and verify both force and feasibility.</p></li></ol></section><section><h2 id="exercises">Problem sheets</h2><p>Work on each sheet after the preceding pair of chapters. Open the worked solutions to check your reasoning.</p><ol class="course-readings"><li><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/1/">Isolating and iterating roots</a><span class="sheet-pair">For chapters 1 and 2</span><p>Use a verified interval to certify one solution, recognise the effect of a transformation on convergence and quantify a stopping rule.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/2/">Tangents and Jacobians</a><span class="sheet-pair">For chapters 3 and 4</span><p>Compute scalar, secant and coupled Newton corrections, and test what an incorrectly assembled derivative changes.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/3/">Safeguards and continuation</a><span class="sheet-pair">For chapters 5 and 6</span><p>Control steps within a scalar bracket, track a turning branch and distinguish equilibrium from stability under a specified evolution law.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/4/">Root sensitivity and certificates</a><span class="sheet-pair">For chapters 7 and 8</span><p>Quantify the influence of coefficients and use derivative intervals to make verifiable statements about roots.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/5/">What an approximate Jacobian knows</a><span class="sheet-pair">For chapters 9 and 10</span><p>Construct a minimal secant update, diagnose the loss of an earlier secant equation, and budget an inexact Newton step.</p></li><li><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/6/">Misfit and one-sided equilibrium</a><span class="sheet-pair">For chapters 11 and 12</span><p>Distinguish a stationary residual fit from an exact root and identify which unilateral constraints carry load.</p></li></ol><p><strong>Final synthesis problem</strong> · <a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/6/#course-synthesis">Locate and follow the two equilibria of a fold</a></p></section><section class="case-introduction"><h2 id="case-study">Applied study</h2><p>Bracket a root and decide when a Newton step is reliable.</p><section>
+<h3 id="root">Why solve an equation inside a time step?</h3>
+<p>A thermal mass cools by radiation. Its temperature obeys \(\dot T=-\beta(T^4-T_a^4)\). For \(T&gt;T_a\) the cooling rate decreases as the body cools. Backward Euler samples this rate at the <em>end</em> of the step. Calling the unknown end temperature \(x\), write the discrete energy balance as a root problem</p>
+<div class="math display">\[F(x)=x-T_n+h\beta(x^4-T_a^4)=0.\]</div>
+<p>Assume a positive time step \(h\), coefficient \(\beta&gt;0\), and \(T_n&gt;T_a&gt;0\). The physical interval is \([T_a,T_n]\). Since \(F(T_a)=T_a-T_n&lt;0\), \(F(T_n)&gt;0\), and \(F\) is continuous, a root exists. Its derivative \(1+4h\beta x^3\) is positive throughout this interval, so the root is unique. These facts suggest an algorithm even before choosing a starting guess.</p>
+</section>
+<section>
+<h3 id="update">Trade guaranteed progress for local speed</h3>
+<p>Bisection evaluates \(F\) at the midpoint and keeps the half containing a sign change. Each iteration halves the interval width. The midpoint error is at most half the remaining width, even when derivatives are unavailable.</p>
+<p>Newton’s method draws the tangent at \(x_j\), \(F(x_j)+F'(x_j)(x-x_j)\), and takes its zero \(x_{j+1}=x_j-F(x_j)/F'(x_j)\). Near a simple root \(r\), Taylor expansion about \(x_j\) gives \(x_{j+1}-r=[F''(\xi)/(2F'(x_j))](x_j-r)^2\). If the derivative stays away from zero and the second derivative is bounded, this explains local quadratic convergence. Farther from the root, a practical safeguard is to replace a tangent step that leaves the bracket with bisection.</p>
+<p>Residual and temperature error have a particularly simple relation here. For an approximation \(x\) in the physical bracket, the mean value theorem gives \(|F(x)|=F'(\eta)|x-r|\geq|x-r|\). An absolute residual of \(10^{-6}\) K certifies a root error no greater than \(10^{-6}\) K for this scaled equation.</p>
+</section>
+<section>
+<h3 id="worked">Follow two tangent steps</h3>
+<p>Set \(T_n=2\) K, \(T_a=1\) K, \(h=1\) s and \(\beta=0.0015\) K⁻³s⁻¹. This deliberately scaled thermal example keeps the arithmetic visible. Starting at \(x_0=2\), the residual is \(0.0015(16-1)=0.0225\) K and the slope is \(1+4(0.0015)2^3=1.048\). The first update gives \(x_1=1.97853053\) K and \(F(x_1)\simeq1.65\times10^{-5}\) K.</p>
+<p>Re-evaluating the slope at \(x_1\) gives \(x_2=1.97851479\) K, with residual about \(8.7\times10^{-12}\) K before rounding the iterate for display. This is the root for one backward Euler step. It still differs from the continuous-time temperature at one second because the rate varied during that second.</p>
+</section>
+<section>
+<h3 id="case-exercises">Problem class</h3>
+<h4>Budget the bisections</h4>
+<p>Start from \([1,2]\) K. After how many bracket halvings is the midpoint guaranteed to be within \(10^{-5}\) K of the root without evaluating a derivative?</p>
+<details><summary>Show the calculation</summary><p>After \(n\) halvings, the width is \(2^{-n}\) K. Midpoint error is bounded by \(2^{-(n+1)}\) K. Thus \(n\geq\lceil\log_2(1/(2\times10^{-5}))\rceil=16\). Fifteen halvings still allow an error greater than the target.</p></details>
+<h4>Test a fixed-point iteration</h4>
+<p>Consider \(g(x)=2-h\beta(x^4-1)\). For \(h=1\) s and \(h=25\) s, does the maximum slope magnitude on \([1,2]\) certify contraction? What can a failed bound tell you?</p>
+<details><summary>Show the calculation</summary><p>The maximum \(|g'|\) is \(4h\beta\,2^3=0.048h\) with \(h\) in seconds. Both maps take the bracket into itself: at one second the image is \([1.9775,2]\), at 25 seconds it is \([1.4375,2]\). At one second the maximum slope is 0.048, which certifies convergence from anywhere in the bracket. At 25 seconds the maximum is 1.2. The global contraction test is then inconclusive. Local convergence depends on the slope near the root.</p></details>
+</section>
+<section>
+<h3 id="experiment">Experiment · Change the solver and the stage equation</h3>
+<p>The downloadable model takes one backward Euler step with \(C=2\) J/K, \(A=0.3\) m², emissivity 0.5 and a test radiation constant of 0.02 W/(m²·K⁴), giving \(\beta=0.0015\) K⁻³s⁻¹. Its output substitutes the returned temperature into the residual independently. Predict which edit changes the root. <a href="/downloads/teaching/numerics/nonlinear-equations.py" download>Download the Python experiment</a> · <a href="https://johmey.github.io/OneSimulation-Showcase/guide/9-worked-numerical-comparisons/06-nonlinear-solver-lab.html#solve-the-same-nonlinear-implicit-cooling-stage">OneSimulation implicit cooling comparison</a>.</p>
+<pre><code>python nonlinear-equations.py
+python nonlinear-equations.py --step 0.05
+python nonlinear-equations.py --solver damped</code></pre>
+<table class="experiment-runs"><caption>End temperature and discrete residual from a single step.</caption><thead><tr><th scope="col">Step, solver</th><th scope="col">Temperature (K)</th><th scope="col">|F| (K)</th></tr></thead><tbody>
+<tr><th scope="row">1 s, Newton</th><td>1.9785147906</td><td>5.6 × 10⁻¹⁷</td></tr>
+<tr><th scope="row">0.05 s, Newton</th><td>1.9988776913</td><td>3.7 × 10⁻¹⁷</td></tr>
+<tr><th scope="row">1 s, damped Newton</th><td>1.9785147906</td><td>5.6 × 10⁻¹⁷</td></tr>
+</tbody></table>
+<p>A different step changes both the equation and the observation time. A converged line-search Newton method on the original step recovers the same physical root. To measure time discretisation error, compare solutions on successively finer grids at a common final time.</p>
+</section>
+</section><section><h2 id="further-reading">Further reading</h2><ul><li><p>Chapter 4 develops scalar and vector rootfinding. Compare Newton and secant iterates at a simple root, then repeat at a multiple root to expose the change in convergence order. <a href="https://fncbook.com/python/">Driscoll and Braun · Fundamentals of Numerical Computation</a></p></li></ul><p><a href="/fundamentals/university-sources/#nonlinear-equations">Compare specific topics with the university sources</a></p></section><nav class="lecture-onward" aria-label="Continue studying">Next subject · <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></nav><script src="/assets/experiment-runs.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

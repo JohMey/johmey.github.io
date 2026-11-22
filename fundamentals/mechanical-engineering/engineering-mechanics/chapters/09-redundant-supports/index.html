@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compatibility and redundant supports · OneSimulation</title>
+<meta name="description" content="Use elastic work to determine a support reaction that cannot be obtained from force and moment balance alone.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/09-redundant-supports/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Compatibility and redundant supports · OneSimulation">
+<meta property="og:description" content="Use elastic work to determine a support reaction that cannot be obtained from force and moment balance alone.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/09-redundant-supports/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Compatibility and redundant supports</h1><p class="lead">Use elastic work to determine a support reaction that cannot be obtained from force and moment balance alone.</p><p class="byline">Chapter 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#release">Choose a redundant force</a><a href="#flexibility">Find the coefficients by virtual work</a><a href="#settlement">Predict the effect of a small support movement</a><a href="#consistency">Check a reaction against a stiffness change</a><a href="#continuous-beam">Use an interior reaction to join two spans</a><a href="#settled-rail">Set a settlement tolerance from a support load</a><a href="#assemble-a-truss">Assemble a displacement model of a redundant braced joint</a><a href="#worked-plot">Trace a moving load onto an added prop</a></nav></aside><article class="prose reference"><section><h2 id="release">Choose a redundant force</h2>
+<p>A cantilever with a vertical prop at its far end has one more reaction than the independent planar equilibrium equations can determine. A change of support elevation changes those reactions even though the applied loads stay the same. This sensitivity provides the additional equation: the displacement at the prop equals its specified settlement. Remove the prop temporarily and replace it by an unknown upward force \(R\). The released cantilever must be stable, and its displacement at that location must be calculable.</p>
+<p>For small elastic deformation the effects of a known load and of the unknown force may be superposed. Write downward displacements as positive. Under a distributed downward load the released tip displaces by \(\delta_w\). An upward reaction displaces it by \(-fR\), where \(f\) is tip flexibility measured in metres per newton. If the prop settles downwards by \(s\), compatibility becomes \(\delta_w-fR=s\).</p>
+</section>
+<section><h2 id="flexibility">Find the coefficients by virtual work</h2>
+<p>For constant \(EI\), impose a unit downward load at the free tip. Its unit-load bending moment has magnitude \(m(x)=L-x\), measured from the fixed end. With a uniformly distributed load of intensity \(w\), the moment magnitude is \(M_w=w(L-x)^2/2\). Multiplying the actual and virtual moments and integrating gives</p>
+<div class="math display">\[\delta_w=\int_0^L\frac{M_wm}{EI}\,dx=\frac{wL^4}{8EI},\qquad f=\int_0^L\frac{m^2}{EI}\,dx=\frac{L^3}{3EI}.\]</div>
+<p>For a rigid prop at its initial elevation \(s=0\), the reaction becomes \(R=3wL/8\). The remaining vertical force at the fixed end is \(5wL/8\). The external support moment there has magnitude \(wL^2/2-RL=wL^2/8\). Recovering equilibrium at the end provides an independent check after using flexibility to close the calculation.</p>
+</section>
+<section><h2 id="settlement">Predict the effect of a small support movement</h2>
+<p>Take \(L=3.0\,\mathrm m\), \(w=4.0\,\mathrm{kN/m}\) and \(EI=1.8\,\mathrm{MN\,m^2}\). Without the prop, \(\delta_w=0.0225\,\mathrm m\), and \(f=5.00\,\mathrm{mm/kN}\). Without settlement the prop takes 4.50 kN. With a measured downward settlement of 6 mm, it takes \((22.5-6)/5=3.30\,\mathrm{kN}\). The fixed-end vertical reaction rises to 8.70 kN and its moment magnitude rises from 4.50 to \(18.0-3.3(3)=8.10\,\mathrm{kN\,m}\).</p>
+<p>A unilateral prop can push upwards but cannot pull the beam down. At settlements exceeding 22.5 mm the linear compatibility solution would give a negative prop reaction. In that case the beam hangs clear of the prop and behaves as the released cantilever. A bolted hold-down could sustain the negative reaction and would require a different contact model. Replacing the rigid prop by a spring gives another direct extension: its reaction moves its top by \(R/k\), so use \(\delta_w-fR=s+R/k\) and obtain \(R=(\delta_w-s)/(f+1/k)\). An increasingly compliant prop takes an increasingly small fraction of the load.</p>
+</section>
+<section><h2 id="consistency">Check a reaction against a stiffness change</h2>
+<p>If all beam cross-sections gain twice their original bending stiffness, both the load-induced tip deflection and the tip flexibility halve. For a rigid prop with zero settlement their ratio stays constant, so reactions are unchanged. For a prescribed settlement, however, the term \(s/f\) doubles. A stiff structure can therefore develop large additional reactions from a small imposed support movement.</p>
+</section>
+<section><h2 id="continuous-beam">Use an interior reaction to join two spans</h2>
+<p>A rail carried over three supports provides a second use of the force method. Remove its central support to form a simple beam of total length \(2L\), retaining the central reaction \(R_B\) as an upward force to be found. Let both spans carry uniform downward load \(w\) with constant \(EI\). For downward displacement at the centre use a downward unit force there. On the left half its moment function is \(m=x/2\), while the corresponding uniform-load moment is \(M=w x(2L-x)/2\). Symmetry provides the other half of the displacement integral.</p>
+<div class="math display">\[\delta_w=\frac{2}{EI}\int_0^L M m\,dx=\frac{5wL^4}{24EI},\qquad f_{BB}=\frac{2}{EI}\int_0^L (x/2)^2dx=\frac{L^3}{6EI}.\]</div>
+<p>If the centre support is at its original elevation, setting \(\delta_w-R_B f_{BB}=0\) gives \(R_B=5wL/4\). Each exterior reaction is then \(3wL/8\) from overall equilibrium. Taking moments at an internal section directly over the middle support gives \(M_B=(3wL/8)L-wL^2/2=-wL^2/8\). Its negative sign describes hogging. An interior vertical support has not created a hinge in the beam; the continuous beam can transmit bending moment across that location even though the support itself supplies only a vertical force.</p>
+</section>
+<section><h2 id="settled-rail">Set a settlement tolerance from a support load</h2>
+<p>For two 2.0 m spans under \(w=3.0\,\mathrm{kN/m}\) with \(EI=500\,\mathrm{kN\,m^2}\), the zero-settlement central reaction is \(5(3)(2)/4=7.50\,\mathrm{kN}\). The two end reactions are 2.25 kN each and the middle moment is −1.50 kN m. The flexibility at the central support is \(2^3/[6(500)]=0.002667\,\mathrm{m/kN}\). A 4.0 mm downward support settlement therefore reduces the central reaction by \(0.004/0.002667=1.50\,\mathrm{kN}\). Rebalancing the beam gives 3.00 kN at each end and zero moment over the middle support. The bar is still geometrically continuous; this particular combination of loading and support elevation happens to eliminate that moment.</p>
+<p>If the central load cell must read at least 5.0 kN, setting \(R_B=7.50-s/f_{BB}\) gives a limiting downward settlement of 6.67 mm. Conversely, a 2 mm rise in the support increases its reading by 0.75 kN. The sign changes because the constraint prescribes a displacement and the reaction adapts. Loss of central contact would occur only at \(s=7.5(2.667)=20.0\,\mathrm{mm}\) in this one-sided arrangement. Temperature gradients that curve the rail create another imposed displacement in the same compatibility equation; measurements of elevation and temperature are needed to distinguish the two influences.</p>
+<p>The numerical values illustrate a sign check for an after-installation alignment survey. At 4 mm descent the central reaction has fallen by 1.50 kN and each outer reaction must grow by 0.75 kN. Their three changes add to zero because the applied rail loading did not change. If all three load cells instead show smaller forces after settlement, some load has moved to another contact or one measurement reference has shifted. Compatibility selects the internal redistribution, but it never replaces the external balance of the complete rail.</p>
+<p>A cross-level survey and a repeated load-cell tare can distinguish a genuine reaction change from a changed instrument zero.</p>
+</section>
+<section><h2 id="assemble-a-truss">Assemble a displacement model of a redundant braced joint</h2>
+<p>An entry in a truss stiffness matrix can be derived from the work of a single member. For a straight pin-ended bar with direction \(n=(c,s)\), length \(L\) and end translations \(u_i,u_j\), the first-order extension is \(n^T(u_j-u_i)\). Its force in tension is \(N=(EA/L)n^T(u_j-u_i)\), and its stored energy is \(EA[n^T(u_j-u_i)]^2/(2L)\). Differentiating with respect to the four translations gives the element stiffness \(K_e=(EA/L)\left(\begin{smallmatrix}nn^T&amp;-nn^T\\-nn^T&amp;nn^T\end{smallmatrix}\right)\). Each member adds its coefficients to the rows and columns of the actual end joints. Shared translations enforce compatibility. Summing member contributions at a joint enforces equilibrium. Prescribed displacements are imposed before solving the remaining equations.</p>
+<p>Consider one moving joint connected to three fixed anchors. Give each bar axial stiffness \(k=10\,\mathrm{MN/m}\) and take the directions from each anchor to the moving joint as \((1,0),(0,1)\) and \((1,1)/\sqrt2\). The first two members supply independent horizontal and vertical stiffness. The diagonal adds \(k/2\) to every entry. After the anchors are constrained, the equation under load \(F=(4,0)\) kN becomes</p>
+<div class="math display">\[k\begin{pmatrix}1.5&amp;0.5\\0.5&amp;1.5\end{pmatrix}\begin{pmatrix}u_x\\u_y\end{pmatrix}=\begin{pmatrix}4000\\0\end{pmatrix}.\]</div>
+<p>Solving gives \(u_x=0.300\) mm, \(u_y=-0.100\) mm. The recovered forces \(k\,n^Tu\) are 3.00 kN tension, 1.00 kN compression and 1.414 kN tension. The diagonal projects 1.00 kN onto each axis, so the resisting components sum to 4.00 kN horizontally and zero vertically. As an energy check, \(\tfrac12 F^Tu=0.600\) J and \(\sum N_i^2/(2k)=0.600\) J. Two joint equilibrium equations alone cannot determine three member forces. If a brace softens, its contribution to \(K\) changes and the forces redistribute. This is the compatibility effect hidden by a purely static count.</p>
+<p class="source-note">Practise on sheet 5 · <a href="/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/5/#practice-assemble-a-truss">Find a mechanism before adding a diagonal spring</a>. Further reading · <a href="https://ocw.mit.edu/courses/3-11-mechanics-of-materials-fall-1999/c41082eb8e8022644f8de9a9f6f91c2c_MIT3_11F99_truss.pdf">MIT · 3.11 Mechanics of Materials · Trusses, “Matrix analysis of trusses”</a>.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Trace a moving load onto an added prop</h2>
+<p>A cantilever of length \(L\) has a vertical prop at its free end. Under a point load at \(a\), the released tip displacement is \(P a^2(3L-a)/(6EI)\). Choose the prop force to cancel it using the tip flexibility \(L^3/(3EI)\).</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/engineering-mechanics/09-redundant-supports.png" alt="Trace a moving load onto an added prop. Horizontal axis: Force location / cantilever length. Vertical axis: Reaction / moving point load. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>At midspan the prop carries 5/16 of the moving load. An ordinary simply supported span would send one half to the right. The clamped-end moment and the compatibility condition explain the change in load path.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/engineering-mechanics/09-redundant-supports.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Reaction / moving point load at selected values of Force location / cantilever length.</caption><thead><tr><th scope="col">Force location / cantilever length</th><th scope="col">Prop at free end</th><th scope="col">Vertical reaction at clamp</th></tr></thead><tbody><tr><th scope="row">0</th><td>0</td><td>1</td></tr><tr><th scope="row">0.25</th><td>0.085938</td><td>0.91406</td></tr><tr><th scope="row">0.5</th><td>0.3125</td><td>0.6875</td></tr><tr><th scope="row">0.75</th><td>0.63281</td><td>0.36719</td></tr><tr><th scope="row">1</th><td>1</td><td>0</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/engineering-mechanics/09-redundant-supports.csv" download>Download all 201 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/4/">Problem sheet 4 · Torsion and transferred shear</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/10-strain-rosettes/">Chapter 10 · From a strain rosette to principal stresses</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

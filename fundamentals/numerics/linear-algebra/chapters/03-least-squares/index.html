@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Least squares and orthogonal factorisation · OneSimulation</title>
+<meta name="description" content="Fit a straight line to inconsistent observations, derive its residual conditions and explain why an orthogonal factorisation can preserve accuracy better than the normal equations.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/03-least-squares/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Least squares and orthogonal factorisation · OneSimulation">
+<meta property="og:description" content="Fit a straight line to inconsistent observations, derive its residual conditions and explain why an orthogonal factorisation can preserve accuracy better than the normal equations.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/03-least-squares/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+<script defer src="/assets/plot-values.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Least squares and orthogonal factorisation</h1><p class="lead">Fit a straight line to inconsistent observations, derive its residual conditions and explain why an orthogonal factorisation can preserve accuracy better than the normal equations.</p><p class="byline">Chapter 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#replace-exact-consistency-by-an-optimisation-problem">Replace exact consistency by an optimisation problem</a><a href="#fit-three-imperfect-readings">Fit three imperfect readings</a><a href="#remove-redundant-precision-loss">Remove redundant precision loss</a><a href="#include-measurement-weights-explicitly">Include measurement weights explicitly</a><a href="#derive-a-prediction-after-withholding-one-observation">Derive a prediction after withholding one observation</a><a href="#predict-the-end-of-a-calibration-line-from-its-other-readings">Predict the end of a calibration line from its other readings</a><a href="#worked-plot">Estimate a fitted line beyond its calibration interval</a></nav></aside><article class="prose reference"><section>
+<h2 id="replace-exact-consistency-by-an-optimisation-problem">Replace exact consistency by an optimisation problem</h2>
+<p>Three thermometers at different positions need not lie on a common straight temperature profile. Let the rows of \(A\) contain the values of candidate basis functions at those positions and let \(b\) contain the observations. With more independent measurements than unknown coefficients, \(Ax=b\) may have no solution. A least-squares fit chooses \(x\) to minimise \(\|b-Ax\|_2^2\). Equal unweighted terms assume the deviations are comparable in units and importance. If one instrument is much noisier than another, that assumption deserves review before interpreting a fitted slope.</p>
+<p>Take any coefficient perturbation \(sd\). Expanding the squared mismatch gives \(\|b-Ax\|^2-2s\,d^TA^T(b-Ax)+s^2\|Ad\|^2\). At a minimum the coefficient of \(s\) must vanish for every \(d\). Hence \(A^TAx=A^Tb\). This is also sufficient: when the linear term vanishes, every perturbation adds a nonnegative square. Geometrically the residual is perpendicular to the column space of \(A\). Full column rank makes the minimiser unique, since no nonzero coefficient perturbation then leaves the fitted values unchanged.</p>
+</section>
+<section>
+<h2 id="fit-three-imperfect-readings">Fit three imperfect readings</h2>
+<p>Take positions \(t=-1,0,1\) and deviations from a baseline temperature of \(1,2,5\) K. Fit \(b(t)\simeq c+mt\), using a constant and a linear column. Their dot product is zero because the positions sum to zero. Their squared lengths are three and two. Multiplying the observation vector by each column gives 8 and 4, so the normal equations are diagonal and yield \(c=8/3\) K and \(m=2\) K per position unit.</p>
+<p>The predicted values are \(2/3,8/3,14/3\) K. The residual \(b-Ax=(1/3,-2/3,1/3)^T\) has zero sum and zero dot product with \((-1,0,1)^T\), as required. Changing the intercept cannot lower the sum of squares because the positive and negative residuals already balance; changing the slope has the analogous weighted balance. The squared residual norm is \(2/3\) K². This measures fit to these readings. It does not tell whether a line will predict temperatures well outside the sampled interval.</p>
+</section>
+<section>
+<h2 id="remove-redundant-precision-loss">Remove redundant precision loss</h2>
+<p>If \(A\) has full column rank and singular values \(\sigma_i\), then \(A^TA\) has eigenvalues \(\sigma_i^2\). Consequently \(\kappa_2(A^TA)=\kappa_2(A)^2\). When two model columns are nearly parallel, forming the products explicitly can lose significant information about their small difference. For example, a straight-line fit on positions clustered around a very large offset has nearly proportional constant and position columns. Centering and scaling positions improves the parameterisation and gives an intercept with a local physical interpretation.</p>
+<p>Alternatively, factor \(A=QR\) with \(Q\) having orthonormal columns and \(R\) upper triangular. Decompose the residual into its orthogonal parts inside and outside the column space:</p>
+<div class="math display">\[\|b-Ax\|^2=\|Q^Tb-Rx\|^2+\|(I-QQ^T)b\|^2.\]</div>
+<p>The second term is independent of the fit. Solve \(Rx=Q^Tb\) by back substitution. Householder reflectors build this factorisation using length-preserving transformations. In the three-temperature example, dividing the constant column by \(\sqrt3\) and the position column by \(\sqrt2\) already produces \(Q\). The transformed data are \(8/\sqrt3\) and \(4/\sqrt2\). Dividing by the diagonal of \(R\) recovers exactly the same fit. When the columns are nearly dependent, inspect the rank explicitly, using column pivoting or singular values, before giving a physical interpretation to individual coefficients.</p>
+</section>
+<section>
+<h2 id="include-measurement-weights-explicitly">Include measurement weights explicitly</h2>
+<p>If an instrument gives independent errors with standard deviations \(s_i\), divide row \(i\) of both \(A\) and \(b\) by \(s_i\). The sum of squares now measures squared differences in units of each sensor’s own standard deviation. For two readings 0 and 10 with standard deviations 1 and 3, a constant fit minimises \(c^2+(10-c)^2/9\). Differentiation gives \(c=1\), versus the unweighted mean of 5. A reliable low reading exerts more influence on the weighted result.</p>
+<p>This weighting still assumes independence and an appropriate error description. If both readings share an uncertain offset, repeated observations can reduce independent fluctuations without removing the offset. Near a rank deficiency, a small weighted residual likewise cannot establish separate physical identifiability of the fitted coefficients. Examine uncertainty or singular directions in the parameter map as well as the final mismatch.</p>
+</section>
+<section>
+<h2 id="derive-a-prediction-after-withholding-one-observation">Derive a prediction after withholding one observation</h2>
+<p>Let \(A\) have full column rank and use equal independent data variances. The fitted vector is \(\hat y=Hy\) with \(H=A(A^TA)^{-1}A^T\); implement the projection with a stable factorisation. Suppose row \(i\) is withheld and the reduced design stays full rank. Its new prediction at that location, \(\hat y_i^{(-i)}\), can be obtained without refitting the entire data set. Replace \(y_i\) in the full data by this predicted value. The model fitted to the reduced observations now also satisfies the full normal equations because the added row has precisely zero residual at that fit.</p>
+<p>Apply the original hat matrix to the modified vector. Its \(i\)-th fitted value is \(\hat y_i+h_{ii}(\hat y_i^{(-i)}-y_i)\), which must equal \(\hat y_i^{(-i)}\). Rearranging gives \(y_i-\hat y_i^{(-i)}=(y_i-\hat y_i)/(1-h_{ii})\). This relation shows how leverage can mask an error inside the training data. If \(h_{ii}=1\), the denominator vanishes because that observation alone identifies some parameter combination. Withholding it then requires a different rank convention or additional modelling information.</p>
+</section>
+<section>
+<h2 id="predict-the-end-of-a-calibration-line-from-its-other-readings">Predict the end of a calibration line from its other readings</h2>
+<p>Fit \(y=a+bt\) to \((t,y)=(0,0),(1,1),(2,4)\). The mean time is one and the mean response is \(5/3\). The slope from centred data is \([(-1)(-5/3)+(1)(7/3)]/[1+1]=2\), giving intercept \(-1/3\). The fitted values are \((-1/3,5/3,11/3)\) and residuals are \((1/3,-2/3,1/3)\). Taken individually, either endpoint looks better fitted than the midpoint. But each endpoint also has disproportionate influence on the slope used to fit itself.</p>
+<p>For a straight line the intercept and centred-time columns are orthogonal, so \(h_{ii}=1/3+(t_i-1)^2/2\). The endpoint leverages are \(5/6\), the central leverage is \(1/3\), and their sum is two, the number of fitted parameters. The leave-one-out residuals are consequently \(2,-1,2\). Verify the last directly: the first two readings define the line \(y=t\); it predicts 2 at the final time, while the held-out observation is 4. For the central reading the two endpoints define \(y=2t\), predicting 2 instead of 1.</p>
+<p>The scientific question determines whether this test is relevant. Dropping an endpoint forces extrapolation, whereas dropping the midpoint tests interpolation between two retained settings. Averaging these three squared errors mixes two distinct prediction tasks. If future measurements will be taken only inside the calibrated interval, a separate evaluation there is more informative. Serially correlated measurements also invalidate the interpretation of neighbouring held-out readings as independent validation, although the algebraic leave-one-out identity for a fixed design remains valid.</p>
+<p>For these three observations the sum of squared training residuals is \(1/9+4/9+1/9=2/3\). The sum after leaving each observation out in turn is \(4+1+4=9\). The discrepancy arises even with an exactly implemented fitting routine. Each training prediction has already used the observation against which it is compared. The difference becomes acute near the boundary because that observation has supplied much of the information about its own fitted value.</p>
+</section>
+<section class="worked-plot"><h2 id="worked-plot">Estimate a fitted line beyond its calibration interval</h2>
+<p>Six independent sensors of equal variance calibrate an intercept and slope. For each proposed location use the row \(c=(1,x)\). The standard error of the fitted mean is \(\sigma\|R^{-\mathsf T}c\|\) from the QR factorisation of the design.</p>
+<figure class="paper-figure"><img src="/assets/worked-figures/linear-algebra/03-least-squares.png" alt="Estimate a fitted line beyond its calibration interval. Horizontal axis: Prediction location. Vertical axis: Standard error of the fitted mean / sensor σ. Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Both designs give 1/√6 times sensor σ at the centre. Narrowing the calibration range by four multiplies the slope standard error by four. To predict an individual future reading add its variance before taking the square root.</figcaption></figure>
+<details class="plot-data" data-csv="/downloads/lecture-data/linear-algebra/03-least-squares.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Standard error of the fitted mean / sensor σ at selected values of Prediction location.</caption><thead><tr><th scope="col">Prediction location</th><th scope="col">Calibration −1 to 1</th><th scope="col">Calibration −0.25 to 0.25</th></tr></thead><tbody><tr><th scope="row">−2</th><td>1.263</td><td>4.7983</td></tr><tr><th scope="row">−1</th><td>0.72375</td><td>2.4251</td></tr><tr><th scope="row">0</th><td>0.40825</td><td>0.40825</td></tr><tr><th scope="row">1</th><td>0.72375</td><td>2.4251</td></tr><tr><th scope="row">2</th><td>1.263</td><td>4.7983</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/linear-algebra/03-least-squares.csv" download>Download all 241 plotted samples (CSV)</a></p></details></section>
+<nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/problem-sheets/1/">Problem sheet 1 · Measurements and elimination</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/04-stationary-iterations/">Chapter 4 · Stationary iterations and smoothing</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
