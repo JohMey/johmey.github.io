@@ -46,13 +46,18 @@
 <div class="math display equation-chain"><div class="equation-step">\[f_{\rm even}(x)=\tfrac12[f(x)+f(1-x)],\]</div><div class="equation-step">\[f_{\rm odd}(x)=\tfrac12[f(x)-f(1-x)] .\]</div></div>
 <p>Pair averaging keeps the first and cancels the second exactly. The two pieces are orthogonal under uniform integration, so cancellation removes the antisymmetric contribution to variability. It also uses two evaluations for each independent pair. Standard errors should therefore be calculated across the pair averages.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Calculate the gain for a quadratic integrand</h3>
-<p>For \(f(x)=x^2\), \(\sigma^2=1/5-1/9=4/45\). The covariance with its reflected partner is \(\int_0^1x^2(1-x)^2dx-1/9=1/30-1/9=-7/90\), giving \(\rho=-7/8\). At a fixed evaluation budget the variance falls by a factor of eight and the standard error by \(\sqrt8\). Each pair integrates the linear part about the midpoint exactly.</p>
+<p>For \(f(x)=x^2\),</p>
+<div class="math display">\[\sigma^2=1/5-1/9=4/45.\]</div>
+<p>The covariance with its reflected partner is \(\int_0^1x^2(1-x)^2dx-1/9=1/30-1/9=-7/90\), giving \(\rho=-7/8\). At a fixed evaluation budget the variance falls by a factor of eight and the standard error by \(\sqrt8\). Each pair integrates the linear part about the midpoint exactly.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Recognize when the second evaluation is redundant</h3>
-<p>For \(f(x)=(x-1/2)^2\), reflection gives the same function value. Here \(\rho=1\) and the paired method has twice the variance of independent sampling at equal cost. With 200 evaluations and single-value variance \(1/180\), the independent standard error is \(1/\sqrt{36000}=0.00527\); using 100 independent pairs gives \(1/\sqrt{18000}=0.00745\).</p>
+<p>For \(f(x)=(x-1/2)^2\), reflection gives the same function value. Here \(\rho=1\) and the paired method has twice the variance of independent sampling at equal cost. With 200 evaluations and single-value variance \(1/180\), the independent standard error is \(1/\sqrt{36000}=0.00527\); using 100 independent pairs gives</p>
+<div class="math display">\[1/\sqrt{18000}=0.00745.\]</div>
 </section>
 <section>
 <h2 id="turn-area-into-an-expectation">Turn area into an expectation</h2>
-<p>For an integrable \(f\) on \([a,b]\), let \(U\) be uniform on the interval. Then \(I=(b-a)\mathbb E[f(U)]\). Independent draws give an unbiased estimator by averaging their function values and multiplying by the length. With finite variance \(\sigma^2=\operatorname{Var}(f(U))\), independence eliminates cross-covariances and gives \(\operatorname{Var}(\hat I)=(b-a)^2\sigma^2/n\). The typical size of the sampling error decreases with the square root of the sample count. Multiplying the budget by four halves the standard error.</p>
+<p>For an integrable \(f\) on \([a,b]\), let \(U\) be uniform on the interval. Then \(I=(b-a)\mathbb E[f(U)]\). Independent draws give an unbiased estimator by averaging their function values and multiplying by the length. With finite variance \(\sigma^2=\operatorname{Var}(f(U))\), independence eliminates cross-covariances and gives</p>
+<div class="math display">\[\operatorname{Var}(\hat I)=(b-a)^2\sigma^2/n.\]</div>
+<p>The typical size of the sampling error decreases with the square root of the sample count. Multiplying the budget by four halves the standard error.</p>
 <p>In a numerical run replace the unknown variance by the sample variance with denominator \(n-1\). For a sufficiently large sample with a suitable distribution, a normal approximation provides an approximate confidence interval. A particular interval need not contain the exact answer. Heavy tails, correlated draws or a nearly unsampled small peak can make the estimated uncertainty unreliable. Recording the random seed reproduces the same sequence of sample values; independent seeds are needed for independent replications.</p>
 </section>
 <section>
@@ -66,17 +71,27 @@
 </section>
 <section>
 <h2 id="use-a-known-integral-to-reduce-variability">Use a known integral to reduce variability</h2>
-<p>For \(f(x)=x+x^2\), the integral of the first term is known to be one half. Sampling only \(x^2\) and adding one half leaves the expectation unchanged. The original sample variance per uniform draw is \(1/3+1/2+1/5-(5/6)^2=61/180\). The residual sample variance per draw is \(1/5-(1/3)^2=4/45\), less than one third as large. This control-variate construction uses a known mean and a correlation with the original integrand. An arbitrary replacement by a superficially similar function without restoring its known mean would bias the estimate.</p>
+<p>For \(f(x)=x+x^2\), the integral of the first term is known to be one half. Sampling only \(x^2\) and adding one half leaves the expectation unchanged. The original sample variance per uniform draw is</p>
+<div class="math display">\[1/3+1/2+1/5-(5/6)^2=61/180.\]</div>
+<p>The residual sample variance per draw is \(1/5-(1/3)^2=4/45\), less than one third as large. This control-variate construction uses a known mean and a correlation with the original integrand. An arbitrary replacement by a superficially similar function without restoring its known mean would bias the estimate.</p>
 </section>
 <section>
 <h2 id="sample-more-often-where-the-integrand-is-large">Sample more often where the integrand is large</h2>
 <p>For a nonuniform positive probability density \(q\) on the integration region, the identity \(\int f(x)\,dx=\mathbb E_q[f(X)/q(X)]\) holds whenever the sampling distribution covers the integrand's support. Independent samples produce an unbiased estimate. Its variance per draw is \(\int f(x)^2/q(x)\,dx-I^2\), provided this integral is finite. A density concentrated near large contributions can reduce this variance even if generating a nonuniform draw costs little more than generating a uniform one. A density that is too small where the integrand is large can have the opposite effect.</p>
-<p>Cauchy–Schwarz applied to \(\int |f|=\int (|f|/\sqrt q)\sqrt q\) gives \((\int|f|)^2\le\int f^2/q\). Equality requires \(q\) proportional to \(|f|\). For a nonnegative integrand that ideal density makes the sample weight constant and the variance zero. Constructing its normalising constant would generally require knowing the integral itself. The result is thus a design guide: choose a tractable density approximating the shape of the large contributions, with known normalisation and sufficiently broad coverage.</p>
+<p>Cauchy–Schwarz applied to \(\int |f|=\int (|f|/\sqrt q)\sqrt q\) gives</p>
+<div class="math display">\[(\int|f|)^2\le\int f^2/q.\]</div>
+<p>Equality requires \(q\) proportional to \(|f|\). For a nonnegative integrand that ideal density makes the sample weight constant and the variance zero. Constructing its normalising constant would generally require knowing the integral itself. The result is thus a design guide: choose a tractable density approximating the shape of the large contributions, with known normalisation and sufficiently broad coverage.</p>
 </section>
 <section>
 <h2 id="restore-finite-variance-for-an-integrable-endpoint-peak">Restore finite variance for an integrable endpoint peak</h2>
-<p>Take \(f(x)=x^{-1/2}\) on \((0,1]\). The integral is two. Under uniform sampling each weight is finite almost surely and has that finite mean, but its second moment is \(\int_0^1 x^{-1}dx=\infty\). The familiar standard-error formula based on a finite variance and a square-root sampling rate is therefore unjustified, even if a modest run happens to avoid tiny \(x\) and reports a reassuringly small sample variance.</p>
-<p>Choose \(q(x)=(3/4)x^{-1/4}\). Its cumulative distribution is \(x^{3/4}\), so one draws \(X=U^{4/3}\) for a uniform \(U\). The importance weight is \(W=(4/3)X^{-1/4}\). The second moment is \((4/3)\int_0^1 x^{-3/4}dx=16/3\), giving variance \(16/3-4=4/3\). For 300 independent draws the exact standard deviation of the mean is \(\sqrt{(4/3)/300}=1/15\). This result quantifies an uncertainty that uniform sampling could not express through a finite variance.</p>
+<p>Take \(f(x)=x^{-1/2}\) on \((0,1]\). The integral is two. Under uniform sampling each weight is finite almost surely and has that finite mean, but its second moment is</p>
+<div class="math display">\[\int_0^1 x^{-1}dx=\infty.\]</div>
+<p>The familiar standard-error formula based on a finite variance and a square-root sampling rate is therefore unjustified, even if a modest run happens to avoid tiny \(x\) and reports a reassuringly small sample variance.</p>
+<p>Choose \(q(x)=(3/4)x^{-1/4}\). Its cumulative distribution is \(x^{3/4}\), so one draws \(X=U^{4/3}\) for a uniform \(U\). The importance weight is</p>
+<div class="math display">\[W=(4/3)X^{-1/4}.\]</div>
+<p>The second moment is \((4/3)\int_0^1 x^{-3/4}dx=16/3\), giving variance \(16/3-4=4/3\). For 300 independent draws the exact standard deviation of the mean is</p>
+<div class="math display">\[\sqrt{(4/3)/300}=1/15.\]</div>
+<p>This result quantifies an uncertainty that uniform sampling could not express through a finite variance.</p>
 <p>For the ideal comparison \(q_\ast=x^{-1/2}/2\), the cumulative distribution is \(\sqrt x\); generating \(X=U^2\) gives \(W=2\) on every draw. Change the integrand to \(x^{-1/2}(1+x)\) while retaining this density and the weights become \(2(1+X)\), bounded between two and four. The method still controls the singular behaviour without needing exact knowledge of the new integral. For a sign-changing integrand, even sampling from \(|f|\) retains sign fluctuation and cannot eliminate cancellation between large positive and negative contributions.</p>
 <p>To check the improved density numerically, record both the sample mean and the largest weight across independent replications. A computation that clips extremely small sampled values of \(X\) to avoid a large weight changes the target expectation. Under the proposed \(q\), the omitted integrand area from zero to a cutoff \(\delta\) is \(2\sqrt\delta\). Even a cutoff of \(10^{-4}\) removes 0.02 integral units, which is already thirty percent of the quoted standard error for 300 samples. Tail handling is therefore part of defining the estimator.</p>
 <p>A stable implementation can generate the weight directly from the sampled uniform variable and check this omitted-area estimate.</p>

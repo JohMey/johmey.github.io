@@ -47,12 +47,18 @@
 <p class="example-label">Worked example</p><h3 id="worked-example">Determine both heat flows through an instrumented wall</h3>
 <p>Let \(T_L=320\) K, \(T_R=300\) K, \(R_L=0.100\), \(R_R=0.200\) m² K/W and \(s=150\) W/m². The interface sees conductances \(10.0\) and \(5.00\) W/(m² K) and reaches \(323.33\) K. The left flux is \(-33.3\) W/m² and the right flux \(116.7\) W/m². Heat leaves on both sides, including toward the hotter external surface. Their oriented difference equals \(150\) W/m².</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Select a heater setting that makes one sensor read zero</h3>
-<p>Keeping the same temperatures and layers, impose \(q_L=0\). Then \(T_I=T_L=320\) K and \(s=(T_L-T_R)/R_R=100\) W/m². All generated heat exits on the right. Reducing \(s\) to zero instead gives \(66.7\) W/m² from left to right through both layers. A zero left-side flux in the heated experiment therefore does not imply an insulating left layer.</p>
+<p>Keeping the same temperatures and layers, impose \(q_L=0\). Then</p>
+<div class="math display equation-chain"><div class="equation-step">\[T_I=T_L=320\,\mathrm{K},\]</div><div class="equation-step">\[s=(T_L-T_R)/R_R=100\,\mathrm{W/m^2}.\]</div></div>
+<p>All generated heat exits on the right. Reducing \(s\) to zero instead gives \(66.7\) W/m² from left to right through both layers. A zero left-side flux in the heated experiment therefore does not imply an insulating left layer.</p>
 </section>
 <section><h2 id="notebook-example">Touch two long solids: which temperature does the interface acquire?</h2>
 <p>Two long blocks, initially at temperatures \(T_L&gt;T_R\), are pressed into ideal thermal contact at \(x=0\). Denote conductivity by \(k\), volumetric heat capacity by \(C\), and diffusivity by \(\alpha=k/C\). At early times the penetration distance on each side is small compared with its length. Model the blocks as half-spaces with a common interfacial temperature \(T_*\). This transient contact problem has no fixed layer thickness to insert into a pair of steady thermal resistances.</p>
-<p>In the right half-space the similarity coordinate is \(x/(2\sqrt{\alpha_R t})\). Substituting a function \(F\) of this coordinate into the heat equation gives \(F&#x27;&#x27;+2\eta F&#x27;=0\). Its bounded solution matching a fixed surface and a uniform distant temperature has an error-function shape. Thus \(T_R(x,t)=T_*+(T_R-T_*)\operatorname{erf}[x/(2\sqrt{\alpha_R t})]\). The left solution uses distance \(-x\), its own diffusivity and the initial left temperature. These profiles share their interface temperature by construction; conservation still requires their heat fluxes to match.</p>
-<p>Differentiate the error functions at zero and apply Fourier&#x27;s law. The left flux equals \(e_L(T_L-T_*)/\sqrt{\pi t}\), and the right flux is \(e_R(T_*-T_R)/\sqrt{\pi t}\), both oriented from left to right. Here \(e=\sqrt{kC}\) is thermal effusivity. Equating the fluxes gives \(T_*=(e_LT_L+e_RT_R)/(e_L+e_R)\). The interfacial temperature is independent of time within this idealisation, while the penetration layers broaden continuously.</p>
+<p>In the right half-space the similarity coordinate is \(x/(2\sqrt{\alpha_R t})\). Substituting a function \(F\) of this coordinate into the heat equation gives</p>
+<div class="math display">\[F&#x27;&#x27;+2\eta F&#x27;=0.\]</div>
+<p>Its bounded solution matching a fixed surface and a uniform distant temperature has an error-function shape. Thus \(T_R(x,t)=T_*+(T_R-T_*)\operatorname{erf}[x/(2\sqrt{\alpha_R t})]\). The left solution uses distance \(-x\), its own diffusivity and the initial left temperature. These profiles share their interface temperature by construction; conservation still requires their heat fluxes to match.</p>
+<p>Differentiate the error functions at zero and apply Fourier&#x27;s law. The left flux equals \(e_L(T_L-T_*)/\sqrt{\pi t}\), and the right flux is \(e_R(T_*-T_R)/\sqrt{\pi t}\), both oriented from left to right. Here \(e=\sqrt{kC}\) is thermal effusivity. Equating the fluxes gives</p>
+<div class="math display">\[T_*=(e_LT_L+e_RT_R)/(e_L+e_R).\]</div>
+<p>The interfacial temperature is independent of time within this idealisation, while the penetration layers broaden continuously.</p>
 <figure class="concept-diagram"><a class="diagram-enlarge" href="/assets/workshop-figures/partial-differential-equations-chapter.png" target="_blank" rel="noopener"><img src="/assets/workshop-figures/partial-differential-equations-chapter.png" alt="Temperature profiles on both sides at two contact times and a logarithmic graph of transmitted flux against time."><span>Open full-size diagram</span></a><figcaption>The two temperature gradients differ because flux continuity weights each gradient by its own conductivity. The common temperature depends on heat capacity as well as conductivity.</figcaption></figure>
 <p>For the notebook&#x27;s \(k_L=4,\ k_R=1\,\mathrm{W/(m\,K)}\) and equal capacities of \(10^6\,\mathrm{J/(m^3\,K)}\), the effusivity ratio is two. Between 80 and 20 degrees Celsius the common temperature is 60 degrees Celsius. The initially infinite ideal flux is integrable: the energy transferred by time \(t\) equals \(2tq(t)\) per unit contact area. The notebook independently integrates temperature loss and gain throughout the two bodies and checks this balance. A real surface resistance, a finite approach time or the far surface of a finite specimen would eventually invalidate different parts of the idealisation.</p>
 <p>A finite-volume scheme offers a sensitive check of this benchmark. On a sufficiently long computational domain, sum nodal or cell-average energies on each side at the same time. Internal face fluxes cancel in the total by conservation. A scheme may pass that global check while partitioning energy incorrectly between materials. Compare both individual energy changes, the early flux integrated over the first step and the temperature nearest the interface. This combination tests the material weighting and the time integration independently.</p>
@@ -61,7 +67,9 @@
 </section><div class="notebook-launch"><a class="button button-primary" href="/fundamentals/numerics/partial-differential-equations/notebooks/chapter/">Open editable notebook</a> <a href="/downloads/fundamentals/notebooks/partial-differential-equations-chapter.ipynb" download>Download .ipynb</a></div>
 <section>
 <h2 id="one-flux-through-resistances-in-series">One flux through resistances in series</h2>
-<p>Let \(q=-kT'\) be heat flux in the positive coordinate direction, with unit cross-sectional area and no internal source. Between two cell centres separated by an interface, let the left and right centre-to-interface distances be \(d_L,d_R\). Piecewise constant conductivities \(k_L,k_R&gt;0\) make the equilibrium temperature linear in each segment. If the interface has perfect contact, its temperature \(T_f\) is continuous. Integrating Fourier's law on each side gives \(T_L-T_f=q\,d_L/k_L\) and \(T_f-T_R=q\,d_R/k_R\). Adding eliminates the unknown interface temperature.</p>
+<p>Let \(q=-kT'\) be heat flux in the positive coordinate direction, with unit cross-sectional area and no internal source. Between two cell centres separated by an interface, let the left and right centre-to-interface distances be \(d_L,d_R\). Piecewise constant conductivities \(k_L,k_R&gt;0\) make the equilibrium temperature linear in each segment. If the interface has perfect contact, its temperature \(T_f\) is continuous. Integrating Fourier's law on each side gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[T_L-T_f=q\,d_L/k_L,\]</div><div class="equation-step">\[T_f-T_R=q\,d_R/k_R.\]</div></div>
+<p>Adding eliminates the unknown interface temperature.</p>
 <div class="math display">\[q=\frac{T_L-T_R}{d_L/k_L+d_R/k_R}.\]</div>
 <p>For equal distances this amounts to using the harmonic mean conductivity over the full centre spacing. Inserting the same signed \(q\) as the outflow of the left cell and the inflow of the right cell produces cancellation when their balances are added. If a material interface stores energy or supplies heat independently, a flux jump belongs in the balance and this steady series calculation must be modified.</p>
 </section>
@@ -69,10 +77,55 @@
 <h2 id="measure-the-temperature-drop">Measure the temperature drop</h2>
 <p>Take \(d_L=d_R=0.01\) m, \(k_L=2,\ k_R=10\) W/(m K) and \(T_L=30,\ T_R=18\) °C. The series resistance per unit area is \(0.005+0.001=0.006\) m²K/W. The flux is \(2000\) W/m² and the interface temperature is \(30-2000(0.005)=20\) °C. The lower conductivity carries the larger temperature drop despite carrying the same flux. Using the arithmetic mean 6 with the centre difference over 0.02 m instead predicts \(3600\) W/m².</p>
 <p>Introduce a contact resistance \(R_c=0.002\) m²K/W. Its temperature jump is \(qR_c\); the total resistance rises to 0.008, reducing the heat flux to 1500 W/m². The two sides of the contact now have temperatures 22.5 and 19.5 °C. Imposing a single interface temperature on this model would remove the physically measured 3 K jump.</p>
+
+<details class="study-aside">
+<summary>OneSimulation · Resolve a temperature jump at imperfect contact</summary>
+<p>Two slabs are each 0.06 m thick, with conductivities 12 and 3 W/(m K). Their outer surfaces are held 30 K apart. A contact resistance \(R_c\) permits two distinct temperatures at the shared physical location. The flux stays continuous. The face law and the exact reference for the whole assembly are</p>
+<div class="math display equation-chain"><div class="equation-step">\[T_{f,L}-T_{f,R}=qR_c,\]</div><div class="equation-step">\[q=\frac{T_L-T_R}{L_1/k_1+R_c+L_2/k_2}.\]</div></div>
+<p>The code adds \(R_c\) only to the resistance between the two cells adjacent to the contact. OneSimulation solves the resulting balance system. The flux falls from 1200 to 800 W/m² for \(R_c=0.0125\) m² K/W. Reconstructing the two face temperatures gives 326 K and 316 K. Connecting only the cell-centre temperatures would smear this 10 K jump over one mesh cell. Refining an ideal-contact model would converge to the wrong interface law.</p>
+<pre><code>"""Find the temperature jump at an imperfect contact between two slabs."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+
+n = 12  # even number of equal, cell-centred control volumes
+length = 0.12  # m
+dx = length / n
+k = np.repeat([12., 3.], n // 2)  # W/(m K)
+left, right = 330., 300.  # K
+centres = (np.arange(n) + 0.5) * dx
+fig, ax = plt.subplots(figsize=(6.8, 3.8), constrained_layout=True)
+for contact, colour in [(0.0, "#a4492b"), (0.0125, "#176879")]:  # m² K/W
+    resistance = np.r_[dx/(2*k[0]), dx/(2*k[:-1]) + dx/(2*k[1:]), dx/(2*k[-1])]
+    resistance[n//2] += contact
+    g = 1 / resistance
+    matrix = np.diag(g[:-1]+g[1:]) - np.diag(g[1:-1], 1) - np.diag(g[1:-1], -1)
+    rhs = np.zeros(n)
+    rhs[0], rhs[-1] = g[0]*left, g[-1]*right
+    temperature = solve_dense(matrix, rhs)
+    fluxes = -np.diff(np.r_[left, temperature, right]) / resistance
+    q = fluxes[0]
+    assert np.allclose(fluxes, (left-right)/(length/2/k[0]+contact+length/2/k[-1]))
+    hot_face = temperature[n//2-1] - q*dx/(2*k[0])
+    cold_face = temperature[n//2] + q*dx/(2*k[-1])
+    assert np.isclose(hot_face-cold_face, q*contact)
+    x = np.r_[0, centres[:n//2], length/2, length/2, centres[n//2:], length]
+    y = np.r_[left, temperature[:n//2], hot_face, cold_face, temperature[n//2:], right]
+    ax.plot(100*x, y, color=colour, label=f"Contact resistance {contact:g} m² K/W")
+    print(f"Flux {q:.0f} W/m²; interface jump {hot_face-cold_face:.1f} K")
+ax.set(xlabel="Distance through slabs (cm)", ylabel="Temperature (K)")
+ax.legend()
+ax.grid(alpha=0.2)
+fig.savefig("partial-differential-equations.png", dpi=160)</code></pre>
+<figure><img src="/assets/aside-figures/partial-differential-equations.png" width="1088" height="608" loading="lazy" alt="Perfect contact gives a continuous piecewise linear temperature, while finite contact resistance produces a 10 K downward jump at 6 cm."><figcaption>The vertical segment reconstructs both surface temperatures at the same location. All control-volume faces carry the same steady flux, including the imperfect contact.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/partial-differential-equations.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section>
 <h2 id="apply-a-convective-boundary">Apply a convective boundary</h2>
-<p>At an exterior face the outward heat flux obeys \(q=h_c(T_s-T_\infty)\), a Robin condition. Eliminate the unknown surface temperature as above to obtain \(q=(T_P-T_\infty)/(d/k+1/h_c)\). If \(h_c\) tends to zero, the boundary becomes insulating. With very large \(h_c\), the surface approaches ambient temperature while the finite centre-to-face resistance remains. For \(d=0.01\) m, \(k=2\), \(h_c=100\) W/(m² K), \(T_P-T_\infty=15\) K, the predicted flux is 1000 W/m² and the surface is 10 K above ambient. Multiplying by face area converts this flux to the power used in a cell energy balance. Mixing up these two quantities makes the result depend incorrectly on mesh area.</p>
+<p>At an exterior face the outward heat flux obeys \(q=h_c(T_s-T_\infty)\), a Robin condition. Eliminate the unknown surface temperature as above to obtain</p>
+<div class="math display">\[q=(T_P-T_\infty)/(d/k+1/h_c).\]</div>
+<p>If \(h_c\) tends to zero, the boundary becomes insulating. With very large \(h_c\), the surface approaches ambient temperature while the finite centre-to-face resistance remains. For \(d=0.01\) m, \(k=2\), \(h_c=100\) W/(m² K), \(T_P-T_\infty=15\) K, the predicted flux is 1000 W/m² and the surface is 10 K above ambient. Multiplying by face area converts this flux to the power used in a cell energy balance. Mixing up these two quantities makes the result depend incorrectly on mesh area.</p>
 </section>
 <section>
 <h2 id="a-jump-located-inside-a-cell">A jump located inside a cell</h2>
@@ -80,13 +133,17 @@
 </section>
 <section>
 <h2 id="derive-effective-transport-parallel-and-normal-to-layers">Derive effective transport parallel and normal to layers</h2>
-<p>A fine laminate of isotropic materials can have a direction-dependent macroscopic conductivity. Consider two perfectly bonded planar layers occupying thickness fractions \(\theta\) and \(1-\theta\), with conductivities \(k_1,k_2\). Assume steady conduction, no internal sources, and boundary conditions that permit a one-dimensional field for the loading orientation being tested. For transport normal to the layers, continuity forces equal flux. Adding their temperature drops across a total thickness \(L\) gives \(k_\perp=[\theta/k_1+(1-\theta)/k_2]^{-1}\). For transport parallel to the layers the imposed longitudinal gradient is common and the area-weighted fluxes add, giving \(k_\parallel=\theta k_1+(1-\theta)k_2\).</p>
+<p>A fine laminate of isotropic materials can have a direction-dependent macroscopic conductivity. Consider two perfectly bonded planar layers occupying thickness fractions \(\theta\) and \(1-\theta\), with conductivities \(k_1,k_2\). Assume steady conduction, no internal sources, and boundary conditions that permit a one-dimensional field for the loading orientation being tested. For transport normal to the layers, continuity forces equal flux. Adding their temperature drops across a total thickness \(L\) gives</p>
+<div class="math display">\[k_\perp=[\theta/k_1+(1-\theta)/k_2]^{-1}.\]</div>
+<p>For transport parallel to the layers the imposed longitudinal gradient is common and the area-weighted fluxes add, giving \(k_\parallel=\theta k_1+(1-\theta)k_2\).</p>
 <p>The arithmetic and harmonic expressions are thus both correct, but apply to different geometries of imposed transport. Their ordering follows without a conductivity table: multiplying the two positive weighted sums \(\theta k_1+(1-\theta)k_2\) and \(\theta/k_1+(1-\theta)/k_2\) gives \(1+\theta(1-\theta)(k_1-k_2)^2/(k_1k_2)\ge1\). Equality requires identical conductivities or a missing layer. Spatial averaging performed before identifying the flux direction would erase precisely the distinction that determines the coarse physics.</p>
 </section>
 <section>
 <h2 id="predict-two-experiments-on-the-same-material-sample">Predict two experiments on the same material sample</h2>
 <p>Suppose a repeated laminate consists of 40 percent material with conductivity 1 and 60 percent with conductivity 10 W/(m K). Then \(k_\parallel=0.4+6=6.4\) W/(m K) and \(k_\perp=1/(0.4+0.06)=50/23\approx2.174\) W/(m K). A temperature drop of 4 K over 0.02 m imposes gradient magnitude 200 K/m. Perfectly normal loading produces flux magnitude about 434.8 W/m², whereas the same gradient parallel to the layers yields 1280 W/m². The larger flux is consistent with the fast material providing a continuous path in the latter orientation.</p>
-<p>For the normal experiment the low-conductivity phase occupies 0.008 m and accounts for a drop \(434.8(0.008)/1\approx3.478\) K. The high-conductivity phase occupies 0.012 m and drops only \(434.8(0.012)/10\approx0.522\) K. Adding recovers the imposed four kelvin. For the parallel experiment individual flux densities are 200 and 2000 W/m². Averaging by their area fractions gives \(0.4(200)+0.6(2000)=1280\) W/m². These local checks use the same two material properties and explain the difference in the observed coarse responses.</p>
+<p>For the normal experiment the low-conductivity phase occupies 0.008 m and accounts for a drop \(434.8(0.008)/1\approx3.478\) K. The high-conductivity phase occupies 0.012 m and drops only \(434.8(0.012)/10\approx0.522\) K. Adding recovers the imposed four kelvin. For the parallel experiment individual flux densities are 200 and 2000 W/m². Averaging by their area fractions gives</p>
+<div class="math display">\[0.4(200)+0.6(2000)=1280\,\mathrm{W/m^2}.\]</div>
+<p>These local checks use the same two material properties and explain the difference in the observed coarse responses.</p>
 <p>Using the effective tensor assumes the observation scale spans representative layers. A sensor within one layer may respond to its local temperature slope instead. Finite contact resistance adds a temperature jump in the normal direction; if the number of interfaces per macroscopic length changes, the effective normal resistance changes even at identical material fractions. Measuring both orientations can distinguish geometric or contact effects that a single scalar fitted conductivity would conceal.</p>
 <p>Rotating a laminate specimen through ninety degrees interchanges the roles of these two effective values without changing its volume fractions. This makes an orientation experiment particularly discriminating: a fit that happened to reproduce the first orientation by adjusting a scalar conductivity predicts the same flux for the rotated specimen, whereas the fine-layer balance predicts a factor of about \(6.4/(50/23)=2.94\) between them.</p>
 <p>Repeating the test over multiple layer spacings also probes the assumption of negligible contact resistance.</p>

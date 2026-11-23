@@ -45,12 +45,16 @@
 <p class="example-label">Worked example</p><h3 id="worked-example">Read a timestep from a material and grid</h3>
 <p>Take \(c=100\) m/s, \(\Delta x=0.0500\) m and \(\Delta t=0.400\) ms. Then \(C=0.800\) and the bound preserves at least \(1-C^2=0.360\) of the usual half-step kinetic term even in the worst spatial mode. The customary limiting step from this argument is \(0.500\) ms.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Show why equality of successive energies can mislead</h3>
-<p>Take the alternating grid mode for which \(\|Dv\|=2\|v\|/\Delta x\), and choose adjacent displacements whose midpoint is zero. At \(C=1.20\) the invariant for this state is \(E=(1-1.44)\|v\|^2/2=-0.220\|v\|^2\). Negative energy here is a property of the numerical quadratic form. A solver can preserve it exactly and still exhibit amplitude growth.</p>
+<p>Take the alternating grid mode for which \(\|Dv\|=2\|v\|/\Delta x\), and choose adjacent displacements whose midpoint is zero. At \(C=1.20\) the invariant for this state is</p>
+<div class="math display">\[E=(1-1.44)\|v\|^2/2=-0.220\|v\|^2.\]</div>
+<p>Negative energy here is a property of the numerical quadratic form. A solver can preserve it exactly and still exhibit amplitude growth.</p>
 </section>
 <section>
 <h2 id="distinguish-transport-of-phase-from-transport-of-energy">Distinguish transport of phase from transport of energy</h2>
 <p>A taut string with small transverse displacements and fixed tension obeys \(u_{tt}=c^2u_{xx}\). The physical speed \(c\) is independent of wavelength in this ideal one-dimensional model. A discrete solver can transport long waves at nearly the correct speed while short waves arrive late. In a pulse comprising many wavelengths, this artificial dependence on frequency distorts its shape even in a stable computation. A phase comparison at a probe provides information beyond monitoring maximum amplitude.</p>
-<p>Use centred second differences in both time and space, with \(C=c\Delta t/h\). Solving explicitly for the new level gives \(u_i^{n+1}=2u_i^n-u_i^{n-1}+C^2(u_{i-1}^n-2u_i^n+u_{i+1}^n)\). To initialise, expand \(u(\Delta t)=u(0)+\Delta t\,v(0)+(\Delta t)^2 c^2u_{xx}(0)/2+\cdots\). Replacing \(u_{xx}(0)\) by the same spatial difference gives a first level consistent with the initial velocity and acceleration. Simply copying the starting displacement to level one can introduce a spurious launch velocity.</p>
+<p>Use centred second differences in both time and space, with \(C=c\Delta t/h\). Solving explicitly for the new level gives</p>
+<div class="math display">\[u_i^{n+1}=2u_i^n-u_i^{n-1}+C^2(u_{i-1}^n-2u_i^n+u_{i+1}^n).\]</div>
+<p>To initialise, expand \(u(\Delta t)=u(0)+\Delta t\,v(0)+(\Delta t)^2 c^2u_{xx}(0)/2+\cdots\). Replacing \(u_{xx}(0)\) by the same spatial difference gives a first level consistent with the initial velocity and acceleration. Simply copying the starting displacement to level one can introduce a spurious launch velocity.</p>
 </section>
 <section>
 <h2 id="derive-the-discrete-dispersion-relation">Derive the discrete dispersion relation</h2>
@@ -61,7 +65,11 @@
 </section>
 <section>
 <h2 id="estimate-a-travel-time-error">Estimate a travel-time error</h2>
-<p>Take \(C=0.5\) and four points per wavelength, so \(\theta=\pi/2\). Then \(\omega_h\Delta t=2\arcsin[0.5\sin(\pi/4)]=0.72273\) rad. The physical advance is \(C\theta=\pi/4=0.78540\) rad. The numerical phase speed is about 0.920 of the true speed. After ten physical periods, its accumulated phase is about 9.20 cycles. A stable solution can therefore be nearly one oscillation behind while retaining a visually plausible amplitude.</p>
+<p>Take \(C=0.5\) and four points per wavelength, so \(\theta=\pi/2\). Then</p>
+<div class="math display">\[\omega_h\Delta t=2\arcsin[0.5\sin(\pi/4)]=0.72273\,\mathrm{rad}.\]</div>
+<p>The physical advance is</p>
+<div class="math display">\[C\theta=\pi/4=0.78540\,\mathrm{rad}.\]</div>
+<p>The numerical phase speed is about 0.920 of the true speed. After ten physical periods, its accumulated phase is about 9.20 cycles. A stable solution can therefore be nearly one oscillation behind while retaining a visually plausible amplitude.</p>
 <p>Group velocity is \(d\omega_h/dk\), obtained by differentiating the dispersion relation. On this branch \(v_g/c=\cos(\theta/2)/\sqrt{1-C^2\sin^2(\theta/2)}\), about 0.756 in the four-point example. A narrow-band packet’s envelope and an individual crest then propagate at different numerical speeds. When interpreting a probe trace, say whether the reported arrival corresponds to a crest, an envelope or a threshold. Repeat the calculation at additional points per wavelength using the same Courant number to isolate spatial-phase improvement from changes in the time integration.</p>
 </section>
 <section>
@@ -71,7 +79,9 @@
 </section>
 <section>
 <h2 id="derive-a-reflected-wave-from-a-discrete-outgoing-condition">Derive a reflected wave from a discrete outgoing condition</h2>
-<p>For a one-dimensional wave travelling right at speed \(c\), the outgoing continuum condition is \(u_t+cu_x=0\) at the right boundary. It annihilates an exact right-travelling waveform. A numerical boundary update using forward time and backward space gives \(u_N^{n+1}=(1-C)u_N^n+C u_{N-1}^n\), where \(C=c\Delta t/h\). A wave satisfying the interior discrete dispersion relation need not satisfy this one-sided relation. Even when the continuum boundary is perfectly absorbing, a mismatch of discrete phase relations can send energy back into the computational domain.</p>
+<p>For a one-dimensional wave travelling right at speed \(c\), the outgoing continuum condition is \(u_t+cu_x=0\) at the right boundary. It annihilates an exact right-travelling waveform. A numerical boundary update using forward time and backward space gives</p>
+<div class="math display">\[u_N^{n+1}=(1-C)u_N^n+C u_{N-1}^n,\]</div>
+<p>where \(C=c\Delta t/h\). A wave satisfying the interior discrete dispersion relation need not satisfy this one-sided relation. Even when the continuum boundary is perfectly absorbing, a mismatch of discrete phase relations can send energy back into the computational domain.</p>
 <p>Let \(z=e^{-i\omega\Delta t}\), with the incident and reflected grid waves represented by \(e^{i\theta(j-N)}z^n\) and \(R e^{-i\theta(j-N)}z^n\). At the boundary their sum is \(1+R\) times \(z^n\). Substitution in the outgoing update and grouping incident and reflected terms gives</p>
 <div class="math display">\[R=-\frac{z-1+C-Ce^{-i\theta}}{z-1+C-Ce^{i\theta}}.\]</div>
 <p>This amplitude ratio assumes a homogeneous grid, a propagating frequency and distinct incident and reflected branches. It compares each wave at the boundary itself. Signals measured farther inward acquire additional phase and travel-time factors and can interfere if both arrive in the same observation window.</p>

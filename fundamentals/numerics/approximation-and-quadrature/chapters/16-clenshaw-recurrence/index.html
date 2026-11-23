@@ -29,14 +29,18 @@
 <main id="content">
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Summing a Chebyshev series by working backwards</h1><p class="lead">Derive a stable evaluation scheme directly from a three-term polynomial identity and diagnose the failure that occurs when a fitted law is used outside its calibrated interval.</p><p class="byline">Chapter 16 of 18</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#from-cosines-to-a-polynomial-recurrence">From cosines to a polynomial recurrence</a><a href="#two-useful-arithmetic-checks">Two useful arithmetic checks</a><a href="#follow-one-uncertain-coefficient">Follow one uncertain coefficient</a><a href="#tutorial-on-mapping-a-laboratory-interval">Tutorial on mapping a laboratory interval</a><a href="#read-further">Read the university treatment</a><a href="#long-form">Study the full derivation</a></nav></aside><article class="prose reference"><section>
 <h2 id="from-cosines-to-a-polynomial-recurrence">From cosines to a polynomial recurrence</h2>
-<p>Set \(x=\cos\theta\) and \(T_k(x)=\cos(k\theta)\). The angle-addition formula gives \(T_{k+1}=2xT_k-T_{k-1}\), with \(T_0=1,T_1=x\). Consider \(p=\sum_{k=0}^n c_k T_k\) with the constant coefficient included in full. We could generate all the polynomials forward. Clenshaw evaluation instead gathers their weighted coefficients from the high end, without converting to monomials.</p>
+<p>Set \(x=\cos\theta\) and \(T_k(x)=\cos(k\theta)\). The angle-addition formula gives</p>
+<div class="math display">\[T_{k+1}=2xT_k-T_{k-1},\]</div>
+<p>with \(T_0=1,T_1=x\). Consider \(p=\sum_{k=0}^n c_k T_k\) with the constant coefficient included in full. We could generate all the polynomials forward. Clenshaw evaluation instead gathers their weighted coefficients from the high end, without converting to monomials.</p>
 <p>Set \(b_{n+1}=b_{n+2}=0\) and \(b_k=c_k+2xb_{k+1}-b_{k+2}\) for \(k=n,\ldots,1\). Substitute \(c_k=b_k-2xb_{k+1}+b_{k+2}\) into the original sum. Every interior \(b_j\) multiplies \(T_j-2xT_{j-1}+T_{j-2}=0\). Only two boundary terms survive:</p>
 <div class="math display">\[p(x)=c_0+xb_1-b_2.\]</div>
 <p>The derivation also identifies a common convention error. If the source defines its zeroth coefficient with a half-weight then it must be halved once before using this formula.</p>
 </section>
 <section>
 <h2 id="two-useful-arithmetic-checks">Two useful arithmetic checks</h2>
-<p>For coefficients \((1,2,3)\) at \(x=0.5\), \(b_2=3\), \(b_1=2+2(0.5)3=5\). The answer is \(1+0.5(5)-3=0.5\). Independently \(T_2(0.5)=-0.5\), giving \(1+1-1.5=0.5\).</p>
+<p>For coefficients \((1,2,3)\) at \(x=0.5\), \(b_2=3\), \(b_1=2+2(0.5)3=5\). The answer is</p>
+<div class="math display">\[1+0.5(5)-3=0.5.\]</div>
+<p>Independently \(T_2(0.5)=-0.5\), giving \(1+1-1.5=0.5\).</p>
 <p>On the calibration interval each \(|T_k|\le1\), so an isolated coefficient error of 0.001 changes the value by at most 0.001. At \(x=1.2\), \(T_{10}(1.2)=\cosh(10\operatorname{arcosh}(1.2))\) is around 252. The same tiny coefficient error now changes a prediction by roughly a quarter of a unit. Accurate summation does not make extrapolation reliable.</p>
 </section>
 <section>

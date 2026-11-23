@@ -36,25 +36,32 @@
 </section>
 <section>
 <h2 id="boundary">Find the time constant and check the uniform-temperature assumption</h2>
-<p>Set \(\theta=T-T_\infty\). For constant \(h\), separation of variables gives \(d\theta/\theta=-(hA/C)\,dt\). Integration from the initial temperature yields</p>
-<div class="math display">\[\frac{T(t)-T_\infty}{T_0-T_\infty}=e^{-t/\tau},\qquad \tau=\frac{C}{hA}.\]</div>
+<p>Set \(\theta=T-T_\infty\). For constant \(h\), separation of variables gives</p>
+<div class="math display">\[d\theta/\theta=-(hA/C)\,dt.\]</div>
+<p>Integration from the initial temperature yields</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{T(t)-T_\infty}{T_0-T_\infty}=e^{-t/\tau},\]</div><div class="equation-step">\[\tau=\frac{C}{hA}.\]</div></div>
 <figure class="lecture-figure"><img src="/assets/cooling-curve.png" width="1440" height="810" loading="lazy" alt="Exponential cooling curve. After 0.693 time constants 50% of the initial temperature excess remains. After one time constant 36.8% remains."><figcaption>The vertical scale measures the fraction of the initial temperature excess above the room. Every half-life, an interval of 0.693 time constants, halves the remaining excess.</figcaption></figure>
 <p>After one time constant the temperature difference is \(1/e\) of its initial value. A check on the single-temperature model is the Biot number \(Bi=h(V/A)/k\), where \(V\) is the body volume and \(k\) its conductivity. A value well below 0.1 means resistance to heat conduction inside the part is small compared with resistance at its surface. A poorly conducting body may have a cool surface while its centre stays warm.</p>
 <p class="source-note">Further study · MIT’s <a href="https://web.mit.edu/course/16/16.unified/www/FALL/thermodynamics/notes/node129.html">Transient Heat Transfer</a> connects the uniform-temperature assumption to the ratio of internal and surface thermal resistances.</p>
 </section>
 <section>
 <h2 id="worked">Cool from 350 K to 310 K</h2>
-<p>Take \(T_\infty=300\) K, \(C=900\) J/K, \(A=0.060\) m² and \(h=15\) W/(m²·K). The thermal conductance is \(hA=0.90\) W/K and \(\tau=900/0.90=1000\) s. The initial heat loss is \(0.90(350-300)=45\) W.</p>
+<p>Take \(T_\infty=300\) K, \(C=900\) J/K, \(A=0.060\) m² and \(h=15\) W/(m²·K). The thermal conductance is \(hA=0.90\) W/K and \(\tau=900/0.90=1000\) s. The initial heat loss is</p>
+<div class="math display">\[0.90(350-300)=45\,\mathrm{W}.\]</div>
 <p>A target of 310 K leaves 10 K of the original 50 K temperature difference. Solve \(10/50=e^{-t/1000}\) to get \(t=1000\ln 5=1609\) s, or 26.8 min. During this interval the part releases \(900(350-310)=36\,000\) J. Dividing that energy by the initial 45 W would underestimate the time, because the heat loss has fallen to 9 W at the target.</p>
 </section>
 <section>
 <h2 id="tutorial">Tutorial on cooling measurements</h2>
 <h3>1. Infer a convection coefficient</h3>
 <p>A repeat experiment starts at 350 K in the same 300 K room. After 700 s the measured part temperature is 325 K. Estimate \(h\) using the given area and heat capacity. When should it reach 312.5 K under those conditions?</p>
-<details><summary>Solution to the cooling measurement</summary><p>The excess temperature has halved, so \(e^{-700/\tau}=1/2\) and \(\tau=700/\ln 2=1010\) s. Thus \(h=C/(A\tau)=14.9\) W/(m²·K). A further half-life of 700 s takes the excess from 25 K to 12.5 K. The target occurs 1400 s after the start.</p></details>
+<details><summary>Solution to the cooling measurement</summary><p>The excess temperature has halved, so</p>
+<div class="math display equation-chain"><div class="equation-step">\[e^{-700/\tau}=1/2,\]</div><div class="equation-step">\[\tau=700/\ln 2=1010\,\mathrm{s}.\]</div></div>
+<p>Thus \(h=C/(A\tau)=14.9\) W/(m²·K). A further half-life of 700 s takes the excess from 25 K to 12.5 K. The target occurs 1400 s after the start.</p></details>
 <h3>2. Decide whether a single thermometer is enough</h3>
 <p>Consider two samples with \(V/A=0.0050\) m exposed to \(h=15\) W/(m²·K). One has \(k=200\) W/(m·K), the other \(k=0.10\) W/(m·K). For which sample would a surface temperature be a reasonable estimate of the core temperature during cooling?</p>
-<details><summary>Solution to the temperature-gradient check</summary><p>The Biot numbers are \(15(0.0050)/200=0.000375\) and \(15(0.0050)/0.10=0.75\). In the first sample conduction readily equalises internal temperatures. In the second an appreciable gradient can develop. A surface sensor can reach a chosen threshold while the core is still warmer, so a core measurement or spatial conduction model is needed.</p></details>
+<details><summary>Solution to the temperature-gradient check</summary><p>The Biot numbers are</p>
+<div class="math display equation-chain"><div class="equation-step">\[15(0.0050)/200=0.000375,\]</div><div class="equation-step">\[15(0.0050)/0.10=0.75.\]</div></div>
+<p>In the first sample conduction readily equalises internal temperatures. In the second an appreciable gradient can develop. A surface sensor can reach a chosen threshold while the core is still warmer, so a core measurement or spatial conduction model is needed.</p></details>
 </section>
 <section>
 <h2 id="numerical">Optional numerical comparison</h2>

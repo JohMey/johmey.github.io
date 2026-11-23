@@ -44,7 +44,9 @@
 <div class="math display equation-chain"><div class="equation-step">\[y_{\rm damped}=G_{\rm start}G^ny^0,\]</div><div class="equation-step">\[y_{\rm plain}=G^{n+1}y^0 .\]</div></div>
 <p>For small \(z\), both startup strategies agree through first order, while for large \(z\) the two half steps strongly suppress the unresolved mode. This argument explains a startup treatment for nonsmooth initial data; sign preservation of every physical grid value is a stronger matrix property than sign preservation of one mode.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Check damping of a near-grid-scale eigenmode</h3>
-<p>Take \(\lambda=2000\) s⁻¹ and \(\Delta t=0.0100\) s. Then \(z=20\). A single Crank–Nicolson step leaves \(-9/11=-0.818\) of the amplitude; two backward-Euler half steps leave \(1/121=0.00826\). The exact amplitude factor is \(e^{-20}=2.06\times10^{-9}\). Both discrete results are bounded, but the startup treatment removes almost all of a mode that the time grid cannot resolve.</p>
+<p>Take \(\lambda=2000\) s⁻¹ and \(\Delta t=0.0100\) s. Then \(z=20\). A single Crank–Nicolson step leaves \(-9/11=-0.818\) of the amplitude; two backward-Euler half steps leave \(1/121=0.00826\). The exact amplitude factor is</p>
+<div class="math display">\[e^{-20}=2.06\times10^{-9}.\]</div>
+<p>Both discrete results are bounded, but the startup treatment removes almost all of a mode that the time grid cannot resolve.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Check the cost for a physically slow component</h3>
 <p>For the same mesh and step, a slow mode with \(\lambda=2.00\) s⁻¹ has \(z=0.0200\). Crank–Nicolson gives \(0.99/1.01=0.980198\), the startup gives \(1/1.01^2=0.980296\) and the exact factor is \(0.980199\). The slow component changes by less than \(10^{-4}\) in this comparison. A timestep must still resolve a transient that is itself part of the desired output.</p>
 </section>
@@ -56,7 +58,9 @@
 <section>
 <h2 id="identify-the-spatial-modes-that-set-the-limit">Identify the spatial modes that set the limit</h2>
 <p>Insert \(u_j^n=g^n e^{\mathrm{i}j\theta}\), where \(\mathrm{i}\) is the imaginary unit and \(j\) indexes the grid. The two neighbouring values contribute factors \(e^{\pm\mathrm{i}\theta}\), yielding \(g=1-4r\sin^2(\theta/2)\). Long waves have \(\sin^2(\theta/2)\simeq\theta^2/4\), so their decay approaches the continuum rate as the mesh is refined. The alternating grid mode \(\theta=\pi\) has the most negative amplification and enforces \(r\leq1/2\) for bounded magnitude.</p>
-<p>At the limiting value \(r=1/2\) the alternating mode flips sign without losing amplitude. A strict margin damps it. For \(D=10^{-4}\) m²/s and \(h=2\) mm, the maximum explicit step is \(h^2/(2D)=0.020\) s. Refining to 1 mm reduces that limit to 0.005 s. The mesh gives a sharper temperature profile yet can cost four times more steps over the same physical interval, besides the increased number of spatial degrees of freedom.</p>
+<p>At the limiting value \(r=1/2\) the alternating mode flips sign without losing amplitude. A strict margin damps it. For \(D=10^{-4}\) m²/s and \(h=2\) mm, the maximum explicit step is</p>
+<div class="math display">\[h^2/(2D)=0.020\,\mathrm{s}.\]</div>
+<p>Refining to 1 mm reduces that limit to 0.005 s. The mesh gives a sharper temperature profile yet can cost four times more steps over the same physical interval, besides the increased number of spatial degrees of freedom.</p>
 </section>
 <section>
 <h2 id="compare-backward-euler-and-crank-nicolson">Compare backward Euler and Crank–Nicolson</h2>
@@ -70,7 +74,9 @@
 </section>
 <section>
 <h2 id="prove-decay-of-a-discrete-thermal-energy">Prove decay of a discrete thermal energy</h2>
-<p>Let a closed semidiscrete diffusion model be \(M\dot u+Ku=0\), with \(M\) symmetric positive definite and \(K\) symmetric positive semidefinite. Assume \(K{\bf1}=0\), expressing zero flux for a uniform temperature. Backward Euler satisfies \(M(u^{n+1}-u^n)+\Delta t Ku^{n+1}=0\). Multiplying by the constant vector and using symmetry gives \({\bf1}^TMu^{n+1}={\bf1}^TMu^n\). Thus the capacity-weighted sum, proportional to stored sensible heat for constant capacities and a fixed reference, is conserved for any step size.</p>
+<p>Let a closed semidiscrete diffusion model be \(M\dot u+Ku=0\), with \(M\) symmetric positive definite and \(K\) symmetric positive semidefinite. Assume \(K{\bf1}=0\), expressing zero flux for a uniform temperature. Backward Euler satisfies \(M(u^{n+1}-u^n)+\Delta t Ku^{n+1}=0\). Multiplying by the constant vector and using symmetry gives</p>
+<div class="math display">\[{\bf1}^TMu^{n+1}={\bf1}^TMu^n.\]</div>
+<p>Thus the capacity-weighted sum, proportional to stored sensible heat for constant capacities and a fixed reference, is conserved for any step size.</p>
 <p>Now multiply by \(u^{n+1}\). The identity \(a^TM(a-b)=[\|a\|_M^2-\|b\|_M^2+\|a-b\|_M^2]/2\) yields the exact balance</p>
 <div class="math display">\[\tfrac12\|u^n\|_M^2-\tfrac12\|u^{n+1}\|_M^2=\Delta t\,(u^{n+1})^TKu^{n+1}+\tfrac12\|u^{n+1}-u^n\|_M^2 .\]</div>
 <p>Both terms are nonnegative. The quadratic quantity therefore decays although total sensible heat is conserved. Subtracting the conserved mean first yields the same decay statement for temperature variation around equilibrium. The first term represents spatial smoothing measured at the new time, and the second reflects the numerical time update. This derivation gives a stability certificate on nonuniform grids without assuming Fourier modes.</p>
@@ -78,7 +84,11 @@
 <section>
 <h2 id="audit-two-cells-with-different-heat-capacities">Audit two cells with different heat capacities</h2>
 <p>Choose capacities 1 and 3 J/K, conductance 2 W/K, and initial temperature deviations \((4,0)^T\) K. The conserved sensible heat is 4 J, so the final equilibrium in a closed system must be one kelvin above reference. At \(\Delta t=0.5\) s the matrix \(M+\Delta tK\) has rows \((2,-1)\) and \((-1,4)\), and the right-hand side is \((4,0)^T\). The new temperatures are \((16/7,4/7)^T\). Checking their weighted sum gives \(16/7+3(4/7)=4\), as required. The unweighted average changes, which is physically appropriate for unequal capacities.</p>
-<p>The quadratic quantity at the start is \(4^2/2=8\). After the step it is \([(16/7)^2+3(4/7)^2]/2=152/49\). Its drop is \(240/49\). The conductive contribution is \((0.5)(2)(12/7)^2=144/49\); the time-update contribution is \([(-12/7)^2+3(4/7)^2]/2=96/49\). Their sum recovers the measured drop exactly. Neither contribution equals a loss of the 4 J of sensible heat. The quadratic measure depends on squared temperatures and has different physical units.</p>
+<p>The quadratic quantity at the start is \(4^2/2=8\). After the step it is</p>
+<div class="math display">\[[(16/7)^2+3(4/7)^2]/2=152/49.\]</div>
+<p>Its drop is \(240/49\). The conductive contribution is \((0.5)(2)(12/7)^2=144/49\); the time-update contribution is</p>
+<div class="math display">\[[(-12/7)^2+3(4/7)^2]/2=96/49.\]</div>
+<p>Their sum recovers the measured drop exactly. Neither contribution equals a loss of the 4 J of sensible heat. The quadratic measure depends on squared temperatures and has different physical units.</p>
 <p>A positive heat supply or a prescribed exterior temperature introduces a boundary or source work term into these identities. Applying the closed-system decay test to an externally heated experiment would therefore diagnose the wrong physical model. Verify which conserved or dissipated quantity is actually implied by the capacity matrix, boundary conditions and source terms before comparing numerical integrators.</p>
 <p>The conserved mean suggests another check after many large steps. The steady state must have zero conductance dissipation, which for two connected cells requires equal temperatures. Together with the weighted heat total this fixes both temperatures at one kelvin above reference. A scheme that instead approaches the unweighted initial average of two would be converging to the wrong conserved quantity despite producing a visually smooth, uniform endpoint. The measured quadratic variation about the correct mean tends to zero; the uncentred squared quantity tends to a positive constant because the remaining uniform state still has temperature above the chosen reference.</p>
 </section>

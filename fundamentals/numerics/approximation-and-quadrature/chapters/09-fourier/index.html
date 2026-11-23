@@ -32,7 +32,9 @@
 <p class="reading-label">From first principles</p><h2 id="first-principles">Recover a Fourier coefficient by orthogonality</h2>
 <p>For a square-integrable signal of period \(2\pi\), represent its main oscillations by harmonics \(e^{ikx}\). To choose the best coefficients in the integrated squared-error sense, set each residual inner product with an included harmonic to zero. Integration of a complex exponential gives the orthogonality relation</p>
 <div class="math display">\[\frac{1}{2\pi}\int_0^{2\pi}e^{ikx}e^{-imx}\,dx=\begin{cases}1,&amp;k=m,\\0,&amp;k\ne m.\end{cases}\]</div>
-<p>Consequently projection onto mode \(m\) gives \(c_m=(2\pi)^{-1}\int f(x)e^{-imx}\,dx\). On a uniform grid \(x_j=2\pi j/N\), replacing this integral by the sample mean defines the normalized discrete coefficient,</p>
+<p>Consequently projection onto mode \(m\) gives</p>
+<div class="math display">\[c_m=(2\pi)^{-1}\int f(x)e^{-imx}\,dx.\]</div>
+<p>On a uniform grid \(x_j=2\pi j/N\), replacing this integral by the sample mean defines the normalized discrete coefficient,</p>
 <div class="math display">\[\widehat c_m=\frac1N\sum_{j=0}^{N-1} f(x_j)e^{-imx_j}.\]</div>
 <p>The finite geometric series now vanishes unless two frequency labels differ by a multiple of \(N\). Such labels have identical sampled values, so the sampled coefficients can combine several underlying continuous frequencies. A physical sampling rate and restrictions on the input bandwidth are needed to associate a discrete coefficient with a unique physical harmonic.</p>
 </section>
@@ -53,12 +55,23 @@
 <p class="example-label">Worked example</p><h3 id="worked-example">Quantify a half-bin mismatch</h3>
 <p>Take \(N=8\) and \(\nu=2.5\) cycles. Bins 2 and 3 each have magnitude \(1/[8\sin(\pi/16)]=0.641\). Together they contain \(2(0.641)^2\simeq0.821\) of the tone’s spectral energy. The remaining fraction is distributed among the other six bins even though the input contains only a single frequency.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Distinguish grid spacing from intrinsic frequency content</h3>
-<p>A recorder sampling at \(800\,\mathrm{Hz}\) takes 80 samples of a \(125\,\mathrm{Hz}\) complex tone. Its bin spacing is \(10\,\mathrm{Hz}\), placing the tone halfway between bins 12 and 13; each magnitude is \(1/[80\sin(\pi/160)]=0.637\). Extending the actual record to 160 samples gives \(5\,\mathrm{Hz}\) spacing and exactly 25 cycles. The normalized magnitude in bin 25 becomes one when the tone remains coherent across the longer measurement.</p>
+<p>A recorder sampling at \(800\,\mathrm{Hz}\) takes 80 samples of a \(125\,\mathrm{Hz}\) complex tone. Its bin spacing is \(10\,\mathrm{Hz}\), placing the tone halfway between bins 12 and 13; each magnitude is</p>
+<div class="math display">\[1/[80\sin(\pi/160)]=0.637.\]</div>
+<p>Extending the actual record to 160 samples gives \(5\,\mathrm{Hz}\) spacing and exactly 25 cycles. The normalized magnitude in bin 25 becomes one when the tone remains coherent across the longer measurement.</p>
 </section>
 <section>
 <h2 id="orthogonality-on-a-period">Orthogonality on a period</h2>
-<p>For a square-integrable \(2\pi\)-periodic signal define \(\langle f,g\rangle=(2\pi)^{-1}\int_0^{2\pi} f(x)\overline{g(x)}\,dx\). The exponentials \(e^{ikx}\) are orthonormal for integer \(k\). Integrating their product gives one when the frequencies coincide and zero otherwise because a nonconstant exponential completes an integer number of cycles. Minimising the squared mean discrepancy over modes \(|k|\leq m\) therefore gives \(c_k=\langle f,e^{ikx}\rangle\). The residual is orthogonal to every retained mode.</p>
+<p>For a square-integrable \(2\pi\)-periodic signal define \(\langle f,g\rangle=(2\pi)^{-1}\int_0^{2\pi} f(x)\overline{g(x)}\,dx\). The exponentials \(e^{ikx}\) are orthonormal for integer \(k\). Integrating their product gives one when the frequencies coincide and zero otherwise because a nonconstant exponential completes an integer number of cycles. Minimising the squared mean discrepancy over modes \(|k|\leq m\) therefore gives</p>
+<div class="math display">\[c_k=\langle f,e^{ikx}\rangle.\]</div>
+<p>The residual is orthogonal to every retained mode.</p>
 <p>Orthogonality also splits energy. The squared norm of the original signal equals the sum of the retained squared coefficient magnitudes plus the remaining squared error. This identity gives the truncation error exactly for a finite trigonometric series. For a general square-integrable periodic signal the projections converge in the mean-square norm. That statement concerns an integral; a narrow region of large pointwise error can contribute little to it.</p>
+
+<details class="study-aside">
+<summary>Background · Why does a noninteger cycle spread power over several bins?</summary>
+<p>Project \(e^{i\nu x}\) on the integer harmonic \(e^{ikx}\) over a single observed interval of length \(2\pi\). Integrating the exponential exactly gives</p>
+<div class="math display">\[c_k=e^{i\pi(\nu-k)}\,\frac{\sin[\pi(\nu-k)]}{\pi(\nu-k)}.\]</div>
+<p>For an integer \(\nu\), the limit at \(k=\nu\) is one and every other bin receives zero. A tone with \(\nu=3.5\) cycles has equal coefficient magnitudes \(2/\pi\) at bins 3 and 4. A longer record at the same sampling rate narrows the physical frequency interval between bins. Applying a taper changes the leakage shape because it changes the projection window. Adding zeros after the existing record samples that same windowed spectrum more densely, without extending the observed duration.</p>
+</details>
 </section>
 <section>
 <h2 id="a-resolvable-frequency-and-an-invisible-one">A resolvable frequency and an invisible one</h2>
@@ -68,7 +81,7 @@
 <section><h2 id="radix-two-fft">Factor the discrete Fourier transform into short transforms</h2>
 <p>The discrete Fourier transform (DFT) maps \(N\) equally spaced samples \(x_n\) to \(X_k=\sum_{n=0}^{N-1}x_n W_N^{kn}\), with \(W_N=e^{-2\pi i/N}\). In this convention the forward transform has no normalization. The discrete Fourier coefficients are \(X_k/N\). Computing every sum directly uses order \(N^2\) operations. There is redundant work because the sample weights are powers of the same root of unity.</p>
 <p>For even \(N\), separate \(n=2j\) and \(n=2j+1\). Since \(W_N^2=W_{N/2}\), the two partial sums are the length-\(N/2\) transforms \(E_k,O_k\) of the even and odd samples. Increasing \(k\) by \(N/2\) leaves both short transforms unchanged and reverses the sign of \(W_N^k\). A single product therefore supplies two entries:</p>
-<div class="math display">\[X_k=E_k+W_N^kO_k,\qquad X_{k+N/2}=E_k-W_N^kO_k,\qquad 0\leq k&lt;N/2.\]</div>
+<div class="math display equation-chain"><div class="equation-step">\[X_k=E_k+W_N^kO_k,\]</div><div class="equation-step">\[X_{k+N/2}=E_k-W_N^kO_k,\qquad 0\leq k&lt;N/2.\]</div></div>
 <p>For the four samples \((1,2,3,4)\), the even subsequence \((1,3)\) gives \((4,-2)\), while the odd subsequence \((2,4)\) gives \((6,-2)\). The multipliers are 1 and \(-i\). Combining the two pairs produces \((10,-2+2i,-2,-2-2i)\) in frequency order. The zero-frequency term recovers the sum of the samples. Conjugate symmetry holds because the samples are real. The Nyquist entry is real as it must be.</p>
 <p>For \(N=2^m\), repeat the split down to length one. Each of the \(m\) stages contains \(N/2\) paired combinations, often called butterflies. The work scales as \(N\log_2 N\). The FFT computes exactly the same mathematical transform as the direct formula, up to rounding. An aliased high frequency still occupies the same discrete bin. Padding an already sampled record can interpolate its displayed spectrum but cannot supply independent measurements at the missing times.</p>
 <p class="source-note">Practise on sheet 5 · <a href="/fundamentals/numerics/approximation-and-quadrature/problem-sheets/5/#fft-repeated-record">Find the zeros in an eight-sample spectrum without eight long sums</a>. Further reading · <a href="https://ocw.mit.edu/courses/2-161-signal-processing-continuous-and-discrete-fall-2008/2b3897bb64743815afae1543066ed4ff_fft.pdf">MIT · 2.161 Signal Processing, Continuous and Discrete · The Fast Fourier Transform · The radix-2 FFT with decimation in time</a>.</p>

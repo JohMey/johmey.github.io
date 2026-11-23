@@ -38,21 +38,25 @@
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Subtract a known endpoint contribution before integrating the remainder</h2>
 <p>A substitution is one way to handle an integrable endpoint singularity. If an expansion of its smooth coefficient is known, a second route is to integrate a few singular terms analytically. Consider \(I=\int_0^1g(x)/\sqrt{x}\,dx\) with \(g\) twice continuously differentiable and \(|g''|\le M\). Taylor’s theorem about \(x=0\) separates the constant and slope from a remainder bounded by \(Mx^2/2\),</p>
-<div class="math display equation-chain"><div class="equation-step">\[g(x)=g(0)+xg'(0)+R(x),\]</div><div class="equation-step">\[|R(x)|\le Mx^2/2 .\]</div></div>
+<div class="math display">\[g(x)=g(0)+xg'(0)+R(x),\qquad |R(x)|\le Mx^2/2 .\]</div>
 <p>The first two contributions have finite known moments. The residual now vanishes at the problematic endpoint and can be sampled continuously there,</p>
-<div class="math display equation-chain"><div class="equation-step">\[I=2g(0)+\frac23g'(0)+\int_0^1\frac{R(x)}{\sqrt{x}}dx,\]</div><div class="equation-step">\[\left|\frac{R(x)}{\sqrt{x}}\right|\le\tfrac M2 x^{3/2} .\]</div></div>
+<div class="math display">\[I=2g(0)+\frac23g'(0)+\int_0^1\frac{R(x)}{\sqrt{x}}dx,\qquad \left|\frac{R(x)}{\sqrt{x}}\right|\le\tfrac M2 x^{3/2} .\]</div>
 <p>If only the short initial interval \([0,h]\) is targeted, the two analytic terms scale as \(\sqrt h\) and \(h^{3/2}\). Bounding the remaining contribution yields a direct local error certificate,</p>
 <div class="math display">\[\left|\int_0^h\frac{g(x)}{\sqrt x}\,dx-2g(0)\sqrt h-\frac23g'(0)h^{3/2}\right|\le\frac{M}{5}h^{5/2}.\]</div>
 <p>The two known coefficients have to use the same units and coordinate origin as \(h\). Numerically it can be advantageous to evaluate the residual through a stable expression or a local series, because subtracting its first two terms from a nearly equal value of \(g(x)\) can lose relative precision.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Integrate a polynomial endpoint layer</h3>
-<p>For \(g(x)=1+3x+2x^2\) and \(h=0.04\), the two retained terms give \(0.4+2(0.008)=0.416\). The remaining integral is \(2(2/5)h^{5/2}=0.000256\), giving total \(0.416256\). The error bound with \(M=4\) also equals \(0.000256\), attained because the curvature has constant sign and magnitude.</p>
+<p>For \(g(x)=1+3x+2x^2\) and \(h=0.04\), the two retained terms give</p>
+<div class="math display">\[0.4+2(0.008)=0.416.\]</div>
+<p>The remaining integral is \(2(2/5)h^{5/2}=0.000256\), giving total \(0.416256\). The error bound with \(M=4\) also equals \(0.000256\), attained because the curvature has constant sign and magnitude.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Choose an endpoint panel from a tolerance</h3>
 <p>A different coefficient has verified \(|g''|\le10\). To limit the omitted endpoint area to \(10^{-5}\), require \(2h^{5/2}\le10^{-5}\), or \(h\le(5\times10^{-6})^{2/5}=0.00758\). Choosing \(h=0.005\) gives a bound \(3.54\times10^{-6}\). The remaining regular part of the integral still needs its own quadrature budget.</p>
 </section>
 <section>
 <h2 id="when-derivative-bounds-fail">When derivative bounds fail</h2>
 <p>The usual trapezoid error bound needs a bounded second derivative. The integral of \(x^{-1/2}\) from zero to one is finite, yet the integrand itself is undefined at the first endpoint. Calling a closed quadrature formula on its original samples is already impossible. Simply omitting that endpoint also omits part of a finite area, and its size scales as the square root of the omitted interval. A substitution can encode the known local behaviour exactly.</p>
-<p>Set \(x=t^q\). A factor \(x^\alpha dx\) becomes \(qt^{q(\alpha+1)-1}\,dt\). For \(\alpha&gt;-1\), choosing \(q=1/(\alpha+1)\) removes the leading power. Any additional factor \(g(t^q)\) still determines the transformed smoothness. For \(\alpha=-1/2\), \(q=2\) and \(g(x)=1+x\), the integral becomes \(\int_0^1 2(1+t^2)\,dt=8/3\). Composite Simpson quadrature on just two equal panels is exact on this quadratic. Assign the endpoint of the transformed expression by its limit to avoid evaluating zero times infinity.</p>
+<p>Set \(x=t^q\). A factor \(x^\alpha dx\) becomes \(qt^{q(\alpha+1)-1}\,dt\). For \(\alpha&gt;-1\), choosing \(q=1/(\alpha+1)\) removes the leading power. Any additional factor \(g(t^q)\) still determines the transformed smoothness. For \(\alpha=-1/2\), \(q=2\) and \(g(x)=1+x\), the integral becomes</p>
+<div class="math display">\[\int_0^1 2(1+t^2)\,dt=8/3.\]</div>
+<p>Composite Simpson quadrature on just two equal panels is exact on this quadratic. Assign the endpoint of the transformed expression by its limit to avoid evaluating zero times infinity.</p>
 </section>
 <section>
 <h2 id="a-deceptively-constant-sample">A deceptively constant sample</h2>
@@ -72,14 +76,22 @@
 <section>
 <h2 id="integrate-the-singular-weight-exactly-on-each-panel">Integrate the singular weight exactly on each panel</h2>
 <p>Sometimes a substitution changes an integrable singularity into a regular function but also complicates the geometry or an expensive supplied amplitude. An alternative is product integration. Suppose \(I=\int_0^1 x^{-1/2}g(x)\,dx\) where only the smooth amplitude \(g\) is sampled. Replace \(g\) by its piecewise linear interpolant while keeping the weight exactly inside each local integral. The contribution of an endpoint sample equals the integral of the corresponding linear basis function against the singular weight. None of these weights requires evaluating \(x^{-1/2}\) at zero.</p>
-<p>On a single panel covering the unit interval the basis functions are \(1-x\) and \(x\). Their weights are \(2-2/3=4/3\) and \(2/3\), respectively. They are positive and sum to two, the exact integral of the singular factor. The rule reproduces constant and linear amplitudes exactly. If \(|g''|\le M\), the pointwise error satisfies \(|g-I_1g|\le Mx(1-x)/2\). Multiplying by the positive weight and integrating gives absolute error at most \((M/2)(2/3-2/5)=2M/15\). This derivation tracks smoothness of the amplitude that is actually interpolated.</p>
+<p>On a single panel covering the unit interval the basis functions are \(1-x\) and \(x\). Their weights are \(2-2/3=4/3\) and \(2/3\), respectively. They are positive and sum to two, the exact integral of the singular factor. The rule reproduces constant and linear amplitudes exactly. If \(|g''|\le M\), the pointwise error satisfies</p>
+<div class="math display">\[|g-I_1g|\le Mx(1-x)/2.\]</div>
+<p>Multiplying by the positive weight and integrating gives absolute error at most \((M/2)(2/3-2/5)=2M/15\). This derivation tracks smoothness of the amplitude that is actually interpolated.</p>
 </section>
 <section>
 <h2 id="compare-a-weighted-panel-with-an-ordinary-endpoint-sample">Compare a weighted panel with an ordinary endpoint sample</h2>
-<p>Let \(g(x)=1+x^2\). The analytically integrated value is \(2+2/5=2.4\). The weighted panel predicts \((4/3)1+(2/3)2=8/3\). The excess is \(4/15\), exactly the bound for \(M=2\), because the interpolating line lies above this convex amplitude throughout the open interval. A direct unweighted trapezoid evaluation would have tried to sample an infinite value at the left endpoint. The finite weights here contain all information about the integrable divergence.</p>
-<p>For a more refined calculation divide at \(x=1/4\). On the first panel, rescaling \(x=t/4\) multiplies the singular measure by \(1/2\), so the local weights become \(2/3\) and \(1/3\). On the second panel use the basis \((1-x)/(3/4)\), \((x-1/4)/(3/4)\). The weight of its left endpoint is \((4/3)[2\sqrt x-(2/3)x^{3/2}]_{1/4}^1=5/9\). The remaining weight is \(4/9\), since that panel's total singular measure is one. Combining adjacent contributions gives global weights \(2/3,8/9,4/9\) at the three sampled amplitudes.</p>
+<p>Let \(g(x)=1+x^2\). The analytically integrated value is \(2+2/5=2.4\). The weighted panel predicts</p>
+<div class="math display">\[(4/3)1+(2/3)2=8/3.\]</div>
+<p>The excess is \(4/15\), exactly the bound for \(M=2\), because the interpolating line lies above this convex amplitude throughout the open interval. A direct unweighted trapezoid evaluation would have tried to sample an infinite value at the left endpoint. The finite weights here contain all information about the integrable divergence.</p>
+<p>For a more refined calculation divide at \(x=1/4\). On the first panel, rescaling \(x=t/4\) multiplies the singular measure by \(1/2\), so the local weights become \(2/3\) and \(1/3\). On the second panel use the basis \((1-x)/(3/4)\), \((x-1/4)/(3/4)\). The weight of its left endpoint is</p>
+<div class="math display">\[(4/3)[2\sqrt x-(2/3)x^{3/2}]_{1/4}^1=5/9.\]</div>
+<p>The remaining weight is \(4/9\), since that panel's total singular measure is one. Combining adjacent contributions gives global weights \(2/3,8/9,4/9\) at the three sampled amplitudes.</p>
 <p>The estimate is now \(2/3+(8/9)(17/16)+(4/9)2=2.5\). Its positive error has fallen from \(4/15\) to 0.1. Subdivision concentrated near the singular endpoint is one design choice, while error here also depends on where the smooth amplitude bends. If the amplitude itself has a discontinuity, splitting at that physical interface is necessary before invoking the second-derivative bound on either side.</p>
-<p>The positive weights also control bounded amplitude uncertainty. If each of the three amplitude evaluations is uncertain by at most 0.01, the worst possible additional integral error is \(0.01(2/3+8/9+4/9)=0.02\). The bound is achieved by a shared positive offset of 0.01. Unlike the deterministic interpolation discrepancy, this worst-case observation error will remain 0.02 under any further positive-weight refinement that still integrates constant amplitudes exactly. A complaint about slow convergence near the endpoint could therefore reflect either amplitude resolution or the data error floor.</p>
+<p>The positive weights also control bounded amplitude uncertainty. If each of the three amplitude evaluations is uncertain by at most 0.01, the worst possible additional integral error is</p>
+<div class="math display">\[0.01(2/3+8/9+4/9)=0.02.\]</div>
+<p>The bound is achieved by a shared positive offset of 0.01. Unlike the deterministic interpolation discrepancy, this worst-case observation error will remain 0.02 under any further positive-weight refinement that still integrates constant amplitudes exactly. A complaint about slow convergence near the endpoint could therefore reflect either amplitude resolution or the data error floor.</p>
 <p>Repeated amplitude measurements can reduce independent sampling variance but cannot remove the effect of a shared calibration offset.</p>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/problem-sheets/5/">Problem sheet 5 · Spectral measures of error</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/12-random-quadrature/">Chapter 12 · Monte Carlo integration and stratification</a></span></nav></article></div>
 </main>

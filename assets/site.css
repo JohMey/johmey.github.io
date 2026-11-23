@@ -392,7 +392,7 @@ td { font-variant-numeric: tabular-nums; white-space: nowrap; }
   #chapter-outline nav { position: static; }
   .chapter-outline-link { display: inline; }
 }
-.equation-chain { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .15rem 1rem; padding-block: .35rem; }
+.equation-chain { display: grid; grid-template-columns: minmax(0, 1fr); gap: .16rem; padding-block: .35rem; }
 .equation-step { min-width: 0; max-width: 100%; overflow-x: auto; }
 .equation-step mjx-container[display="true"] { margin-block: .35em !important; }
 .book-lab-link + section { margin-top: 1.5rem; }
@@ -482,3 +482,30 @@ td { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .notebook-output img { display:block; width:auto; max-width:100%; height:auto; padding:.45rem 0; }
 .notebook-toolbar button:disabled, .notebook-cell button:disabled { opacity:.55; }
 .notebook-practice { margin:1.1rem 0; }
+
+.prose details.study-aside {
+  margin: 1.1rem 0;
+  padding: 0 clamp(.8rem, 2vw, 1.15rem);
+  border: 1px solid var(--rule);
+  border-left: 3px solid #657b68;
+  border-radius: .18rem;
+  background: var(--page);
+}
+.prose .study-aside > summary { padding: .65rem .1rem; line-height: 1.4; }
+.prose .study-aside[open] { padding-bottom: .85rem; }
+.prose .study-aside[open] > summary { border-bottom: 1px solid var(--rule); }
+.study-aside figure { margin: 1rem 0 .4rem; }
+.study-aside figcaption { font-size: .92em; color: var(--subtle); margin-top: .4rem; }
+.prose .study-aside pre { tab-size: 4; }
+@media print {
+  .course-book .study-aside { break-inside: auto; }
+  .course-book .study-aside:not(:has(pre)) { break-inside: avoid; }
+  .course-book .study-aside summary {
+    display: block; break-inside: avoid; break-after: avoid;
+  }
+  .course-book .study-aside pre {
+    white-space: pre-wrap; overflow-wrap: anywhere; overflow: visible; max-block-size: none;
+    background: transparent; color: var(--ink); font-size: 8pt; padding: .35rem 0;
+  }
+  .course-book .study-aside figure { break-inside: avoid; }
+}

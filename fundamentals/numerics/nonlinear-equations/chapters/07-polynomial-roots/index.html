@@ -39,21 +39,27 @@
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Measure a computed polynomial root against its coefficient budget</h2>
 <p>A raw polynomial residual can be changed by multiplying every coefficient by the same constant. A more informative diagnostic asks how much the specified coefficients must change to make the reported root exact. Consider a polynomial \(p(x)=\sum_{j=0}^na_jx^j\), a trial real root \(z\), and admissible coefficient changes \(|\delta a_j|\le\eta w_j\), with nonnegative weights \(w_j\) chosen from measurement tolerances. Requiring \(z\) to solve the perturbed equation gives</p>
-<div class="math display equation-chain"><div class="equation-step">\[\sum_j\delta a_j z^j=-p(z),\]</div><div class="equation-step">\[|p(z)|\le\eta\sum_jw_j|z|^j .\]</div></div>
+<div class="math display">\[\sum_j\delta a_j z^j=-p(z),\qquad |p(z)|\le\eta\sum_jw_j|z|^j .\]</div>
 <p>For real data and real trial root, each term can be aligned in sign against the residual. If the denominator is positive, scaling those aligned perturbations simultaneously attains equality. The smallest admissible coefficient multiplier is therefore</p>
 <div class="math display">\[\eta_*=\frac{|p(z)|}{\sum_jw_j|z|^j}.\]</div>
 <p>A zero weight freezes the corresponding coefficient; taking \(w_j=|a_j|\) tests componentwise relative backward error. To compare this diagnostic with a forward root error, linearize about the trial value provided \(p'(z)\ne0\) and higher terms are small,</p>
 <div class="math display">\[r-z\simeq-\frac{p(z)}{p'(z)} .\]</div>
 <p>A small coefficient backward error and large root displacement can coexist near a multiple root. Conversely, an accurately approximated location can appear to have a large raw residual when all coefficients carry a large common scale. This sign construction must be reconsidered if a complex trial root is tested using only real coefficient perturbations.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Compute a scale-invariant certificate for a trial root</h3>
-<p>For \(p(x)=x^2-3x+2\), take \(z=1.01\) and \(w_j=|a_j|\). The residual is \(-0.0099\); the denominator is \(1.0201+3.03+2=6.0501\). The backward error is \(0.00164\), despite the \(0.010\) location error relative to the root at one. Multiplying the polynomial and all its weights by 1000 leaves the ratio unchanged.</p>
+<p>For \(p(x)=x^2-3x+2\), take \(z=1.01\) and \(w_j=|a_j|\). The residual is \(-0.0099\); the denominator is</p>
+<div class="math display">\[1.0201+3.03+2=6.0501.\]</div>
+<p>The backward error is \(0.00164\), despite the \(0.010\) location error relative to the root at one. Multiplying the polynomial and all its weights by 1000 leaves the ratio unchanged.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Test which coefficient is actually uncertain</h3>
 <p>For a different polynomial \(p(x)=x^2-4\), suppose only the constant term can be adjusted, with tolerance \(0.020\). The trial \(z=2.01\) gives \(p(z)=0.0401\). Its required tolerance multiplier is \(0.0401/0.020=2.005\), so it falls outside the specified data envelope. Indeed the constant would have to move from \(-4\) to \(-4.0401\), which directly checks the diagnostic.</p>
 </section>
 <section>
 <h2 id="a-root-belongs-to-a-set-of-coefficients">A root belongs to a set of coefficients</h2>
-<p>Write \(p(x)=a_nx^n+\cdots+a_0\) and suppose a simple real root \(r\) satisfies \(p'(r)\ne0\). Perturb the coefficients and write the displaced root as \(r+\delta r\). Keeping first-order terms in the equation gives \(p'(r)\delta r+\sum_{j=0}^n\delta a_j r^j=0\). Consequently the effect of a given coefficient error depends on both the slope at the root and the size of the corresponding power. An evaluation routine can be backward accurate and still return an uncertain root when the input coefficients are insufficiently precise.</p>
-<p>For \(p=(x-1)(x-1.01)=x^2-2.01x+1.01\), the derivative at 1 is \(-0.01\). Increasing the constant coefficient by \(10^{-6}\) moves this root upward by approximately \(10^{-4}\). The exact perturbation is easier to see by completing the square: \(p=(x-1.005)^2-0.000025\). The new lower root is \(1.005-\sqrt{0.000024}\approx1.00010102\). The first-order estimate captures the direction and scale. A coefficient change of \(0.000025\) merges the roots; a larger upward change removes both real roots.</p>
+<p>Write \(p(x)=a_nx^n+\cdots+a_0\) and suppose a simple real root \(r\) satisfies \(p'(r)\ne0\). Perturb the coefficients and write the displaced root as \(r+\delta r\). Keeping first-order terms in the equation gives</p>
+<div class="math display">\[p'(r)\delta r+\sum_{j=0}^n\delta a_j r^j=0.\]</div>
+<p>Consequently the effect of a given coefficient error depends on both the slope at the root and the size of the corresponding power. An evaluation routine can be backward accurate and still return an uncertain root when the input coefficients are insufficiently precise.</p>
+<p>For \(p=(x-1)(x-1.01)=x^2-2.01x+1.01\), the derivative at 1 is \(-0.01\). Increasing the constant coefficient by \(10^{-6}\) moves this root upward by approximately \(10^{-4}\). The exact perturbation is easier to see by completing the square:</p>
+<div class="math display">\[p=(x-1.005)^2-0.000025.\]</div>
+<p>The new lower root is \(1.005-\sqrt{0.000024}\approx1.00010102\). The first-order estimate captures the direction and scale. A coefficient change of \(0.000025\) merges the roots; a larger upward change removes both real roots.</p>
 </section>
 <section>
 <h2 id="carry-derivative-information-through-horner-evaluation">Carry derivative information through Horner evaluation</h2>

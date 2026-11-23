@@ -32,7 +32,7 @@
 <p>Consider a nonsingular discrete linear problem \(Au=b\) with approximate solution \(\tilde u\). A user may care about one output \(J(u)=c^\mathsf Tu\) rather than every entry of \(u\). The unknown error \(e=u-\tilde u\) satisfies \(Ae=r\) with residual \(r=b-A\tilde u\). Directly computing \(e\) would require another solve for a complete field. To weight the known residual for this output, select a vector \(z\) whose transposed action reproduces the output coefficients:</p>
 <div class="math display equation-chain"><div class="equation-step">\[A^\mathsf Tz=c,\]</div><div class="equation-step">\[c^\mathsf T e=z^\mathsf T A e .\]</div></div>
 <p>Substitution yields an exact algebraic output identity and a norm bound:</p>
-<div class="math display equation-chain"><div class="equation-step">\[J(u)-J(\tilde u)=z^\mathsf T r,\]</div><div class="equation-step">\[|J(u)-J(\tilde u)|\le\|z\|_2\|r\|_2 .\]</div></div>
+<div class="math display">\[J(u)-J(\tilde u)=z^\mathsf T r,\qquad |J(u)-J(\tilde u)|\le\|z\|_2\|r\|_2 .\]</div>
 <p>Large entries of \(z\) identify rows where a residual matters strongly to this particular observable, including possible sign cancellation between rows. A different output requires a different adjoint. The identity concerns error in solving the stated algebraic system. To estimate error relative to a continuum solution, discretization residuals and a suitable continuous or enriched adjoint must also enter.</p>
 </section>
 <section class="chapter-derivation"><p class="reading-label">Derivation and applications</p><h2 id="derivation">Weight a distributed residual for one point-temperature measurement</h2>
@@ -45,7 +45,9 @@
 <div class="math display">\[J(u)-J(\tilde u)=e(\xi)=\int_0^L z(x)\,r(x)\,dx .\]</div>
 <p>A residual near the chosen output can have a larger effect than an equal residual near a prescribed boundary. Residuals of opposite signs can cancel for this observation without producing a globally accurate field. For piecewise linear finite-element fields, the distributional second derivative also contains jumps of the first derivative; omitting those terms would invalidate the identity.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Calculate a local temperature error</h3>
-<p>Take \(L=1\) m and \(\xi=0.250\) m. Suppose \(r=8.00\) K/m² on \(0&lt;x&lt;0.250\) m and zero elsewhere. The relevant weight is \(0.750x\), so the point error is \(8(0.750)(0.250)^2/2=0.1875\) K. The positive residual means the exact temperature at the observation exceeds the reconstructed value.</p>
+<p>Take \(L=1\) m and \(\xi=0.250\) m. Suppose \(r=8.00\) K/m² on \(0&lt;x&lt;0.250\) m and zero elsewhere. The relevant weight is \(0.750x\), so the point error is</p>
+<div class="math display">\[8(0.750)(0.250)^2/2=0.1875\,\mathrm{K}.\]</div>
+<p>The positive residual means the exact temperature at the observation exceeds the reconstructed value.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Move the same residual nearer the far boundary</h3>
 <p>Put the same \(8.00\) K/m² on \(0.750&lt;x&lt;1.00\) m instead. Now the weight is \(0.250(1-x)\), yielding \(8(0.250)(0.250)^2/2=0.0625\) K. Both residuals have identical \(L^1\) and \(L^2\) magnitude; the first affects this particular sensor three times as strongly. Moving the sensor would change the ranking without changing either residual field.</p>
 </section>
@@ -76,8 +78,14 @@
 </section>
 <section>
 <h2 id="a-case-where-the-product-bound-is-exact">A case where the product bound is exact</h2>
-<p>Let \(a(v,w)=v^TAw\) with \(A=\operatorname{diag}(2,8)\), exact state \(u=(1,2)^T\), and reduced approximation space spanned by \(s=(1,1)^T\). The Galerkin coefficient is \((s^TAu)/(s^TAs)=(2+16)/10=1.8\). Choose output \(Q(v)=(6,8)v\); its exact dual is \(z=(3,1)^T\) since \(Az=(6,8)^T\). Projecting that dual onto the same space gives coefficient \((6+8)/10=1.4\). The primal and dual errors are therefore \((-0.8,0.2)^T\) and \((1.6,-0.4)^T\).</p>
-<p>Their energy inner product is \(2(-0.8)(1.6)+8(0.2)(-0.4)=-3.2\). Direct evaluation gives \(Q(u)=22\) and \(Q(u_h)=25.2\), confirming the signed error exactly. Squared energy errors are \(2(0.8)^2+8(0.2)^2=1.6\) and \(2(1.6)^2+8(0.4)^2=6.4\). Their square-root product is 3.2, attaining the absolute bound because the two error vectors are antiparallel. The bound cannot determine the sign; the signed dual residual can.</p>
+<p>Let \(a(v,w)=v^TAw\) with \(A=\operatorname{diag}(2,8)\), exact state \(u=(1,2)^T\), and reduced approximation space spanned by \(s=(1,1)^T\). The Galerkin coefficient is</p>
+<div class="math display">\[(s^TAu)/(s^TAs)=(2+16)/10=1.8.\]</div>
+<p>Choose output \(Q(v)=(6,8)v\); its exact dual is \(z=(3,1)^T\) since \(Az=(6,8)^T\). Projecting that dual onto the same space gives coefficient \((6+8)/10=1.4\). The primal and dual errors are therefore \((-0.8,0.2)^T\) and \((1.6,-0.4)^T\).</p>
+<p>Their energy inner product is</p>
+<div class="math display">\[2(-0.8)(1.6)+8(0.2)(-0.4)=-3.2.\]</div>
+<p>Direct evaluation gives \(Q(u)=22\) and \(Q(u_h)=25.2\), confirming the signed error exactly. Squared energy errors are</p>
+<div class="math display equation-chain"><div class="equation-step">\[2(0.8)^2+8(0.2)^2=1.6,\]</div><div class="equation-step">\[2(1.6)^2+8(0.4)^2=6.4.\]</div></div>
+<p>Their square-root product is 3.2, attaining the absolute bound because the two error vectors are antiparallel. The bound cannot determine the sign; the signed dual residual can.</p>
 <p>Replace the observation by \(Q_2(v)=(2,8)v\). Its exact dual is \(s\), already representable, so \(z-z_h=0\) and the output error vanishes even though the state error is unchanged. Indeed \(Q_2(u)=18=Q_2(u_h)\). A mesh judged solely by that particular observable could look exact. A different sensor weighing the same simulation states produces a demonstrably nonzero output error, which is why adaptive refinement objectives should name their actual observations.</p>
 <p>If the approximate dual used the same one-dimensional space and one simply evaluated the primal residual on it, the reported correction would be exactly zero for either output. The first observation shows that such a number can be badly misleading. An enriched dual must include a direction outside the primal test space; in this two-coordinate example, adding either coordinate direction gives the full space and recovers the signed error exactly. On a fine physical mesh full enrichment may be too expensive, making local higher-order reconstruction or an independently refined dual mesh attractive. The product bound then clarifies which additional error in the dual approximation needs to be controlled.</p>
 <p>It also identifies the observation for which refining the primal mesh alone is unnecessary.</p>

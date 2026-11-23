@@ -52,7 +52,11 @@
 <p class="example-label">Worked example</p><h3 id="worked-example">Predict the support readings of a loaded shelf</h3>
 <p>A \(2.40\) m shelf carries \(q_a=100\) N/m on the left increasing to \(q_b=400\) N/m on the right. The resultant is \(600\) N and its moment about the left end is \(864\) N m, placing it at \(1.44\) m. The right support reads \(360\) N and the left \(240\) N. Their sum and their moment reproduce both integrals independently.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Reconstruct a linear distribution from the scale readings</h3>
-<p>The same span now gives \(R_A=320\) N and \(R_B=280\) N. Adding the readings gives \(q_a+q_b=2(600)/2.40=500\) N/m. Subtraction gives \(q_a-q_b=6(320-280)/2.40=100\) N/m. Thus \(q_a=300\) and \(q_b=200\) N/m. If a point load could also be present, these two support readings alone would not uniquely determine the load shape.</p>
+<p>The same span now gives \(R_A=320\) N and \(R_B=280\) N. Adding the readings gives</p>
+<div class="math display">\[q_a+q_b=2(600)/2.40=500\,\mathrm{N/m}.\]</div>
+<p>Subtraction gives</p>
+<div class="math display">\[q_a-q_b=6(320-280)/2.40=100\,\mathrm{N/m}.\]</div>
+<p>Thus \(q_a=300\) and \(q_b=200\) N/m. If a point load could also be present, these two support readings alone would not uniquely determine the load shape.</p>
 </section><section class="course-lab"><p class="reading-label">OneSimulation laboratory</p><h2 id="experiment">Distinguish force from deflection in a truss</h2><p class="lab-prediction"><strong>Start from this chapter.</strong> Take a section through the truss and balance moments. Would doubling every bar area change that balance? Compare the predicted chord force and the separately computed joint movement.</p><p class="lab-access">Compare recorded OneSimulation runs on this page. To test your own inputs, <a href="/downloads/teaching/plane_and_space_truss.zip" download>download the notebook and model files</a> and run the model in an <a href="/tutorials/install/">activated OneSimulation environment</a>.</p>
 <p>Run the example once and record the <em>plane truss</em> results for member “top 3-4” and the vertical displacement of bottom joint 1. At <code>a=3.0</code>, <code>h=2.0</code>, <code>area=10e-4</code> and <code>force=100e3</code>, expect −75.0 kN and 3.219 mm downward. The same script also prints a separate space-truss solution.</p>
 <ol><li>Change <code>area</code> from <code>10e-4</code> to <code>20e-4</code> m² for every bar. Rerun from the model setup. Predict unchanged forces and 1.609 mm deflection. Check both outputs.</li><li>Restore the area and change <code>h</code> from <code>2.0</code> to <code>3.0</code> m. The steeper diagonals need less axial force for the same vertical component. Expect −50.0 kN in the top chord and 2.659 mm of deflection. Compare the gain in stiffness with the reduced top stress.</li></ol>
@@ -73,12 +77,33 @@
 <p>In a planar model a smooth roller on a horizontal track supplies one vertical reaction. A pin supplies two force components and admits rotation. A clamp supplies both force components and a reaction moment. A cable pulls along its length. A roller simply resting on a track can push, but a negative calculated upward reaction would require a hold-down or a change of contact. These restrictions are part of the physical model, even before a single number is inserted.</p>
 </section>
 <section><h2 id="balance">Sum forces and moments</h2>
-<p>A rigid body at rest satisfies \(\sum F_x=\sum F_y=0\) and \(\sum M_O=0\) about any point \(O\). In two dimensions, a force applied at \((x,y)\) contributes \(xF_y-yF_x\) to the moment about the origin. Adopt positive upward force and counterclockwise moment throughout. Taking moments about a pin eliminates its two unknown forces at once. A specified couple has the same signed moment about every origin and contributes zero resultant force.</p>
-<p>For a vertical load distributed with downward intensity \(q(x)\) in N/m, a strip of width \(dx\) supplies \(q(x)\,dx\). Adding the strips gives the force magnitude \(W=\int q(x)\,dx\). Its clockwise moment magnitude about the left end is \(\int xq(x)\,dx\). The equivalent line of action therefore passes through \(\bar x=\int xq(x)\,dx/W\). This replacement preserves the external reactions. When finding an internal force at a cut, integrate only the load actually lying on the chosen side.</p>
+<p>A rigid body at rest in a plane obeys three independent scalar equilibrium equations. Choose an arbitrary point \(O\) as the moment centre. Taking upward force and counterclockwise moment as positive gives</p>
+<div class="math display">\[\begin{aligned}
+\sum_i F_{x,i} &= 0,\\
+\sum_i F_{y,i} &= 0,\\
+\sum_i M_{O,i} &= 0.
+\end{aligned}\]</div>
+<p>A force applied at \((x,y)\) relative to \(O\) contributes \(xF_y-yF_x\) to the last sum. Taking moments about a pin eliminates its two unknown forces at once. A specified couple has the same signed moment about every origin and contributes zero resultant force.</p>
+<p>For a vertical load with downward intensity \(q(x)\) in N/m, a strip of width \(dx\) contributes a downward force of magnitude \(q(x)\,dx\). Integrate over the loaded span to obtain the force magnitude and its clockwise moment magnitude about the left end. An equivalent point load must reproduce both.</p>
+<div class="math display">\[\begin{aligned}
+W&=\int q(x)\,dx,\\
+W\bar x&=\int x\,q(x)\,dx,\\
+\bar x&=\frac{\int x\,q(x)\,dx}{\int q(x)\,dx}.
+\end{aligned}\]</div>
+<p>This replacement preserves the external reactions. When finding an internal force at a cut, integrate only the load actually lying on the chosen side.</p>
+
+<details class="study-aside">
+<summary>Background · Why can the moment balance be taken about any point?</summary>
+<p>Keep all forces on the same free body, including support reactions. Let \(\mathbf a\) point from the first moment centre \(O\) to the second \(P\). Every force lever arm changes by the same vector. Applied couples have no lever arm and carry their original signs.</p>
+<div class="math display">\[\mathbf M_P=\sum_i(\mathbf r_i-\mathbf a)\times\mathbf F_i+\sum_j\mathbf C_j=\mathbf M_O-\mathbf a\times\sum_i\mathbf F_i.\]</div>
+<p>Once force balance holds, the two moment sums coincide. This makes a second choice of moment centre a diagnostic. A missing 100 N vertical load creates a 50 N m difference between sums taken about points 0.5 m apart horizontally. Repeating the moment sum about points displaced parallel to that missing force would hide the discrepancy.</p>
+</details>
 </section>
 <section><h2 id="calculation">Weigh a platform with a triangular load</h2>
-<p>A 4.0 m platform is pinned at its left end A and supported by a roller at B at its right end. Bulk material forms a triangular pile, loading the platform with intensity rising linearly from zero at A to 3.0 kN/m at B. A 2.0 kN crate sits 1.0 m from A. Platform self-weight has already been tared off. Write \(q(x)=q_Bx/L\). Integration gives \(W=q_BL/2=6.0\) kN and \(\bar x=(q_BL^2/3)/W=2L/3=2.667\) m. The resultant is closer to the heavily loaded end.</p>
-<div class="math display">\[4B_y-6(2.667)-2(1)=0,\qquad A_y+B_y=8.0\ {\rm kN}.\]</div>
+<p>A 4.0 m platform is pinned at its left end A and supported by a roller at B at its right end. Bulk material forms a triangular pile, loading the platform with intensity rising linearly from zero at A to 3.0 kN/m at B. A 2.0 kN crate sits 1.0 m from A. Platform self-weight has already been tared off. Write \(q(x)=q_Bx/L\). Integration gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[W=q_BL/2=6.0\,\mathrm{kN},\]</div><div class="equation-step">\[\bar x=(q_BL^2/3)/W=2L/3=2.667\,\mathrm{m}.\]</div></div>
+<p>The resultant is closer to the heavily loaded end.</p>
+<div class="math display equation-chain"><div class="equation-step">\[4B_y-6(2.667)-2(1)=0,\]</div><div class="equation-step">\[A_y+B_y=8.0\ {\rm kN}.\]</div></div>
 <p>The right reaction is 4.50 kN and the left is 3.50 kN. There is no applied horizontal force, so \(A_x=0\). Check independently about B: the clockwise effect of the left reaction is \(3.50(4)=14.0\) kN·m and the two weights give the opposite moment \(6(1.333)+2(3)=14.0\) kN·m. Replacing the triangle by a uniform load of equal total weight would pass a force check and fail this moment check.</p>
 </section>
 <section><h2 id="shifting">Predict the next scale reading</h2>
@@ -89,16 +114,24 @@
 </section>
 <section><h2 id="contact-reactions">Determine when an assumed contact can exist</h2>
 <p>A support symbol on paper often hides a condition on the direction of its reaction. A dry foot resting on a horizontal floor can push on the floor, but it cannot pull the floor upwards. A stationary contact can transmit a range of tangential forces up to its friction limit. These statements convert an ordinary equilibrium problem into one with inequalities. First derive the forces required to maintain the proposed configuration. Then ask whether the contact can supply them. Assigning the maximum friction before writing equilibrium would generally give the wrong answer for a stationary body.</p>
-<p>Consider a rectangular machine base supported on two narrow feet a distance \(b\) apart. Its centre of mass lies midway between them, its weight is \(W\), and a horizontal force \(P\) acts to the right at height \(h\). Write upward contact forces \(N_L,N_R\). Neglect the thickness of the contact patches and consider only motion in the vertical plane. Vertical equilibrium requires \(N_L+N_R=W\). Taking moments about the midpoint between feet eliminates both unknown friction forces, which act along the floor. The right foot gains normal load as the left one loses it:</p>
-<div class="math display">\[(N_R-N_L)b/2=Ph,\qquad N_L=W/2-Ph/b,\qquad N_R=W/2+Ph/b .\]</div>
-<p>Both feet stay in contact only while \(P\le Wb/(2h)\). If both have the same coefficient \(\mu\), their combined available friction is \(\mu(N_L+N_R)=\mu W\). Thus impending tip and impending slip are distinct limiting states. The precise sharing of tangential load between the feet depends on their compliance; these three rigid-body equations alone need not fix it.</p>
+<p>Consider a rectangular machine base supported on two narrow feet a distance \(b\) apart. Its centre of mass lies midway between them, its weight is \(W\), and a horizontal force \(P\) acts to the right at height \(h\). Write upward contact forces \(N_L,N_R\). Neglect the thickness of the contact patches and consider only motion in the vertical plane. Vertical equilibrium requires</p>
+<div class="math display">\[N_L+N_R=W.\]</div>
+<p>Taking moments about the midpoint between feet eliminates both unknown friction forces, which act along the floor. The right foot gains normal load as the left one loses it:</p>
+<div class="math display equation-chain"><div class="equation-step">\[(N_R-N_L)b/2=Ph,\]</div><div class="equation-step">\[N_L=W/2-Ph/b,\]</div><div class="equation-step">\[N_R=W/2+Ph/b .\]</div></div>
+<p>Both feet stay in contact only while \(P\le Wb/(2h)\). If both have the same coefficient \(\mu\), their combined available friction is</p>
+<div class="math display">\[\mu(N_L+N_R)=\mu W.\]</div>
+<p>Thus impending tip and impending slip are distinct limiting states. The precise sharing of tangential load between the feet depends on their compliance; these three rigid-body equations alone need not fix it.</p>
 </section>
 <section><h2 id="sliding-or-tipping">Decide which motion starts first on a test stand</h2>
 <p>A movable test stand weighs 1800 N. Its feet are 0.80 m apart and the technician pushes horizontally on a handle 1.20 m above the floor. Suppose the measured static friction coefficient is 0.45. At a push of 400 N, the load shifts by \(400(1.20)/0.80=600\,\mathrm N\) to the right. The left reaction is 300 N and the right reaction is 1500 N. The available 810 N of total friction exceeds 400 N; a static configuration is possible. A calculation assigning each foot a friction force of 405 N would nevertheless violate the individual 135 N friction limit on the lightly loaded left foot.</p>
-<p>Increase the push gradually. The tip threshold is \(1800(0.80)/[2(1.20)]=600\,\mathrm N\), below the 810 N sliding threshold. At 600 N the right foot alone carries 1800 N; the required friction ratio there is \(600/1800=0.333\), within the measured friction limit. Now relocate the handle to 0.60 m. The calculated tip threshold doubles to 1200 N, so the base begins sliding at 810 N while both feet still carry weight. The dividing height follows directly from equating both thresholds, \(h=b/(2\mu)=0.889\,\mathrm m\). Lowering the handle changes the rotational demand without changing the total horizontal force that floor friction can transmit.</p>
+<p>Increase the push gradually. The tip threshold is \(1800(0.80)/[2(1.20)]=600\,\mathrm N\), below the 810 N sliding threshold. At 600 N the right foot alone carries 1800 N; the required friction ratio there is \(600/1800=0.333\), within the measured friction limit. Now relocate the handle to 0.60 m. The calculated tip threshold doubles to 1200 N, so the base begins sliding at 810 N while both feet still carry weight. The dividing height follows directly from equating both thresholds,</p>
+<div class="math display">\[h=b/(2\mu)=0.889\,\mathrm m.\]</div>
+<p>Lowering the handle changes the rotational demand without changing the total horizontal force that floor friction can transmit.</p>
 </section>
 <section class="worked-plot"><h2 id="worked-plot">Locate a trolley from two support reactions</h2>
-<p>A simply supported 6 m runway weighs 12 kN uniformly and carries an 18 kN trolley. Take moments about the left support to find \(R_B\,6=12(3)+18a\). Then close the vertical force balance. Suppose the right load cell reads 18 kN. Where is the trolley?</p>
+<p>A simply supported 6 m runway weighs 12 kN uniformly and carries an 18 kN trolley. Take moments about the left support to find</p>
+<div class="math display">\[R_B\,6=12(3)+18a.\]</div>
+<p>Then close the vertical force balance. Suppose the right load cell reads 18 kN. Where is the trolley?</p>
 <figure class="paper-figure"><img src="/assets/worked-figures/engineering-mechanics/01-equilibrium.png" alt="Locate a trolley from two support reactions. Horizontal axis: Trolley position from left support (m). Vertical axis: Vertical reaction (kN). Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Subtracting the 6 kN permanent-load reaction leaves 12 kN on the right, placing the trolley at 4 m. The two readings must sum to 30 kN at every position. A constant bias in both sensors would violate this independent check.</figcaption></figure>
 <details class="plot-data" data-csv="/downloads/lecture-data/engineering-mechanics/01-equilibrium.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Vertical reaction (kN) at selected values of Trolley position from left support (m).</caption><thead><tr><th scope="col">Trolley position from left support (m)</th><th scope="col">Left support</th><th scope="col">Right support</th></tr></thead><tbody><tr><th scope="row">0</th><td>24</td><td>6</td></tr><tr><th scope="row">1.5</th><td>19.5</td><td>10.5</td></tr><tr><th scope="row">3</th><td>15</td><td>15</td></tr><tr><th scope="row">4.5</th><td>10.5</td><td>19.5</td></tr><tr><th scope="row">6</th><td>6</td><td>24</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/engineering-mechanics/01-equilibrium.csv" download>Download all 121 plotted samples (CSV)</a></p></details></section>
 <nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Course contents</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/02-axial-deformation/">Chapter 2 · Axial stress, strain and compatibility</a></span></nav></article></div>

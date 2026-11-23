@@ -29,14 +29,22 @@
 <main id="content">
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Evaluating an interpolant without rebuilding its polynomial</h1><p class="lead">Derive a quotient from the Lagrange basis, evaluate the removable singularity at a data point and separate rounding error from sensitivity to the data.</p><p class="byline">Chapter 13 of 18</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#one-product-shared-by-all-the-basis-functions">One product shared by all the basis functions</a><a href="#worked-interpolation-and-data-sensitivity">Worked interpolation and data sensitivity</a><a href="#put-more-sensors-near-the-endpoints">Put more sensors near the endpoints</a><a href="#tutorial-on-what-the-formula-guarantees">Tutorial on what the formula guarantees</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
 <h2 id="one-product-shared-by-all-the-basis-functions">One product shared by all the basis functions</h2>
-<p>Let distinct nodes \(x_0,\ldots,x_n\) carry data \(y_j\). The cardinal function \(\ell_j(x)\) is one at node \(j\) and zero at the other nodes. Its product formula is expensive if every evaluation repeats the same differences. Set \(w_j=1/\prod_{k\ne j}(x_j-x_k)\) and \(P(x)=\prod_k(x-x_k)\). Away from all nodes, \(\ell_j(x)=P(x)w_j/(x-x_j)\). The polynomial interpolating constant data equal to one is one everywhere. Dividing the interpolating polynomial by this partition of unity cancels \(P(x)\) to give</p>
+<p>Let distinct nodes \(x_0,\ldots,x_n\) carry data \(y_j\). The cardinal function \(\ell_j(x)\) is one at node \(j\) and zero at the other nodes. Its product formula is expensive if every evaluation repeats the same differences. Set \(w_j=1/\prod_{k\ne j}(x_j-x_k)\) and \(P(x)=\prod_k(x-x_k)\). Away from all nodes,</p>
+<div class="math display">\[\ell_j(x)=P(x)w_j/(x-x_j).\]</div>
+<p>The polynomial interpolating constant data equal to one is one everywhere. Dividing the interpolating polynomial by this partition of unity cancels \(P(x)\) to give</p>
 <div class="math display">\[p(x)=\frac{\sum_j w_jy_j/(x-x_j)}{\sum_j w_j/(x-x_j)}.\]</div>
 <p>At a node the written quotient divides infinities. Multiply numerator and denominator by \(x-x_j\) and take the limit to recover \(y_j\) exactly. An implementation should return the stored value when the evaluation coordinate equals a node. Multiplying every weight by the same nonzero factor leaves the quotient invariant, a useful freedom when storing weights.</p>
+
+<details class="study-aside"><summary>Background · Barycentric weight</summary><div class="math display">\[w_j=\prod_{i\ne j}(x_j-x_i)^{-1}\]</div><p>Only relative weights enter the rational expression for the interpolating polynomial. At a node return the recorded value directly.</p></details>
 </section>
 <section>
 <h2 id="worked-interpolation-and-data-sensitivity">Worked interpolation and data sensitivity</h2>
-<p>Take the nodes \(-1,0,1\). Their weights are proportional to \(1,-2,1\). With data \(1,0,1\) at \(x=0.5\), the numerator is \(2/3-2=-4/3\) and the denominator is \(2/3-4-2=-16/3\). Hence \(p(0.5)=1/4\), as the polynomial \(x^2\) requires.</p>
-<p>Change the middle datum from 0 to 0.01. Its cardinal function is \(1-x^2\), so the prediction at 0.5 rises by 0.0075. For arbitrary data perturbations bounded by \(\delta\), the triangle inequality gives \(|\Delta p(x)|\le\delta\sum_j|\ell_j(x)|\). Large values of this sum signal a sensitivity of the interpolation problem. Evaluating the same polynomial by a smarter formula cannot remove this source of error.</p>
+<p>Take the nodes \(-1,0,1\). Their weights are proportional to \(1,-2,1\). With data \(1,0,1\) at \(x=0.5\), the numerator is \(2/3-2=-4/3\) and the denominator is</p>
+<div class="math display">\[2/3-4-2=-16/3.\]</div>
+<p>Hence \(p(0.5)=1/4\), as the polynomial \(x^2\) requires.</p>
+<p>Change the middle datum from 0 to 0.01. Its cardinal function is \(1-x^2\), so the prediction at 0.5 rises by 0.0075. For arbitrary data perturbations bounded by \(\delta\), the triangle inequality gives</p>
+<div class="math display">\[|\Delta p(x)|\le\delta\sum_j|\ell_j(x)|.\]</div>
+<p>Large values of this sum signal a sensitivity of the interpolation problem. Evaluating the same polynomial by a smarter formula cannot remove this source of error.</p>
 </section>
 <section>
 <h2 id="put-more-sensors-near-the-endpoints">Put more sensors near the endpoints</h2>

@@ -29,8 +29,12 @@
 <main id="content">
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>A physically positive root across six decades</h1><p class="lead">Reparametrise the unknown and rescale the residual in a nonlinear resistance model. Follow what each choice changes in a Newton step.</p><p class="byline">Chapter 16 of 18</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#start-from-a-positive-constitutive-quantity">Start from a positive constitutive quantity</a><a href="#measure-failure-and-sensitivity-separately">Measure failure and sensitivity separately</a><a href="#inspect-a-newton-proposal-without-losing-its-invalid-values">Inspect a Newton proposal without losing its invalid values</a><a href="#tutorial-on-relative-residuals">Tutorial on relative residuals</a></nav></aside><article class="prose reference"><section>
 <h2 id="start-from-a-positive-constitutive-quantity">Start from a positive constitutive quantity</h2>
-<p>An ideal thermistor calibration can be written \(R/R_*=e^z\). More generally a sensor fit may require a positive amplitude \(x\) satisfying its logarithmic reading \(\log x=d\). A Newton correction on \(f(x)=\log x-d\) gives \(x_+=x[1+d-\log x]\). Even with a unique perfectly regular root \(e^d\), this formula can propose a negative amplitude when the initial residual exceeds one. Evaluating the next logarithm would then be impossible.</p>
-<p>Choose \(z=\log x\) instead. The equation in the new variable is \(z=d\) and one step yields the answer. For an arbitrary residual \(f(x)\), chain differentiation gives \(d f(e^z)/dz=x f'(x)\). Newton moves \(z\) by \(-f/(xf')\), so the update in \(x\) is multiplicative:</p>
+<p>An ideal thermistor calibration can be written \(R/R_*=e^z\). More generally a sensor fit may require a positive amplitude \(x\) satisfying its logarithmic reading \(\log x=d\). A Newton correction on \(f(x)=\log x-d\) gives</p>
+<div class="math display">\[x_+=x[1+d-\log x].\]</div>
+<p>Even with a unique perfectly regular root \(e^d\), this formula can propose a negative amplitude when the initial residual exceeds one. Evaluating the next logarithm would then be impossible.</p>
+<p>Choose \(z=\log x\) instead. The equation in the new variable is \(z=d\) and one step yields the answer. For an arbitrary residual \(f(x)\), chain differentiation gives</p>
+<div class="math display">\[d f(e^z)/dz=x f'(x).\]</div>
+<p>Newton moves \(z\) by \(-f/(xf')\), so the update in \(x\) is multiplicative:</p>
 <div class="math display">\[x_+=x\exp[-f(x)/(x f'(x))].\]</div>
 <p>Near a simple root, expanding the exponential gives the ordinary first-order correction; the difference is quadratic in the relative step. A logarithmic coordinate enforces positivity at every finite iterate. It cannot restore information missing from the measurement.</p>
 </section>
@@ -47,7 +51,9 @@
 <span id="practice"></span><section>
 <h2 id="tutorial-on-relative-residuals">Tutorial on relative residuals</h2>
 <p>A model supplies \(F(x)=e^{0.1x}\) and a positive observation \(y\). How do residuals \(F-y\) and \(\log F-\log y\) weight small changes near a fit?</p>
-<details><summary>Worked solution</summary><p>Near \(F=y\), \(\log F-\log y\approx(F-y)/y\). A squared log residual weights errors approximately by relative error. Choosing it implies a different observation-noise model when fitting several readings.</p></details>
+<details><summary>Worked solution</summary><p>Near \(F=y\),</p>
+<div class="math display">\[\log F-\log y\approx(F-y)/y.\]</div>
+<p>A squared log residual weights errors approximately by relative error. Choosing it implies a different observation-noise model when fitting several readings.</p></details>
 <p>If the true parameter can be exactly zero, what does the logarithmic coordinate miss?</p>
 <details><summary>Worked solution</summary><p>The zero boundary is at \(z=-\infty\). A finite transformed iterate cannot represent it. One must allow a boundary solution explicitly when the physics admits it.</p></details>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/15-trust-radius/">Chapter 15 · Deciding how far to trust a linearised residual</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/17-fold-conditioning/">Chapter 17 · Finding a turning point without using the load as a coordinate</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>

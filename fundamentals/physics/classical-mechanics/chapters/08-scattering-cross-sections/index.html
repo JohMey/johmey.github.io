@@ -33,6 +33,8 @@
 <p>For an axisymmetric interaction the corresponding polar exit angles \(\theta\) to \(\theta+d\theta\) fill an angular band of solid angle \(d\Omega=2\pi\sin\theta\,|d\theta|\). Equate the rate from the entrance to the rate reported by a detector normalized to flux and solid angle:</p>
 <div class="math display equation-chain"><div class="equation-step">\[\mathcal F\,\frac{d\sigma}{d\Omega}2\pi\sin\theta\,|d\theta|=\mathcal F\,2\pi b\,|db|,\]</div><div class="equation-step">\[\frac{d\sigma}{d\Omega}=\frac{b}{\sin\theta}\left|\frac{db}{d\theta}\right|.\]</div></div>
 <p>This is a change of variables based on flux conservation, not a force law. The actual interaction supplies \(b(\theta)\). If multiple impact parameters map into one angular band, add their positive contributions. A finite detector averages this distribution over its acceptance, which matters near a sharp angular feature.</p>
+
+<details class="study-aside"><summary>Background · Differential cross-section</summary><div class="math display">\[d\sigma/d\Omega=(b/\sin\theta)|db/d\theta|\]</div><p>For an axially symmetric single-valued scattering branch this converts incoming area to outgoing solid angle. Sum contributions if more than one impact parameter gives the same angle.</p></details>
 </section>
 <section class="chapter-derivation"><p class="reading-label">Derivation and applications</p><h2 id="derivation">Which scattering cross section measures a loss of directed momentum?</h2>
 <p>A detector counting encounters adds one event in every accepted direction. A force measurement weights the same encounters according to how much directed momentum each removes. Consider a dilute parallel stream of identical particles of speed \(v\) and mass \(m\) scattered elastically by isolated, stationary, much heavier centres. The incoming direction defines \(z\). The outgoing speed is unchanged, and assume axial symmetry so that transverse recoils cancel in the ensemble. Let \(\mathcal F\) be the incident number per area per time.</p>
@@ -44,12 +46,16 @@
 <div class="math display">\[\sigma_{\rm tr}=2\pi\int b\,[1-\cos\theta(b)]\,db.\]</div>
 <p>Use the sum of all annuli if the same angle is reached from several impact parameters. Forward scattering transfers almost no longitudinal momentum. Exact backscattering transfers twice the incident longitudinal momentum, even though it still counts as a single encounter.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Compute the momentum flux for elastic spheres</h3>
-<p>For a hard sphere of effective contact radius \(R\), specular reflection gives \(\cos\theta=2(b/R)^2-1\) for \(0\le b\le R\). The integral is \(4\pi\int_0^R[b-b^3/R^2]db=\pi R^2\). For \(R=1.00\) mm, \(\mathcal F=2.00\times10^7\) m⁻²s⁻¹, \(m=1.00\times10^{-9}\) kg and \(v=2.00\) m/s, the encounter rate is \(62.8\) s⁻¹ and the mean force is \(1.26\times10^{-7}\) N.</p>
+<p>For a hard sphere of effective contact radius \(R\), specular reflection gives \(\cos\theta=2(b/R)^2-1\) for \(0\le b\le R\). The integral is</p>
+<div class="math display">\[4\pi\int_0^R[b-b^3/R^2]db=\pi R^2.\]</div>
+<p>For \(R=1.00\) mm, \(\mathcal F=2.00\times10^7\) m⁻²s⁻¹, \(m=1.00\times10^{-9}\) kg and \(v=2.00\) m/s, the encounter rate is \(62.8\) s⁻¹ and the mean force is \(1.26\times10^{-7}\) N.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Compare two angular distributions with identical event counts</h3>
 <p>Suppose an angular histogram is fitted by \(d\sigma/d\Omega=C(1+\alpha\cos\theta)\), with \(|\alpha|\le1\). Its integrated count is \(4\pi C\) for every \(\alpha\). Averaging the momentum factor uses \(\langle\cos^2\theta\rangle=1/3\) on a sphere, giving \(\sigma_{\rm tr}=4\pi C(1-\alpha/3)\). For \(\alpha=0.900\), the same count produces only \(0.700\) of the force for an isotropic distribution. An encounter count alone cannot determine a transport coefficient.</p>
 </section>
 <section><h2 id="counting-directions">What does a detector with equal angular bins count?</h2>
-<p>A stream of dilute neutral beads meets a much heavier fixed hard sphere with effective contact radius \(R\). For specular elastic reflection the impact parameter and polar deflection angle satisfy \(b=R\cos(\theta/2)\). The incoming annulus has area \(2\pi b\,|db|\), while an outgoing ring subtends \(2\pi\sin\theta\,d\theta\). Dividing gives the constant differential cross-section \(R^2/4\) per steradian. A detector with equal polar-angle bins sees a changing count because those bins have unequal solid angle.</p>
+<p>A stream of dilute neutral beads meets a much heavier fixed hard sphere with effective contact radius \(R\). For specular elastic reflection the impact parameter and polar deflection angle satisfy</p>
+<div class="math display">\[b=R\cos(\theta/2).\]</div>
+<p>The incoming annulus has area \(2\pi b\,|db|\), while an outgoing ring subtends \(2\pi\sin\theta\,d\theta\). Dividing gives the constant differential cross-section \(R^2/4\) per steradian. A detector with equal polar-angle bins sees a changing count because those bins have unequal solid angle.</p>
 <div id="try-it" class="interactive-study" data-study="physics-lab-scattering-bins"></div>
 <p>Predict which ring receives the largest incoming area. Sum the exact bin cross-sections and compare with \(\pi R^2\). The second curve uses the midpoint approximation to each bin's solid angle. Narrow the bins and test how that approximation approaches the same total. A plot that makes all counts equal in equal polar-angle bins would not represent isotropic scattering per steradian.</p></section>
 
@@ -63,7 +69,11 @@
 <p>The absolute value matters because stronger deflections often correspond to smaller impact parameters. If several distinct impact parameters produce the same angle, their contributions must be added. Multiplying by a detector’s solid angle is justified when its angular aperture is small enough that the differential cross-section is nearly constant across it.</p>
 </section>
 <section><h2 id="test-the-construction-on-a-hard-sphere">Test the construction on a hard sphere</h2>
-<p>Take an impenetrable smooth sphere of radius \(R\) that reflects incident point particles elastically. At a surface hit the normal component of velocity reverses while the tangential component stays fixed. A central hit returns straight back and a grazing hit barely deflects. The geometry of the contact normal gives \(b=R\cos(\theta/2)\). Differentiation and \(\sin\theta=2\sin(\theta/2)\cos(\theta/2)\) give \(d\sigma/d\Omega=R^2/4\). Integrating over all \(4\pi\) steradians recovers \(\pi R^2\), the area presented to the incoming parallel beam.</p>
+<p>Take an impenetrable smooth sphere of radius \(R\) that reflects incident point particles elastically. At a surface hit the normal component of velocity reverses while the tangential component stays fixed. A central hit returns straight back and a grazing hit barely deflects. The geometry of the contact normal gives</p>
+<div class="math display">\[b=R\cos(\theta/2).\]</div>
+<p>Differentiation and \(\sin\theta=2\sin(\theta/2)\cos(\theta/2)\) give</p>
+<div class="math display">\[d\sigma/d\Omega=R^2/4.\]</div>
+<p>Integrating over all \(4\pi\) steradians recovers \(\pi R^2\), the area presented to the incoming parallel beam.</p>
 <p>Although the angular density is isotropic in this classical example, the trajectories are deterministic. Isotropy results from the area-to-angle map. A detector covering a fixed span of polar angle but all azimuths receives different counts near the pole and near the equator because its solid angle changes.</p>
 </section>
 <section><h2 id="calculate-detector-counts">Calculate detector counts</h2>
@@ -72,8 +82,10 @@
 </section>
 <section><h2 id="attraction-enlarges-the-area-that-meets-a-body">Attraction enlarges the area that meets a body</h2>
 <p>An astronomical body can collect small incoming particles from a larger area than its apparent disk. Consider a stationary spherical body of mass \(M\) and radius \(R\) with vacuum outside. Small particles arrive from far away with common speed \(v_\infty\) and an approximately uniform distribution across their beam. Assume negligible particle mass, no drag, no interactions among particles and an absorbing surface. Gravity changes which incident trajectories reach the surface while conserving each particle’s energy and angular momentum until its first contact.</p>
-<p>At infinity the specific angular momentum is \(h=bv_\infty\) for impact parameter \(b\). The trajectory that just grazes the surface is tangent there, so \(h=Rv_p\), where \(v_p\) is its speed at closest approach. Energy conservation between infinity and the grazing point gives \(v_p^2=v_\infty^2+2GM/R\). Eliminating \(v_p\) supplies the critical impact parameter and capture cross section</p>
-<div class="math display">\[b_{\max}^2=R^2\left(1+\frac{v_{\rm esc}^2}{v_\infty^2}\right),\qquad \sigma_{\rm hit}=\pi b_{\max}^2,\qquad v_{\rm esc}=\sqrt{2GM/R}.\]</div>
+<p>At infinity the specific angular momentum is \(h=bv_\infty\) for impact parameter \(b\). The trajectory that just grazes the surface is tangent there, so \(h=Rv_p\), where \(v_p\) is its speed at closest approach. Energy conservation between infinity and the grazing point gives</p>
+<div class="math display">\[v_p^2=v_\infty^2+2GM/R.\]</div>
+<p>Eliminating \(v_p\) supplies the critical impact parameter and capture cross section</p>
+<div class="math display equation-chain"><div class="equation-step">\[b_{\max}^2=R^2\left(1+\frac{v_{\rm esc}^2}{v_\infty^2}\right),\]</div><div class="equation-step">\[\sigma_{\rm hit}=\pi b_{\max}^2,\]</div><div class="equation-step">\[v_{\rm esc}=\sqrt{2GM/R}.\]</div></div>
 <p>The incident area element is measured in the undisturbed beam at infinity. Particles with \(b&lt;R\) obviously hit; some initially farther from the centre do as well. Very fast particles hardly change direction before passing the body, giving the geometric area in that limit. Very slow incident particles experience strong focusing, and the idealized cross section grows as \(v_\infty^{-2}\). For extremely small speeds the assumed uniform, isolated far-field beam can cease to be physically meaningful because other gravitating masses perturb it.</p>
 </section>
 <section><h2 id="compare-two-incoming-populations">Compare two incoming populations</h2>

@@ -46,10 +46,19 @@
 <p>At \(B=0.1f_c\), \(F\simeq0.06345\), so the recorded RMS is about 25.2% of the infinite-band RMS. At \(B=10f_c\), \(F\simeq0.93655\), giving about 96.8% of the RMS. In an experiment, taking a square root one step too early changes this comparison. A real detector transfer function replaces the sharp cutoff by an integral of \(S_C(f)|H_\mathrm{det}(f)|^2\).</p>
 <p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/03-thermal-noise-and-bandwidth/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-thermal-noise-and-bandwidth"></div>
 <p>Sweep the resistance by a factor ten. Observe how the corner moves along the frequency axis and how the fraction measured in a fixed bandwidth changes. Then vary temperature. In the classical regime spectral density and integrated variance are proportional to \(T\), while RMS voltage grows only as \(\sqrt T\). A plot labelled “noise” without units cannot distinguish these two dependencies.</p>
+
+<details class="study-aside">
+<summary>Background · How does a longer voltage exposure alter the measured noise?</summary>
+<p>An equilibrium resistor–capacitor circuit has voltage covariance \(C_v(s)=(k_BT/C)\exp(-|s|/\tau)\), where \(\tau=RC\). Suppose a digitiser returns the mean voltage during an exposure \(T_m\). Squaring a sample of this mean measures a different variance from averaging the instantaneous voltage squared. In the classical stationary model the two-time integral becomes</p>
+<div class="math display equation-chain"><div class="equation-step">\[\mathrm{var}(\bar v)=\frac{2}{T_m^2}\int_0^{T_m}(T_m-s)C_v(s)\,ds=\frac{2k_BT}{C}\frac{u-1+e^{-u}}{u^2},\]</div><div class="equation-step">\[u=\frac{T_m}{\tau}.\]</div></div>
+<p>Short exposures recover \(k_BT/C\). At ten correlation times only about 18% of that variance remains. For very long exposures the variance decreases as \(2\tau/T_m\). Taking more closely spaced samples of one exposure cannot undo that averaging.</p>
+</details>
 </section>
 <section>
 <h2 id="a-physical-check-and-a-calibration-check">A physical check and a calibration check</h2>
-<p>An RC time-domain experiment provides a second observable beyond integrated power. Under the same single-pole equilibrium model the voltage autocovariance is \(\langle V(t)V(t+\tau)\rangle=(k_BT/C)e^{-|\tau|/(RC)}\). Its variance at zero lag agrees with equipartition, and its decay time is obtained from the homogeneous charge-relaxation equation. Repeating the measurement with a known extra parallel capacitance lowers the RMS and lengthens the correlation time. Seeing only one of those changes suggests that the observed noise may include substantial amplifier input voltage or an independent background.</p>
+<p>An RC time-domain experiment provides a second observable beyond integrated power. Under the same single-pole equilibrium model the voltage autocovariance is</p>
+<div class="math display">\[\langle V(t)V(t+\tau)\rangle=(k_BT/C)e^{-|\tau|/(RC)}.\]</div>
+<p>Its variance at zero lag agrees with equipartition, and its decay time is obtained from the homogeneous charge-relaxation equation. Repeating the measurement with a known extra parallel capacitance lowers the RMS and lengthens the correlation time. Seeing only one of those changes suggests that the observed noise may include substantial amplifier input voltage or an independent background.</p>
 <p>The classical approximation assumes \(hf\ll k_BT\) over the relevant band and a resistor that can be treated as frequency independent. A MHz room-temperature experiment is far inside this regime. At sufficiently high frequencies or cryogenic temperatures, a quantum noise model, an explicit definition of the measured ordering of the spectrum and the detector's energy exchange are needed. Extending an ideal classical white source to infinite frequency is only permissible as an approximation inside the convergent low-frequency RC calculation; it is not a microscopic model at arbitrarily high frequency.</p>
 </section>
 <section>
@@ -59,7 +68,9 @@
 <p>A two-sided spectrum in hertz is used instead. What density and integration limits preserve the same variance?</p>
 <details><summary>Work through the solution</summary><p>For this real voltage, the density for each sign of frequency is half the one-sided positive-frequency value. Integrate it over \((-\infty,\infty)\). Integrating the one-sided density over both signs would count the power twice.</p></details>
 <p>A measured RMS is 10 μV, including independent amplifier noise of 6 μV RMS. Can 6 μV simply be subtracted to infer the sample contribution?</p>
-<details><summary>Work through the solution</summary><p>Independent zero-mean voltages add in variance. The inferred sample RMS is \(\sqrt{10^2-6^2}=8\ \mu\mathrm V\). A deterministic offset or correlated noise would require a different treatment.</p></details>
+<details><summary>Work through the solution</summary><p>Independent zero-mean voltages add in variance. The inferred sample RMS is</p>
+<div class="math display">\[\sqrt{10^2-6^2}=8\ \mu\mathrm V.\]</div>
+<p>A deterministic offset or correlated noise would require a different treatment.</p></details>
 </section>
 <section>
 <h2 id="compare-with-an-actual-laboratory">Compare with an actual laboratory</h2>

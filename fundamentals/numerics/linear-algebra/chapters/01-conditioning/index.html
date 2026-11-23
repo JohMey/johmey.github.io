@@ -33,9 +33,16 @@
 <p class="reading-label">From first principles</p><h2 id="first-principles">Derive the relative error in a linear solve</h2>
 <p>Suppose measured data \(b\) determine unknowns through \(Ax=b\), with \(A\) square and nonsingular. Keep the coefficients fixed and change only the measured data by \(\delta b\). Subtracting the two equations removes the unperturbed solution exactly,</p>
 <div class="math display equation-chain"><div class="equation-step">\[A(x+\delta x)-Ax=\delta b,\]</div><div class="equation-step">\[\delta x=A^{-1}\delta b .\]</div></div>
-<p>Choose a vector norm and its induced matrix norm, defined as the largest stretch of a unit vector. By that definition \(\|\delta x\|\leq\|A^{-1}\|\|\delta b\|\), while \(\|b\|\leq\|A\|\|x\|\). For nonzero \(b\) and \(x\), combine these two inequalities to express both errors as fractions,</p>
+<p>Choose a vector norm and its induced matrix norm, defined as the largest stretch of a unit vector. Applying the induced norm first to the perturbation and then to the original data gives</p>
+<div class="math display">\[\begin{aligned}
+\|\delta x\| &amp;= \|A^{-1}\delta b\| \leq \|A^{-1}\|\,\|\delta b\|,\\
+\|b\| &amp;= \|Ax\| \leq \|A\|\,\|x\|.
+\end{aligned}\]</div>
+<p>For nonzero \(b\) and \(x\), combine these two inequalities to express both errors as fractions,</p>
 <div class="math display">\[\frac{\|\delta x\|}{\|x\|}\leq\|A\|\,\|A^{-1}\|\frac{\|\delta b\|}{\|b\|}.\]</div>
 <p>The product is the normwise condition number. It concerns the problem even when the solver is exact. For a computed solution one can instead insert its measured residual as the data perturbation. The norm bound allows the most sensitive possible orientation of that perturbation, so a particular residual can give a considerably smaller error.</p>
+
+<details class="study-aside"><summary>Background · Condition number</summary><div class="math display">\[\kappa(A)=\|A\|\|A^{-1}\|\]</div><p>For an invertible square matrix choose a compatible norm. Conditioning describes data sensitivity, while stability refers to the algorithm processing the data.</p></details>
 </section>
 <figure class="concept-diagram" id="concept-diagram">
 <a class="diagram-enlarge" href="/assets/fundamentals-figures/linear-algebra.png" target="_blank" rel="noopener"><img src="/assets/fundamentals-figures/linear-algebra.png" alt="A unit circle of input perturbations and its image under diagonal scaling. Horizontal radius stays one and vertical radius shrinks to 0.12." width="1326" height="569"><span>Open full-size diagram</span></a>
@@ -77,9 +84,19 @@ python linear-algebra.py --cells 10 --rtol 0.05</code></pre>
 <section>
 <h2 id="two-questions-about-a-reported-solution">Two questions about a reported solution</h2>
 <p>Suppose you determine two unknown forces by balancing their components in two directions. If the directions are almost parallel, the second measurement repeats much of the first. A machine can solve both written equations very accurately while the inferred forces vary considerably from trial to trial. To understand this, separate the map from data to physical answer from the algorithm used to evaluate that map. Conditioning describes the map locally near the supplied data. Stability describes the calculation that produced an answer from those data.</p>
-<p>Let \(A\) be a nonsingular real matrix, let \(Ax=b\) and suppose that only the right-hand side changes. Subtract \(Ax=b\) from \(A(x+\delta x)=b+\delta b\). The result \(A\delta x=\delta b\) says that \(A^{-1}\) maps the measurement disturbance into the answer. In a consistent norm, \(\|\delta x\|\leq\|A^{-1}\|\|\delta b\|\). To compare percentages rather than units, use \(\|b\|\leq\|A\|\|x\|\) and divide through by \(\|x\|\). For nonzero \(b\) this gives</p>
+<p>Let \(A\) be a nonsingular real matrix, let \(Ax=b\) and suppose that only the right-hand side changes. Subtract \(Ax=b\) from \(A(x+\delta x)=b+\delta b\). The result \(A\delta x=\delta b\) says that \(A^{-1}\) maps the measurement disturbance into the answer. In a consistent norm,</p>
+<div class="math display">\[\|\delta x\|\leq\|A^{-1}\|\|\delta b\|.\]</div>
+<p>To compare percentages rather than units, use \(\|b\|\leq\|A\|\|x\|\) and divide through by \(\|x\|\). For nonzero \(b\) this gives</p>
 <div class="math display">\[\frac{\|\delta x\|}{\|x\|}\leq\|A\|\|A^{-1}\|\frac{\|\delta b\|}{\|b\|}.\]</div>
 <p>The product is the condition number in the specified norm. Rotating the disturbance relative to the singular vectors changes the actual amplification, so a worst-case bound alone cannot tell which measurement caused trouble.</p>
+
+<details class="study-aside">
+<summary>Background · How can changing units change a condition number?</summary>
+<p>Suppose two independent instruments measure a length and a force. In chosen reference units the measurement matrix is the identity. If the first instrument reports the same length in millimetres rather than metres, its numerical output is multiplied by a thousand. Measuring input and output perturbations with unweighted Euclidean norms then produces a condition number of 1000. The physical readings have exactly the same precision as before.</p>
+<p>Represent the instrument uncertainties by standard deviations \(s_i\), and scale each output by its own \(s_i\). Under a change of units, both the first measurement and its uncertainty acquire the factor 1000. Their ratio stays fixed. A physically meaningful sensitivity analysis also scales the unknowns when their units differ. If \(D_y,D_x\) contain the respective reference scales, the operator to examine is</p>
+<div class="math display">\[A_{\rm scaled}=D_y^{-1} A D_x.\]</div>
+<p>Report those scales next to a condition number. An apparently large change in conditioning can then be traced to sensor precision, physical coupling, or simply the coordinates used to report them.</p>
+</details>
 </section>
 <section>
 <h2 id="resolve-the-sensitive-direction">Resolve the sensitive direction</h2>
@@ -93,17 +110,27 @@ python linear-algebra.py --cells 10 --rtol 0.05</code></pre>
 </section>
 <section>
 <h2 id="allow-uncertainty-in-the-coefficients">Allow uncertainty in the coefficients</h2>
-<p>If directions as well as forces are measured, the perturbed equations are \((A+\delta A)(x+\delta x)=b+\delta b\). Keeping first-order terms gives \(A\delta x\simeq\delta b-\delta A\,x\). Uncertainty in a coefficient therefore contributes an effective disturbance proportional to the magnitude of the state it multiplies. Reporting only uncertainty in the measured right-hand side can underestimate the final error.</p>
-<p>For a scalar calibration \(a x=b\), logarithmic differentiation gives \(\delta x/x\simeq\delta b/b-\delta a/a\). If both measurements are 1% too large with the same sign, their errors cancel exactly in the ratio. Opposite 1% changes give \(1.01/0.99-1\simeq2.02\%\). Componentwise measurement correlations affect typical errors even though a norm bound has to allow the worst admissible combination. In force reconstruction this is a reason to keep calibration information with the measured balances.</p>
+<p>If directions as well as forces are measured, the perturbed equations are</p>
+<div class="math display">\[(A+\delta A)(x+\delta x)=b+\delta b.\]</div>
+<p>Keeping first-order terms gives</p>
+<div class="math display">\[A\delta x\simeq\delta b-\delta A\,x.\]</div>
+<p>Uncertainty in a coefficient therefore contributes an effective disturbance proportional to the magnitude of the state it multiplies. Reporting only uncertainty in the measured right-hand side can underestimate the final error.</p>
+<p>For a scalar calibration \(a x=b\), logarithmic differentiation gives</p>
+<div class="math display">\[\delta x/x\simeq\delta b/b-\delta a/a.\]</div>
+<p>If both measurements are 1% too large with the same sign, their errors cancel exactly in the ratio. Opposite 1% changes give \(1.01/0.99-1\simeq2.02\%\). Componentwise measurement correlations affect typical errors even though a norm bound has to allow the worst admissible combination. In force reconstruction this is a reason to keep calibration information with the measured balances.</p>
 </section>
 <section>
 <h2 id="compute-a-condition-number-for-a-particular-observable">Compute a condition number for a particular observable</h2>
-<p>Suppose a linear solve is used only to predict \(q=c^Tx\), rather than every component of the state. Let \(A\) be fixed and nonsingular. Perturb the load by \(\delta b\); the output changes by \(c^TA^{-1}\delta b\). Solve the dual system \(A^Tz=c\). Then the exact change is \(z^T\delta b\), and Cauchy–Schwarz gives \(|\delta q|\le\|z\|_2\|\delta b\|_2\). Equality is possible by choosing a load error parallel to \(z\). The absolute condition number of this observable with respect to this load norm is consequently \(\|z\|_2\). It can be much smaller than the worst amplification over all outputs.</p>
+<p>Suppose a linear solve is used only to predict \(q=c^Tx\), rather than every component of the state. Let \(A\) be fixed and nonsingular. Perturb the load by \(\delta b\); the output changes by \(c^TA^{-1}\delta b\). Solve the dual system \(A^Tz=c\). Then the exact change is \(z^T\delta b\), and Cauchy–Schwarz gives</p>
+<div class="math display">\[|\delta q|\le\|z\|_2\|\delta b\|_2.\]</div>
+<p>Equality is possible by choosing a load error parallel to \(z\). The absolute condition number of this observable with respect to this load norm is consequently \(\|z\|_2\). It can be much smaller than the worst amplification over all outputs.</p>
 <p>The error model matters to the result. If each source instead has its own bounded relative uncertainty \(|\delta b_i|\le\epsilon |b_i|\), the worst change is \(\epsilon\sum_i|z_i b_i|\). The bound is attained by choosing the signs of the perturbations to make every term reinforce the same output change. For independent mean-zero source errors with covariances collected in \(\Sigma\), the variance is \(z^T\Sigma z\), generally smaller than a worst-case bound. A worst-case condition number and a statistical standard deviation answer different questions even when evaluated using exactly the same dual solution.</p>
 </section>
 <section>
 <h2 id="which-of-two-coupled-readings-can-be-predicted">Which of two coupled readings can be predicted?</h2>
-<p>Take \(A=\left(\begin{smallmatrix}1&amp;1\\1&amp;1.02\end{smallmatrix}\right)\) and load \(b=(2,2.02)^T\). Subtracting the equations gives \(0.02x_2=0.02\), and back-substitution gives \(x=(1,1)^T\). For a prediction of the sum \(q_s=x_1+x_2\), the dual vector is \(z_s=(1,0)^T\): the first equation already reports that sum. For the difference \(q_d=x_1-x_2\), subtract twice the inferred \(x_2\) from the first equation. This gives \(q_d=101b_1-100b_2\), so \(z_d=(101,-100)^T\). These two physically simple outputs depend on the same pair of source readings in strikingly different ways.</p>
+<p>Take \(A=\left(\begin{smallmatrix}1&amp;1\\1&amp;1.02\end{smallmatrix}\right)\) and load \(b=(2,2.02)^T\). Subtracting the equations gives \(0.02x_2=0.02\), and back-substitution gives</p>
+<div class="math display">\[x=(1,1)^T.\]</div>
+<p>For a prediction of the sum \(q_s=x_1+x_2\), the dual vector is \(z_s=(1,0)^T\): the first equation already reports that sum. For the difference \(q_d=x_1-x_2\), subtract twice the inferred \(x_2\) from the first equation. This gives \(q_d=101b_1-100b_2\), so \(z_d=(101,-100)^T\). These two physically simple outputs depend on the same pair of source readings in strikingly different ways.</p>
 <p>With each reading uncertain by at most 0.001 in absolute units, the sum can change by at most 0.001. The difference can change by as much as 0.201 when the errors have opposite signs. With a single common offset of 0.001 in both readings, however, the difference changes by only 0.001 because the two large terms nearly cancel. The nominal difference is zero, so relative error in that output is undefined. An absolute tolerance or a physically chosen reference amplitude provides a meaningful accuracy requirement.</p>
 <p>A designer considering improved load cells should therefore ask whether calibration drift is shared or independent and whether the useful output is a sum or a difference. Reporting just the matrix condition number gives no way to recover either piece of information. If the coefficients of \(A\) are uncertain as well, the effective right-hand side also contains the term \(-\delta A\,x\) to first order. Its direction can be entirely different from plausible measurement errors in \(b\).</p>
 <p>A direct numerical perturbation illustrates the worst bounded case. Increasing \(b_1\) by 0.001 and decreasing \(b_2\) by 0.001 gives \(x_2=0.90\) and \(x_1=1.101\). The output difference has changed by 0.201 exactly, demonstrating that the sign choice in the componentwise bound is achievable.</p>

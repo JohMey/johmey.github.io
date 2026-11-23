@@ -31,10 +31,14 @@
 <p>For steady incompressible two-dimensional flow over a smooth wall, let \(U_e(x)\) denote the local speed just outside a thin attached boundary layer and \(u(x,y)\) the tangential speed inside it. Displacement thickness \(\delta^*=\int_0^\infty(1-u/U_e)dy\) measures missing volume flow per unit outer speed. Momentum thickness \(\theta=\int_0^\infty (u/U_e)(1-u/U_e)dy\) measures a different deficit. Both have dimensions of length, while their ratio \(H=\delta^*/\theta\) characterises profile shape. Neither thickness is defined by a particular percentage edge speed.</p>
 <p>Integrating the streamwise boundary-layer momentum equation and using continuity to eliminate the edge-normal flux yields</p>
 <div class="math display">\[\frac{\tau_w}{\rho U_e^2}=\frac{d\theta}{dx}+(2+H)\frac{\theta}{U_e}\frac{dU_e}{dx}.\]</div>
-<p>The edge pressure gradient follows outer inviscid flow through \(dp_e/dx=-\rho U_e\,dU_e/dx\). Under uniform outer speed the equation reduces to \(d\theta/dx=C_f/2\), \(C_f=\tau_w/(\rho U_e^2/2)\). With an adverse pressure gradient the second term is negative, and an increasingly thickening layer can still have very small or negative wall shear. Applying the uniform-speed relation outside its conditions would overestimate shear near separation.</p>
+<p>The edge pressure gradient follows outer inviscid flow through \(dp_e/dx=-\rho U_e\,dU_e/dx\). Under uniform outer speed the equation reduces to</p>
+<div class="math display equation-chain"><div class="equation-step">\[d\theta/dx=C_f/2,\]</div><div class="equation-step">\[C_f=\tau_w/(\rho U_e^2/2).\]</div></div>
+<p>With an adverse pressure gradient the second term is negative, and an increasingly thickening layer can still have very small or negative wall shear. Applying the uniform-speed relation outside its conditions would overestimate shear near separation.</p>
 </section>
 <section><h2 id="closure">Derive an approximate flat-plate law</h2>
-<p>Assume a laminar zero-pressure-gradient layer with \(u/U=2\eta-\eta^2\) for \(0&lt;\eta=y/\delta&lt;1\) and outer speed beyond. The profile satisfies no slip at the wall, reaches the edge speed and has zero first derivative at its nominal outer edge. Integrating gives \(\delta^*=\delta/3\), \(\theta=2\delta/15\), while the wall gradient gives \(\tau_w=2\mu U/\delta\). Substitute into the momentum integral and integrate from the leading edge:</p>
+<p>Assume a laminar zero-pressure-gradient layer with \(u/U=2\eta-\eta^2\) for \(0&lt;\eta=y/\delta&lt;1\) and outer speed beyond. The profile satisfies no slip at the wall, reaches the edge speed and has zero first derivative at its nominal outer edge. Integrating gives \(\delta^*=\delta/3\), \(\theta=2\delta/15\), while the wall gradient gives</p>
+<div class="math display">\[\tau_w=2\mu U/\delta.\]</div>
+<p>Substitute into the momentum integral and integrate from the leading edge:</p>
 <div class="math display equation-chain"><div class="equation-step">\[\delta=\sqrt{\frac{30\nu x}{U}},\]</div><div class="equation-step">\[C_{f,x}=\frac{4}{\sqrt{30Re_x}},\]</div><div class="equation-step">\[Re_x=\frac{Ux}{\nu}.\]</div></div>
 <p>The coefficient 0.730 from this approximate profile differs from the exact Blasius laminar result 0.664 while reproducing the square-root scaling. Profile choice closes an otherwise exact integrated balance and creates a measurable modelling error. It also treats the local leading-edge region outside its proper thin-layer asymptotics. Refining numerical integration of the same polynomial cannot eliminate the profile approximation.</p>
 <p>For air with \(U=5.0\) m/s, \(\nu=1.5\times10^{-5}\) square metres per second, \(x=0.20\) m and \(\rho=1.2\) kg/m³, \(Re_x=6.67\times10^4\) and predicted \(\delta=4.24\) mm. The approximate local \(C_f=0.00283\) gives \(\tau_w=0.0424\) Pa. If a pressure-gradient or transition changes the profile appreciably, measure the actual shape and its \(x\) variation rather than applying this laminar estimate.</p>
@@ -50,7 +54,9 @@
 <section><h2 id="tutorial-one">Tutorial · Infer drag from two traverse stations</h2>
 <p>A constant-speed incompressible layer has momentum thickness 0.30 mm at one station and 0.50 mm 0.15 m farther downstream. With \(U=5.0\) m/s and \(\rho=1.2\), estimate mean wall shear over the interval and total drag on a strip of width 0.20 m.</p>
 <details><summary>Integrate the momentum relation</summary>
-<p>Mean shear is \(\rho U^2\Delta\theta/\Delta x=1.2(25)(0.00020)/0.15=0.040\) Pa. The area is 0.030 square metres, so drag is 1.20 mN. This estimate uses the complete momentum deficit and does not require differentiating a noisy near-wall velocity. It does require both profiles to cover the entire defect region and share a calibrated outer speed.</p>
+<p>Mean shear is</p>
+<div class="math display">\[\rho U^2\Delta\theta/\Delta x=1.2(25)(0.00020)/0.15=0.040\,\mathrm{Pa}.\]</div>
+<p>The area is 0.030 square metres, so drag is 1.20 mN. This estimate uses the complete momentum deficit and does not require differentiating a noisy near-wall velocity. It does require both profiles to cover the entire defect region and share a calibrated outer speed.</p>
 </details>
 </section>
 <section><h2 id="tutorial-two">Tutorial · Check an apparent separation claim</h2>

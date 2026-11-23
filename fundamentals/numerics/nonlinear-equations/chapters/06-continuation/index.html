@@ -47,28 +47,86 @@
 <p>The usual corrector plane is perpendicular to \(t\). In two dimensions the permitted correction therefore lies along the initial unit normal \(n=g/\|g\|\). Try \(z=z_p+\delta n\). Since \(\delta=O(h^2)\), the derivative at the initial point gives the leading normal correction,</p>
 <div class="math display equation-chain"><div class="equation-step">\[0=\tfrac12h^2t^THt+\delta\|g\|+O(h^3),\]</div><div class="equation-step">\[\delta=-\frac{h^2t^THt}{2\|g\|}+O(h^3).\]</div></div>
 <p>Thus a local curvature estimate \(K=|t^THt|/\|g\|\) suggests a predictor length for a desired transverse error \(\varepsilon\),</p>
-<div class="math display equation-chain"><div class="equation-step">\[\frac12Kh^2\lesssim\varepsilon,\]</div><div class="equation-step">\[h\lesssim\sqrt{2\varepsilon/K}.\]</div></div>
+<div class="math display">\[\frac12Kh^2\lesssim\varepsilon,\qquad h\lesssim\sqrt{2\varepsilon/K}.\]</div>
 <p>The absolute curvature is invariant when \(F\) is multiplied by a fixed nonzero scalar. The estimate depends on the coordinate metric and becomes unreliable if the gradient is nearly zero or higher derivatives vary substantially over the step. A measured corrector displacement tests the prediction.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Predict the normal correction on a circle</h3>
-<p>On \(F=x^2+\lambda^2-4=0\), start at \((2,0)\) with tangent \((0,1)\) and choose \(h=0.20\). Then \(t^THt=2,\ \|g\|=4\), and the predicted normal displacement is \(-0.0100\). At fixed \(\lambda=0.20\), the exact correction is \(\sqrt{4-0.20^2}-2=-0.01003\). Its sign points inward, restoring the radius.</p>
+<p>On \(F=x^2+\lambda^2-4=0\), start at \((2,0)\) with tangent \((0,1)\) and choose \(h=0.20\). Then \(t^THt=2,\ \|g\|=4\), and the predicted normal displacement is \(-0.0100\). At fixed \(\lambda=0.20\), the exact correction is</p>
+<div class="math display">\[\sqrt{4-0.20^2}-2=-0.01003.\]</div>
+<p>Its sign points inward, restoring the radius.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Choose a step near a parabolic turning point</h3>
 <p>For \(F=\lambda-3x^2\) at the origin, take \(t=(1,0)\), \(n=(0,1)\). Here \(t^THt=-6,\ \|g\|=1\), so the exact corrector at fixed \(x=h\) is \(+3h^2\) in the parameter. To keep it below \(0.0012\), choose \(h\le0.020\). A proposed \(h=0.05\) would require correction \(0.0075\), over six times the target.</p>
 </section>
 <section>
 <h2 id="a-solution-curve-contains-more-than-one-isolated-solve">A solution curve contains more than one isolated solve</h2>
-<p>A physical model often depends on a parameter \(\lambda\), such as heat input, end displacement or applied load. Solving \(F(x,\lambda)=0\) independently at each parameter value discards information about how neighbouring states are related. On a smooth branch where \(F_x\) is invertible, differentiation gives \(F_x\,dx/d\lambda=-F_\lambda\). This linear solve predicts how the state moves under a small parameter change. Re-evaluating the full residual at the prediction and correcting it by Newton accounts for the curvature omitted by the tangent.</p>
-<p>For a scalar illustration take \(F=x^2+\lambda-1\). The admissible solution set is a parabola in the \((x,\lambda)\) plane, with branches \(x=\pm\sqrt{1-\lambda}\) for \(\lambda&lt;1\). Its derivative \(dx/d\lambda=-1/(2x)\) grows without bound as \(x\) approaches zero. Starting at \(x=0.5,\lambda=0.75\), a change \(\Delta\lambda=0.1\) predicts \(x=0.4\). The positive exact value is \(\sqrt{0.15}=0.38730\). The predictor is close enough for a local correction here. Increasing the load beyond one would ask for a real equilibrium that this model cannot supply.</p>
+<p>A physical model often depends on a parameter \(\lambda\), such as heat input, end displacement or applied load. Solving \(F(x,\lambda)=0\) independently at each parameter value discards information about how neighbouring states are related. On a smooth branch where \(F_x\) is invertible, differentiation gives</p>
+<div class="math display">\[F_x\,dx/d\lambda=-F_\lambda.\]</div>
+<p>This linear solve predicts how the state moves under a small parameter change. Re-evaluating the full residual at the prediction and correcting it by Newton accounts for the curvature omitted by the tangent.</p>
+<p>For a scalar illustration take \(F=x^2+\lambda-1\). The admissible solution set is a parabola in the \((x,\lambda)\) plane, with branches \(x=\pm\sqrt{1-\lambda}\) for \(\lambda&lt;1\). Its derivative \(dx/d\lambda=-1/(2x)\) grows without bound as \(x\) approaches zero. Starting at \(x=0.5,\lambda=0.75\), a change \(\Delta\lambda=0.1\) predicts \(x=0.4\). The positive exact value is</p>
+<div class="math display">\[\sqrt{0.15}=0.38730.\]</div>
+<p>The predictor is close enough for a local correction here. Increasing the load beyond one would ask for a real equilibrium that this model cannot supply.</p>
 </section>
 <section>
 <h2 id="change-the-parameter-used-to-follow-the-curve">Change the parameter used to follow the curve</h2>
 <p>The curve itself is smooth at \((0,1)\) although \(\lambda\) is a poor local coordinate there. Introduce an arclength-like parameter and a normalised tangent \(t=(t_x,t_\lambda)\) satisfying \(F_x t_x+F_\lambda t_\lambda=0\). At a known point \(z_k=(x_k,\lambda_k)\) predict \(z_p=z_k+\Delta s\,t\). Correct by solving the physical equation together with a hyperplane constraint \(t^T(z-z_p)=0\). This pseudo-arclength condition selects a nearby point on the branch while allowing the load parameter itself to reverse direction.</p>
 <p>At the fold of the example \(F_x=0,\ F_\lambda=1\), and the tangent can be \(t=(-1,0)\). The augmented Jacobian has rows \((0,1)\) and \((-1,0)\), with determinant one. A Newton correction in the two unknowns is well posed even though the original scalar Jacobian for fixed \(\lambda\) was singular. The construction depends on a simple fold and the correct tangent. A more complicated branch intersection can require additional information to choose which path to follow.</p>
 <figure class="paper-figure"><img src="/assets/lecture-figures/continuation-fold.png" width="1264" height="720" loading="lazy" alt="Two root branches turn at lambda equal to one and join at x equal to zero."><figcaption>The solution curve can be followed through the fold even though increasing the parameter beyond one would leave this particular equation with no real root.</figcaption></figure>
+
+<details class="study-aside">
+<summary>OneSimulation · Follow an equilibrium through two load reversals</summary>
+<p>The dimensionless restoring law \(F(x,\lambda)=x^3-x+\lambda\) crosses two folds. At a prescribed load, Newton's scalar displacement update needs \(1/(3x^2-1)\); the denominator vanishes at the turns. In the displacement–load plane the tangent \(t\) remains defined. Starting from \((1.2,-0.528)\), the code orients that tangent toward decreasing displacement, makes a prediction \(p\), and requires the corrected point \(z\) to satisfy</p>
+<div class="math display equation-chain"><div class="equation-step">\[F(z)=0,\]</div><div class="equation-step">\[t^T(z-p)=0.\]</div></div>
+<p>The OneSimulation linear solver computes each two-component Newton correction. At a fold the tangent points entirely in the displacement direction, so the second equation fixes the displacement component locally and the first equation determines the load component. Try halving the step to sample the turns more densely. Load parametrisation visits the same load at up to three equilibria; the path history identifies which one has been followed.</p>
+<pre><code>"""Follow both folds of a scalar equilibrium with a two-variable Newton correction."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+
+step = 0.12  # arclength in dimensionless displacement-load coordinates
+point = np.array([1.2, 1.2 - 1.2**3])
+path = [point.copy()]
+for _ in range(100):
+    x, load = point
+    tangent = np.array([-1.0, 3*x*x - 1])
+    tangent /= np.linalg.norm(tangent)
+    predicted = point + step * tangent
+    point = predicted.copy()
+    for _ in range(10):
+        x, load = point
+        residual = np.array([x**3 - x + load, tangent @ (point - predicted)])
+        if np.linalg.norm(residual, np.inf) &lt; 1e-12:
+            break
+        jacobian = np.array([[3*x*x - 1, 1], tangent])
+        point -= solve_dense(jacobian, residual)
+    else:
+        raise RuntimeError("Reduce the continuation step")
+    path.append(point.copy())
+    if point[0] &lt; -1.2:
+        break
+
+x, load = np.array(path).T
+fold_x = np.array([-1, 1]) / np.sqrt(3)
+assert x[-1] &lt; -1.2 and np.max(np.abs(x**3 - x + load)) &lt; 1e-11
+assert np.count_nonzero(np.diff(np.sign(np.diff(load)))) == 2
+print("Fold loads from the derivative:", fold_x - fold_x**3)
+fig, ax = plt.subplots(figsize=(6.8, 3.8), constrained_layout=True)
+ax.plot(load, x, ".-", color="#176879", label="Corrected continuation steps")
+ax.scatter(fold_x-fold_x**3, fold_x, color="#a4492b", label="Analytic folds", zorder=3)
+ax.set(xlabel="Load parameter (dimensionless)", ylabel="Displacement (dimensionless)")
+ax.grid(alpha=0.2)
+ax.legend()
+fig.savefig("nonlinear-equations.png", dpi=160)</code></pre>
+<figure><img src="/assets/aside-figures/nonlinear-equations.png" width="1088" height="608" loading="lazy" alt="An S-shaped displacement versus load curve with computed equilibria and both analytic folds marked."><figcaption>The markers follow the middle branch through both folds. The isolated highlighted points use the exact criterion \(3x^2-1=0\), giving load magnitudes \(2/(3\sqrt{3})\).</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/nonlinear-equations.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section>
 <h2 id="take-one-step-past-a-turning-point">Take one step past a turning point</h2>
-<p>Start exactly at the fold, choose the negative-\(x\) tangent and take \(\Delta s=0.1\). The predictor gives \((-0.1,1)\). Its physical residual is \(0.01\). The transverse plane now fixes \(x=-0.1\). Correcting the physical balance therefore gives \(\lambda=1-0.1^2=0.99\). The parameter has decreased while the curve coordinate has advanced. This simple calculation illustrates why choosing fixed increments of \(\lambda\) alone cannot traverse both sides of the same load maximum.</p>
-<p>A solver can report an accurate branch even if a physical system would not settle on that branch. To test stability one needs a dynamical law. For instance, if \(\dot x=1-\lambda-x^2=-F\), then perturbing an equilibrium gives \(\dot e=-2x_\star e\). The positive branch is locally attracting and the negative branch repelling. The algebraic root residual vanishes on both. For a different specified dynamics the interpretation must be rederived. Keep separate records of equilibrium balance, tangent orientation, correction size and dynamical stability when interpreting a continuation diagram.</p>
+<p>Start exactly at the fold, choose the negative-\(x\) tangent and take \(\Delta s=0.1\). The predictor gives \((-0.1,1)\). Its physical residual is \(0.01\). The transverse plane now fixes \(x=-0.1\). Correcting the physical balance therefore gives</p>
+<div class="math display">\[\lambda=1-0.1^2=0.99.\]</div>
+<p>The parameter has decreased while the curve coordinate has advanced. This simple calculation illustrates why choosing fixed increments of \(\lambda\) alone cannot traverse both sides of the same load maximum.</p>
+<p>A solver can report an accurate branch even if a physical system would not settle on that branch. To test stability one needs a dynamical law. For instance, if \(\dot x=1-\lambda-x^2=-F\), then perturbing an equilibrium gives</p>
+<div class="math display">\[\dot e=-2x_\star e.\]</div>
+<p>The positive branch is locally attracting and the negative branch repelling. The algebraic root residual vanishes on both. For a different specified dynamics the interpretation must be rederived. Keep separate records of equilibrium balance, tangent orientation, correction size and dynamical stability when interpreting a continuation diagram.</p>
 </section>
 <section>
 <h2 id="check-the-prediction-error-against-the-step-length">Check the prediction error against the step length</h2>
@@ -78,12 +136,16 @@
 <section>
 <h2 id="distinguish-a-fold-from-a-genuine-branching-point">Distinguish a fold from a genuine branching point</h2>
 <p>The scalar equilibrium equation \(F(x,\mu)=x^3-\mu x=0\) describes a symmetry-breaking pitchfork. There is a trivial branch \(x=0\) for every \(\mu\) and two additional real branches \(x=\pm\sqrt\mu\) when \(\mu&gt;0\). Ordinary parameter continuation along the trivial branch encounters no difficulty evaluating the solution on either side of zero. Yet the collection of real equilibria changes there. An algorithm that accurately follows one branch can therefore entirely miss the existence of the other two.</p>
-<p>A fold often has \(F_x=0\) while \(F_\mu\ne0\), so the full derivative with respect to state and parameter retains rank one. At the pitchfork origin both derivatives vanish: \(F_x=3x^2-\mu=0,\ F_\mu=-x=0\). Adding one arclength condition to the original scalar equation cannot restore full rank there because the equilibrium row itself is zero. Arclength continuation avoids a poor choice of independent coordinate at a regular fold; it does not automatically select a tangent at an actual branch crossing. Higher-order terms or an independent symmetry condition carry the missing information.</p>
+<p>A fold often has \(F_x=0\) while \(F_\mu\ne0\), so the full derivative with respect to state and parameter retains rank one. At the pitchfork origin both derivatives vanish:</p>
+<div class="math display">\[F_x=3x^2-\mu=0,\ F_\mu=-x=0.\]</div>
+<p>Adding one arclength condition to the original scalar equation cannot restore full rank there because the equilibrium row itself is zero. Arclength continuation avoids a poor choice of independent coordinate at a regular fold; it does not automatically select a tangent at an actual branch crossing. Higher-order terms or an independent symmetry condition carry the missing information.</p>
 </section>
 <section>
 <h2 id="follow-the-stable-state-through-a-loss-of-stability">Follow the stable state through a loss of stability</h2>
 <p>To distinguish algebraic solutions from dynamically attracting equilibria, embed the example in \(x'=\mu x-x^3=-F(x,\mu)\). Linearising near an equilibrium gives perturbation growth rate \(\mu-3x^2\). At \(x=0,\mu=-0.04\), the rate is \(-0.04\) and small perturbations decay. At \(x=0,\mu=+0.04\), it becomes \(+0.04\) and perturbations grow. The additional equilibria are \(x=\pm0.2\), both with linear rate \(0.04-3(0.04)=-0.08\). A static Newton solve initialised at zero on the positive side returns zero residual immediately, even though that solution is now dynamically unstable.</p>
-<p>To switch branches deliberately, use the state amplitude as the small parameter. Cancelling the known factor \(x\) on a nontrivial branch gives \(\mu=x^2\). At \(x=0.1\) the predicted parameter is 0.01; at \(x=-0.1\) the same parameter gives the mirror branch. This cancellation is valid only because the branch sought has nonzero amplitude. Dividing the original equilibrium equation by \(x\) everywhere would have silently deleted the entire trivial branch.</p>
+<p>To switch branches deliberately, use the state amplitude as the small parameter. Cancelling the known factor \(x\) on a nontrivial branch gives</p>
+<div class="math display">\[\mu=x^2.\]</div>
+<p>At \(x=0.1\) the predicted parameter is 0.01; at \(x=-0.1\) the same parameter gives the mirror branch. This cancellation is valid only because the branch sought has nonzero amplitude. Dividing the original equilibrium equation by \(x\) everywhere would have silently deleted the entire trivial branch.</p>
 <p>The potential \(V=x^4/4-\mu x^2/2\) provides an independent physical check. At \(\mu=0.04\), the trivial state has energy zero, whereas either nontrivial state has energy \((0.2)^4/4-0.04(0.2)^2/2=-0.0004\). Its lower energy and positive second derivative agree with the negative linear growth rate. Near a bifurcation, record branch existence, stability and which branch a continuation procedure actually followed as three separately testable facts.</p>
 <p>If small external imperfections break the symmetry, replacing the equation by \(x^3-\mu x-\epsilon=0\) eliminates the exact \(x=0\) branch whenever \(\epsilon\ne0\). At \(\mu=0\) the remaining equilibrium then has amplitude \(\epsilon^{1/3}\). A forcing imperfection of \(10^{-6}\) produces displacement 0.01, much larger than a linear response of the same size. This calculation identifies why branch diagrams near an ideal symmetry-breaking point are sensitive to tiny unmodelled loads.</p>
 <p>A careful numerical continuation can map the resulting changes in the number of equilibria before interpreting any single sweep from one initial condition.</p>

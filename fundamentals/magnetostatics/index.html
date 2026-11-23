@@ -30,7 +30,9 @@
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/course/#fields">Electric and magnetic fields</a> / Magnetostatics</p><h1>When does the long-solenoid formula work?</h1><p class="lead">Add the fields of current loops along a coil and estimate the centre-field error caused by its finite length.</p><p class="prerequisites"><strong>Prerequisites</strong> Magnetic field of a current loop and integration.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#theory">Building a coil from current loops</a><a href="#boundary">What the two ends contribute</a><a href="#worked">Field at the centre of a short solenoid</a><a href="#tutorial">Tutorial · Testing a long-coil estimate</a><a href="#numerical">Numerical comparison · A coil with finite winding thickness</a></nav></aside><article class="prose reference"><section>
 <h2 id="theory">Building a coil from current loops</h2>
 <p>The usual solenoid formula depends only on turns per metre and current. A short coil, however, can have a noticeably weaker field than that formula predicts. To see where the length enters, start with one circular loop of radius \(R\) carrying steady current \(I\) in air. On its axis, every wire element has a partner across the loop. Their radial field components cancel and their axial components add.</p>
-<p>At distance \(u\) from the plane of the loop, each element lies a distance \(\sqrt{R^2+u^2}\) from the observation point. The axial projection of the Biot–Savart law is \(dB_z=(\mu_0 I/4\pi)R\,d\ell/(R^2+u^2)^{3/2}\). Integrating \(d\ell\) around the circumference \(2\pi R\) gives</p>
+<p>At distance \(u\) from the plane of the loop, each element lies a distance \(\sqrt{R^2+u^2}\) from the observation point. The axial projection of the Biot–Savart law is</p>
+<div class="math display">\[dB_z=(\mu_0 I/4\pi)R\,d\ell/(R^2+u^2)^{3/2}.\]</div>
+<p>Integrating \(d\ell\) around the circumference \(2\pi R\) gives</p>
 <div class="math display">\[B_{\rm loop}(u)=\frac{\mu_0 I R^2}{2(R^2+u^2)^{3/2}}.\]</div>
 </section>
 <section>
@@ -42,15 +44,23 @@
 </section>
 <section>
 <h2 id="worked">Field at the centre of a short solenoid</h2>
-<p>A 200-turn winding has radius 25 mm, length 30 mm and current 1.0 A. The long-coil estimate is \(\mu_0(200/0.030)(1.0)=8.38\,\mathrm{mT}\), with \(\mu_0\approx4\pi\times10^{-7}\,\mathrm{H/m}\). Here \(2R/L=1.67\), so the finite-length factor is \(1/\sqrt{1+1.67^2}=0.514\). The centre field is 4.31 mT. Much of the field spreads around the ends of this short winding.</p>
+<p>A 200-turn winding has radius 25 mm, length 30 mm and current 1.0 A. The long-coil estimate is \(\mu_0(200/0.030)(1.0)=8.38\,\mathrm{mT}\), with \(\mu_0\approx4\pi\times10^{-7}\,\mathrm{H/m}\). Here \(2R/L=1.67\), so the finite-length factor is</p>
+<div class="math display">\[1/\sqrt{1+1.67^2}=0.514.\]</div>
+<p>The centre field is 4.31 mT. Much of the field spreads around the ends of this short winding.</p>
 </section>
 <section>
 <h2 id="tutorial">Tutorial · Testing a long-coil estimate</h2>
 <ol>
 <li><p>An engineer wants the long-solenoid formula to overestimate the actual centre field by at most 5% of the actual value. What minimum length is needed at \(R=25\) mm?</p>
-<details><summary>Worked solution</summary><p>The ratio of estimated to actual field is \(\sqrt{1+(2R/L)^2}\). Requiring it to be at most 1.05 gives \(L/R\geq 2/\sqrt{1.05^2-1}=6.25\). The threshold is 156.2 mm, so a whole-millimetre design needs at least 157 mm. This tests the single centre point. A requirement covering the ends would need the field at additional positions.</p></details></li>
+<details><summary>Worked solution</summary><p>The ratio of estimated to actual field is \(\sqrt{1+(2R/L)^2}\). Requiring it to be at most 1.05 gives</p>
+<div class="math display">\[L/R\geq 2/\sqrt{1.05^2-1}=6.25.\]</div>
+<p>The threshold is 156.2 mm, so a whole-millimetre design needs at least 157 mm. This tests the single centre point. A requirement covering the ends would need the field at additional positions.</p></details></li>
 <li><p>Place the probe at one end of the original 30 mm coil. Integrate the contributions from loops at distances \(0\) to \(L\). What fraction of the centre field reaches the probe?</p>
-<details><summary>Worked solution</summary><p>Inserting the new limits into the same antiderivative gives \(B_{\rm end}=(\mu_0 NI/2L)L/\sqrt{R^2+L^2}=3.22\,\mathrm{mT}\). Its ratio to \(B_{\rm centre}\) is \(3.22/4.31=0.747\). For a very long coil the ratio tends to one half, since turns then extend far away on only one side of an end probe.</p></details></li>
+<details><summary>Worked solution</summary><p>Inserting the new limits into the same antiderivative gives</p>
+<div class="math display">\[B_{\rm end}=(\mu_0 NI/2L)L/\sqrt{R^2+L^2}=3.22\,\mathrm{mT}.\]</div>
+<p>Its ratio to \(B_{\rm centre}\) is</p>
+<div class="math display">\[3.22/4.31=0.747.\]</div>
+<p>For a very long coil the ratio tends to one half, since turns then extend far away on only one side of an end probe.</p></details></li>
 </ol>
 </section>
 <section>

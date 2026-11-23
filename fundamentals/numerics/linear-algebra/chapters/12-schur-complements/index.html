@@ -35,6 +35,8 @@
 <p>Substitute into the remaining balance \(Bu+Dv=g\). Collect all terms that still depend on \(v\) to obtain a smaller system and a recovery step,</p>
 <div class="math display equation-chain"><div class="equation-step">\[(D-BK^{-1}C)v=g-BK^{-1}f,\]</div><div class="equation-step">\[Ku=f-Cv .\]</div></div>
 <p>The new coefficient matrix is the Schur complement of \(K\). The term in the right-hand side is needed even when no external load acts directly on the retained variables. In practice, notation such as \(K^{-1}C\) denotes solves with columns of \(C\) or an operator action; explicit inversion is unnecessary. If the full matrix and \(K\) are both nonsingular, so is the Schur complement. Very small reduced eigenvalues can signal a weakly constrained remaining quantity.</p>
+
+<details class="study-aside"><summary>Background · Schur complement</summary><div class="math display">\[S=D-CA^{-1}B\]</div><p>Eliminate the first block of a partitioned system by solving with A. Forming an explicit inverse is unnecessary and may discard useful structure.</p></details>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Update a solved system after adding one spring or penalty</h2>
@@ -46,7 +48,9 @@
 <div class="math display">\[u^Tx=\frac{u^Tx_0}{1+k\,u^TA^{-1}u}.\]</div>
 <p>This explicitly shows how the added stiffness reduces extension. If the old extension is zero, adding the spring changes neither the old force balance nor the solution. As \(k\) becomes arbitrarily large the extension tends to zero while the internal force approaches a finite constraint reaction. The original factors can serve many choices of stiffness when the location \(u\) stays fixed.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Retrofit a link between two supported nodes</h3>
-<p>Take \(A=\operatorname{diag}(2,4)\,\mathrm{N/m}\), load \(b=(2,0)^T\,\mathrm N\), and \(u=(1,-1)^T\). Initially \(x_0=(1,0)^T\,\mathrm m\); the unit response \(z=(0.5,-0.25)^T\,\mathrm{m/N}\) gives \(u^Tz=0.75\,\mathrm{m/N}\). Adding \(k=4\,\mathrm{N/m}\) gives \(t=1\,\mathrm N\), \(x=(0.5,0.25)^T\,\mathrm m\) and relative extension \(0.25\,\mathrm m\).</p>
+<p>Take \(A=\operatorname{diag}(2,4)\,\mathrm{N/m}\), load \(b=(2,0)^T\,\mathrm N\), and \(u=(1,-1)^T\). Initially \(x_0=(1,0)^T\,\mathrm m\); the unit response \(z=(0.5,-0.25)^T\,\mathrm{m/N}\) gives</p>
+<div class="math display">\[u^Tz=0.75\,\mathrm{m/N}.\]</div>
+<p>Adding \(k=4\,\mathrm{N/m}\) gives \(t=1\,\mathrm N\), \(x=(0.5,0.25)^T\,\mathrm m\) and relative extension \(0.25\,\mathrm m\).</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Determine the stiffness needed for a target extension</h3>
 <p>A different model gives old relative displacement \(6.00\,\mathrm{mm}\) and relative compliance \(0.0200\,\mathrm{m/N}\). Cutting the extension to \(2.00\,\mathrm{mm}\) requires \(1+k(0.0200)=3\), hence \(k=100\,\mathrm{N/m}\). The new force is \(0.200\,\mathrm N\), producing a compliance displacement \(0.0200(0.200)=4.00\,\mathrm{mm}\), exactly the required reduction.</p>
 </section>
@@ -57,8 +61,47 @@
 <section>
 <h2 id="deriving-a-reduced-operator">Deriving a reduced operator</h2>
 <p>Solve the first equation formally for \(u=K^{-1}(f-B^T\lambda)\). Inserting this expression into the constraint gives a smaller positive system,</p>
-<div class="math display">\[S\lambda=BK^{-1}f-g,\qquad S=BK^{-1}B^T.\]</div>
-<p>The literal lower diagonal block left by elimination is \(-S\). Multiplying both sides by minus one produces the positive form written above. For any nonzero vector \(z\), full row rank implies \(B^Tz\ne0\), hence \(z^TSz=(B^Tz)^TK^{-1}(B^Tz)&gt;0\). This proof explains why redundant constraints create a singular reduced matrix. Even in that case the physical displacement can remain unique while reactions assigned to duplicate equations become ambiguous.</p>
+<div class="math display equation-chain"><div class="equation-step">\[S\lambda=BK^{-1}f-g,\]</div><div class="equation-step">\[S=BK^{-1}B^T.\]</div></div>
+<p>The literal lower diagonal block left by elimination is \(-S\). Multiplying both sides by minus one produces the positive form written above. For any nonzero vector \(z\), full row rank implies \(B^Tz\ne0\), hence</p>
+<div class="math display">\[z^TSz=(B^Tz)^TK^{-1}(B^Tz)&gt;0.\]</div>
+<p>This proof explains why redundant constraints create a singular reduced matrix. Even in that case the physical displacement can remain unique while reactions assigned to duplicate equations become ambiguous.</p>
+
+<details class="study-aside">
+<summary>OneSimulation · How stiff must a link be to act like a constraint?</summary>
+<p>Two grounded springs with stiffnesses 2 and 8 N/mm carry the force vector \((10,0)^T\) N. Before coupling them, the gap between their displacements is 5 mm. A positive link reaction \(\lambda\) reduces that gap according to \(g=g_0-S\lambda\). The scalar Schur complement \(S=B K^{-1}B^T=0.625\) mm/N measures the gap closed by a unit reaction. A real link of stiffness \(k_c\) obeys \(g=\lambda/k_c\). Eliminating the gap gives</p>
+<div class="math display">\[\lambda=\frac{g_0}{S+1/k_c}.\]</div>
+<p>The stiffness of the structure as seen through the link is \(1/S=1.6\) N/mm. Matching this value transfers half the limiting reaction. Reaching 90% requires nine times this stiffness, or 14.4 N/mm. The code checks the reduced force against the full coupled displacement solution over four decades of link stiffness.</p>
+<pre><code>"""Find the reaction transmitted by a compliant link between two supports."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+
+support = np.diag([2.0, 8.0])  # N/mm
+load = np.array([10.0, 0.0])  # N
+gap = np.array([1.0, -1.0])  # positive when the first support moves farther
+free_gap = gap @ solve_dense(support, load)
+compliance = gap @ solve_dense(support, gap)  # mm/N
+link_stiffness = np.geomspace(0.02, 200, 150)  # N/mm
+reaction = free_gap / (compliance + 1 / link_stiffness)
+rigid_reaction = free_gap / compliance
+
+# Check the reduced equation against the full two-displacement system.
+for stiffness, force in zip(link_stiffness, reaction):
+    displacement = solve_dense(support + stiffness * np.outer(gap, gap), load)
+    assert np.isclose(stiffness * (gap @ displacement), force)
+print(f"Half the rigid reaction at {1/compliance:.2f} N/mm; rigid limit {rigid_reaction:.2f} N")
+
+fig, ax = plt.subplots(figsize=(6.8, 3.8), constrained_layout=True)
+ax.semilogx(link_stiffness, reaction, color="#176879", label="Elastic link")
+ax.axhline(rigid_reaction, ls="--", color="#a4492b", label="Rigid constraint")
+ax.plot(1/compliance, rigid_reaction/2, "o", color="#273d30")
+ax.set(xlabel="Link stiffness (N/mm)", ylabel="Link reaction (N)", ylim=(0, 9))
+ax.grid(alpha=0.2)
+ax.legend()
+fig.savefig("linear-algebra.png", dpi=160)</code></pre>
+<figure><img src="/assets/aside-figures/linear-algebra.png" width="1088" height="608" loading="lazy" alt="Reaction rises from almost zero to an 8 N plateau as link stiffness increases, reaching 4 N at 1.6 N/mm."><figcaption>The bend in the curve occurs where the link and the two supports contribute equal compliance. The high-stiffness plateau is the 8 N reaction of the rigid constraint.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/linear-algebra.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section>
 <h2 id="two-springs-sharing-a-displacement">Two springs sharing a displacement</h2>
@@ -75,13 +118,20 @@
 </section>
 <section>
 <h2 id="condense-internal-degrees-of-freedom-while-preserving-energy">Condense internal degrees of freedom while preserving energy</h2>
-<p>Partition the degrees of freedom of a symmetric positive definite stiffness matrix into interior coordinates \(i\) and retained boundary coordinates \(b\). For a specified boundary displacement, the interior balance is \(K_{ii}u_i=f_i-K_{ib}u_b\). Eliminating it produces the boundary operator \(S=K_{bb}-K_{bi}K_{ii}^{-1}K_{ib}\) and the effective boundary load \(f_b-K_{bi}K_{ii}^{-1}f_i\). This elimination differs physically from setting the interior displacement to zero: the interior has been allowed to respond to the prescribed boundary value and applied load.</p>
+<p>Partition the degrees of freedom of a symmetric positive definite stiffness matrix into interior coordinates \(i\) and retained boundary coordinates \(b\). For a specified boundary displacement, the interior balance is</p>
+<div class="math display">\[K_{ii}u_i=f_i-K_{ib}u_b.\]</div>
+<p>Eliminating it produces the boundary operator \(S=K_{bb}-K_{bi}K_{ii}^{-1}K_{ib}\) and the effective boundary load \(f_b-K_{bi}K_{ii}^{-1}f_i\). This elimination differs physically from setting the interior displacement to zero: the interior has been allowed to respond to the prescribed boundary value and applied load.</p>
 <p>With zero load, insert \(u_i=-K_{ii}^{-1}K_{ib}u_b\) into the full strain energy. Completing the square in \(u_i\) shows that the minimum energy at fixed boundary coordinates is \(u_b^TSu_b/2\). Since the full stiffness is positive definite, any nonzero boundary vector yields positive minimum energy. This gives a physical proof that the condensed operator is positive definite. A free-floating component may instead have rigid-body modes; then the same proof establishes only nonnegativity, and some imposed displacement patterns cause no stress.</p>
 </section>
 <section>
 <h2 id="reduce-a-spring-chain-and-preserve-the-internal-load">Reduce a spring chain and preserve the internal load</h2>
-<p>Two springs connect a fixed left support to an observable endpoint through an internal joint. Their stiffnesses are 6 and 3 N/mm. Let the internal and boundary displacements be \(u_i,u_b\), and apply forces 3 and 6 N at those nodes. The strain energy is \([6u_i^2+3(u_b-u_i)^2]/2\). Differentiating gives \(K_{ii}=9,\ K_{ib}=K_{bi}=-3,\ K_{bb}=3\). Condensing yields \(S=3-9/9=2\) N/mm and effective boundary load \(6-(-3)(3/9)=7\) N. Thus \(u_b=3.5\) mm. Recovering the internal state gives \(u_i=(3+3u_b)/9=1.5\) mm.</p>
-<p>The first spring therefore carries \(6(1.5)=9\) N, and the second carries \(3(3.5-1.5)=6\) N. Their difference is the internal force of 3 N and the support reaction balances the total applied load of 9 N. Simply using the well-known series stiffness \(2\) N/mm with the endpoint force 6 N would yield 3 mm, missing the transmitted effect of the interior load. Both condensed stiffness and condensed right-hand side are necessary in a reduced model.</p>
+<p>Two springs connect a fixed left support to an observable endpoint through an internal joint. Their stiffnesses are 6 and 3 N/mm. Let the internal and boundary displacements be \(u_i,u_b\), and apply forces 3 and 6 N at those nodes. The strain energy is \([6u_i^2+3(u_b-u_i)^2]/2\). Differentiating gives</p>
+<div class="math display">\[K_{ii}=9,\ K_{ib}=K_{bi}=-3,\ K_{bb}=3.\]</div>
+<p>Condensing yields \(S=3-9/9=2\) N/mm and effective boundary load \(6-(-3)(3/9)=7\) N. Thus \(u_b=3.5\) mm. Recovering the internal state gives</p>
+<div class="math display">\[u_i=(3+3u_b)/9=1.5\,\mathrm{mm}.\]</div>
+<p>The first spring therefore carries \(6(1.5)=9\) N, and the second carries</p>
+<div class="math display">\[3(3.5-1.5)=6\,\mathrm{N}.\]</div>
+<p>Their difference is the internal force of 3 N and the support reaction balances the total applied load of 9 N. Simply using the well-known series stiffness \(2\) N/mm with the endpoint force 6 N would yield 3 mm, missing the transmitted effect of the interior load. Both condensed stiffness and condensed right-hand side are necessary in a reduced model.</p>
 <p>A local finite-element assembly can repeat this calculation for many independent element interiors, retaining only interface coordinates for the global solve. To compute internal stress afterward, keep enough local factor information to reconstruct each eliminated state. The boundary displacement alone does not directly encode the internal load distribution; two differently loaded elements can have the same endpoint displacement and different internal stresses. This distinction matters whenever reduction is justified using one observable but results are later requested for another.</p>
 <p>Under a change in the prescribed end condition, the same reduced law can be used in the opposite direction. Hold the endpoint at \(u_b=0\) with the internal 3 N force still present and remove the applied endpoint load. The recovered internal displacement is \(1/3\) mm. The computed endpoint force required to hold it fixed is \(-3u_i=-1\) N. A boundary law containing only the series stiffness would predict zero force for this imposed zero displacement.</p>
 </section>

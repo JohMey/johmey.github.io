@@ -39,11 +39,11 @@
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Shrink a two-dimensional gradient while preserving its direction</h2>
 <p>At an image pixel or a mesh cell the inferred gradient can have two measured components. If the physical surface has no preferred coordinate axes, a rotationally invariant local penalty is proportional to the Euclidean length of the gradient vector. Consider the local optimization with equally scaled and equally precise components,</p>
-<div class="math display equation-chain"><div class="equation-step">\[\min_{g\in\mathbb R^2}\ \frac12\|g-y\|_2^2+\lambda\|g\|_2,\]</div><div class="equation-step">\[\lambda\ge0 .\]</div></div>
+<div class="math display">\[\min_{g\in\mathbb R^2}\ \frac12\|g-y\|_2^2+\lambda\|g\|_2,\qquad \lambda\ge0 .\]</div>
 <p>For a fixed trial length \(r=\|g\|\), the data mismatch is minimized by making \(g\) parallel to \(y\), since this maximizes their dot product. For \(y\ne0\) write \(g=r y/\|y\|\). The remaining one-dimensional constrained problem is</p>
-<div class="math display equation-chain"><div class="equation-step">\[\min_{r\ge0}\ \frac12(r-\|y\|)^2+\lambda r,\]</div><div class="equation-step">\[r_*=\max(\|y\|-\lambda,0).\]</div></div>
+<div class="math display">\[\min_{r\ge0}\ \frac12(r-\|y\|)^2+\lambda r,\qquad r_*=\max(\|y\|-\lambda,0).\]</div>
 <p>Thus both gradient components are attenuated by a common factor; if \(y=0\), the solution is zero directly. The componentwise absolute-value penalty gives a different rule,</p>
-<div class="math display equation-chain"><div class="equation-step">\[g_*=\max(1-\lambda/\|y\|,0)y,\]</div><div class="equation-step">\[(g_{\rm component})_i=\operatorname{sign}(y_i)\max(|y_i|-\lambda,0).\]</div></div>
+<div class="math display">\[g_*=\max(1-\lambda/\|y\|,0)y,\qquad (g_{\rm component})_i=\operatorname{sign}(y_i)\max(|y_i|-\lambda,0).\]</div>
 <p>The first expression is for \(y\ne0\). A local gradient shrinkage step is used inside some total-variation algorithms, but arbitrary independently shrunk gradient vectors need not be differences of one global image. A full reconstruction must enforce consistency with the field and the measurement equations. Different component units or uncertainties likewise require a corresponding metric.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Compare an inclined edge under two penalties</h3>
 <p>For measured gradient \(y=(3,4)\) and \(\lambda=2\), the isotropic solution has length \(5-2=3\) and vector \((1.8,2.4)\); its angle is unchanged. Applying componentwise shrinkage gives \((1,2)\) with angle \(63.4^\circ\), compared with the measured \(53.1^\circ\). The choice of penalty can therefore affect an estimated orientation.</p>
@@ -55,7 +55,9 @@
 <p>For example minimise \(\tfrac12[(x_1+x_2-1)^2+(x_1+1)^2]\) under \(x_i\ge0\). The unconstrained solution is \((-1,2)\). Clipping gives \((0,2)\), which overpredicts the first observation. On the active face \(x_1=0\), the minimising \(x_2\) is 1. At \((0,1)\) the gradient is \((1,0)\) and the bound conditions hold. The price of feasibility appears in the data residual; it is important to show which observations the constrained model cannot fit.</p>
 </section>
 <section><h2 id="derive-the-soft-threshold-rule">Derive the soft-threshold rule</h2>
-<p>For a scalar coefficient with observation \(b\), minimise \(\tfrac12(x-b)^2+\lambda|x|\). On \(x&gt;0\) the stationary point is \(b-\lambda\), feasible there only when \(b&gt;\lambda\); on \(x&lt;0\) it is \(b+\lambda\). At zero, the admissible slopes of the absolute value range from \(-1\) to 1, so zero solves the condition when \(|b|\le\lambda\). Together these give \(x=\operatorname{sign}(b)\max(|b|-\lambda,0)\). Even retained coefficients shrink by \(\lambda\), a real amplitude bias. With \(b=(-0.2,0.7,2.4)\) and \(\lambda=0.5\), the estimate is \((0,0.2,1.9)\) for an identity forward map.</p>
+<p>For a scalar coefficient with observation \(b\), minimise \(\tfrac12(x-b)^2+\lambda|x|\). On \(x&gt;0\) the stationary point is \(b-\lambda\), feasible there only when \(b&gt;\lambda\); on \(x&lt;0\) it is \(b+\lambda\). At zero, the admissible slopes of the absolute value range from \(-1\) to 1, so zero solves the condition when \(|b|\le\lambda\). Together these give</p>
+<div class="math display">\[x=\operatorname{sign}(b)\max(|b|-\lambda,0).\]</div>
+<p>Even retained coefficients shrink by \(\lambda\), a real amplitude bias. With \(b=(-0.2,0.7,2.4)\) and \(\lambda=0.5\), the estimate is \((0,0.2,1.9)\) for an identity forward map.</p>
 </section>
 <section><h2 id="penalise-changes-in-a-field">Penalise changes in a field</h2>
 <p>In one dimension discrete total variation is \(\sum_j|x_{j+1}-x_j|\). A single large jump and several monotone small steps spanning the same overall change have equal total variation. In contrast a squared difference penalty favours spreading the jump over several sites. That explains why total variation can preserve an abrupt edge when the data localise it. It can also create nearly constant plateaus in a field that really changes smoothly.</p>
@@ -71,7 +73,13 @@
 </section>
 <section>
 <h2 id="derive-the-complete-fusion-path-for-a-short-profile">Derive the complete fusion path for a short profile</h2>
-<p>Take \(b=(0,1,5)^T\). For small positive \(\lambda\), both differences remain positive, so \(s_1=s_2=1\). The equations give \(x=(\lambda,1,5-\lambda)^T\). The first two coordinates meet at \(\lambda=1\), while the second and third are still unequal. Assume those first two now form a plateau of height \(a\), with \(s_2=1\). Adding their balances gives \(2a-1-\lambda=0\), hence \(a=(1+\lambda)/2\). The first equation then requires \(s_1=a/\lambda=(1+\lambda)/(2\lambda)\), which lies in the permitted interval exactly when \(\lambda\ge1\).</p>
+<p>Take \(b=(0,1,5)^T\). For small positive \(\lambda\), both differences remain positive, so</p>
+<div class="math display">\[s_1=s_2=1.\]</div>
+<p>The equations give</p>
+<div class="math display">\[x=(\lambda,1,5-\lambda)^T.\]</div>
+<p>The first two coordinates meet at \(\lambda=1\), while the second and third are still unequal. Assume those first two now form a plateau of height \(a\), with \(s_2=1\). Adding their balances gives \(2a-1-\lambda=0\), hence \(a=(1+\lambda)/2\). The first equation then requires</p>
+<div class="math display">\[s_1=a/\lambda=(1+\lambda)/(2\lambda),\]</div>
+<p>which lies in the permitted interval exactly when \(\lambda\ge1\).</p>
 <p>The third coordinate stays \(5-\lambda\). Equating it to the plateau gives \((1+\lambda)/2=5-\lambda\), or \(\lambda=3\). Beyond this value all three cells coincide, and sum conservation fixes them at two. The required subgradients are \(s_1=2/\lambda\) and \(s_2=3/\lambda\), both admissible for \(\lambda\ge3\). This completes the path without numerical optimisation. At strengths 0.5, 2 and 4 the respective profiles are \((0.5,1,4.5)\), \((1.5,1.5,3)\) and \((2,2,2)\).</p>
 <p>The thresholds record when the data imbalance inside a proposed plateau can be supported by the admissible edge subgradients. A flat patch at the second strength is therefore compatible with unequal raw values of zero and one. Conversely, a visible third-cell edge at that strength has already lost much of its amplitude. A reconstruction report that uses one threshold for declaring the existence of a jump and another for estimating its amplitude should explain both decisions.</p>
 <p>Checking the final all-fused solution using only its observed mean would miss the second edge constraint. For example at strength two that constant candidate would require \(s_2=1.5\), outside the admissible unit interval, despite reproducing total mass perfectly. The failed local balance tells which boundary of the candidate plateau has to reopen. This provides a simple hand diagnostic for more complicated one-dimensional reconstructions when an apparently reasonable flat interval has been proposed.</p>

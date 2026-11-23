@@ -39,13 +39,19 @@
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Follow a magnetic field step into a metal</h2>
 <p>A switched field probes a conductor over a growing depth. Take a conducting half-space \(x&gt;0\) with constant permeability \(\mu\) and conductivity \(\sigma\). Initially its magnetic field is zero. At \(t=0\) impose a uniform tangential field \(B_s\) at its planar surface and maintain it thereafter. Work at times longer than charge relaxation and switching transients, neglect displacement current, and assume no variation parallel to the surface. Ampère's and Faraday's laws, together with Ohm's law, reduce to a diffusion equation for the tangential induction.</p>
 <div class="math display equation-chain"><div class="equation-step">\[\partial_t B=D\partial_x^2B,\]</div><div class="equation-step">\[D=\frac{1}{\mu\sigma}.\]</div></div>
-<p>Since \(D\) has dimensions of area per time and the half-space supplies no length scale, try \(B=B_sf(\eta)\) with \(\eta=x/(2\sqrt{Dt})\). Differentiating at fixed \(x\) gives \(\partial_t\eta=-\eta/(2t)\) and differentiating at fixed \(t\) gives \(\partial_x\eta=1/(2\sqrt{Dt})\). Common factors cancel, leaving</p>
+<p>Since \(D\) has dimensions of area per time and the half-space supplies no length scale, try \(B=B_sf(\eta)\) with \(\eta=x/(2\sqrt{Dt})\). Differentiating at fixed \(x\) gives \(\partial_t\eta=-\eta/(2t)\) and differentiating at fixed \(t\) gives</p>
+<div class="math display">\[\partial_x\eta=1/(2\sqrt{Dt}).\]</div>
+<p>Common factors cancel, leaving</p>
 <div class="math display equation-chain"><div class="equation-step">\[f''+2\eta f'=0,\]</div><div class="equation-step">\[f'=C e^{-\eta^2}.\]</div></div>
 <p>The surface imposes \(f(0)=1\) and the unaffected interior gives \(f(\infty)=0\). Integrate the Gaussian slope from \(\eta\) to infinity and normalise its integral at the surface. The result fixes both the shape and the rate at which any chosen field contour advances.</p>
 <div class="math display equation-chain"><div class="equation-step">\[\frac{B(x,t)}{B_s}=\operatorname{erfc}\!\left(\frac{x}{2\sqrt{Dt}}\right),\]</div><div class="equation-step">\[\operatorname{erfc}(u)=\frac{2}{\sqrt\pi}\int_u^\infty e^{-s^2}ds.\]</div></div>
 <p>This contour speed falls with time. A sinusoidal skin depth describes a steady, single-frequency measurement, while the step response has a penetration length that grows with the square root of elapsed time.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Time the half-field crossing in aluminium</h3>
-<p>Take \(\sigma=3.50\times10^7\) S/m and \(\mu=\mu_0\). The diffusivity is \(0.0227\) m²/s. Half the applied field corresponds to \(\operatorname{erfc}^{-1}(0.5)=0.47694\). At \(x=2.00\) mm its arrival time is \(x^2/[4D(0.47694)^2]=0.193\) ms. A sensor at 4.00 mm would reach the same fraction at 0.773 ms as long as the far surface remains sufficiently distant.</p>
+<p>Take \(\sigma=3.50\times10^7\) S/m and \(\mu=\mu_0\). The diffusivity is \(0.0227\) m²/s. Half the applied field corresponds to</p>
+<div class="math display">\[\operatorname{erfc}^{-1}(0.5)=0.47694.\]</div>
+<p>At \(x=2.00\) mm its arrival time is</p>
+<div class="math display">\[x^2/[4D(0.47694)^2]=0.193\,\mathrm{ms}.\]</div>
+<p>A sensor at 4.00 mm would reach the same fraction at 0.773 ms as long as the far surface remains sufficiently distant.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Estimate conductivity from a single contour</h3>
 <p>In a thick nonmagnetic sample the 15.73 percent contour reaches 3.00 mm after 0.180 ms. Since \(\operatorname{erfc}(1)=0.1573\), this contour has \(x=2\sqrt{Dt}\). Its measured depth gives \(D=(0.00300)^2/(4\times0.000180)=0.0125\) m²/s and hence \(\sigma=1/(\mu_0D)=6.37\times10^7\) S/m. A conductivity inferred this way depends on knowing the permeability independently, since the field trace determines their product.</p>
 </section>
@@ -58,14 +64,22 @@
 <div class="math display equation-chain"><div class="equation-step">\[d_1E_1+d_2E_2=V,\]</div><div class="equation-step">\[\sigma_1 E_1+\epsilon_1\dot E_1=\sigma_2 E_2+\epsilon_2\dot E_2 .\]</div></div>
 <p>The second equation is continuity of the sum of conduction and displacement current densities. The conduction currents alone can differ while free charge accumulates on the interface. Define \(\sigma_f=\epsilon_2E_2-\epsilon_1E_1\). Differentiating it and using the second equation yields \(\dot\sigma_f=\sigma_1E_1-\sigma_2E_2\), an independent local balance that fixes the sign of any predicted sheet charge.</p>
 <h3>Derive the response without guessing a circuit</h3>
-<p>Eliminate \(E_2=(V-d_1E_1)/d_2\). Since \(V\) is constant after the rise, \(\dot E_2=-d_1\dot E_1/d_2\). Collecting the terms gives</p>
+<p>Eliminate \(E_2=(V-d_1E_1)/d_2\). Since \(V\) is constant after the rise,</p>
+<div class="math display">\[\dot E_2=-d_1\dot E_1/d_2.\]</div>
+<p>Collecting the terms gives</p>
 <div class="math display">\[(\epsilon_1d_2+\epsilon_2d_1)\dot E_1+(\sigma_1d_2+\sigma_2d_1)E_1=\sigma_2V .\]</div>
-<p>Before conduction has had time to move appreciable charge, \(\sigma_f(0^+)=0\), so \(E_1(0^+)=\epsilon_2V/(\epsilon_1d_2+\epsilon_2d_1)\). In steady state the displacement derivatives vanish and \(E_1(\infty)=\sigma_2V/(\sigma_1d_2+\sigma_2d_1)\). The first-order equation therefore gives</p>
+<p>Before conduction has had time to move appreciable charge, \(\sigma_f(0^+)=0\), so</p>
+<div class="math display">\[E_1(0^+)=\epsilon_2V/(\epsilon_1d_2+\epsilon_2d_1).\]</div>
+<p>In steady state the displacement derivatives vanish and \(E_1(\infty)=\sigma_2V/(\sigma_1d_2+\sigma_2d_1)\). The first-order equation therefore gives</p>
 <div class="math display equation-chain"><div class="equation-step">\[E_1(t)=E_1(\infty)+[E_1(0^+)-E_1(\infty)]e^{-t/\tau},\]</div><div class="equation-step">\[\tau=\frac{\epsilon_1d_2+\epsilon_2d_1}{\sigma_1d_2+\sigma_2d_1}.\]</div></div>
-<p>Substitution into the first voltage equation gives \(E_2(t)\), and subtraction of the two normal displacements gives \(\sigma_f(t)=\sigma_f(\infty)(1-e^{-t/\tau})\). Its final value can have either sign even when both applied fields always point in the same direction. If \(\sigma_1/\epsilon_1=\sigma_2/\epsilon_2\), the initial and final voltage divisions coincide. Both materials conduct and dissipate power, but this particular interfacial charge does not build up.</p>
+<p>Substitution into the first voltage equation gives \(E_2(t)\), and subtraction of the two normal displacements gives</p>
+<div class="math display">\[\sigma_f(t)=\sigma_f(\infty)(1-e^{-t/\tau}).\]</div>
+<p>Its final value can have either sign even when both applied fields always point in the same direction. If \(\sigma_1/\epsilon_1=\sigma_2/\epsilon_2\), the initial and final voltage divisions coincide. Both materials conduct and dissipate power, but this particular interfacial charge does not build up.</p>
 <h3>Reconstruct an interface charge from a voltage trace</h3>
 <p>Choose \(d_1=d_2=1.00\) mm, \(\epsilon_1=2\epsilon_0,\epsilon_2=6\epsilon_0\), \(\sigma_1=1.00\times10^{-9}\) S/m and \(\sigma_2=3.00\times10^{-10}\) S/m. With \(V=10.0\) V, the first layer initially drops 7.50 V but finally drops only 2.31 V. The time constant is 54.5 ms. After one time constant the first-layer drop is 4.22 V. The final sheet is positive, \(\epsilon_0[6(7692)-2(2308)]\simeq3.68\times10^{-7}\) C/m². Equal steady conduction currents \(2.31\,\mu\mathrm{A/m^2}\) through both layers independently confirm the final voltage division.</p>
-<p>An alternative calculation uses admittances per area in the Laplace domain: \(Y_i/A=(\sigma_i+s\epsilon_i)/d_i\). The fraction of total voltage across layer 1 is \(Y_2/(Y_1+Y_2)\). Its pole is at \(s=-(\sigma_1d_2+\sigma_2d_1)/(\epsilon_1d_2+\epsilon_2d_1)\), precisely the time constant found without using a circuit. Its high- and low-frequency limits give the two electrode readings above. The familiar parallel resistor–capacitor representation of each layer now has an identifiable field origin and a way to test its validity.</p>
+<p>An alternative calculation uses admittances per area in the Laplace domain:</p>
+<div class="math display">\[Y_i/A=(\sigma_i+s\epsilon_i)/d_i.\]</div>
+<p>The fraction of total voltage across layer 1 is \(Y_2/(Y_1+Y_2)\). Its pole is at \(s=-(\sigma_1d_2+\sigma_2d_1)/(\epsilon_1d_2+\epsilon_2d_1)\), precisely the time constant found without using a circuit. Its high- and low-frequency limits give the two electrode readings above. The familiar parallel resistor–capacitor representation of each layer now has an identifiable field origin and a way to test its validity.</p>
 <h3>Estimate conductivities from a step without measuring a tiny dc current</h3>
 <p>If the thicknesses and permittivities are known, the late-time voltage fraction and the measured relaxation time constrain two different combinations of the conductivities. In the equal-thickness example write \(f=V_1(\infty)/V=\sigma_2/(\sigma_1+\sigma_2)\). The transient gives the sum \(\sigma_1+\sigma_2=(\epsilon_1+\epsilon_2)/\tau\). Using \(f=0.231\) and \(\tau=54.5\) ms yields a sum of \(1.30\times10^{-9}\) S/m, with contributions \(\sigma_2\simeq3.0\times10^{-10}\) S/m and \(\sigma_1\simeq1.0\times10^{-9}\) S/m. The initial capacitive voltage division remains an independent check on the assumed permittivities and geometry.</p>
 <p>This inversion becomes ill-conditioned if the initial and final voltage fractions nearly coincide. Although the formal time constant is still finite, the measured exponential then has very small amplitude and its decay time is hard to estimate against offsets or drift. A static leakage-current measurement can provide a more reliable conductivity constraint in that case. Fitting an arbitrary time constant to a trace that is experimentally flat would confuse a model parameter with a measured observable.</p>
@@ -79,26 +93,78 @@
 
 <section><h2 id="what-relaxes-when-a-field-is-applied">What relaxes when a field is applied?</h2>
 <p>A metal plate inserted in a static electric field rapidly rearranges its free surface charge. A metal plate subjected to a changing magnetic field can carry eddy currents for an appreciable time. The two observations concern different field equations. Model a uniform material using \(\mathbf J=\sigma\mathbf E\), \(\mathbf D=\epsilon\mathbf E\) and \(\mathbf B=\mu\mathbf H\), treating the coefficients as constants over the frequencies used.</p>
-<p>Free charge conservation gives \(\partial_t\rho+\nabla\cdot\mathbf J=0\). Within the uniform bulk, \(\nabla\cdot\mathbf E=\rho/\epsilon\) gives \(\partial_t\rho=-(\sigma/\epsilon)\rho\). A prepared bulk charge perturbation therefore decays exponentially with characteristic time \(\tau_q=\epsilon/\sigma\). The derivation says nothing about the disappearance of total charge from an isolated body. Charge can move to its boundary, where the bulk equation with constant coefficients across the interface no longer applies. Extremely short formal times in good metals also probe frequencies beyond the constant-conductivity model.</p>
+<p>Free charge conservation gives</p>
+<div class="math display">\[\partial_t\rho+\nabla\cdot\mathbf J=0.\]</div>
+<p>Within the uniform bulk, \(\nabla\cdot\mathbf E=\rho/\epsilon\) gives</p>
+<div class="math display">\[\partial_t\rho=-(\sigma/\epsilon)\rho.\]</div>
+<p>A prepared bulk charge perturbation therefore decays exponentially with characteristic time \(\tau_q=\epsilon/\sigma\). The derivation says nothing about the disappearance of total charge from an isolated body. Charge can move to its boundary, where the bulk equation with constant coefficients across the interface no longer applies. Extremely short formal times in good metals also probe frequencies beyond the constant-conductivity model.</p>
 </section>
 <section><h2 id="curl-fields-obey-a-different-evolution">Curl fields obey a different evolution</h2>
-<p>Use Ampère’s law without displacement current when \(\omega\epsilon\ll\sigma\) and the frequency lies within the material model. Combining \(\nabla\times\mathbf B=\mu\sigma\mathbf E\) with Faraday’s law gives \(\nabla\times(\nabla\times\mathbf B)=-\mu\sigma\partial_t\mathbf B\). Because magnetic flux has zero divergence, the left-hand side is \(-\nabla^2\mathbf B\). Thus</p>
-<div class="math display">\[\partial_t\mathbf B=D_m\nabla^2\mathbf B,\qquad D_m=\frac1{\mu\sigma}.\]</div>
+<p>Use Ampère’s law without displacement current when \(\omega\epsilon\ll\sigma\) and the frequency lies within the material model. Combining \(\nabla\times\mathbf B=\mu\sigma\mathbf E\) with Faraday’s law gives</p>
+<div class="math display">\[\nabla\times(\nabla\times\mathbf B)=-\mu\sigma\partial_t\mathbf B.\]</div>
+<p>Because magnetic flux has zero divergence, the left-hand side is \(-\nabla^2\mathbf B\). Thus</p>
+<div class="math display equation-chain"><div class="equation-step">\[\partial_t\mathbf B=D_m\nabla^2\mathbf B,\]</div><div class="equation-step">\[D_m=\frac1{\mu\sigma}.\]</div></div>
 <p>A spatial Fourier component with wavenumber \(k\) decays as \(\exp(-D_mk^2t)\). Long spatial scales persist longer because the electric field required to change a large magnetic flux drives stronger circulating currents. Dimensional analysis gives a diffusion time of order \(\mu\sigma L^2\), with a geometric factor determined by the actual boundaries.</p>
+
+<details class="study-aside">
+<summary>OneSimulation · Does a thin sheet have a field-free interior?</summary>
+<p>Place a 2 mm copper sheet between two coils that impose the same harmonic tangential magnetic field on its two faces. Neglect displacement current and edge fringing. For a phasor proportional to \(e^{i\omega t}\), diffusion across the thickness becomes a complex boundary-value problem. Reflection symmetry fixes the slope at the centre.</p>
+<div class="math display equation-chain"><div class="equation-step">\[H&#x27;&#x27;=i\omega\mu\sigma H,\]</div><div class="equation-step">\[\frac{H(x)}{H_s}=\frac{\cosh[(1+i)x/\delta]}{\cosh[(1+i)a/\delta]},\]</div><div class="equation-step">\[\delta=\sqrt{\frac{2}{\omega\mu\sigma}}.\]</div></div>
+<p>Here \(a\) is the half-thickness. The half-space law would keep a single decaying exponential. In this experiment the second face drives a second field with a definite phase. OneSimulation solves for both quadratures on a thickness grid. Compare the calculated centre amplitude with the two-face solution before using a measured attenuation to infer conductivity.</p>
+<pre><code>"""Harmonic magnetic diffusion in a copper sheet with two driven faces."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+
+mu, sigma = 4e-7 * np.pi, 5.8e7  # H/m, S/m
+half_width = 1e-3  # m
+x = np.linspace(-half_width, half_width, 101)
+h = x[1] - x[0]
+n = len(x) - 2
+identity = np.eye(n)
+minus_laplacian = 2 * identity - np.eye(n, k=1) - np.eye(n, k=-1)
+boundary = np.zeros(n)
+boundary[[0, -1]] = 1.0  # unit field at each face
+fig, ax = plt.subplots(figsize=(6.6, 3.5), layout="constrained")
+
+for frequency in (1e3, 1e4, 1e5):
+    omega = 2 * np.pi * frequency
+    alpha = omega * mu * sigma * h**2
+    # Real and imaginary parts of the same complex diffusion equation.
+    matrix = np.block([[minus_laplacian, -alpha * identity],
+                       [alpha * identity, minus_laplacian]])
+    u, v = np.split(solve_dense(matrix, np.r_[boundary, np.zeros(n)]), 2)
+    field = np.r_[1, u + 1j * v, 1]
+    delta = np.sqrt(2 / (omega * mu * sigma))
+    exact = np.cosh((1+1j) * x / delta) / np.cosh((1+1j) * half_width / delta)
+    assert np.max(np.abs(field - exact)) &lt; 8e-4
+    print(f"{frequency:g} Hz: centre amplitude {abs(field[n//2+1]):.4f}")
+    ax.plot(1000 * x, abs(field), label=f"{frequency/1000:g} kHz")
+ax.set(xlabel="Position across sheet (mm)", ylabel="Field amplitude / surface amplitude")
+ax.legend()
+ax.grid(alpha=0.2)
+fig.savefig("electrodynamics.png", dpi=180)</code></pre>
+<figure><img src="/assets/aside-figures/electrodynamics.png" width="1188" height="630" loading="lazy" alt="Three symmetric through-thickness profiles dip at the middle. The middle amplitude falls from 0.983 at 1 kHz to 0.017 at 100 kHz."><figcaption>Both surfaces have unit amplitude. At 10 kHz the interior still reaches 46% of that field. At 100 kHz the centre reaches less than 2%.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/electrodynamics.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section><h2 id="an-alternating-field-outside-a-copper-block">An alternating field outside a copper block</h2>
 <p>Take a tangential field at the plane \(x=0\) bounding a conductor occupying \(x&gt;0\). Substitute \(B(x,t)=\mathrm{Re}\{B_0e^{i\omega t-\kappa x}\}\) into diffusion. The admissible square root of \(\kappa^2=i\omega\mu\sigma\) has positive real part,</p>
-<div class="math display">\[\kappa=(1+i)/\delta,\qquad \delta=\sqrt{2/(\omega\mu\sigma)} .\]</div>
+<div class="math display equation-chain"><div class="equation-step">\[\kappa=(1+i)/\delta,\]</div><div class="equation-step">\[\delta=\sqrt{2/(\omega\mu\sigma)} .\]</div></div>
 <p>At depth \(\delta\) the amplitude has dropped to \(1/e\) and the phase lags by one radian. These are independent observables for testing the semi-infinite, constant-property solution. The surface excitation sets the boundary amplitude. It need not equal the field that an external coil would generate with the metal absent.</p>
 <p>For copper take \(\sigma=5.8\times10^7\) S/m, \(\mu=\mu_0\) and \(f=1.00\) kHz. Then \(\delta=2.09\) mm. At \(x=4.00\) mm the field amplitude is \(0.148\) of its surface value and the phase lag is \(1.91\) rad. Raising frequency by a factor of four halves the penetration depth. If a plate thickness is comparable to \(\delta\), fields from the opposite face also affect the solution and a second boundary condition must replace the one-sided decay condition. This geometric check matters as much as the conductivity value when using an amplitude ratio to infer a material property.</p>
 <figure class="paper-figure"><img src="/assets/lecture-figures/skin-depth.png" width="1264" height="720" loading="lazy" alt="Two magnetic field profiles at a quarter-cycle separation decay with depth and show a delayed oscillation below the surface."><figcaption>A conducting half-space in a sinusoidal field. Both the attenuation and the phase shift are set by the depth measured in skin depths.</figcaption></figure>
 <p>The oscillating solution also predicts current concentrated near the surface, since Ampère’s law makes the current density proportional to the local spatial derivative of magnetic field. As frequency rises, less of the metal cross-section transports the alternating current at a given field amplitude. This mechanism helps explain why a conductor’s measured AC resistance can exceed its DC value even when the local conductivity is unchanged.</p>
 </section>
 <section><h2 id="relate-surface-fields-to-the-power-dissipated-in-a-metal">Relate surface fields to the power dissipated in a metal</h2>
-<p>The skin depth gives the distance over which current flows, yet a circuit measurement usually returns an impedance or a heating rate. Use the conducting half-space \(x&gt;0\) and time convention \(e^{i\omega t}\). Choose magnetic field along \(z\), with phasor \(H_z=H_0e^{-(1+i)x/\delta}\). From Ampère's law without displacement current, the only current component is \(J_y=-\partial_xH_z=(1+i)H_z/\delta\). Ohm’s law therefore fixes the tangential electric field immediately inside the conductor.</p>
-<div class="math display">\[Z_s=\frac{E_y(0)}{H_z(0)}=\frac{1+i}{\sigma\delta},\qquad R_s=\mathrm{Re}\,Z_s=\sqrt{\frac{\pi f\mu}{\sigma}} .\]</div>
+<p>The skin depth gives the distance over which current flows, yet a circuit measurement usually returns an impedance or a heating rate. Use the conducting half-space \(x&gt;0\) and time convention \(e^{i\omega t}\). Choose magnetic field along \(z\), with phasor \(H_z=H_0e^{-(1+i)x/\delta}\). From Ampère's law without displacement current, the only current component is</p>
+<div class="math display">\[J_y=-\partial_xH_z=(1+i)H_z/\delta.\]</div>
+<p>Ohm’s law therefore fixes the tangential electric field immediately inside the conductor.</p>
+<div class="math display equation-chain"><div class="equation-step">\[Z_s=\frac{E_y(0)}{H_z(0)}=\frac{1+i}{\sigma\delta},\]</div><div class="equation-step">\[R_s=\mathrm{Re}\,Z_s=\sqrt{\frac{\pi f\mu}{\sigma}} .\]</div></div>
 <p>The surface resistance \(R_s\) is expressed in ohms even though neither field in this ratio is a terminal voltage or current. Current integrated over depth is a sheet current with units A/m equal to the surface magnetic amplitude. The real part of the surface impedance relates mean heating per unit area to this current, while the imaginary part describes reversible magnetic energy storage near the surface.</p>
-<p>For peak phasors, mean inward Poynting flux is \(\mathrm{Re}[E_yH_z^*]/2=R_s|H_0|^2/2\). The same result must follow from local heating. Insert \(|J_y|^2=2|H_0|^2e^{-2x/\delta}/\delta^2\) into \(\int_0^\infty |J_y|^2/(2\sigma)\,dx\). The integral supplies \(\delta/2\), reproducing the surface formula. This equality is a sensitive check on the distinction between amplitude decay over \(\delta\) and squared-amplitude decay over \(\delta/2\).</p>
+<p>For peak phasors, mean inward Poynting flux is</p>
+<div class="math display">\[\mathrm{Re}[E_yH_z^*]/2=R_s|H_0|^2/2.\]</div>
+<p>The same result must follow from local heating. Insert \(|J_y|^2=2|H_0|^2e^{-2x/\delta}/\delta^2\) into \(\int_0^\infty |J_y|^2/(2\sigma)\,dx\). The integral supplies \(\delta/2\), reproducing the surface formula. This equality is a sensitive check on the distinction between amplitude decay over \(\delta\) and squared-amplitude decay over \(\delta/2\).</p>
 </section>
 <section><h2 id="estimate-loss-in-a-microwave-wall">Estimate loss in a microwave wall</h2>
 <p>Take copper with constant \(\sigma=5.8\times10^7\) S/m, \(\mu=\mu_0\) at \(f=10.0\) MHz. The skin depth is \(\delta=20.9\) μm and \(R_s=1/(\sigma\delta)=0.825\) mΩ. A nearly uniform tangential peak magnetic field of \(80.0\) A/m illuminates a wall patch of area \(0.0200\) m². Surface heating density is \(0.000825(80.0)^2/2=2.64\) W/m², corresponding to \(52.8\) mW for the patch. If the supplied field were an RMS amplitude the division by two would be inappropriate.</p>

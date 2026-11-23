@@ -52,7 +52,9 @@
 <section>
 <h2 id="eliminate-a-column-without-stretching-it">Eliminate a column without stretching it</h2>
 <p>An orthogonal transformation applied simultaneously to the data matrix and right-hand side leaves every Euclidean residual length unchanged. A Householder reflector is \(H=I-2vv^T/(v^Tv)\) for a nonzero vector \(v\). Decompose any vector into components parallel and perpendicular to \(v\). The parallel component changes sign and the perpendicular component stays fixed, proving both length preservation and \(H^2=I\). Implementation requires just a dot product and a scaled vector subtraction rather than a dense matrix.</p>
-<p>To make the entries below the first element of a column \(x\) vanish, choose \(v=x-\alpha e_1\) where \(|\alpha|=\|x\|_2\). A short calculation gives \(v^Tv=2(\|x\|^2-\alpha x_1)\) and \(v^Tx=\|x\|^2-\alpha x_1\), hence \(Hx=x-v=\alpha e_1\). Choose \(\alpha\) with sign opposite to \(x_1\) to avoid subtracting nearly equal positive numbers when computing \(v_1\). A zero column requires a separate decision about rank.</p>
+<p>To make the entries below the first element of a column \(x\) vanish, choose \(v=x-\alpha e_1\) where \(|\alpha|=\|x\|_2\). A short calculation gives \(v^Tv=2(\|x\|^2-\alpha x_1)\) and \(v^Tx=\|x\|^2-\alpha x_1\), hence</p>
+<div class="math display">\[Hx=x-v=\alpha e_1.\]</div>
+<p>Choose \(\alpha\) with sign opposite to \(x_1\) to avoid subtracting nearly equal positive numbers when computing \(v_1\). A zero column requires a separate decision about rank.</p>
 </section>
 <section>
 <h2 id="follow-the-data-into-the-triangular-system">Follow the data into the triangular system</h2>
@@ -76,7 +78,13 @@
 <section>
 <h2 id="insert-a-point-into-an-existing-two-parameter-fit">Insert a point into an existing two-parameter fit</h2>
 <p>Suppose the existing transformed problem has \(R=I,\ z=(1,2)^T,\ S=0\). A new sensor reports \(x_1+x_2=5\). The best prior estimate was \((1,2)^T\), which predicts three and therefore disagrees with the incoming reading by two. To reconcile all observations, stack the new row \((1,1\mid5)\) below \((1,0\mid1)\) and \((0,1\mid2)\). Rotate the first and last rows with \(c=d=1/\sqrt2\). The first becomes \((\sqrt2,1/\sqrt2\mid6/\sqrt2)\); the last becomes \((0,1/\sqrt2\mid4/\sqrt2)\).</p>
-<p>The second rotation combines leading entries \(1\) and \(1/\sqrt2\), yielding \(\rho=\sqrt{3/2}\), \(c=\sqrt{2/3}\), \(d=1/\sqrt3\). Its surviving right-hand side is \(2\sqrt{2/3}+4/\sqrt6=8/\sqrt6\). Thus the second-coordinate estimate is \((8/\sqrt6)/\sqrt{3/2}=8/3\). Back substitution in the first row gives \(x_1=(6-8/3)/2=5/3\). The final bottom data entry is \(-2/\sqrt3+4/\sqrt3=2/\sqrt3\), contributing \(4/3\) to the residual sum of squares.</p>
+<p>The second rotation combines leading entries \(1\) and \(1/\sqrt2\), yielding \(\rho=\sqrt{3/2}\), \(c=\sqrt{2/3}\), \(d=1/\sqrt3\). Its surviving right-hand side is</p>
+<div class="math display">\[2\sqrt{2/3}+4/\sqrt6=8/\sqrt6.\]</div>
+<p>Thus the second-coordinate estimate is</p>
+<div class="math display">\[(8/\sqrt6)/\sqrt{3/2}=8/3.\]</div>
+<p>Back substitution in the first row gives</p>
+<div class="math display">\[x_1=(6-8/3)/2=5/3.\]</div>
+<p>The final bottom data entry is \(-2/\sqrt3+4/\sqrt3=2/\sqrt3\), contributing \(4/3\) to the residual sum of squares.</p>
 <p>Verify directly: the three residual magnitudes are all \(2/3\), so their squared sum is \(4/3\). The new reading moved both coordinates equally because their original transformed information was identical and its row is symmetric. No historical measurement needed to be reread. Conversely deleting an earlier reading can expose rank deficiency and is a different numerical operation; simply running the same update with a negated data value would add another squared term rather than remove information.</p>
 <p>When a stream contains different measurement variances, divide each arriving row and its right-hand side by its independently known standard deviation before applying the rotations. The accumulated \(S\) then measures squared standardised discrepancies. If the new reading shares an error with earlier readings, dividing its row alone is insufficient. One must first account for the conditional error and correlated design contribution or refactor a suitable joint whitening transformation. This is a measurement-model limitation, even when the rotations themselves remain perfectly orthogonal.</p>
 <p>Repeated readings of a common reference are one practical source of precisely this kind of dependence.</p>

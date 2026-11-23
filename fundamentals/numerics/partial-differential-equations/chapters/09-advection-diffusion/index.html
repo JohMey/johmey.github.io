@@ -46,7 +46,9 @@
 <p class="example-label">Worked example</p><h3 id="worked-example">Compute a moderate-Péclet-number channel profile</h3>
 <p>Take \(L=1.00\) m, \(a=0.0200\) m/s, \(D=0.0100\) m²/s, \(u_f=1.00\) and \(u_L=0\) kg/m³. The inlet concentration is \(1-e^{-2}=0.8647\) kg/m³ and the midpoint is \(1-e^{-1}=0.6321\) kg/m³. Inlet advection carries \(0.01729\) kg/(m² s) and diffusion supplies \(0.00271\) kg/(m² s), giving the prescribed total \(0.0200\).</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Quantify a boundary-condition error</h3>
-<p>If a code instead fixes \(u(0)=1.00\) and \(u(L)=0\), its exact constant flux for those Dirichlet data satisfies \(u(0)=(J/a)(1-e^{-\mathrm{Pe}})\). Hence \(J=0.0200/(1-e^{-2})=0.0231\) kg/(m² s), about \(15.7\%\) too large for the original feed problem. Grid refinement can converge cleanly to that incorrect-for-purpose value because the error lies in the boundary model.</p>
+<p>If a code instead fixes \(u(0)=1.00\) and \(u(L)=0\), its exact constant flux for those Dirichlet data satisfies</p>
+<div class="math display">\[u(0)=(J/a)(1-e^{-\mathrm{Pe}}).\]</div>
+<p>Hence \(J=0.0200/(1-e^{-2})=0.0231\) kg/(m² s), about \(15.7\%\) too large for the original feed problem. Grid refinement can converge cleanly to that incorrect-for-purpose value because the error lies in the boundary model.</p>
 </section>
 <section>
 <h2 id="which-length-sets-the-balance">Which length sets the balance?</h2>
@@ -55,7 +57,9 @@
 </section>
 <section>
 <h2 id="watch-a-node-cross-below-the-boundary-range">Watch a node cross below the boundary range</h2>
-<p>Take \(L=1,a=1,\kappa=0.1\), \(u(0)=0,u(1)=1\) and two equal cells. Then \(h=0.5,P=5\). At the only interior node the coefficients are \(-1.4,0.8,0.6\). The numerical value is \(-0.75\), outside the prescribed boundary range. The exact solution is \((e^{ax/\kappa}-1)/(e^{aL/\kappa}-1)\), increasing and close to zero except near the outlet. At \(x=0.5\) it is \(1/(e^5+1)\approx0.00669\). The coarse grid does not resolve a physical layer of width 0.1.</p>
+<p>Take \(L=1,a=1,\kappa=0.1\), \(u(0)=0,u(1)=1\) and two equal cells. Then</p>
+<div class="math display">\[h=0.5,P=5.\]</div>
+<p>At the only interior node the coefficients are \(-1.4,0.8,0.6\). The numerical value is \(-0.75\), outside the prescribed boundary range. The exact solution is \((e^{ax/\kappa}-1)/(e^{aL/\kappa}-1)\), increasing and close to zero except near the outlet. At \(x=0.5\) it is \(1/(e^5+1)\approx0.00669\). The coarse grid does not resolve a physical layer of width 0.1.</p>
 <p>Using the upstream difference \((u_j-u_{j-1})/h\) changes the coefficients to \(-2.4,2.8,-0.4\); the computed midpoint is \(1/7\). The value lies in range but the layer is excessively broad. A monotone method can replace an oscillation with a large smoothing error. Plot the magnitude of the profile at fixed physical locations while refining to distinguish those outcomes.</p>
 </section>
 <section>

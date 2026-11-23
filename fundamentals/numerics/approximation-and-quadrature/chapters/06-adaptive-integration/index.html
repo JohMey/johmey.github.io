@@ -41,7 +41,7 @@
 <p>An adaptive integrator can refine its mesh until truncation error is small, yet the requested relative accuracy may be limited by uncertainty in the integrand. Consider an integrable real \(f\) on \([a,b]\) with pointwise error bounded by \(|\delta f(x)|\le\eta|f(x)|\). This can represent a numerical evaluation error or a relative tolerance on measured input values. The resulting data-induced error in the exact integral is bounded directly by</p>
 <div class="math display">\[|\delta I|=\left|\int_a^b\delta f(x)\,dx\right|\le\eta\int_a^b|f(x)|\,dx.\]</div>
 <p>If arbitrary signs of perturbation are allowed, the bound is attained by taking \(\delta f=\eta|f|\). Let \(I_+\) and \(I_-\) be the respective positive magnitudes of the positive and negative contributions. For \(I\ne0\) the relative sensitivity to the data is therefore</p>
-<div class="math display equation-chain"><div class="equation-step">\[\kappa_I=\frac{I_++I_-}{|I_+-I_-|},\]</div><div class="equation-step">\[\frac{|\delta I|}{|I|}\le\eta\kappa_I .\]</div></div>
+<div class="math display">\[\kappa_I=\frac{I_++I_-}{|I_+-I_-|},\qquad \frac{|\delta I|}{|I|}\le\eta\kappa_I .\]</div>
 <p>It equals one for a one-sign integrand and can diverge as the net area tends to zero. If the algorithm has an independent absolute discretization error budget \(E_Q\), add the separate errors before deciding whether the requested tolerance is meaningful,</p>
 <div class="math display">\[|\widehat I-I|\le E_Q+\eta(I_++I_-).\]</div>
 <p>Splitting at known sign changes makes estimates of the separate contribution magnitudes easier to audit. It does not undo cancellation in the underlying quantity. Correlated data errors can yield a less severe budget when their correlation is independently known; a uniform multiplicative calibration error, for example, scales the net integral itself.</p>
@@ -52,7 +52,11 @@
 </section>
 <section>
 <h2 id="use-two-resolutions-to-estimate-a-missing-integral">Use two resolutions to estimate a missing integral</h2>
-<p>Suppose a composite rule on a smooth integrand has \(Q_h=I+Ch^p+O(h^{p+2})\). Halving the uniform spacing gives \(Q_{h/2}=I+Ch^p/2^p+\cdots\). Subtract the two approximations to eliminate \(I\). The fine-grid error satisfies \(I-Q_{h/2}\simeq(Q_{h/2}-Q_h)/(2^p-1)\). The sign of this estimate matters if correcting the numerical answer. Its magnitude supplies an error indicator. The relation assumes the same leading power operates on both grids and that the error exceeds the noise in the data.</p>
+<p>Suppose a composite rule on a smooth integrand has \(Q_h=I+Ch^p+O(h^{p+2})\). Halving the uniform spacing gives</p>
+<div class="math display">\[Q_{h/2}=I+Ch^p/2^p+\cdots.\]</div>
+<p>Subtract the two approximations to eliminate \(I\). The fine-grid error satisfies</p>
+<div class="math display">\[I-Q_{h/2}\simeq(Q_{h/2}-Q_h)/(2^p-1).\]</div>
+<p>The sign of this estimate matters if correcting the numerical answer. Its magnitude supplies an error indicator. The relation assumes the same leading power operates on both grids and that the error exceeds the noise in the data.</p>
 <p>For Simpson’s rule \(p=4\). On a parent interval compare one Simpson panel \(S\) with two half-panels whose sum is \(S_2\). The fine estimate of the local integral error is \(|S_2-S|/15\), and an extrapolated value is \(S_2+(S_2-S)/15\). The comparison needs only two new function evaluations because the endpoints and original midpoint are reused. If the indicator is too large, split the interval and apply the same test to each child separately.</p>
 </section>
 <section>

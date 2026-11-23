@@ -33,7 +33,7 @@
 <p>Put an Ising spin \(s_i=\pm1\) on each lattice site and use a ferromagnetic bond energy \(-J s_i s_j\) with \(J&gt;0\). If every site has \(z\) neighbours, replacing their actual spins by the common mean \(m=\langle s\rangle\) assigns a trial spin energy \(-s(zJm+\mu B)\). Thermal averaging this two-level problem must reproduce the same mean used to construct the local field:</p>
 <div class="math display">\[m=\frac{\sum_{s=\pm1}s\, e^{s(zJm+\mu B)/(k_BT)}}{\sum_{s=\pm1}e^{s(zJm+\mu B)/(k_BT)}}=\tanh\!\left(\frac{zJm+\mu B}{k_BT}\right).\]</div>
 <p>At zero applied field the right-hand side is odd, so \(m=0\) always solves the equation. To decide when two nearby nonzero solutions appear, compare the slope at the origin with one, then retain the cubic correction. Write \(a=zJ/(k_BT)\):</p>
-<div class="math display equation-chain"><div class="equation-step">\[m=am-\tfrac13a^3m^3+\cdots,\]</div><div class="equation-step">\[T_c^{\rm MF}=zJ/k_B,\]</div><div class="equation-step">\[m^2\simeq3(a-1)/a^3 .\]</div></div>
+<div class="math display equation-chain"><div class="equation-step">\[m=am-\tfrac13a^3m^3+\cdots,\]</div><div class="equation-step">\[T_c^{\rm MF}=zJ/k_B,\qquad m^2\simeq3(a-1)/a^3 .\]</div></div>
 <p>Just below this mean-field critical temperature either sign of \(m\) is possible even in zero applied field. The approximation replaces correlated neighbours by an average. In short-range one-dimensional systems that omission can even change whether a finite-temperature transition exists.</p>
 </section>
 <section class="chapter-derivation">
@@ -48,7 +48,9 @@
 <p class="example-label">Worked example</p><h3 id="worked-example">Estimate decorrelation over a microscope field</h3>
 <p>Let \(J/k_B=20.0\,\mathrm K\), \(T=10.0\,\mathrm K\) and \(a=0.400\,\mathrm{nm}\). The wall probability is \(1/(1+e^4)=0.0180\), giving about 18 walls per 1000 bonds on average. The exact correlation length is \(10.9\,\mathrm{nm}\). Across \(20.0\,\mathrm{nm}\), or 50 bonds, the measured spin correlation should be approximately \((\tanh2)^{50}=0.160\).</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Infer exchange from a measured spatial decay</h3>
-<p>In a different chain the correlation drops to one half over eight bonds at \(T=30.0\,\mathrm K\). Each step has correlation \(2^{-1/8}=0.9170\). Inverting \(K=\tfrac12\ln[(1+\langle b\rangle)/(1-\langle b\rangle)]\) gives \(J/k_B=47.1\,\mathrm K\). A local image counting opposite neighbours should then find a fraction \((1-0.9170)/2=0.0415\), an independent test using adjacent spins.</p>
+<p>In a different chain the correlation drops to one half over eight bonds at \(T=30.0\,\mathrm K\). Each step has correlation \(2^{-1/8}=0.9170\). Inverting \(K=\tfrac12\ln[(1+\langle b\rangle)/(1-\langle b\rangle)]\) gives</p>
+<div class="math display">\[J/k_B=47.1\,\mathrm K.\]</div>
+<p>A local image counting opposite neighbours should then find a fraction \((1-0.9170)/2=0.0415\), an independent test using adjacent spins.</p>
 </section>
 <section><h2 id="replace-neighbouring-moments-by-their-average">Replace neighbouring moments by their average</h2>
 <p>An independent moment has zero mean at zero field for any positive temperature. In a ferromagnet aligned neighbours can lower the exchange energy. Consider Ising variables \(s_i=\pm1\) with energy \(-J\sum_{\langle ij\rangle}s_i s_j-\mu B\sum_i s_i\), \(J&gt;0\). Each distinct nearest-neighbour bond is counted once. In a uniform mean-field approximation replace a neighbour's spin by \(m=\langle s\rangle\). For coordination number \(z\), an individual spin then feels an effective energy bias \(zJm+\mu B\). Applying the two-state result to that spin requires self-consistency:</p>
@@ -68,8 +70,16 @@
 <section><h2 id="derive-the-profile-and-energy-of-a-domain-wall">Derive the profile and energy of a domain wall</h2>
 <p>Two domains magnetized in opposite easy-axis directions can coexist, but rotating the magnetization in between costs exchange and anisotropy energy. Consider a uniaxial ferromagnet with magnetization magnitude fixed and angle \(\theta(x)\) relative to the easy axis varying along one spatial coordinate. Assume a planar 180-degree wall in a geometry where additional magnetostatic costs can be neglected for this profile. With exchange stiffness \(A\) in J/m and anisotropy density \(K\) in J/m³, the wall energy per unit area is</p>
 <div class="math display">\[\sigma_w=\int_{-\infty}^{\infty}[A(\partial_x\theta)^2+K\sin^2\theta]\,dx .\]</div>
-<p>A narrow wall saves anisotropy energy but makes the spatial gradient steep. A broad wall saves exchange energy but places more material away from the preferred axis. Variation gives \(2A\theta''=2K\sin\theta\cos\theta\). Multiply by \(\theta'\) and integrate once. Since both gradient and anisotropy term vanish deep inside either domain, the integration constant is zero, yielding \(A(\theta')^2=K\sin^2\theta\). Exchange and anisotropy costs are locally equal on the minimum-energy profile.</p>
-<p>Take increasing \(\theta\) between zero and \(\pi\) and define \(\Delta=\sqrt{A/K}\). Separation gives \(d\theta/\sin\theta=dx/\Delta\). With the wall centred at zero, \(\tan(\theta/2)=\exp(x/\Delta)\). Inserting the first integral back into the wall energy and changing variable from \(x\) to \(\theta\) gives \(\sigma_w=2K\Delta\int_0^\pi\sin\theta\,d\theta=4\sqrt{AK}\). The profile has long tails, so a quoted wall width must state its convention; \(\pi\Delta\) is a frequently used slope-based width rather than a sharp boundary.</p>
+<p>A narrow wall saves anisotropy energy but makes the spatial gradient steep. A broad wall saves exchange energy but places more material away from the preferred axis. Variation gives</p>
+<div class="math display">\[2A\theta''=2K\sin\theta\cos\theta.\]</div>
+<p>Multiply by \(\theta'\) and integrate once. Since both gradient and anisotropy term vanish deep inside either domain, the integration constant is zero, yielding \(A(\theta')^2=K\sin^2\theta\). Exchange and anisotropy costs are locally equal on the minimum-energy profile.</p>
+<p>Take increasing \(\theta\) between zero and \(\pi\) and define \(\Delta=\sqrt{A/K}\). Separation gives</p>
+<div class="math display">\[d\theta/\sin\theta=dx/\Delta.\]</div>
+<p>With the wall centred at zero,</p>
+<div class="math display">\[\tan(\theta/2)=\exp(x/\Delta).\]</div>
+<p>Inserting the first integral back into the wall energy and changing variable from \(x\) to \(\theta\) gives</p>
+<div class="math display">\[\sigma_w=2K\Delta\int_0^\pi\sin\theta\,d\theta=4\sqrt{AK}.\]</div>
+<p>The profile has long tails, so a quoted wall width must state its convention; \(\pi\Delta\) is a frequently used slope-based width rather than a sharp boundary.</p>
 </section>
 <section><h2 id="compare-two-anisotropies-at-fixed-exchange-stiffness">Compare two anisotropies at fixed exchange stiffness</h2>
 <p>Use \(A=1.00\times10^{-11}\) J/m and \(K=1.00\times10^5\) J/m³. The scale \(\Delta\) is 10.0 nm and conventional width \(\pi\Delta\) is 31.4 nm. Wall energy is \(4.00\) mJ/m². A planar patch of area \(1.00\) μm² costs \(4.00\times10^{-15}\) J, even though the two far domains have the same zero-field bulk energy.</p>

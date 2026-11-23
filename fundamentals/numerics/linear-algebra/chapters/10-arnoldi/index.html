@@ -34,18 +34,22 @@
 <p>If \(h_{j+1,j}&gt;0\), take \(v_{j+1}=w/h_{j+1,j}\). The resulting Arnoldi identity \(AV_k=V_{k+1}\bar H_k\) expresses each large product using a small upper-Hessenberg matrix. A correction \(V_ky\) gives the residual norm</p>
 <div class="math display">\[\|r_0-AV_ky\|_2=\|\beta e_1-\bar H_k y\|_2 .\]</div>
 <p>Orthonormality justifies the equality. GMRES solves the smaller least-squares problem to minimize the actual residual over this search space. When the new norm is zero the subspace is already invariant, and no further independent direction is available through another ordinary Arnoldi step.</p>
+
+<details class="study-aside"><summary>Background · Krylov subspace</summary><div class="math display">\[\mathcal K_k(A,b)=\operatorname{span}(b,Ab,\ldots,A^{k-1}b)\]</div><p>The starting vector determines which parts of the spectrum are visible. Orthogonalisation avoids storing nearly dependent raw powers.</p></details>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Calculate exactly when the first GMRES step stalls</h2>
 <p>For one Krylov step the only available correction is a multiple of the initial residual \(r=b-Ax\). The resulting change in the residual is parallel to \(Ar\). Assume a real nonsingular \(A\) and \(r\ne0\), which guarantees \(Ar\ne0\). To choose the coefficient \(\alpha\), expand the squared residual norm,</p>
 <div class="math display">\[\|r-\alpha Ar\|_2^2=r^Tr-2\alpha(Ar)^Tr+\alpha^2\|Ar\|_2^2 .\]</div>
 <p>The derivative vanishes at the coefficient of the orthogonal projection of \(r\) onto \(Ar\). Hence the new residual is perpendicular to the direction in which it was allowed to change,</p>
-<div class="math display equation-chain"><div class="equation-step">\[\alpha_*=\frac{(Ar)^Tr}{\|Ar\|_2^2},\]</div><div class="equation-step">\[(Ar)^T(r-\alpha_*Ar)=0 .\]</div></div>
+<div class="math display">\[\alpha_*=\frac{(Ar)^Tr}{\|Ar\|_2^2},\qquad (Ar)^T(r-\alpha_*Ar)=0 .\]</div>
 <p>Let \(\theta\) denote the angle between \(r\) and \(Ar\). At the minimum the squared length removed is exactly the squared length of that projection. The remaining fraction of residual is</p>
 <div class="math display">\[\frac{\|r_{\rm new}\|}{\|r\|}=\sqrt{1-\frac{[(Ar)^Tr]^2}{\|Ar\|^2\|r\|^2}}=|\sin\theta|.\]</div>
 <p>Thus equal or opposite directions allow an exact one-step solve, while perpendicular directions deliver no change. This is purely geometric and applies without symmetry. It also clarifies why restarting after one step can be costly: later basis vectors could expose a direction inaccessible on the first line.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Compute the residual reduction for a shear</h3>
-<p>Use \(A=\left(\begin{smallmatrix}1&amp;2\\0&amp;1\end{smallmatrix}\right)\) and \(r=(0,1)^T\). Then \(Ar=(2,1)^T\), \(\alpha_*=1/5\), and \(r_{\rm new}=(-0.4,0.8)^T\). Its norm is \(\sqrt{0.8}=0.894\). The dot product with \(Ar\) is \(-0.8+0.8=0\), an independent check that the selected coefficient minimizes the residual along this line.</p>
+<p>Use \(A=\left(\begin{smallmatrix}1&amp;2\\0&amp;1\end{smallmatrix}\right)\) and \(r=(0,1)^T\). Then \(Ar=(2,1)^T\), \(\alpha_*=1/5\), and \(r_{\rm new}=(-0.4,0.8)^T\). Its norm is</p>
+<div class="math display">\[\sqrt{0.8}=0.894.\]</div>
+<p>The dot product with \(Ar\) is \(-0.8+0.8=0\), an independent check that the selected coefficient minimizes the residual along this line.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Detect stagnation despite a nonsingular operator</h3>
 <p>Take \(A=\operatorname{diag}(2,-1)\) and \(r=(1,\sqrt2)^T\). The dot product \(r^TAr=2-2=0\) forces the first coefficient to zero. A second direction completes a two-dimensional space because \(Ar=(2,-\sqrt2)^T\) is independent of \(r\). In fact \(A^{-1}r=(0.5,-\sqrt2)^T=-0.5r+0.5Ar\). The two-direction correction solves the problem exactly although a one-step restart would repeat the same state.</p>
 </section>
@@ -55,7 +59,9 @@
 </section>
 <section>
 <h2 id="replacing-large-products-by-small-coordinates">Replacing large products by small coordinates</h2>
-<p>Start with \(v_1=r_0/\beta\), where \(\beta=\|r_0\|_2\). For each new direction form \(w=Av_j\), subtract its projections onto the existing orthonormal columns, and normalise what remains. Each projection coefficient occupies one row of column \(j\) of a small matrix. The final normalising length occupies its first subdiagonal. This Arnoldi construction gives \(AV_k=V_{k+1}\bar H_k\). If the length vanishes, the current subspace is invariant and no further normalisation is possible.</p>
+<p>Start with \(v_1=r_0/\beta\), where \(\beta=\|r_0\|_2\). For each new direction form \(w=Av_j\), subtract its projections onto the existing orthonormal columns, and normalise what remains. Each projection coefficient occupies one row of column \(j\) of a small matrix. The final normalising length occupies its first subdiagonal. This Arnoldi construction gives</p>
+<div class="math display">\[AV_k=V_{k+1}\bar H_k.\]</div>
+<p>If the length vanishes, the current subspace is invariant and no further normalisation is possible.</p>
 <div class="math display">\[\|b-A(x_0+V_ky)\|_2=\|V_{k+1}(\beta e_1-\bar H_ky)\|_2=\|\beta e_1-\bar H_ky\|_2.\]</div>
 <p>The second equality uses orthonormality. Solve this small rectangular least-squares problem, for example by updating triangular factors using plane rotations. The resulting residual is orthogonal to the range of \(AV_k\). Repeated projection may be necessary when rounding spoils orthogonality. A freshly calculated physical residual can test the small model's estimate before reporting convergence.</p>
 </section>
@@ -74,7 +80,9 @@
 </section>
 <section>
 <h2 id="how-restarting-can-erase-a-necessary-direction">How restarting can erase a necessary direction</h2>
-<p>GMRES minimises the full residual norm over its current correction space. A one-step restart retains only the first correction direction generated from the new residual. If that direction makes no angle with the gradient of the residual objective in the appropriate sense, progress can cease even for an invertible, perfectly conditioned matrix. To see the geometry, suppose the current residual is \(r\). The one-dimensional trial residual is \(r-\alpha Ar\). Minimising its squared norm for real arithmetic yields \(\alpha=(Ar)^Tr/\|Ar\|^2\). Thus no reduction occurs when \(Ar\) is perpendicular to \(r\). Restarting immediately recreates precisely the same subproblem.</p>
+<p>GMRES minimises the full residual norm over its current correction space. A one-step restart retains only the first correction direction generated from the new residual. If that direction makes no angle with the gradient of the residual objective in the appropriate sense, progress can cease even for an invertible, perfectly conditioned matrix. To see the geometry, suppose the current residual is \(r\). The one-dimensional trial residual is \(r-\alpha Ar\). Minimising its squared norm for real arithmetic yields</p>
+<div class="math display">\[\alpha=(Ar)^Tr/\|Ar\|^2.\]</div>
+<p>Thus no reduction occurs when \(Ar\) is perpendicular to \(r\). Restarting immediately recreates precisely the same subproblem.</p>
 <p>Unrestarted GMRES can still add \(Ar\) and further powers to its Krylov space. In exact arithmetic it can therefore escape one-step stagnation. This distinction matters for storage allocation: reducing the basis length can change the convergence mechanism itself. Merely multiplying the allowed number of restart cycles cannot recover directions if every cycle begins and ends with the same residual. Conversely increasing the restart length helps only if the additional space contains directions that produce a lower residual.</p>
 </section>
 <section>

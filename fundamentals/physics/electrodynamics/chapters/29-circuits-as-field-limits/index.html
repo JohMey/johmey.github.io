@@ -28,14 +28,25 @@
 </div></header>
 <main id="content">
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>When a circuit element must be treated as a field</h1><p class="lead">Can a short pair of conductors be called a capacitor? At low frequencies it stores energy almost electrostatically. As propagation time becomes important, the same open conductors support standing waves and their input current no longer grows proportionally to frequency.</p><p class="byline">Chapter 29 of 47</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#distributed">Build a transmission line from small field volumes</a><a href="#input">Derive the input admittance of an open end</a><a href="#examples">Two decisions about model size</a><a href="#coupling">A second circuit limit from magnetic energy</a><a href="#experiment">Measure the range of a lumped capacitor model</a><a href="#tutorial">Problem sheet · estimating the cost of a circuit approximation</a><a href="#sources">Further reading</a><a href="#long-form">Study the full derivation</a></nav></aside><article class="prose reference"><section><h2 id="distributed">Build a transmission line from small field volumes</h2>
-<p>Consider a uniform two-conductor line supporting a transverse electromagnetic wave. Let \(V(z,t)\) measure the transverse potential difference and \(I(z,t)\) the current toward \(+z\). Denote its inductance and capacitance per unit length by \(L'\) and \(C'\). For the moment assume ideal conductors, a linear lossless dielectric and negligible radiation. A segment \(dz\) stores charge \(C'V\,dz\). Charge balance gives \(I(z)-I(z+dz)=C' dz\,\partial_t V\). Its linked magnetic flux is \(L'I\,dz\); Faraday's law gives the voltage drop \(V(z)-V(z+dz)=L' dz\,\partial_t I\). Division by \(dz\) yields</p>
+<p>Consider a uniform two-conductor line supporting a transverse electromagnetic wave. Let \(V(z,t)\) measure the transverse potential difference and \(I(z,t)\) the current toward \(+z\). Denote its inductance and capacitance per unit length by \(L'\) and \(C'\). For the moment assume ideal conductors, a linear lossless dielectric and negligible radiation. A segment \(dz\) stores charge \(C'V\,dz\). Charge balance gives</p>
+<div class="math display">\[I(z)-I(z+dz)=C' dz\,\partial_t V.\]</div>
+<p>Its linked magnetic flux is \(L'I\,dz\); Faraday's law gives the voltage drop \(V(z)-V(z+dz)=L' dz\,\partial_t I\). Division by \(dz\) yields</p>
 <div class="math display equation-chain"><div class="equation-step">\[\partial_z I=-C'\partial_t V,\]</div><div class="equation-step">\[\partial_z V=-L'\partial_t I .\]</div></div>
-<p>Differentiate the second relation with respect to \(z\) and substitute the first. The result is \(\partial_z^2 V=L'C'\partial_t^2V\), with speed \(u=1/\sqrt{L'C'}\). An outgoing wave \(F(t-z/u)\) satisfies \(V/I=Z_0=\sqrt{L'/C'}\). The electric and magnetic field energies per length are \(C'V^2/2\) and \(L'I^2/2\), and they are equal for this travelling wave. Multiplying the two equations by \(V\) and \(I\) also gives a one-dimensional conservation law: \(\partial_z(VI)=-\partial_t(C'V^2/2+L'I^2/2)\).</p>
+<p>Differentiate the second relation with respect to \(z\) and substitute the first. The result is</p>
+<div class="math display">\[\partial_z^2 V=L'C'\partial_t^2V,\]</div>
+<p>with speed \(u=1/\sqrt{L'C'}\). An outgoing wave \(F(t-z/u)\) satisfies</p>
+<div class="math display">\[V/I=Z_0=\sqrt{L'/C'}.\]</div>
+<p>The electric and magnetic field energies per length are \(C'V^2/2\) and \(L'I^2/2\), and they are equal for this travelling wave. Multiplying the two equations by \(V\) and \(I\) also gives a one-dimensional conservation law:</p>
+<div class="math display">\[\partial_z(VI)=-\partial_t(C'V^2/2+L'I^2/2).\]</div>
 </section>
 <section><h2 id="input">Derive the input admittance of an open end</h2>
-<p>Use \(e^{-i\omega t}\) time dependence, and let the far end \(z=\ell\) be open so \(I(\ell)=0\). Then \(\partial_zV(\ell)=0\). The solution is \(V(z)=V_L\cos k(\ell-z)\), where \(k=\omega/u\). Since \(\partial_zV=i\omega L'I\), the current is \(-i V_L\sin k(\ell-z)/Z_0\). At the input,</p>
+<p>Use \(e^{-i\omega t}\) time dependence, and let the far end \(z=\ell\) be open so \(I(\ell)=0\). Then \(\partial_zV(\ell)=0\). The solution is</p>
+<div class="math display">\[V(z)=V_L\cos k(\ell-z),\]</div>
+<p>where \(k=\omega/u\). Since \(\partial_zV=i\omega L'I\), the current is \(-i V_L\sin k(\ell-z)/Z_0\). At the input,</p>
 <div class="math display equation-chain"><div class="equation-step">\[Y_{\rm in}=-\frac{i}{Z_0}\tan(k\ell),\]</div><div class="equation-step">\[Y_{\rm lumped}=-i\omega C'\ell,\]</div><div class="equation-step">\[\frac{Y_{\rm in}}{Y_{\rm lumped}}=\frac{\tan x}{x},\]</div><div class="equation-step">\[x=\frac{\omega\ell}{u} .\]</div></div>
-<p>At small \(x\), \(\tan x/x=1+x^2/3+O(x^4)\). Thus a circuit approximation can be assigned an error estimate. Near \(x=\pi/2\) the input voltage approaches a node and the ideal input admittance diverges. Losses round the pole in a real line. Beyond this frequency even the sign can change, although the far end remains open.</p>
+<p>At small \(x\),</p>
+<div class="math display">\[\tan x/x=1+x^2/3+O(x^4).\]</div>
+<p>Thus a circuit approximation can be assigned an error estimate. Near \(x=\pi/2\) the input voltage approaches a node and the ideal input admittance diverges. Losses round the pole in a real line. Beyond this frequency even the sign can change, although the far end remains open.</p>
 </section>
 <section><h2 id="examples">Two decisions about model size</h2>
 <h3>A 15 cm open lead</h3>
@@ -44,7 +55,15 @@
 <p>The one-way flight time is \(0.75\) ns. A step launched down the line first sees the characteristic impedance. Information about the open end returns only after \(1.50\) ns. At an open end an incident positive voltage wave is reflected with the same sign. The current waves cancel there, enforcing zero terminal current, while the terminal voltage doubles at their first overlap. For a source matched to \(Z_0\), the returning wave is absorbed at the source. This time-domain argument provides a check on the origin of the standing-wave solution.</p>
 </section>
 <section><h2 id="coupling">A second circuit limit from magnetic energy</h2>
-<p>In the slow-variation limit, linked flux in two fixed coils is linear in both currents. For a reciprocal medium, \(\lambda_1=L_1I_1+MI_2\), \(\lambda_2=MI_1+L_2I_2\). Integrate the supplied power \(I_1\dot\lambda_1+I_2\dot\lambda_2\) to obtain \(U=(L_1I_1^2+2MI_1I_2+L_2I_2^2)/2\). Completing the square gives \(2U=L_1(I_1+MI_2/L_1)^2+(L_2-M^2/L_1)I_2^2\). A passive magnetic energy requires \(|M|\leq\sqrt{L_1L_2}\). The sign of \(M\) depends on terminal orientations. This bound is an independent way to check a measured or numerically inferred circuit model.</p>
+<p>In the slow-variation limit, linked flux in two fixed coils is linear in both currents. For a reciprocal medium,</p>
+<div class="math display equation-chain"><div class="equation-step">\[\lambda_1=L_1I_1+MI_2,\]</div><div class="equation-step">\[\lambda_2=MI_1+L_2I_2.\]</div></div>
+<p>Integrate the supplied power \(I_1\dot\lambda_1+I_2\dot\lambda_2\) to obtain</p>
+<div class="math display">\[U=(L_1I_1^2+2MI_1I_2+L_2I_2^2)/2.\]</div>
+<p>Completing the square gives</p>
+<div class="math display">\[2U=L_1(I_1+MI_2/L_1)^2+(L_2-M^2/L_1)I_2^2.\]</div>
+<p>A passive magnetic energy requires</p>
+<div class="math display">\[|M|\leq\sqrt{L_1L_2}.\]</div>
+<p>The sign of \(M\) depends on terminal orientations. This bound is an independent way to check a measured or numerically inferred circuit model.</p>
 </section>
 <section><h2 id="experiment">Measure the range of a lumped capacitor model</h2>
 <p>The line has speed 2.00 × 10⁸ m/s and impedance 50 Ω. For a 15 cm open section its first quarter-wave pole is 333 MHz. At 60% of that frequency the distributed admittance exceeds the lumped value by 46%. Move the open end and compare the two curves.</p>

@@ -34,10 +34,19 @@
 </section>
 <section>
 <h2 id="manufacture-the-source-by-differentiating-the-field">Manufacture the source by differentiating the field</h2>
-<p>The physical problem uses Gauss's law and the electrostatic relation \(\mathbf E=-\nabla V\). For uniform vacuum permittivity they yield \(-\nabla^2V=\rho/\epsilon_0\). A product \(s_m(x)s_1(y)\) returns the factor \((m^2+1)\pi^2/L^2\) when acted on by the negative Laplacian. Applying this separately to the two patterns gives</p>
+<p>The physical problem uses Gauss's law and the electrostatic relation \(\mathbf E=-\nabla V\). For uniform vacuum permittivity they yield</p>
+<div class="math display">\[-\nabla^2V=\rho/\epsilon_0.\]</div>
+<p>A product \(s_m(x)s_1(y)\) returns the factor \((m^2+1)\pi^2/L^2\) when acted on by the negative Laplacian. Applying this separately to the two patterns gives</p>
 <div class="math display">\[\rho/\epsilon_0=(\pi/L)^2[2s_1(x)+5g s_2(x)]s_1(y)\ {\rm V}.\]</div>
 <p>The right side has dimensions V/m² after including the factor \(L^{-2}\); multiplication by permittivity gives C/m³. When \(g\) becomes large enough, part of the imposed density changes sign. That is permissible for a manufactured source. The calculation represents a solution of the stated Poisson problem. Judging whether a particular apparatus could maintain that charge requires its own charge-transport model.</p>
 <p>Uniqueness gives the reference solution special status. If there were a different voltage for the same walls and charge, their difference \(w\) would satisfy Laplace's equation with zero boundary value. Integrate \(w(-\nabla^2 w)\) over the square. Integration by parts leaves \(\int|\nabla w|^2\), because \(w\) is zero on the boundary. The integral must vanish; \(w\) is constant and its boundary makes that constant zero. This is why agreement with the manufactured voltage is a test of the solver and its input, rather than a choice between two physical solutions.</p>
+
+<details class="study-aside">
+<summary>Background · How can the same source test a second boundary condition?</summary>
+<p>A smooth manufactured solution that vanishes on every edge tests a homogeneous Dirichlet solve. A code that incorrectly sets every requested boundary voltage to zero may still pass. Add a harmonic lift to the known field on a square of width \(L\). For a constant permittivity the charge depends on the Laplacian, so the exact source is unchanged.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\widetilde V(x,y)=V(x,y)+V_0\!\left(1+\frac{x}{L}\right),\]</div><div class="equation-step">\[-\epsilon\nabla^2\widetilde V=-\epsilon\nabla^2 V.\]</div></div>
+<p>Prescribe the lifted values on all four sides and solve again using the same charge samples. The difference of the computed solutions should be the linear lift, which a centred second difference represents exactly on a uniform grid. A discrepancy points first to boundary-value handling or to the way known values enter the right-hand side. This comparison isolates that error from the truncation error on the original sine modes.</p>
+</details>
 </section>
 <section>
 <h2 id="solve-the-discrete-problem-on-paper-as-a-second-reference">Solve the discrete problem on paper as a second reference</h2>

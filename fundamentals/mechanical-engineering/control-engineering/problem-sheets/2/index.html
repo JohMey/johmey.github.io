@@ -42,13 +42,22 @@
 <section><h2 id="3-delay-on-a-positioning-stage">3. Delay on a positioning stage</h2>
 <p>With \(L=2/[s(1+s/2)]\), (a) find the gain crossover, (b) estimate the delay that would use all phase margin, and (c) evaluate the remaining margin after including 0.10 s delay. Count angles consistently.</p>
 <details><summary>Convert delay to a phase at crossover</summary>
-<p>Writing \(x=\omega_c^2\) gives \(x(1+x/4)=4\), so \(\omega_c=\sqrt{-2+2\sqrt5}=1.572\) rad/s. The phase margin is \(90^\circ-\arctan(1.572/2)=51.8^\circ\), or 0.905 rad. A pure delay leaves the crossover magnitude fixed, so the first crossing occurs at about \(0.905/1.572=0.576\) s. A 0.10 s delay costs 0.157 rad or 9.0°, leaving approximately 42.8°. This calculation assumes the given loop is otherwise accurately modelled.</p>
+<p>Writing \(x=\omega_c^2\) gives \(x(1+x/4)=4\), so</p>
+<div class="math display">\[\omega_c=\sqrt{-2+2\sqrt5}=1.572\,\mathrm{rad/s}.\]</div>
+<p>The phase margin is \(90^\circ-\arctan(1.572/2)=51.8^\circ\), or 0.905 rad. A pure delay leaves the crossover magnitude fixed, so the first crossing occurs at about \(0.905/1.572=0.576\) s. A 0.10 s delay costs 0.157 rad or 9.0°, leaving approximately 42.8°. This calculation assumes the given loop is otherwise accurately modelled.</p>
 </details>
 </section>
 <section><h2 id="practice-pid-design">Assign a repeated pole and check a holding-force constraint</h2>
-<p>A second stage has \(m=1.0\,\mathrm{kg}\), \(c=2.0\,\mathrm{N\,s\,m^{-1}}\), \(k=6.0\,\mathrm{N\,m^{-1}}\). Select the PID gains for poles at \(-2,-2,-5\,\mathrm{s^{-1}}\). A constant \(+0.50\,\mathrm N\) force then acts on the stage while its position command is \(+0.020\,\mathrm m\). Determine the holding force and whether an actuator limited to \(\pm0.30\,\mathrm N\) can achieve zero steady position error.</p>
+<p>A second stage has \(m=1.0\,\mathrm{kg}\),</p>
+<div class="math display equation-chain"><div class="equation-step">\[c=2.0\,\mathrm{N\,s\,m^{-1}},\]</div><div class="equation-step">\[k=6.0\,\mathrm{N\,m^{-1}}.\]</div></div>
+<p>Select the PID gains for poles at \(-2,-2,-5\,\mathrm{s^{-1}}\). A constant \(+0.50\,\mathrm N\) force then acts on the stage while its position command is \(+0.020\,\mathrm m\). Determine the holding force and whether an actuator limited to \(\pm0.30\,\mathrm N\) can achieve zero steady position error.</p>
 <details><summary>Show the worked solution</summary>
-<p>\((s+2)^2(s+5)=s^3+9s^2+24s+20\). Subtract the passive coefficients to obtain \(K_d=7.0\,\mathrm{N\,s\,m^{-1}}\), \(K_p=18\,\mathrm{N\,m^{-1}}\), \(K_i=20\,\mathrm{N\,m^{-1}s^{-1}}\). At rest the plant requires \(u=kr-d=6(0.020)-0.50=-0.38\,\mathrm N\), outside the range. Even with \(u=-0.30\,\mathrm N\), the equilibrium is \(y=(u+d)/k=0.0333\,\mathrm m\). The pole assignment describes unsaturated dynamics. Tuning the three gains cannot provide the missing holding authority.</p>
+<div class="math display">\[(s+2)^2(s+5)=s^3+9s^2+24s+20.\]</div>
+<p>Subtract the passive coefficients to obtain \(K_d=7.0\,\mathrm{N\,s\,m^{-1}}\),</p>
+<div class="math display equation-chain"><div class="equation-step">\[K_p=18\,\mathrm{N\,m^{-1}},\]</div><div class="equation-step">\[K_i=20\,\mathrm{N\,m^{-1}s^{-1}}.\]</div></div>
+<p>At rest the plant requires \(u=kr-d=6(0.020)-0.50=-0.38\,\mathrm N\), outside the range. Even with \(u=-0.30\,\mathrm N\), the equilibrium is</p>
+<div class="math display">\[y=(u+d)/k=0.0333\,\mathrm m.\]</div>
+<p>The pole assignment describes unsaturated dynamics. Tuning the three gains cannot provide the missing holding authority.</p>
 </details>
 <p class="source-note">Revisit chapter 3 · <a href="/fundamentals/mechanical-engineering/control-engineering/chapters/03-closed-loop-poles/#pid-design">Assign the poles of a spring-mounted positioning stage with PID</a>.</p>
 </section>
@@ -61,7 +70,9 @@
 </section>
 <section class="lab-problem"><h2 id="laboratory-problem">Identify a controller from a finite-time observation</h2>
 <p>A zero-initial-state, first-order proportional-feedback loop has plant static gain 2. A unit step gives error 0.11331 at six fitted closed-loop time constants. The fitted time constant is 2.22222 s. Infer the controller gain and the original plant time constant, retaining the residual exponential at the sample time.</p>
-<details><summary>Work through the solution</summary><p>The first-order error is \(e(t)=e_\infty+(1-e_\infty)e^{-t/\tau_c}\). Thus \(e_\infty=(0.11331-e^{-6})/(1-e^{-6})=0.11111\) to rounding. With negative unity feedback, \(e_\infty=1/(1+2K_p)\) gives \(K_p\simeq4.00\). The closed-loop denominator gives \(\tau_c=\tau_p/(1+2K_p)\), so \(\tau_p\simeq20.0\) s. Treating the sampled error as the asymptotic value would slightly underestimate gain.</p></details>
+<details><summary>Work through the solution</summary><p>The first-order error is</p>
+<div class="math display">\[e(t)=e_\infty+(1-e_\infty)e^{-t/\tau_c}.\]</div>
+<p>Thus \(e_\infty=(0.11331-e^{-6})/(1-e^{-6})=0.11111\) to rounding. With negative unity feedback, \(e_\infty=1/(1+2K_p)\) gives \(K_p\simeq4.00\). The closed-loop denominator gives \(\tau_c=\tau_p/(1+2K_p)\), so \(\tau_p\simeq20.0\) s. Treating the sampled error as the asymptotic value would slightly underestimate gain.</p></details>
 <p><a href="/fundamentals/mechanical-engineering/control-engineering/#experiment">Use the OneSimulation laboratory to check your answer</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/04-frequency-response/">Chapter 4 · Frequency response, disturbance rejection and robustness</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/05-state-feedback/">Chapter 5 · States, reachability and estimation</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">

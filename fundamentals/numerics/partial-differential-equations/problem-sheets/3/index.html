@@ -31,15 +31,20 @@
 <h2 id="release-a-mode-from-rest">Release a mode from rest</h2>
 <p>For a unit string with fixed ends take initial shape \(u_i^0=\sin(\pi i/N)\) and initial velocity zero. Derive the factor relating \(u_i^1\) to \(u_i^0\) for the centred wave scheme with Courant number \(C\). Evaluate it for \(N=4,\ C=0.5\).</p>
 <details><summary>Worked solution</summary>
-<p>The central second difference of the sine is \(-4\sin^2(\pi/(2N))u_i^0\) before dividing by \(h^2\). The first-step Taylor formula therefore gives \(u_i^1=[1-2C^2\sin^2(\pi/(2N))]u_i^0\).</p>
-<p>At \(N=4,C=0.5\), the factor is \(1-0.5\sin^2(\pi/8)=0.92678\). Copying the initial displacement instead would omit the physical acceleration produced by the curved shape.</p>
+<p>The central second difference of the sine is \(-4\sin^2(\pi/(2N))u_i^0\) before dividing by \(h^2\). The first-step Taylor formula therefore gives</p>
+<div class="math display">\[u_i^1=[1-2C^2\sin^2(\pi/(2N))]u_i^0.\]</div>
+<p>At \(N=4,C=0.5\), the factor is</p>
+<div class="math display">\[1-0.5\sin^2(\pi/8)=0.92678.\]</div>
+<p>Copying the initial displacement instead would omit the physical acceleration produced by the curved shape.</p>
 </details>
 </section>
 <section>
 <h2 id="quantify-a-grid-dependent-observable">Quantify a grid-dependent observable</h2>
 <p>A computed outflow on meshes \(h,h/2,h/4\) is 2.080, 2.020 and 2.005 W. Assuming an asymptotic \(Q_h=Q+c h^p\), estimate \(p\), the extrapolated flux and the fine-grid error. Can those figures alone demonstrate conservation to the same tolerance?</p>
 <details><summary>Worked solution</summary>
-<p>The successive differences are 0.060 and 0.015 W, whose ratio is 4. Thus \(2^p=4,\ p=2\). Extrapolate \(Q=2.005+(2.005-2.020)/3=2.000\) W, giving estimated fine-grid error +0.005 W.</p>
+<p>The successive differences are 0.060 and 0.015 W, whose ratio is 4. Thus</p>
+<div class="math display">\[2^p=4,\ p=2.\]</div>
+<p>Extrapolate \(Q=2.005+(2.005-2.020)/3=2.000\) W, giving estimated fine-grid error +0.005 W.</p>
 <p>A separate conservation check must sum inflows, outflows, sources and storage. A sequence of outflow values can converge cleanly even under a method that systematically loses heat elsewhere.</p>
 </details>
 </section>
@@ -55,14 +60,20 @@
 <h2 id="transfer-mark-source-patch">Refine a three-cell source patch</h2>
 <p>Split the unit interval into thirds and set \(f=0,9,0\) on successive cells, with zero temperature at both ends. Assemble the two interior values, calculate all three indicators and find a smallest set that accounts for \(80\%\) of the sum of indicator squares.</p>
 <details><summary>Worked solution</summary>
-<p>The middle cell contributes \(9(1/3)/2=3/2\) to each endpoint. The interior matrix is \(3\begin{pmatrix}2&amp;-1\\-1&amp;2\end{pmatrix}\), so symmetry gives \(u_1=u_2=1/2\). The slopes are \(3/2,0,-3/2\). Both jumps have magnitude \(3/2\).</p>
-<p>Each attached jump contributes \((1/6)(3/2)^2=3/8\) to a cell. The middle source term contributes \((1/3)^2(81/3)=3\). Thus the indicator squares are \(3/8,15/4,3/8\), totaling \(9/2\). The middle fraction is \((15/4)/(9/2)=5/6\). Marking just that cell exceeds the target.</p>
+<p>The middle cell contributes \(9(1/3)/2=3/2\) to each endpoint. The interior matrix is \(3\begin{pmatrix}2&amp;-1\\-1&amp;2\end{pmatrix}\), so symmetry gives</p>
+<div class="math display">\[u_1=u_2=1/2.\]</div>
+<p>The slopes are \(3/2,0,-3/2\). Both jumps have magnitude \(3/2\).</p>
+<p>Each attached jump contributes \((1/6)(3/2)^2=3/8\) to a cell. The middle source term contributes \((1/3)^2(81/3)=3\). Thus the indicator squares are \(3/8,15/4,3/8\), totaling \(9/2\). The middle fraction is</p>
+<div class="math display">\[(15/4)/(9/2)=5/6.\]</div>
+<p>Marking just that cell exceeds the target.</p>
 </details>
 <p class="source-note">Revisit chapter 6 · <a href="/fundamentals/numerics/partial-differential-equations/chapters/06-verification/#residual-marking">Choose cells to refine from residuals and flux jumps</a>.</p>
 </section>
 <section class="lab-problem"><h2 id="laboratory-problem">Predict the error before making a finer grid</h2>
 <p>In the variable-diffusion laboratory the mode-one errors on 24, 48 and 96 cells per side are \(1.33345\times10^{-3}\), \(3.33763\times10^{-4}\) and \(8.34283\times10^{-5}\). Estimate the last observed order, then predict the error at 192 cells and the number of interior unknowns. Decide whether reducing only the algebraic residual tolerance is likely to produce the same improvement.</p>
-<details><summary>Work through the solution</summary><p>For \(E_N\approx C N^{-p}\), the last doubling gives \(p=\log_2(E_{48}/E_{96})\simeq2.00\). Another doubling predicts \(E_{192}\simeq2.09\times10^{-5}\). Eliminating prescribed boundary nodes leaves \(191^2=36\,481\) interior values. The observed rate is a checkable prediction for this smooth fixed mode. A smaller residual on the 96-cell mesh solves the same discrete equations more accurately. The reported residual is already small, and refinement is what changes their truncation error.</p></details>
+<details><summary>Work through the solution</summary><p>For \(E_N\approx C N^{-p}\), the last doubling gives</p>
+<div class="math display">\[p=\log_2(E_{48}/E_{96})\simeq2.00.\]</div>
+<p>Another doubling predicts \(E_{192}\simeq2.09\times10^{-5}\). Eliminating prescribed boundary nodes leaves \(191^2=36\,481\) interior values. The observed rate is a checkable prediction for this smooth fixed mode. A smaller residual on the 96-cell mesh solves the same discrete equations more accurately. The reported residual is already small, and refinement is what changes their truncation error.</p></details>
 <p><a href="/fundamentals/numerics/partial-differential-equations/#experiment">Use the OneSimulation laboratory to check your answer</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/06-verification/">Chapter 6 · Verification, refinement and local error</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/07-interface-fluxes/">Chapter 7 · Interfaces, contact resistance and Robin data</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">

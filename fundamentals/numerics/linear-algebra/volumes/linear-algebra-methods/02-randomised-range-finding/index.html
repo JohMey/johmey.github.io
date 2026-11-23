@@ -37,7 +37,16 @@
 </section>
 <section><h2 id="probing">Independently test an approximation after building it</h2>
 <p>Add \(p\) extra columns to \(\Omega\) to reduce the chance of poorly exciting a dominant combination. An oversampled \(Q\) has \(k+p\) columns; project to \(B=Q^TA\), take its dominant \(k\) small left singular vectors and map them back through \(Q\). For an exactly rank-\(k\) input the extra columns need appropriate numerical rank handling. In the nearly low-rank case they provide room to represent part of the tail and improve the final cut. Cost depends on access: computing \(A^TQ\) or performing every additional power pass can dominate on streamed or distributed data, even though the final dense SVD is tiny.</p>
-<p>Freeze the fitted approximation \(\tilde A\) and consider an independent random sign vector \(g\) with entries equally likely \(\pm1\). Write \(R=A-\tilde A\). Since \(\mathbb E[gg^T]=I\), \(\mathbb E\|Rg\|^2=\operatorname{tr}(R^TR)=\|R\|_F^2\). Multiple independent checks estimate residual energy and its sampling spread without explicitly assembling \(R\). This estimates Frobenius norm squared; the maximum directional error is a different objective. A single small response does not certify a small spectral norm or guarantee missed directions are unimportant to a particular downstream measurement. Test the physically relevant load or measurement directions as well.</p>
+<p>Freeze the fitted approximation \(\tilde A\) and consider an independent random sign vector \(g\) with entries equally likely \(\pm1\). Write \(R=A-\tilde A\). Since \(\mathbb E[gg^T]=I\),</p>
+<div class="math display">\[\mathbb E\|Rg\|^2=\operatorname{tr}(R^TR)=\|R\|_F^2.\]</div>
+<p>Multiple independent checks estimate residual energy and its sampling spread without explicitly assembling \(R\). This estimates Frobenius norm squared; the maximum directional error is a different objective. A single small response does not certify a small spectral norm or guarantee missed directions are unimportant to a particular downstream measurement. Test the physically relevant load or measurement directions as well.</p>
+
+<details class="study-aside">
+<summary>Background · Why must the test vector be independent of the sketch?</summary>
+<p>Build the sampled range \(Q\) by orthogonalising \(A\Omega\). With exact arithmetic every sampled column already lies in the range of \(Q\). Applying the residual to those same vectors gives</p>
+<div class="math display">\[(I-QQ^T)A\Omega=0.\]</div>
+<p>For example, one column sampled from the two-dimensional identity spans only a line. It reconstructs its own training vector exactly while the unit vector perpendicular to it has error one. A fresh isotropic probe has, on average, nonzero energy in every missing direction. For a standard Gaussian vector \(g\) independent of \(Q\), the mean squared diagnostic is \(\mathbb E\|Rg\|^2=\|R\|_F^2\), with \(R=(I-QQ^T)A\). This identity follows by expanding \(g^TR^TRg\) and using \(\mathbb E[gg^T]=I\). One draw is still a noisy diagnostic, especially when only a single direction is missing.</p>
+</details>
 </section>
 <section><h2 id="numerical-investigation">Which starting direction defeats a random range probe?</h2>
 <p>For a diagonal matrix with singular values 1 and r, rotate a test vector through the dominant right singular direction. Each power iteration multiplies the tangent of its output angle by r². Set r to 0.45, compare zero and two iterations, then inspect the exactly orthogonal probe at 90°. Explain why its residual stays at one.</p>

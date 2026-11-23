@@ -55,14 +55,20 @@
 <h2 id="transfer-qr-shifts">Compare two shifts on the same symmetric operator</h2>
 <p>For \(A=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\end{smallmatrix}\right)\), compute one unshifted QR step using a positively oriented orthogonal basis. Then use shift one and choose any orthonormal completion if the shifted matrix loses rank. Explain why a singular shifted matrix causes no division by an eigenvalue in this method.</p>
 <details><summary>Worked solution</summary>
-<p>The first unshifted column gives \(q_1=(2,1)^T/\sqrt5,\ q_2=(-1,2)^T/\sqrt5\). Their Rayleigh values are \(14/5\) and \(6/5\), and \(q_2^TAq_1=3/5\). The trailing coordinate still has residual 0.6.</p>
+<p>The first unshifted column gives</p>
+<div class="math display">\[q_1=(2,1)^T/\sqrt5,\ q_2=(-1,2)^T/\sqrt5.\]</div>
+<p>Their Rayleigh values are \(14/5\) and \(6/5\), and \(q_2^TAq_1=3/5\). The trailing coordinate still has residual 0.6.</p>
 <p>With shift one the first shifted column is \((1,1)^T\). Its normalised direction and the perpendicular direction are already the two eigenvectors. The updated matrix is diagonal with entries 3 and 1, so deflation is exact. A zero last pivot in the QR factor is allowed because the algorithm multiplies factors and never solves with the singular matrix \(A-I\).</p>
 </details>
 <p class="source-note">Revisit chapter 6 · <a href="/fundamentals/numerics/linear-algebra/chapters/06-spectral/#qr-spectrum">Follow the whole spectrum by QR iteration</a>.</p>
 </section>
 <section class="lab-problem"><h2 id="laboratory-problem">Bound the effect of stopping a linear solve early</h2>
 <p>On the common ten-cell mesh the direct and loose-tolerance CG peak temperatures are 0.05708900 and 0.05620782 K. The maximum pointwise difference over all nodes is reported as \(8.8\times10^{-4}\) K to two significant figures. Derive a bound for the difference between maxima even if the two peak nodes differ. Evaluate it here. Does it bound the continuum error?</p>
-<details><summary>Work through the solution</summary><p>For any nodes \(i\), \(u_i\le v_i+\lVert u-v\rVert_\infty\). Maximise both sides, then interchange \(u,v\), to obtain \(|\max u-\max v|\le\lVert u-v\rVert_\infty\). The two listed peaks differ by 0.00088118 K, consistent with the rounded all-node bound. The argument compares solutions sampled on one mesh. It cannot bound the continuous peak error because neither discretisation nor off-node sampling is included.</p></details>
+<details><summary>Work through the solution</summary><p>For any nodes \(i\),</p>
+<div class="math display">\[u_i\le v_i+\lVert u-v\rVert_\infty.\]</div>
+<p>Maximise both sides, then interchange \(u,v\), to obtain</p>
+<div class="math display">\[|\max u-\max v|\le\lVert u-v\rVert_\infty.\]</div>
+<p>The two listed peaks differ by 0.00088118 K, consistent with the rounded all-node bound. The argument compares solutions sampled on one mesh. It cannot bound the continuous peak error because neither discretisation nor off-node sampling is included.</p></details>
 <p><a href="/fundamentals/numerics/linear-algebra/#experiment">Use the OneSimulation laboratory to check your answer</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/06-spectral/">Chapter 6 · Eigenvalues, modes and spectral gaps</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/07-householder/">Chapter 7 · Householder reflections and practical QR</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">

@@ -39,7 +39,9 @@
 <h2 id="locate-two-coupled-unknowns">Locate two coupled unknowns</h2>
 <p>Take \(F_1=x^2+y-3,\ F_2=x+y^2-3\). At \(x=y=1\), compute the Jacobian and full Newton update. Compare the residual after that update with the result of dropping both coupling terms from the Jacobian.</p>
 <details><summary>Worked solution</summary>
-<p>The residual is \((-1,-1)\) and \(J=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\end{smallmatrix}\right)\). Symmetry gives \(s_x=s_y=1/3\), hence \(x=y=4/3\). Both new residuals equal \(1/9\).</p>
+<p>The residual is \((-1,-1)\) and \(J=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\end{smallmatrix}\right)\). Symmetry gives \(s_x=s_y=1/3\), hence</p>
+<div class="math display">\[x=y=4/3.\]</div>
+<p>Both new residuals equal \(1/9\).</p>
 <p>Dropping the off-diagonal entries instead gives \(s_x=s_y=1/2\), landing at 1.5 in both coordinates with residual \(0.75\) in each row. The uncoupled derivative overestimates the correction because each unknown changes both balances.</p>
 </details>
 </section>
@@ -55,14 +57,21 @@
 <h2 id="transfer-frozen-refresh">Decide when a reused slope is still informative</h2>
 <p>Solve \(x^2=9\) from \(x_0=4\) using the initial slope for the first two steps. Compare the second result with refreshing the slope at the first iterate. For an arbitrary positive frozen slope \(B\), find the range giving a strict local contraction at the positive root.</p>
 <details><summary>Worked solution</summary>
-<p>The initial slope is 8. The first iterate is \(4-7/8=25/8\). Its residual is \(49/64\). Reuse gives \(25/8-49/512=1551/512\approx3.02930\). Refreshing the slope to \(25/4\) gives \(25/8-(49/64)(4/25)=3.0025\).</p>
+<p>The initial slope is 8. The first iterate is</p>
+<div class="math display">\[4-7/8=25/8.\]</div>
+<p>Its residual is \(49/64\). Reuse gives</p>
+<div class="math display">\[25/8-49/512=1551/512\approx3.02930.\]</div>
+<p>Refreshing the slope to \(25/4\) gives</p>
+<div class="math display">\[25/8-(49/64)(4/25)=3.0025.\]</div>
 <p>At the root the error multiplier is \(1-6/B\). The strict inequality \(|1-6/B|&lt;1\) requires \(B&gt;3\). In particular \(B=8\) gives multiplier \(1/4\): factor reuse converges but does not retain Newton's local quadratic rate.</p>
 </details>
 <p class="source-note">Revisit chapter 4 · <a href="/fundamentals/numerics/nonlinear-equations/chapters/04-coupled-newton/#frozen-jacobian">Quantify the cost of freezing a Jacobian</a>.</p>
 </section>
 <section class="lab-problem"><h2 id="laboratory-problem">Distinguish root accuracy from temperature sensitivity</h2>
 <p>For one implicit cooling step take \(T_n=2\) K, \(T_a=1\) K, \(h=1\) s and \(\beta=0.0015\) K⁻³s⁻¹. Differentiate the stage equation with respect to the input temperature, treating \(h,\beta,T_a\) as fixed. Use the tabulated root 1.97851479 K to predict the effect of a 0.001 K increase in \(T_n\). Compare its scale with an algebraic residual near \(10^{-16}\) K.</p>
-<details><summary>Work through the solution</summary><p>Write \(F=x-T_n+h\beta(x^4-T_a^4)\). Implicit differentiation yields \((1+4h\beta x^3)\,\partial x/\partial T_n=1\). The derivative at the tabulated root is approximately 0.956. A small 0.001 K input increase therefore shifts the physical stage root by about 0.000956 K. A tiny numerical residual verifies the equation for specified inputs, while the derivative measures uncertainty resulting from a change to those inputs.</p></details>
+<details><summary>Work through the solution</summary><p>Write \(F=x-T_n+h\beta(x^4-T_a^4)\). Implicit differentiation yields</p>
+<div class="math display">\[(1+4h\beta x^3)\,\partial x/\partial T_n=1.\]</div>
+<p>The derivative at the tabulated root is approximately 0.956. A small 0.001 K input increase therefore shifts the physical stage root by about 0.000956 K. A tiny numerical residual verifies the equation for specified inputs, while the derivative measures uncertainty resulting from a change to those inputs.</p></details>
 <p><a href="/fundamentals/numerics/nonlinear-equations/#experiment">Use the OneSimulation laboratory to check your answer</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/04-coupled-newton/">Chapter 4 · Newton’s method for coupled balances</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/05-globalisation/">Chapter 5 · Line searches and trust regions</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">

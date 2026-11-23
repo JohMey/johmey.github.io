@@ -35,6 +35,8 @@
 <p>In passive exchange neither exit can cross the opposite stream’s inlet temperature. Therefore the maximum available temperature change on either stream is bounded by the same inlet difference \(T_{h,i}-T_{c,i}\). The smaller capacity rate limits the largest conceivable common duty. Define effectiveness from this physically accessible upper scale:</p>
 <div class="math display equation-chain"><div class="equation-step">\[\dot Q_{\max}=C_{\min}(T_{h,i}-T_{c,i}),\]</div><div class="equation-step">\[\varepsilon=\dot Q/\dot Q_{\max},\]</div><div class="equation-step">\[\mathrm{NTU}=UA/C_{\min}.\]</div></div>
 <p>The bound need not be reached by a finite exchanger or by every flow arrangement. Local conductance \(U\,dA\) and the changing local temperature difference determine the actual effectiveness. Knowing the two capacity rates and \(\varepsilon\) suffices to reconstruct both outlet temperatures using the separate energy balances.</p>
+
+<details class="study-aside"><summary>Background · Heat-exchanger effectiveness</summary><div class="math display">\[\epsilon=\dot Q/[C_{\min}(T_{h,i}-T_{c,i})]\]</div><p>Heat-capacity rate is mass flow times specific heat for a single-phase stream. The smaller rate limits the maximum possible sensible heat transfer.</p></details>
 </section>
 <figure class="concept-diagram" id="concept-diagram">
 <a class="diagram-enlarge" href="/assets/fundamentals-figures/engineering-thermodynamics.png" target="_blank" rel="noopener"><img src="/assets/fundamentals-figures/engineering-thermodynamics.png" alt="Hot and cold temperatures both fall along a coordinate measured from the hot inlet. The two fluids travel in opposite directions and stay twenty kelvin apart." width="1326" height="569"><span>Open full-size diagram</span></a>
@@ -50,7 +52,9 @@
 <div class="math display">\[\dot Q=UA\,\frac{\Delta_1-\Delta_2}{\ln(\Delta_1/\Delta_2)} .\]</div>
 <p>For equal terminal differences the apparent zero divided by zero has limit \(\Delta_1\). When one positive approach tends toward zero at a fixed heat duty, the necessary area diverges. Terminal differences must pair the temperatures at the same physical end, not two inlet temperatures chosen from opposite ends.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Size an exchanger from measured terminal temperatures</h3>
-<p>A hot stream cools from \(90\) to \(55^\circ\)C while the counterflow cold stream warms from \(20\) to \(60^\circ\)C. The terminal differences are \(30\) and \(35\) K, so their logarithmic mean is \(5/\ln(35/30)=32.4\) K. For a duty of \(70.0\) kW and \(U=500\) W/(m² K), the required area is \(4.32\) m². The capacities \(2.00\) and \(1.75\) kW/K independently deliver the same \(70.0\) kW.</p>
+<p>A hot stream cools from \(90\) to \(55^\circ\)C while the counterflow cold stream warms from \(20\) to \(60^\circ\)C. The terminal differences are \(30\) and \(35\) K, so their logarithmic mean is</p>
+<div class="math display">\[5/\ln(35/30)=32.4\,\mathrm{K}.\]</div>
+<p>For a duty of \(70.0\) kW and \(U=500\) W/(m² K), the required area is \(4.32\) m². The capacities \(2.00\) and \(1.75\) kW/K independently deliver the same \(70.0\) kW.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Compare equal duty at a tighter terminal approach</h3>
 <p>A redesign has measured terminal differences of \(5.00\) and \(35.0\) K at the same duty and coefficient. The logarithmic mean drops to \(30/\ln7=15.4\) K and the required area rises to \(9.08\) m². Using the arithmetic mean \(20.0\) K would give only \(7.00\) m². The region with low driving difference consumes disproportionately more area per kilowatt transferred.</p>
 </section><section class="course-lab"><p class="reading-label">OneSimulation laboratory</p><h2 id="experiment">Explain why greater exchanger effectiveness can give less power</h2><p class="lab-prediction"><strong>Start from this chapter.</strong> Predict outlet temperatures using the counterflow effectiveness relation. At fixed conductance, increasing NTU here reduces the smaller heat-capacity rate. Determine whether effectiveness and total power move together.</p><p class="lab-access">Compare recorded OneSimulation runs on this page. To test your own inputs, <a href="/downloads/teaching/counterflow_heat_exchanger_ntu.zip" download>download the notebook and model files</a> and run the model in an <a href="/tutorials/install/">activated OneSimulation environment</a>.</p>
@@ -70,16 +74,55 @@
 <p><a class="button" href="/downloads/teaching/counterflow_heat_exchanger_ntu.zip" download>Download experiment files (ZIP)</a> <span class="run-help">Extract the files together and open <code>counterflow_heat_exchanger_ntu.ipynb</code> in a local <a href="/tutorials/install/">OneSimulation environment</a>.</span></p>
 <p>Problem sheet 6 · <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/problem-sheets/6/#laboratory-problem">Recover an exchanger capacity rate from outlet data</a></p><p><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/#case-study">Read the model setup and preparatory problems</a></p></section>
 <section><h2 id="capacity">Set the maximum possible heat rate</h2>
-<p>In a two-stream heat exchanger, the hot temperature falls as the cold temperature rises. Treat each stream as single phase with constant heat capacity rate \(C=\dot m c_p\) in watts per kelvin. Neglect heat leakage, axial conduction and changes in kinetic energy. A steady overall balance gives \(Q=C_h(T_{hi}-T_{ho})=C_c(T_{co}-T_{ci})\). Performing this balance alone leaves both outlet temperatures and the transferred heat rate unknown.</p>
+<p>In a two-stream heat exchanger, the hot temperature falls as the cold temperature rises. Treat each stream as single phase with constant heat capacity rate \(C=\dot m c_p\) in watts per kelvin. Neglect heat leakage, axial conduction and changes in kinetic energy. A steady overall balance gives</p>
+<div class="math display">\[Q=C_h(T_{hi}-T_{ho})=C_c(T_{co}-T_{ci}).\]</div>
+<p>Performing this balance alone leaves both outlet temperatures and the transferred heat rate unknown.</p>
 <p>The stream with smaller capacity rate would undergo the larger temperature change for a given heat rate. Even in an ideal counterflow exchanger it cannot pass the inlet temperature of the other stream at its nearest end. Thus \(Q_{\max}=C_{\min}(T_{hi}-T_{ci})\). Effectiveness is \(\varepsilon=Q/Q_{\max}\), which immediately gives both outlet temperatures once the heat transfer law fixes \(\varepsilon\).</p>
 </section>
 <section><h2 id="differential">Apply a balance to an area element</h2>
 <p>Let \(A\) increase along the hot stream and write the local temperature difference \(\Delta=T_h-T_c\). An element transfers \(dQ=U\Delta\,dA\). In counterflow both temperature profiles decrease when followed in the hot-stream direction, giving \(dT_h=-dQ/C_h\), \(dT_c=-dQ/C_c\). Hence \(d\ln\Delta/dA=U(1/C_c-1/C_h)\). Integrate over area and express each end difference in terms of inlet temperatures and total heat rate using the stream balances.</p>
-<div class="math display">\[NTU=UA/C_{\min},\quad C_r=C_{\min}/C_{\max},\quad \varepsilon=\frac{1-\exp[-NTU(1-C_r)]}{1-C_r\exp[-NTU(1-C_r)]}.\]</div>
+<div class="math display equation-chain"><div class="equation-step">\[NTU=UA/C_{\min},\]</div><div class="equation-step">\[C_r=C_{\min}/C_{\max},\]</div><div class="equation-step">\[\varepsilon=\frac{1-\exp[-NTU(1-C_r)]}{1-C_r\exp[-NTU(1-C_r)]}.\]</div></div>
 <p>The sign in the differential balance follows from the chosen spatial direction. In parallel flow the cold stream warms along that coordinate and the local temperature difference decays more rapidly. For equal capacity rates the counterflow formula has a removable zero over zero. Its limit is \(NTU/(1+NTU)\), which can also be obtained from the constant temperature difference in that special case.</p>
+
+<details class="study-aside">
+<summary>OneSimulation · Can the cold outlet leave hotter than the hot outlet?</summary>
+<p>The hot stream enters at 80 °C with a heat-capacity rate of 2 kW/K. The cold stream enters at 20 °C with a capacity rate of 1 kW/K. Compare the same heat exchanger conductance in parallel flow and counterflow. Obtain the two discharges from the same transferred heat rate \(\dot Q\), using \(\dot C=\dot m c_p\).</p>
+<div class="math display equation-chain"><div class="equation-step">\[T_{h,o}=T_{h,i}-\dot Q/\dot C_h,\]</div><div class="equation-step">\[T_{c,o}=T_{c,i}+\dot Q/\dot C_c.\]</div></div>
+<p>Equal outlets occur at 60 °C and require 40 kW, or effectiveness \(2/3\). Parallel flow approaches this common temperature asymptotically. Counterflow reaches it at \(\mathrm{NTU}=2\ln2\). At NTU 2 the two OneSimulation models predict cold and hot outlets of 66.5 °C and 56.8 °C in counterflow, against 58.0 °C and 61.0 °C in parallel flow. The counterflow outlets sit at opposite ends; heat still travels locally from the hotter fluid to the colder one.</p>
+<pre><code>"""Check for an outlet temperature cross in a two-stream heat exchanger."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.physics.systems.process import counterflow_effectiveness, parallel_flow_effectiveness
+
+hot_in, cold_in = 80., 20.       # °C
+hot_rate, cold_rate = 2., 1.     # kW/K
+capacity_min = min(hot_rate, cold_rate)
+ratio = capacity_min/max(hot_rate, cold_rate)
+ntu = np.linspace(0, 4, 201)
+
+fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+for name, model, style in [("Counterflow", counterflow_effectiveness, "-"),
+                            ("Parallel flow", parallel_flow_effectiveness, "--")]:
+    heat = model(ntu, ratio)*capacity_min*(hot_in-cold_in)  # kW
+    hot_out = hot_in - heat/hot_rate
+    cold_out = cold_in + heat/cold_rate
+    assert np.allclose(hot_rate*(hot_in-hot_out), cold_rate*(cold_out-cold_in))
+    ax.plot(ntu, hot_out, style, color="#a5442e", label=f"{name}, hot outlet")
+    ax.plot(ntu, cold_out, style, color="#19596a", label=f"{name}, cold outlet")
+
+ax.axvline(2*np.log(2), color="0.5", linestyle=":", label="Counterflow outlets equal")
+ax.set(xlabel="Transfer units UA / minimum capacity rate", ylabel="Outlet temperature (°C)")
+ax.legend(fontsize=8)
+fig.savefig("engineering-thermodynamics.png", dpi=170)</code></pre>
+<figure><img src="/assets/aside-figures/engineering-thermodynamics.png" width="1190" height="680" alt="Solid counterflow outlet temperature curves cross; dashed parallel-flow outlet temperatures approach a common limit from either side." loading="lazy"><figcaption>Compare outlets at the same horizontal coordinate. A temperature cross in counterflow describes two different positions along the exchanger.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/engineering-thermodynamics.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section><h2 id="cooler">Predict both outlet temperatures</h2>
-<p>A counterflow cooler receives a hot stream at 90 °C with \(C_h=2.0\,\mathrm{kW/K}\) and a cold stream at 20 °C with \(C_c=1.0\,\mathrm{kW/K}\). Its conductance \(UA\) is 1.50 kW/K. Thus \(C_r=0.5\), \(NTU=1.5\), and the exponential is \(e^{-0.75}=0.4724\). Effectiveness is 0.6908. Consequently \(Q=0.6908(1.0)(90-20)=48.4\,\mathrm{kW}\), \(T_{ho}=90-48.4/2=65.8^\circ\mathrm C\) and \(T_{co}=20+48.4=68.4^\circ\mathrm C\).</p>
+<p>A counterflow cooler receives a hot stream at 90 °C with \(C_h=2.0\,\mathrm{kW/K}\) and a cold stream at 20 °C with \(C_c=1.0\,\mathrm{kW/K}\). Its conductance \(UA\) is 1.50 kW/K. Thus \(C_r=0.5\), \(NTU=1.5\), and the exponential is</p>
+<div class="math display">\[e^{-0.75}=0.4724.\]</div>
+<p>Effectiveness is 0.6908. Consequently \(Q=0.6908(1.0)(90-20)=48.4\,\mathrm{kW}\),</p>
+<div class="math display equation-chain"><div class="equation-step">\[T_{ho}=90-48.4/2=65.8^\circ\mathrm C,\]</div><div class="equation-step">\[T_{co}=20+48.4=68.4^\circ\mathrm C.\]</div></div>
 <p>The cold outlet is warmer than the hot outlet. They are at opposite physical ends, so this does not imply a local reversal of heat flow. The end differences are \(90-68.4=21.6\) K and \(65.8-20=45.8\) K, both positive. Their logarithmic mean is approximately \((45.8-21.6)/\ln(45.8/21.6)=32.2\,\mathrm K\), independently recovering \(Q=UA\Delta T_{\rm lm}\simeq48.3\,\mathrm{kW}\). This local check catches errors caused by swapping the terminal temperatures of a counterflow exchanger.</p>
 </section>
 <section><h2 id="capacity-change">Predict the counterflow experiment</h2>
@@ -92,7 +135,11 @@
 <p>Treating \(UA\) as proportional to flow whenever convection rises would ignore the series resistances left in its path. As \(m_r\) becomes large the hot-film term tends to zero, leaving an asymptote \(1/R_{\rm fixed}\) rather than unbounded conductance. Pumping power typically rises over this same change of flow.</p>
 </section>
 <section><h2 id="cleaning">Use a flow sweep to distinguish fouling from film resistance</h2>
-<p>A clean counterflow rig at reference hot-side mass flow has \(UA=500\,\mathrm{W/K}\), giving total resistance \(0.00200\,\mathrm{K/W}\). At twice the flow it has \(UA=600\,\mathrm{W/K}\), or \(0.001667\,\mathrm{K/W}\). Over this interval use measured exponent \(n=0.80\), so \(2^{-0.8}=0.5743\). Subtracting the two equations gives \(R_{h,\rm ref}=(0.00200-0.001667)/(1-0.5743)=0.000783\,\mathrm{K/W}\). The combined fixed resistance is \(0.001217\,\mathrm{K/W}\). Even an ideal hot film could raise conductance only to about 822 W/K under the unchanged fixed-side assumptions.</p>
+<p>A clean counterflow rig at reference hot-side mass flow has \(UA=500\,\mathrm{W/K}\), giving total resistance \(0.00200\,\mathrm{K/W}\). At twice the flow it has \(UA=600\,\mathrm{W/K}\), or \(0.001667\,\mathrm{K/W}\). Over this interval use measured exponent \(n=0.80\), so</p>
+<div class="math display">\[2^{-0.8}=0.5743.\]</div>
+<p>Subtracting the two equations gives</p>
+<div class="math display">\[R_{h,\rm ref}=(0.00200-0.001667)/(1-0.5743)=0.000783\,\mathrm{K/W}.\]</div>
+<p>The combined fixed resistance is \(0.001217\,\mathrm{K/W}\). Even an ideal hot film could raise conductance only to about 822 W/K under the unchanged fixed-side assumptions.</p>
 <p>A later test at reference flow gives \(UA=400\,\mathrm{W/K}\), so total resistance has grown to 0.00250 K/W. If a second flow sweep confirms the same hot-film slope, the added fixed resistance is 0.00050 K/W. For a heat-transfer area of 2.0 m² on the chosen basis this corresponds to fouling resistance \(R_f''=0.0010\,\mathrm{m^2K/W}\). If instead the slope has changed, assigning the entire difference to deposits is unwarranted; changed flow distribution or fluid properties may contribute. Temperature measurement also matters strongly when the two terminal differences are close to sensor uncertainty. Compare the hot and cold enthalpy duties before fitting the conductance and retain the residual across all measured flow settings.</p>
 <p>A third clean test can challenge the fitted exponent. At four times reference hot flow, the predicted resistance is \(0.001217+0.000783(4^{-0.8})=0.001475\,\mathrm{K/W}\), or \(UA\simeq678\,\mathrm{W/K}\). A systematic departure that grows at high flow could reflect changing cold-side properties, thermocouple bias or failure of the hot-film correlation. Two calibration points always fit a two-parameter straight line; the independent third point actually tests the assumed dependence.</p>
 </section>

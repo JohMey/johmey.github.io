@@ -31,7 +31,9 @@
 <p class="reading-label">From first principles</p><h2 id="first-principles">Differentiate the trajectory that your instrument measures</h2>
 <p>Let a scalar parameter \(\theta\) enter both a smooth rate law \(y'=f(t,y,\theta)\) and the initial data \(y(0)=g(\theta)\). Compare two solutions at the same physical time. Their difference divided by a small parameter increment tends to the sensitivity \(S=\partial y/\partial\theta\). Differentiating the rate law at fixed time supplies a term from the moving state and a direct parameter term:</p>
 <div class="math display equation-chain"><div class="equation-step">\[\dot S=f_y S+f_\theta,\]</div><div class="equation-step">\[S(0)=g'(\theta).\]</div></div>
-<p>For a scalar terminal measurement \(J=\psi(y(T),\theta)\) the chain rule gives \(J'=\psi_y S(T)+\psi_\theta\). When many parameters enter a single output, a backward equation can reuse their common output weighting. Choose \(\lambda(T)=\psi_y^T\) and \(\dot\lambda=-f_y^T\lambda\). Then the terms containing the unknown sensitivity cancel in the derivative of their scalar product:</p>
+<p>For a scalar terminal measurement \(J=\psi(y(T),\theta)\) the chain rule gives</p>
+<div class="math display">\[J'=\psi_y S(T)+\psi_\theta.\]</div>
+<p>When many parameters enter a single output, a backward equation can reuse their common output weighting. Choose \(\lambda(T)=\psi_y^T\) and \(\dot\lambda=-f_y^T\lambda\). Then the terms containing the unknown sensitivity cancel in the derivative of their scalar product:</p>
 <div class="math display equation-chain"><div class="equation-step">\[\frac{d}{dt}(\lambda^T S)=\lambda^Tf_\theta,\]</div><div class="equation-step">\[J'=\psi_\theta+\lambda(0)^Tg'(\theta)+\int_0^T\lambda^Tf_\theta\,dt.\]</div></div>
 <p>Evaluate all derivatives on the original trajectory. For \(y'=-\theta y\) with fixed \(y(0)\), direct differentiation gives \(S(T)=-Ty(T)\), the sign expected when increasing the decay rate. A parameter-dependent observation time would add an endpoint term.</p>
 </section>
@@ -45,18 +47,26 @@
 <div class="math display">\[dJ/d\theta=\Phi_\theta+\sum_{n=0}^{N-1}\lambda_{n+1}B_n .\]</div>
 <p>With vector states the reverse update uses the transpose Jacobian. An initial condition depending on \(\theta\) adds \(\lambda_0\,\partial_\theta y_0\). The resulting gradient is exact for the discrete map up to arithmetic precision, though it can differ from the gradient of the continuous solution. Adaptive control decisions need special care if differentiating through changes in the time grid.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Differentiate a two-step fitted decay</h3>
-<p>Let \(y'=-\theta y\), \(y_0=2.00\), \(h=0.250\), \(\theta=1.00\), and \(J=(y_2-1)^2/2\). The Euler states are \(1.50\) and \(1.125\), giving \(\lambda_2=0.125\), \(\lambda_1=0.09375\). The local parameter derivatives are \(-0.500\) and \(-0.375\). Thus \(J'=0.09375(-0.500)+0.125(-0.375)=-0.09375\). Increasing the decay rate locally reduces the positive final residual.</p>
+<p>Let \(y'=-\theta y\), \(y_0=2.00\), \(h=0.250\), \(\theta=1.00\), and \(J=(y_2-1)^2/2\). The Euler states are \(1.50\) and \(1.125\), giving \(\lambda_2=0.125\), \(\lambda_1=0.09375\). The local parameter derivatives are \(-0.500\) and \(-0.375\). Thus</p>
+<div class="math display">\[J'=0.09375(-0.500)+0.125(-0.375)=-0.09375.\]</div>
+<p>Increasing the decay rate locally reduces the positive final residual.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Compare with the continuous sensitivity at the same time</h3>
 <p>At \(t=0.500\) the exact value is \(2e^{-0.5}=1.21306\) and its derivative is \(-0.500(1.21306)=-0.60653\). The continuous objective therefore has derivative \(-0.1292\). That difference is expected at this coarse step. A centred parameter perturbation of the two-step numerical objective should approach \(-0.09375\), providing a direct implementation check without assuming that the time integrator is already accurate.</p>
 </section>
 <section>
 <h2 id="differentiate-the-evolution">Differentiate the evolution</h2>
-<p>Let \(y'=f(t,y,\alpha)\) with smooth \(f\) and \(y(0)=y_0(\alpha)\). Assume that the solution exists and depends differentiably on \(\alpha\) throughout the observation window. Differentiating the equation along the solution gives \(S'=f_y S+f_\alpha\) and \(S(0)=y_0'(\alpha)\), where \(S=\partial y/\partial\alpha\). The first term propagates state changes through the dynamics and the second injects the direct parameter effect. Losing the initial derivative gives the wrong sensitivity whenever a parameter also changes the initial preparation.</p>
-<p>For an output \(Q=\phi(y(T),\alpha)\), the chain rule gives \(Q_\alpha=\phi_y S(T)+\phi_\alpha\). Each parameter requires its own tangent column. Many observations can then reuse the propagated columns. Scaling matters because a derivative with respect to milliseconds is numerically different from the derivative with respect to seconds. Multiplying by a stated parameter perturbation converts the derivative back into a predicted observation change that can be checked directly.</p>
+<p>Let \(y'=f(t,y,\alpha)\) with smooth \(f\) and \(y(0)=y_0(\alpha)\). Assume that the solution exists and depends differentiably on \(\alpha\) throughout the observation window. Differentiating the equation along the solution gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[S'=f_y S+f_\alpha,\]</div><div class="equation-step">\[S(0)=y_0'(\alpha),\]</div></div>
+<p>where \(S=\partial y/\partial\alpha\). The first term propagates state changes through the dynamics and the second injects the direct parameter effect. Losing the initial derivative gives the wrong sensitivity whenever a parameter also changes the initial preparation.</p>
+<p>For an output \(Q=\phi(y(T),\alpha)\), the chain rule gives</p>
+<div class="math display">\[Q_\alpha=\phi_y S(T)+\phi_\alpha.\]</div>
+<p>Each parameter requires its own tangent column. Many observations can then reuse the propagated columns. Scaling matters because a derivative with respect to milliseconds is numerically different from the derivative with respect to seconds. Multiplying by a stated parameter perturbation converts the derivative back into a predicted observation change that can be checked directly.</p>
 </section>
 <section>
 <h2 id="a-rate-parameter-and-a-final-measurement">A rate parameter and a final measurement</h2>
-<p>Take \(y'=-\alpha y,\ y(0)=2\). Then \(S'=-\alpha S-y,\ S(0)=0\). Multiplying by \(e^{\alpha t}\) leaves \((e^{\alpha t}S)'=-2\), hence \(S=-2te^{-\alpha t}\). At \(\alpha=0.5\) per second and \(T=2\) s the sensitivity of final amplitude is \(-4/e\approx-1.47152\) amplitude units per inverse second. Raising the decay rate by 0.01 per second predicts a decrease of 0.014715. The exact change is \(2e^{-1}(e^{-0.02}-1)\approx-0.01457\); the discrepancy is quadratic in the parameter perturbation.</p>
+<p>Take \(y'=-\alpha y,\ y(0)=2\). Then</p>
+<div class="math display">\[S'=-\alpha S-y,\ S(0)=0.\]</div>
+<p>Multiplying by \(e^{\alpha t}\) leaves \((e^{\alpha t}S)'=-2\), hence \(S=-2te^{-\alpha t}\). At \(\alpha=0.5\) per second and \(T=2\) s the sensitivity of final amplitude is \(-4/e\approx-1.47152\) amplitude units per inverse second. Raising the decay rate by 0.01 per second predicts a decrease of 0.014715. The exact change is \(2e^{-1}(e^{-0.02}-1)\approx-0.01457\); the discrepancy is quadratic in the parameter perturbation.</p>
 <p>Testing a tangent code by differences requires controlling both the ODE integration error and subtraction error. Use several perturbation sizes. With a forward difference the truncation error normally decreases linearly at first, until numerical noise in subtracting two nearly equal outputs dominates.</p>
 </section>
 <section>
@@ -78,15 +88,25 @@
 </section>
 <section>
 <h2 id="estimate-the-final-position-after-a-velocity-switch">Estimate the final position after a velocity switch</h2>
-<p>Let a cart start at zero and travel at constant positive speed \(p\) until it reaches position one. It then travels at fixed speed 0.5. Observe its position at \(T=2\), and examine \(p=1\), so the event occurs at \(\tau=1\). The pre-event position is \(pt\) and its tangent at fixed time is \(S^-=t=1\). Using \(G=y-1\) gives \(\tau_p=-1/p^2=-1\). Since \(f^-=1\) and \(f^+=0.5\), the tangent immediately after the switch becomes \(1+(1-0.5)(-1)=0.5\). Subsequent evolution at the fixed speed adds no further parameter source.</p>
+<p>Let a cart start at zero and travel at constant positive speed \(p\) until it reaches position one. It then travels at fixed speed 0.5. Observe its position at \(T=2\), and examine \(p=1\), so the event occurs at \(\tau=1\). The pre-event position is \(pt\) and its tangent at fixed time is</p>
+<div class="math display">\[S^-=t=1.\]</div>
+<p>Using \(G=y-1\) gives</p>
+<div class="math display">\[\tau_p=-1/p^2=-1.\]</div>
+<p>Since \(f^-=1\) and \(f^+=0.5\), the tangent immediately after the switch becomes</p>
+<div class="math display">\[1+(1-0.5)(-1)=0.5.\]</div>
+<p>Subsequent evolution at the fixed speed adds no further parameter source.</p>
 <p>Check directly: as long as the event precedes the observation, \(y(T,p)=1+0.5(2-1/p)\). Its derivative at one is indeed 0.5. At \(p=1.01\) the exact final position is approximately 1.5049505 instead of 1.5. The first-order prediction is 1.505. Carrying the pre-event tangent unchanged through the switch would predict 1.51, nearly doubling the response. Resetting it to zero because the event position is fixed would miss the change entirely.</p>
 <p>At \(p=0.5\) the switch is exactly at the observation endpoint. Parameters below this value give \(y(T)=2p\), whereas parameters above it use the switched expression. Both one-sided derivatives happen to equal two here because the two velocities match at this specific threshold value. Their second derivatives differ. Changing the post-event speed to 0.25 makes even the first derivatives disagree at the boundary. An apparent smooth result in one carefully chosen switching case cannot justify ignoring event timing throughout a parameter study.</p>
 <p>A finite-difference sensitivity test should consequently check which events occurred on both perturbed trajectories. Agreement in total simulated duration and integrator tolerance is insufficient if the jump sequence changed. Recording event times together with the reported output makes it possible to distinguish an error in the reset law from a derivative that has ceased to exist across the selected parameter interval.</p>
 </section>
 <section>
 <h2 id="propagate-a-reset-depending-on-the-event-location">Propagate a reset depending on the event location</h2>
-<p>If a switching event resets the state by \(y^+=R(t,y^-,p)\), differentiate the reset along the moving event before returning to a fixed clock time. The result is \(S^+=R_yS^-+R_p+(R_t+R_y f^--f^+)\tau_p\). This reduces to the continuous-state formula when \(R\) is the identity. The occurrence time must still come from the pre-event trajectory, since the post-event state generally does not satisfy the original trigger condition.</p>
-<p>Modify the cart example so the trigger position is \(H(p)=1+0.2(p-1)\), and the indicated position is reset to \(R=0.3y^-+0.2\) before it increases at speed 0.5. At \(p=1\), \(\tau=H/p=1\) and \(\tau_p=0.2-1=-0.8\). The pre-event fixed-time tangent is one. The reset gives \(S^+=0.3+(0.3-0.5)(-0.8)=0.46\). The indicated final position at time two is \(0.3H+0.2+0.5(2-H/p)\), exactly one at the nominal parameter. Differentiating this expression gives \(0.3(0.2)-0.5(0.2-1)=0.46\), independently verifying the sign and the event-time correction. Simply differentiating the reset map at the nominal crossing position would give 0.3 and lose the varying length of the post-event trajectory.</p>
+<p>If a switching event resets the state by \(y^+=R(t,y^-,p)\), differentiate the reset along the moving event before returning to a fixed clock time. The result is</p>
+<div class="math display">\[S^+=R_yS^-+R_p+(R_t+R_y f^--f^+)\tau_p.\]</div>
+<p>This reduces to the continuous-state formula when \(R\) is the identity. The occurrence time must still come from the pre-event trajectory, since the post-event state generally does not satisfy the original trigger condition.</p>
+<p>Modify the cart example so the trigger position is \(H(p)=1+0.2(p-1)\), and the indicated position is reset to \(R=0.3y^-+0.2\) before it increases at speed 0.5. At \(p=1\), \(\tau=H/p=1\) and \(\tau_p=0.2-1=-0.8\). The pre-event fixed-time tangent is one. The reset gives</p>
+<div class="math display">\[S^+=0.3+(0.3-0.5)(-0.8)=0.46.\]</div>
+<p>The indicated final position at time two is \(0.3H+0.2+0.5(2-H/p)\), exactly one at the nominal parameter. Differentiating this expression gives \(0.3(0.2)-0.5(0.2-1)=0.46\), independently verifying the sign and the event-time correction. Simply differentiating the reset map at the nominal crossing position would give 0.3 and lose the varying length of the post-event trajectory.</p>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/09-verlet/">Chapter 9 · Störmer–Verlet and a discrete invariant</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/5/">Problem sheet 5 · Long trajectories and sensitivities</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">

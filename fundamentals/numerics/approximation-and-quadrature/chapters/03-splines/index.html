@@ -34,7 +34,9 @@
 <div class="math display">\[p(t)=y_0+hd_0t+At^2+Bt^3 .\]</div>
 <p>The factor \(h\) converts a derivative per unit \(x\) into one per unit \(t\). Write \(\Delta=y_1-y_0\). Imposing the right endpoint value and derivative gives two linear equations,</p>
 <div class="math display equation-chain"><div class="equation-step">\[A+B=\Delta-hd_0,\]</div><div class="equation-step">\[2A+3B=h(d_1-d_0).\]</div></div>
-<p>Solving gives \(A=3\Delta-h(2d_0+d_1)\) and \(B=-2\Delta+h(d_0+d_1)\). Thus four measurements determine four coefficients uniquely. Adjacent panels sharing heights and slopes join with a continuous first derivative. If only heights are measured, a spline construction supplies the missing information through smoothness conditions between panels and boundary conditions at the ends.</p>
+<p>Solving gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[A=3\Delta-h(2d_0+d_1),\]</div><div class="equation-step">\[B=-2\Delta+h(d_0+d_1).\]</div></div>
+<p>Thus four measurements determine four coefficients uniquely. Adjacent panels sharing heights and slopes join with a continuous first derivative. If only heights are measured, a spline construction supplies the missing information through smoothness conditions between panels and boundary conditions at the ends.</p>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Check whether a cubic panel preserves a rising signal</h2>
@@ -43,12 +45,16 @@
 <p>Here \(p'\) is with respect to the physical coordinate \(x\). The first and last coefficients enforce the endpoint derivatives. Each of the three basis functions has integral \(1/3\) over \(t\). Since integrating \(p'(x)\) across the physical panel must return the specified height gain, the middle coefficient is fixed,</p>
 <div class="math display equation-chain"><div class="equation-step">\[y_1-y_0=\frac{h}{3}(d_0+b+d_1),\]</div><div class="equation-step">\[b=3m-d_0-d_1 .\]</div></div>
 <p>Nonnegative coefficients provide a simple sufficient condition for a nondecreasing panel. The basis functions also sum to one, so they immediately bound the derivative when the condition holds,</p>
-<div class="math display equation-chain"><div class="equation-step">\[d_0,d_1\ge0,\]</div><div class="equation-step">\[d_0+d_1\le3m\quad\Longrightarrow\quad 0\le p'(x)\le\max(d_0,b,d_1).\]</div></div>
+<div class="math display">\[d_0,d_1\ge0,\quad d_0+d_1\le3m\quad\Longrightarrow\quad 0\le p'(x)\le\max(d_0,b,d_1).\]</div>
 <p>A negative middle coefficient alone does not prove reversal, since the three basis functions overlap. If the sufficient test fails, evaluate the minimum of the quadratic on the panel, including its endpoints and any interior stationary point. Local monotonicity matters when interpolating cumulative counts or instrument calibrations that must be invertible.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Certify a rising calibration between samples</h3>
-<p>A signal rises from 2 to 5 over \(h=2\), so \(m=1.5\). Reported slopes are \(d_0=1\) and \(d_1=3\), giving \(b=0.5\). The derivative is nonnegative everywhere. At the midpoint it equals \(0.25(1)+0.5(0.5)+0.25(3)=1.25\). No hidden local maximum can lie inside this panel.</p>
+<p>A signal rises from 2 to 5 over \(h=2\), so \(m=1.5\). Reported slopes are \(d_0=1\) and \(d_1=3\), giving \(b=0.5\). The derivative is nonnegative everywhere. At the midpoint it equals</p>
+<div class="math display">\[0.25(1)+0.5(0.5)+0.25(3)=1.25.\]</div>
+<p>No hidden local maximum can lie inside this panel.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Find a reversal that endpoint slopes conceal</h3>
-<p>On a separate unit panel take a rise of one and equal endpoint slopes of four. Then \(m=1\), \(b=3-8=-5\), and the midpoint derivative is \(1-2.5+1=-0.5\). Both measured endpoint derivatives are positive, yet the fitted curve locally decreases. Replacing both slopes by \(1.5\) gives \(b=0\) and restores a certifiably nondecreasing interpolation while preserving the two measured heights.</p>
+<p>On a separate unit panel take a rise of one and equal endpoint slopes of four. Then \(m=1\), \(b=3-8=-5\), and the midpoint derivative is</p>
+<div class="math display">\[1-2.5+1=-0.5.\]</div>
+<p>Both measured endpoint derivatives are positive, yet the fitted curve locally decreases. Replacing both slopes by \(1.5\) gives \(b=0\) and restores a certifiably nondecreasing interpolation while preserving the two measured heights.</p>
 </section>
 <section>
 <h2 id="four-conditions-on-a-single-panel">Four conditions on a single panel</h2>
@@ -60,11 +66,15 @@
 <section>
 <h2 id="recover-slopes-when-only-values-are-measured">Recover slopes when only values are measured</h2>
 <p>A cubic spline fits one cubic on every interval, requiring continuity of both first and second derivatives at interior nodes. Let \(M_i=S''(x_i)\). Since a cubic has a linear second derivative, on panel \(i\) interpolate \(M_i\) and \(M_{i+1}\) linearly and integrate twice. Use the two measured endpoint values to fix the integration constants. On equal panels the resulting right-hand slope at the left endpoint is \((y_{i+1}-y_i)/h-h(2M_i+M_{i+1})/6\). The left-hand slope at the right endpoint is \((y_{i+1}-y_i)/h+h(M_i+2M_{i+1})/6\).</p>
-<p>Equating these expressions at an interior join gives \(M_{i-1}+4M_i+M_{i+1}=6(y_{i-1}-2y_i+y_{i+1})/h^2\). This tridiagonal system relates each undetermined curvature to the neighbouring data. Two additional end conditions are needed. A natural spline imposes zero curvature at both endpoints. A clamped spline uses given endpoint slopes instead. Choose those conditions from what the experiment actually controls.</p>
+<p>Equating these expressions at an interior join gives</p>
+<div class="math display">\[M_{i-1}+4M_i+M_{i+1}=6(y_{i-1}-2y_i+y_{i+1})/h^2.\]</div>
+<p>This tridiagonal system relates each undetermined curvature to the neighbouring data. Two additional end conditions are needed. A natural spline imposes zero curvature at both endpoints. A clamped spline uses given endpoint slopes instead. Choose those conditions from what the experiment actually controls.</p>
 </section>
 <section>
 <h2 id="examine-the-influence-of-endpoint-assumptions">Examine the influence of endpoint assumptions</h2>
-<p>Fit a natural spline at \(x=0,1,2\) to \(y=0,1,0\). The end curvatures are zero and the interior equation gives \(4M_1=6(0-2+0)=-12\), hence \(M_1=-3\). On the first panel \(S''=-3x\). Two integrations give \(S=-x^3/2+ax+b\). The endpoint values set \(b=0,a=1.5\), yielding \(S(0.5)=0.6875\) compared with 0.5 from the straight chord. Symmetry gives zero slope at the summit and a reflected cubic on the second interval.</p>
+<p>Fit a natural spline at \(x=0,1,2\) to \(y=0,1,0\). The end curvatures are zero and the interior equation gives \(4M_1=6(0-2+0)=-12\), hence \(M_1=-3\). On the first panel \(S''=-3x\). Two integrations give</p>
+<div class="math display">\[S=-x^3/2+ax+b.\]</div>
+<p>The endpoint values set \(b=0,a=1.5\), yielding \(S(0.5)=0.6875\) compared with 0.5 from the straight chord. Symmetry gives zero slope at the summit and a reflected cubic on the second interval.</p>
 <p>Smoothness alone cannot establish the true midpoint value. A sensor measuring a sharp corner would support a piecewise linear description, and monotone data can require a slope limiter to avoid artificial extrema in a cubic fit. Likewise, setting endpoint curvature to zero in a mechanical fit asserts a moment condition only under the appropriate beam model. Report the end conditions with the fitted curve, especially when derivatives near the ends are used as physical observables.</p>
 </section>
 <section>
@@ -74,13 +84,21 @@
 </section>
 <section>
 <h2 id="why-the-natural-spline-minimises-bending">Why the natural spline minimises bending</h2>
-<p>Consider all twice continuously differentiable interpolants of the same tabulated values on an interval. For a natural cubic spline \(S\), each panel is cubic, \(S'\) and \(S''\) agree across knots, and \(S''=0\) at both endpoints. Let a competing interpolant be \(S+w\). The perturbation \(w\) vanishes at every knot including the endpoints. Expanding the squared curvature integral gives \(\int(S''+w'')^2=\int(S'')^2+2\int S''w''+\int(w'')^2\). To prove that \(S\) minimises this integral, account for every boundary term in the cross product.</p>
+<p>Consider all twice continuously differentiable interpolants of the same tabulated values on an interval. For a natural cubic spline \(S\), each panel is cubic, \(S'\) and \(S''\) agree across knots, and \(S''=0\) at both endpoints. Let a competing interpolant be \(S+w\). The perturbation \(w\) vanishes at every knot including the endpoints. Expanding the squared curvature integral gives</p>
+<div class="math display">\[\int(S''+w'')^2=\int(S'')^2+2\int S''w''+\int(w'')^2.\]</div>
+<p>To prove that \(S\) minimises this integral, account for every boundary term in the cross product.</p>
 <p>Integrate the cross product by parts twice on each panel. The interior integral containing \(S''''w\) vanishes because the panel is cubic. The term \(S'''w\) vanishes at every panel endpoint since \(w=0\) at each knot. The remaining interface contributions \(S''w'\) cancel between adjacent panels because both factors are continuous. At the outer boundaries \(S''=0\). Thus the cross term vanishes exactly. Equality of the objectives requires \(w''=0\) throughout; a globally affine perturbation vanishing at two distinct knots is zero. This proves uniqueness within the admissible class and explains the natural endpoint condition as part of a variational statement.</p>
 </section>
 <section>
 <h2 id="calculate-the-bending-energy-on-an-uneven-grid">Calculate the bending energy on an uneven grid</h2>
-<p>Suppose the interpolation points are \((0,0),(1,2),(3,2)\). The panel widths are one and two, and the secant slopes are two and zero. For a natural cubic write \(M_i=S''(x_i)\), so \(M_0=M_2=0\). Continuity of first derivative at the central knot gives \(2(1+2)M_1=6(0-2)\), hence \(M_1=-2\). The bending moment changes linearly from zero to −2 on the first panel and from −2 to zero on the second. The longer panel contains twice the squared curvature integral because it sweeps the same range of curvature over twice the distance.</p>
-<p>Specifically the first contribution is \(\int_0^1(-2x)^2dx=4/3\). On the second panel \(S''=x-3\), giving \(\int_1^3(x-3)^2dx=8/3\). Total energy is four. Integrating the first curvature twice and fitting its endpoints gives \(S=7x/3-x^3/3\); at the central knot the slope is \(4/3\), neither of the adjacent straight-line secant slopes. On the second panel write \(t=x-1\). Then \(S=2+4t/3-t^2+t^3/6\), which returns to two at \(t=2\). The curve rises above the equal second and third data values in between.</p>
+<p>Suppose the interpolation points are \((0,0),(1,2),(3,2)\). The panel widths are one and two, and the secant slopes are two and zero. For a natural cubic write \(M_i=S''(x_i)\), so</p>
+<div class="math display">\[M_0=M_2=0.\]</div>
+<p>Continuity of first derivative at the central knot gives \(2(1+2)M_1=6(0-2)\), hence \(M_1=-2\). The bending moment changes linearly from zero to −2 on the first panel and from −2 to zero on the second. The longer panel contains twice the squared curvature integral because it sweeps the same range of curvature over twice the distance.</p>
+<p>Specifically the first contribution is</p>
+<div class="math display">\[\int_0^1(-2x)^2dx=4/3.\]</div>
+<p>On the second panel \(S''=x-3\), giving \(\int_1^3(x-3)^2dx=8/3\). Total energy is four. Integrating the first curvature twice and fitting its endpoints gives</p>
+<div class="math display">\[S=7x/3-x^3/3;\]</div>
+<p>at the central knot the slope is \(4/3\), neither of the adjacent straight-line secant slopes. On the second panel write \(t=x-1\). Then \(S=2+4t/3-t^2+t^3/6\), which returns to two at \(t=2\). The curve rises above the equal second and third data values in between.</p>
 <p>Minimum bending therefore does not guarantee monotonicity between nearly flat measurements or an absence of overshoot. If flat endpoints describe a known plateau rather than merely two equal observations, a shape constraint changes the admissible functions. The preceding proof still explains why the natural interpolant won its own curvature competition, but gives no reason to prefer it after physical constraints have changed.</p>
 <p>For these data the overshoot can even be located analytically. On the second panel the derivative vanishes when \(4/3-2t+t^2/2=0\), giving the interior root \(t=2-2/\sqrt3\), about 0.845. A measured value taken near \(x=1.845\) would therefore help discriminate the minimum-bending curve from a physical plateau. Taking another measurement at either already constrained endpoint would do less to resolve that ambiguity.</p>
 </section>

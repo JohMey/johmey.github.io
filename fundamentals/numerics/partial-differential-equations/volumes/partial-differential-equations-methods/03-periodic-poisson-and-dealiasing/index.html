@@ -50,7 +50,11 @@
 <p>For the reported solution \(-u''=\sin x\), so the original pointwise residual \(-u''-f=-0.03\) everywhere and its integral is \(-0.06\pi\). There is no periodic solution to the original equation. The programme exactly solved the mean-subtracted problem. An external sink or a physically justified zero-mean correction could make such a model appropriate, but the removed source must be stated and checked.</p>
 </details>
 <h3>Predict the grid error of a low physical mode</h3><p>For \(k=1\), expand \(\lambda_h(k)\) and find the leading relative error in the finite-difference solution amplitude for a fixed unit cosine source.</p><details><summary>Work through the solution</summary>
-<p>Using \(\sin^2 z=z^2-z^4/3+\cdots\) gives \(\lambda_h=k^2-k^4h^2/12+O(h^4)\). Inversion yields \(1/\lambda_h=k^{-2}[1+k^2h^2/12+O(h^4)]\). The discrete potential amplitude is too large to leading order. Refining at the same \(k\) by halving \(h\) should reduce the amplitude error by roughly four. This statement differs from finding the residual of the already solved stencil.</p>
+<p>Using \(\sin^2 z=z^2-z^4/3+\cdots\) gives</p>
+<div class="math display">\[\lambda_h=k^2-k^4h^2/12+O(h^4).\]</div>
+<p>Inversion yields</p>
+<div class="math display">\[1/\lambda_h=k^{-2}[1+k^2h^2/12+O(h^4)].\]</div>
+<p>The discrete potential amplitude is too large to leading order. Refining at the same \(k\) by halving \(h\) should reduce the amplitude error by roughly four. This statement differs from finding the residual of the already solved stencil.</p>
 </details>
 <h3>Choose a padding size from the desired output band</h3><p>Input modes occupy \(|k|\le5\), and only output modes \(|k|\le5\) of their quadratic product will be kept. Compare multiplication grids with 14 and 16 points.</p><details><summary>Work through the solution</summary>
 <p>With 14 points a possible product \(k=10\) aliases to \(-4\), contaminating the retained range. With 16 points all modes \(6,\ldots,10\) which wrap do so outside \([-5,5]\); for example 10 wraps to \(-6\). Thus 16 is sufficient for retained coefficients. It is not sufficient to represent and report the complete \(k=10\) output wave itself, which needs a larger bandwidth. Distinguish accuracy of a projected nonlinear evolution from recovery of every generated physical harmonic.</p>

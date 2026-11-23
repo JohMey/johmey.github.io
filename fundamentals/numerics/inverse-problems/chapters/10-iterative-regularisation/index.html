@@ -39,7 +39,7 @@
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Bound the noise admitted by a finite iteration count</h2>
 <p>Suppose the data are corrupted by an unknown vector \(e\) with \(\|e\|_2\le\delta\). Compare two Landweber runs starting at zero, one with exact data and one with noisy data, with fixed \(0&lt;\omega\le1/\|A\|_2^2\). Orthogonality of the singular vectors makes the worst possible data amplification at iteration \(k\ge1\) the largest singular-mode gain</p>
-<div class="math display equation-chain"><div class="equation-step">\[g_k(\sigma)=\frac{1-(1-\omega\sigma^2)^k}{\sigma},\]</div><div class="equation-step">\[\sigma&gt;0 .\]</div></div>
+<div class="math display">\[g_k(\sigma)=\frac{1-(1-\omega\sigma^2)^k}{\sigma},\qquad \sigma&gt;0 .\]</div>
 <p>Put \(t=\omega\sigma^2\in[0,1]\). The numerator lies below one and also below \(kt\), since the sum \(1+(1-t)+\cdots+(1-t)^{k-1}\) contains \(k\) terms each at most one. These two estimates control opposite ends of the spectrum,</p>
 <div class="math display">\[0\le g_k(\sigma)\le\min\{1/\sigma,\ k\omega\sigma\}.\]</div>
 <p>The largest value of this upper envelope occurs where its increasing and decreasing branches meet. At \(\sigma=1/\sqrt{k\omega}\), both equal \(\sqrt{k\omega}\). The noise passed to the reconstruction is therefore bounded by</p>
@@ -56,15 +56,19 @@
 <p>An implementation requires both procedures to be adjoints in the same inner products. Check \(\langle Bv,w\rangle=\langle v,B^\mathsf{T}w\rangle\) on a variety of inputs; quadrature weights in a discretised integral can change the correct transpose. For the Euclidean norm choose \(0&lt;\omega&lt;2/\sigma_{\max}^2\) to ensure contraction in every nonzero singular direction. Choosing \(\omega\le1/\sigma_{\max}^2\) additionally avoids alternating scalar transients in these directions.</p>
 </section>
 <section><h2 id="derive-the-filter-after-a-finite-number-of-steps">Derive the filter after a finite number of steps</h2>
-<p>Let \(z_{j,k}=v_j^\mathsf{T}x_k\), \(\beta_j=u_j^\mathsf{T}b\). The recurrence becomes \(z_{j,k+1}=(1-\omega\sigma_j^2)z_{j,k}+\omega\sigma_j\beta_j\). Summing its geometric series at \(x_0=0\) gives</p>
+<p>Let \(z_{j,k}=v_j^\mathsf{T}x_k\), \(\beta_j=u_j^\mathsf{T}b\). The recurrence becomes</p>
+<div class="math display">\[z_{j,k+1}=(1-\omega\sigma_j^2)z_{j,k}+\omega\sigma_j\beta_j.\]</div>
+<p>Summing its geometric series at \(x_0=0\) gives</p>
 <div class="math display">\[z_{j,k}=\left[1-(1-\omega\sigma_j^2)^k\right]\frac{\beta_j}{\sigma_j}.\]</div>
 <p>Components with large singular values reach their least-squares values quickly. Small-singular-value components remain suppressed for many iterations because \(1-(1-\omega\sigma_j^2)^k\simeq k\omega\sigma_j^2\) while \(k\omega\sigma_j^2\) is small. Stopping early is therefore a choice of spectral filter. Changing the initial guess affects the pattern retained in weak or null directions; with initial zero the iteration never invents a null-space component.</p>
 </section>
 <section>
 <h2 id="asymptotic-regularisation">Regularise with an artificial evolution time</h2>
 <p>There are two clocks in a time-dependent inverse experiment. One describes the physical process being measured. A second, entirely artificial clock can limit how far we move towards a data fit. For a fixed real matrix \(A\) and fixed observed data \(b\), evolve the negative least-squares gradient from zero,</p>
-<div class="math display">\[\dot x(t)=A^T(b-Ax(t)),\qquad x(0)=0 .\]</div>
-<p>The data misfit \(F=\|Ax-b\|_2^2/2\) satisfies \(dF/dt=-\|A^T(Ax-b)\|_2^2\le0\). Monotone improvement of the fit alone does not establish improvement of the reconstruction. In singular coordinates \(b_j=u_j^Tb\), each positive singular value gives the scalar equation \(\dot x_j+\sigma_j^2 x_j=\sigma_j b_j\). Multiplying by \(e^{\sigma_j^2t}\) and integrating from zero gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[\dot x(t)=A^T(b-Ax(t)),\]</div><div class="equation-step">\[x(0)=0 .\]</div></div>
+<p>The data misfit \(F=\|Ax-b\|_2^2/2\) satisfies</p>
+<div class="math display">\[dF/dt=-\|A^T(Ax-b)\|_2^2\le0.\]</div>
+<p>Monotone improvement of the fit alone does not establish improvement of the reconstruction. In singular coordinates \(b_j=u_j^Tb\), each positive singular value gives the scalar equation \(\dot x_j+\sigma_j^2 x_j=\sigma_j b_j\). Multiplying by \(e^{\sigma_j^2t}\) and integrating from zero gives</p>
 <div class="math display">\[x_j(t)=\frac{1-e^{-\sigma_j^2t}}{\sigma_j}\,b_j .\]</div>
 <p>A null component remains zero. A mode reaches half of its unregularised amplitude at \(t=(\log2)/\sigma_j^2\). At a fixed finite \(t\), weak modes have small noise gain approximately \(t\sigma_j\). At very long times the gain tends to \(1/\sigma_j\). This is asymptotic regularisation, with stopping time acting as a spectral filter. As the noise bound decreases one can allow longer runs, subject to continued noise control. A single fixed noisy measurement offers no justification for sending \(t\) to infinity.</p>
 <h3>Two modes fitted on different clocks</h3>
@@ -73,7 +77,9 @@
 <p class="source-note">Practise on sheet 5 · <a href="/fundamentals/numerics/inverse-problems/problem-sheets/5/#transfer-regularisation-time">When explicit reconstruction has its own stability limit</a>. Further reading · <a href="https://mehrhardt.github.io/data/201803_lecture_notes_invprob.pdf#page=39">University of Cambridge · Inverse Problems, Mathematical Tripos Part III · §3.2.5 Asymptotic regularisation and §3.2.6 Landweber iteration, pp. 39–40</a>.</p>
 </section>
 <section><h2 id="see-semiconvergence-in-a-two-mode-experiment">See semiconvergence in a two-mode experiment</h2>
-<p>Let \(B=\operatorname{diag}(1,0.1)\), true \(x=(1,0)\) and observed \(b=(1,0.02)\). Set \(\omega=1\). After one step the estimate is \((1,0.002)\), very close to truth, and the first mode is already exact. After 100 steps the second coordinate is \(0.2(1-0.99^{100})=0.1268\). At convergence it is 0.2. The residual shrinks steadily toward zero while the actual reconstruction has deteriorated after the first step. With a genuinely nonzero second component the error curve may initially improve for longer. Which iteration is best depends on the unknown signal and noise, so a solver's normal residual criterion is not a suitable scientific stopping rule by itself.</p>
+<p>Let \(B=\operatorname{diag}(1,0.1)\), true \(x=(1,0)\) and observed \(b=(1,0.02)\). Set \(\omega=1\). After one step the estimate is \((1,0.002)\), very close to truth, and the first mode is already exact. After 100 steps the second coordinate is</p>
+<div class="math display">\[0.2(1-0.99^{100})=0.1268.\]</div>
+<p>At convergence it is 0.2. The residual shrinks steadily toward zero while the actual reconstruction has deteriorated after the first step. With a genuinely nonzero second component the error curve may initially improve for longer. Which iteration is best depends on the unknown signal and noise, so a solver's normal residual criterion is not a suitable scientific stopping rule by itself.</p>
 </section>
 <section><h2 id="select-an-observable-stopping-test">Select an observable stopping test</h2>
 <p>When a data error bound is known, stop the first time the residual falls below a noise-compatible level. With independent validation measurements monitor their predictive error across iterations. A fast Krylov method can bring useful modes in much sooner but may also reach noise-dominated directions sooner. Compare algorithms by scientific accuracy and forward/adjoint applications at a defensible stopping point. If a prior-weighted variable or preconditioner changes how quickly individual modes enter, the early-stopped result changes as well. Record that choice alongside the step size, starting state and stopping rule so the reconstruction can be interpreted.</p>

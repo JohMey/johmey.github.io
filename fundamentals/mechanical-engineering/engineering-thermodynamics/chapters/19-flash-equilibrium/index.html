@@ -31,20 +31,32 @@
 <p>Let \(F=L+V\) be the total molar feed and liquid and vapour flow rates. Overall component fractions are \(z_i\), liquid fractions \(x_i\) and vapour fractions \(y_i\). At equilibrium the chemical potential of each species agrees across phases. In an ideal gas over an ideal liquid this reduces to Raoult's law \(y_i p=x_i p_i^{\rm sat}(T)\), so \(K_i=y_i/x_i=p_i^{\rm sat}(T)/p\). A larger K enriches that species in the vapour. For a real mixture K can depend on phase composition and require an outer property iteration. Here use fixed positive K values to isolate the material balance.</p>
 </section>
 <section><h2 id="root">Eliminate the component flows</h2>
-<p>Define \(\beta=V/F\). Component conservation gives \(z_i=(1-\beta)x_i+\beta y_i=x_i[1+\beta(K_i-1)]\). Thus \(x_i=z_i/[1+\beta(K_i-1)]\). For both compositions to sum to one, enforce \(\sum_i(y_i-x_i)=0\), giving the Rachford–Rice equation:</p>
+<p>Define \(\beta=V/F\). Component conservation gives</p>
+<div class="math display">\[z_i=(1-\beta)x_i+\beta y_i=x_i[1+\beta(K_i-1)].\]</div>
+<p>Thus \(x_i=z_i/[1+\beta(K_i-1)]\). For both compositions to sum to one, enforce \(\sum_i(y_i-x_i)=0\), giving the Rachford–Rice equation:</p>
 <div class="math display equation-chain"><div class="equation-step">\[R(\beta)=\sum_i{z_i(K_i-1)\over1+\beta(K_i-1)}=0,\]</div><div class="equation-step">\[R'(\beta)=-\sum_i{z_i(K_i-1)^2\over[1+\beta(K_i-1)]^2}.\]</div></div>
 <p>The denominators are positive for \(0\le\beta\le1\). With at least one non-unity K of positive feed fraction, R decreases strictly, so at most one physical root exists. A positive R(0) and a negative R(1) bracket two phases. If \(R(0)\le0\) the stable fixed-K split is all liquid; if \(R(1)\ge0\) it is all vapour, with equality corresponding to incipient phase appearance. When every K is one this balance cannot specify \(\beta\). A bracketed numerical method preserves the meaningful interval even near a phase boundary.</p>
 </section>
 <section><h2 id="examples">Perform a binary flash and change the feed composition</h2>
-<p>Choose \(K_A=2,\ K_B=0.5,\ z_A=z_B=0.5\). Then \(R(0)=0.25,\ R(1)=-0.25\). Multiplying by the two denominators gives \(0.25-0.50\beta=0\), hence \(\beta=0.50\). Liquid fractions are \(x_A=1/3,\ x_B=2/3\), and vapour fractions are \(y_A=2/3,\ y_B=1/3\). For 10 mol/s feed each outlet carries 5 mol/s. The A balance reads \(5(1/3)+5(2/3)=5\) mol/s.</p>
-<p>Increase \(z_A\) to 0.60 at the same T, p and K. The physical root becomes \(\beta=0.80\). The phase compositions remain at the same two endpoints; their proportions change to accommodate the new feed. Indeed the overall A fraction is \(0.20(1/3)+0.80(2/3)=0.60\). At \(z_A=0.75\) the feed lies beyond the vapour endpoint. Then R(1) is positive, and searching outside the interval would produce a vapour fraction above unity. Report a single vapour phase instead. An adiabatic flash at unknown temperature would require a further enthalpy balance.</p>
+<p>Choose \(K_A=2,\ K_B=0.5,\ z_A=z_B=0.5\). Then</p>
+<div class="math display">\[R(0)=0.25,\ R(1)=-0.25.\]</div>
+<p>Multiplying by the two denominators gives \(0.25-0.50\beta=0\), hence \(\beta=0.50\). Liquid fractions are \(x_A=1/3,\ x_B=2/3\), and vapour fractions are</p>
+<div class="math display">\[y_A=2/3,\ y_B=1/3.\]</div>
+<p>For 10 mol/s feed each outlet carries 5 mol/s. The A balance reads \(5(1/3)+5(2/3)=5\) mol/s.</p>
+<p>Increase \(z_A\) to 0.60 at the same T, p and K. The physical root becomes \(\beta=0.80\). The phase compositions remain at the same two endpoints; their proportions change to accommodate the new feed. Indeed the overall A fraction is</p>
+<div class="math display">\[0.20(1/3)+0.80(2/3)=0.60.\]</div>
+<p>At \(z_A=0.75\) the feed lies beyond the vapour endpoint. Then R(1) is positive, and searching outside the interval would produce a vapour fraction above unity. Report a single vapour phase instead. An adiabatic flash at unknown temperature would require a further enthalpy balance.</p>
 <p class="calculation-prompt">Start from equal feed fractions and increase the fraction of A until the root leaves the physical interval. Predict which pure-phase endpoint is reached. Compare residual signs at both endpoints before interpreting the reported phase.</p>
 <div id="try-it" class="interactive-study" data-study="eng-engineering-thermodynamics-flash-equilibrium"></div>
 </section>
 <span id="practice"></span><section><h2 id="tutorial">Tutorial · determine whether an iteration is warranted</h2>
 <p>At an operating point take \(K_A=3,\ K_B=0.6\). Compute the liquid and vapour A fractions when both phases coexist. For \(z_A=0.30\), calculate \(\beta\). Repeat the phase test for \(z_A=0.10\) and explain why normalized hypothetical phase compositions can hide a failed balance.</p>
 <details><summary>Solve phase closure and the lever rule</summary>
-<p>Vapour closure gives \(3x_A+0.6(1-x_A)=1\), hence \(x_A=1/6\), \(y_A=1/2\). For overall fraction 0.30, \(\beta=(0.30-1/6)/(1/2-1/6)=0.40\). At \(z_A=0.10\), \(R(0)=0.10(2)+0.90(-0.4)=-0.16\). The feed remains liquid. Renormalizing an unphysical trial vapour composition could make it sum to unity while violating the original component and equilibrium equations. Check the physical endpoint signs first.</p>
+<p>Vapour closure gives \(3x_A+0.6(1-x_A)=1\), hence \(x_A=1/6\), \(y_A=1/2\). For overall fraction 0.30,</p>
+<div class="math display">\[\beta=(0.30-1/6)/(1/2-1/6)=0.40.\]</div>
+<p>At \(z_A=0.10\),</p>
+<div class="math display">\[R(0)=0.10(2)+0.90(-0.4)=-0.16.\]</div>
+<p>The feed remains liquid. Renormalizing an unphysical trial vapour composition could make it sum to unity while violating the original component and equilibrium equations. Check the physical endpoint signs first.</p>
 </details>
 <p class="source-note">Further reading · <a href="https://courses.ems.psu.edu/png520/print/m13_p3.html">Penn State, PNG 520 · elementary vapour–liquid equilibrium, flash objective function and numerical solution</a></p>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/18-vapour-refrigeration/">Chapter 18 · Reading a vapour-compression refrigerator from its four enthalpies</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/20-thermoelectric-cooling-and-sink-resistance/">Chapter 20 · Where a thermoelectric cooler rejects its heat</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>

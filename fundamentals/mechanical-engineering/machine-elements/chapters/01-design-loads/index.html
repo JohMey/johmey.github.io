@@ -46,22 +46,41 @@
 <div class="math display">\[f_H=\frac{n_H S_H^m}{n_H S_H^m+n_L S_L^m}.\]</div>
 <p>Changing sequence, residual stress, mean stress or a transition between slopes can invalidate the reduction; the equality here is an exact statement about the stated damage model.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Identify which cycles dominate a conveyor duty</h3>
-<p>A block contains 900 cycles at 40.0 MPa and 100 at 80.0 MPa. For \(m=4\), the equivalent amplitude is \(40[0.9+0.1(2^4)]^{1/4}=50.3\) MPa. The high cycles provide \(1.6/(0.9+1.6)=0.640\) of damage, though they occupy one tenth of the block. Simply taking the arithmetic mean would give 44.0 MPa and understate predicted damage.</p>
+<p>A block contains 900 cycles at 40.0 MPa and 100 at 80.0 MPa. For \(m=4\), the equivalent amplitude is</p>
+<div class="math display">\[40[0.9+0.1(2^4)]^{1/4}=50.3\,\mathrm{MPa}.\]</div>
+<p>The high cycles provide \(1.6/(0.9+1.6)=0.640\) of damage, though they occupy one tenth of the block. Simply taking the arithmetic mean would give 44.0 MPa and understate predicted damage.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Determine a permissible high-cycle fraction</h3>
-<p>Another duty must stay below a damage-equivalent amplitude of 60.0 MPa. Let the available levels be 50.0 and 75.0 MPa with slope \(m=3\). Solving \(60^3=(1-f)50^3+f75^3\) gives \(f=(60^3-50^3)/(75^3-50^3)=0.307\). At most about 30.7 percent of cycles can occupy the higher level under these assumptions. The result concerns cycle count; unequal shaft speeds would require converting operating durations first.</p>
+<p>Another duty must stay below a damage-equivalent amplitude of 60.0 MPa. Let the available levels be 50.0 and 75.0 MPa with slope \(m=3\). Solving \(60^3=(1-f)50^3+f75^3\) gives</p>
+<div class="math display">\[f=(60^3-50^3)/(75^3-50^3)=0.307.\]</div>
+<p>At most about 30.7 percent of cycles can occupy the higher level under these assumptions. The result concerns cycle count; unequal shaft speeds would require converting operating durations first.</p>
 </section>
 <section><h2 id="load-path">Follow the force through the machine</h2>
 <p>A machine specification may give lifting capacity in kilograms or motor power in kilowatts. Neither quantity by itself gives the tension in an individual link. Begin with the moving assembly and its connections. Isolate one body, mark every contact and decide which reactions the connection can transmit. A pin carries two force components in a planar model. A flexible cable carries tension along its length. A pair of guides may transmit a couple even though each individual contact carries only a normal force. These decisions determine which part experiences each load.</p>
 <p>Consider a carriage raised by a vertical cable. Its cable attachment transfers tension through a flat link of net area \(A\). If upward is positive, the carriage balance reads \(F-mg=ma\), hence \(F=m(g+a)\). This also applies while the carriage is moving downwards and slowing down. Its upward acceleration increases tension. A speed record alone therefore conceals an important load case. Draw both the velocity and its slope before assigning signs. A cable solution with negative tension means that the cable would slacken and the assumed constraint has failed.</p>
 </section>
 <section><h2 id="cycle">Separate a steady bias from an alternating load</h2>
-<p>Cut the link across its smallest section. With the load centred and bending negligible, integration of an approximately uniform axial stress gives \(F=\sigma A\). The stress at the two turning points defines the mean stress and alternating amplitude for that cycle. An amplitude is measured from the mean, so a recorded peak-to-peak range must be divided by two.</p>
-<div class="math display">\[\sigma_{\max,\min}=F_{\max,\min}/A,\qquad \sigma_m=(\sigma_{\max}+\sigma_{\min})/2,\qquad \sigma_a=(\sigma_{\max}-\sigma_{\min})/2.\]</div>
+<p>Cut the link across its smallest section. With the load centred and bending negligible, integration of an approximately uniform axial stress gives</p>
+<div class="math display">\[F=\sigma A.\]</div>
+<p>The stress at the two turning points defines the mean stress and alternating amplitude for that cycle. An amplitude is measured from the mean, so a recorded peak-to-peak range must be divided by two.</p>
+<div class="math display">\[\begin{aligned}
+\sigma_{\max,\min} &= \frac{F_{\max,\min}}{A},\\
+\sigma_m &= \frac{\sigma_{\max}+\sigma_{\min}}{2},\\
+\sigma_a &= \frac{\sigma_{\max}-\sigma_{\min}}{2}.
+\end{aligned}\]</div>
 <p>A part loaded from zero to a maximum tensile stress has equal positive mean and alternating components. A fully reversed load with the same peak tensile stress has zero mean and twice that alternating amplitude. To assess fatigue, a material curve must describe the applicable mean stress, surface condition, stress concentration and environment. For yielding, first compare the largest local stress with the yield strength. Those two calculations use different features of the same history.</p>
+
+<details class="study-aside">
+<summary>Background · Why can the surface of a steadily loaded rotating shaft see alternating stress?</summary>
+<p>A transverse force fixed in the laboratory creates a bending moment with a stationary direction. A particular material fibre at radius \(r\) rotates through the tensile and compressive sides. For linear bending of a circular shaft with second moment \(I\), that fibre samples</p>
+<div class="math display">\[\sigma_x(t)=\frac{Mr}{I}\cos(\Omega t+\theta_0).\]</div>
+<p>At 1500 rpm the fibre experiences 25 complete stress cycles per second, even while a force transducer on the housing sees a steady reading. A torque also fixed in magnitude gives a steady torsional component in the rotating material frame. Trace the history at one material point before combining a bending cycle with a torsional mean.</p>
+</details>
 </section>
 <section><h2 id="carriage">A lift with repeated starts</h2>
 <p>A carriage and its payload have a combined mass of 800 kg. In each trip the drive accelerates upwards at 2.0 m/s² and later decelerates while travelling upwards at 3.0 m/s². The cable passes without mechanical advantage to a link with net section 80 mm². Gravity is 9.81 m/s². Assume the cable remains taut, and treat the measured accelerations as representing the load on the carriage.</p>
-<p>The maximum tension is \(800(9.81+2.0)=9448\,\mathrm N\) and the minimum during the stated loaded cycle is \(800(9.81-3.0)=5448\,\mathrm N\). Dividing by area gives 118.1 and 68.1 MPa. Their mean is 93.1 MPa and their amplitude is 25.0 MPa. A stopped, suspended carriage still loads the link at 98.1 MPa. Unloading the carriage fully between trips would introduce another turning point. The original two-level description would no longer define every cycle experienced by the link.</p>
+<p>The maximum tension is \(800(9.81+2.0)=9448\,\mathrm N\) and the minimum during the stated loaded cycle is</p>
+<div class="math display">\[800(9.81-3.0)=5448\,\mathrm N.\]</div>
+<p>Dividing by area gives 118.1 and 68.1 MPa. Their mean is 93.1 MPa and their amplitude is 25.0 MPa. A stopped, suspended carriage still loads the link at 98.1 MPa. Unloading the carriage fully between trips would introduce another turning point. The original two-level description would no longer define every cycle experienced by the link.</p>
 </section>
 <section><h2 id="damage">Convert a repeated block into a fatigue estimate</h2>
 <p>Suppose tests at the applicable stress ratios give lives of \(8.0\times10^5\) cycles for ordinary loaded trips and \(1.2\times10^5\) for heavier trips. One representative block contains 200 ordinary and 30 heavy cycles. Palmgren–Miner averaging assigns the used fraction \(n_i/N_i\) to each level. If a block is repeated \(B\) times, its predicted accumulated damage is</p>
@@ -70,12 +89,19 @@
 </section>
 <section><h2 id="fatigue-envelope">Combine alternating stress with a tensile mean stress</h2>
 <p>A duty histogram can contain cycles with the same amplitude but different tensile mean stresses. Applying a fully reversed fatigue curve to every cycle ignores this distinction. A common preliminary engineering construction at a selected life is the modified Goodman line. Let \(S_f(N)\) be a component’s fully reversed fatigue strength at that life and \(S_u\) its tensile ultimate strength. Draw the line joining \((\sigma_m=0,\sigma_a=S_f)\) and \((\sigma_m=S_u,\sigma_a=0)\) on a mean–alternating stress diagram. Points on the line satisfy</p>
-<div class="math display">\[\frac{\sigma_a}{S_f(N)}+\frac{\sigma_m}{S_u}=1,\qquad \sigma_{a,\rm eq}=\frac{\sigma_a}{1-\sigma_m/S_u}.\]</div>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{\sigma_a}{S_f(N)}+\frac{\sigma_m}{S_u}=1,\]</div><div class="equation-step">\[\sigma_{a,\rm eq}=\frac{\sigma_a}{1-\sigma_m/S_u}.\]</div></div>
 <p>The second expression gives the fully reversed amplitude assigned to the measured cycle by this interpolation. This is an empirical mean-stress correction, rather than a derivation of material behaviour from elasticity. Use component or specimen data appropriate to surface, size, loading mode, environment and stress concentration. Compressive mean stresses and regions near yield require their own treatment. If a local cycle produces plastic strain, an elastic stress-life calculation can be inappropriate.</p>
-<p>If all stresses scale in proportion to an external load multiplier \(n_L\), the intersection of that load ray with the Goodman line gives \(n_L=1/(\sigma_a/S_f+\sigma_m/S_u)\). A fixed installation preload is different: it contributes to the mean but will not scale with a later service-load multiplier. Adding preload to a stress diagram and multiplying the whole state by a single factor would then misstate the available service-load increase.</p>
+<p>If all stresses scale in proportion to an external load multiplier \(n_L\), the intersection of that load ray with the Goodman line gives</p>
+<div class="math display">\[n_L=1/(\sigma_a/S_f+\sigma_m/S_u).\]</div>
+<p>A fixed installation preload is different: it contributes to the mean but will not scale with a later service-load multiplier. Adding preload to a stress diagram and multiplying the whole state by a single factor would then misstate the available service-load increase.</p>
 </section>
 <section><h2 id="production-duty">Compare a raised preload with an increased cycle range</h2>
-<p>Consider a smooth tensile link with illustrative life-\(10^6\)-cycle strength \(S_f=180\,\mathrm{MPa}\), ultimate strength \(S_u=600\,\mathrm{MPa}\) and yield strength 360 MPa. Its measured stress cycles from 40 to 200 MPa. Mean and amplitude are 120 and 80 MPa; the Goodman sum is \(80/180+120/600=0.644\). The model’s equivalent reversed amplitude is \(80/(1-120/600)=100\,\mathrm{MPa}\). The peak of 200 MPa is below yield. If the full cycle scales with service load, the fatigue-ray multiplier is 1.55, while first yield at the nominal peak gives \(360/200=1.80\).</p>
+<p>Consider a smooth tensile link with illustrative life-\(10^6\)-cycle strength \(S_f=180\,\mathrm{MPa}\), ultimate strength \(S_u=600\,\mathrm{MPa}\) and yield strength 360 MPa. Its measured stress cycles from 40 to 200 MPa. Mean and amplitude are 120 and 80 MPa; the Goodman sum is</p>
+<div class="math display">\[80/180+120/600=0.644.\]</div>
+<p>The model’s equivalent reversed amplitude is</p>
+<div class="math display">\[80/(1-120/600)=100\,\mathrm{MPa}.\]</div>
+<p>The peak of 200 MPa is below yield. If the full cycle scales with service load, the fatigue-ray multiplier is 1.55, while first yield at the nominal peak gives</p>
+<div class="math display">\[360/200=1.80.\]</div>
 <p>Suppose instead that a 60 MPa assembly preload remains fixed and only the remainder scales. At the original operating point the service component then has a mean of 60 MPa and an amplitude of 80 MPa. Its fatigue boundary is \(n_L(80/180)+(60+60n_L)/600=1\), giving \(n_L=1.65\). The peak yield condition becomes \(60+140n_L=360\), or \(n_L=2.14\). Both multipliers differ from scaling everything because the preload has a different physical source. A further rise of fixed preload by 30 MPa at the original service range changes the equivalent reversed amplitude to \(80/(1-150/600)=106.7\,\mathrm{MPa}\). This comparison shows which load measurement must change if the aim is reducing fatigue demand rather than merely reducing the largest force in a test record.</p>
 <p>The same diagram can represent a measured range with uncertainty. A sensor offset changes the reconstructed mean while leaving the alternating component unchanged. A gain calibration error generally changes both. Reporting only the highest gauge reading leaves these two uncertainty sources indistinguishable when estimating fatigue demand.</p>
 </section>

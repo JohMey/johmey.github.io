@@ -35,12 +35,16 @@
 <p>Resolve an input into these vectors and the null space. A component along \(v_j\) is amplified by \(\sigma_j\), while every null component disappears. For measured data \(b\), matching the observed output components gives</p>
 <div class="math display">\[x_{\min}=\sum_{\sigma_j&gt;0}\frac{u_j^Tb}{\sigma_j}\,v_j .\]</div>
 <p>Adding any null vector produces the same prediction but increases the squared norm by its own squared length. This proves the minimum-norm choice. Data perpendicular to all the \(u_j\) remain as a least-squares residual, and noise along a small positive singular value can be amplified substantially.</p>
+
+<details class="study-aside"><summary>Background · Singular value</summary><div class="math display">\[Av_i=\sigma_i u_i\]</div><p>Input and output directions can live in different spaces. A small positive singular value can cause large inverse amplification.</p></details>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Find the smallest reconstruction in physically scaled coordinates</h2>
 <p>The minimum-norm solution of an underdetermined fit depends on which units and physical scale define the norm. Consider exact independent constraints \(Ax=b\) with fewer rows than columns, and let \(W\) be a symmetric positive definite matrix of penalties. Minimize \(\tfrac12 x^TWx\) among all feasible states. A reference value could first be subtracted if zero represents an inappropriate baseline. Factor \(W=L^TL\) and express the optimization in the scaled variable \(y=Lx\),</p>
 <div class="math display equation-chain"><div class="equation-step">\[Ax=b\quad\Longrightarrow\quad (AL^{-1})y=b,\]</div><div class="equation-step">\[x^TWx=\|y\|_2^2 .\]</div></div>
-<p>Thus the usual minimum-norm singular-value solution applies to the scaled matrix. An alternative derivation introduces a multiplier \(\lambda\). Differentiating \(\tfrac12x^TWx-\lambda^T(Ax-b)\) gives \(Wx=A^T\lambda\). Substituting in the constraints yields</p>
+<p>Thus the usual minimum-norm singular-value solution applies to the scaled matrix. An alternative derivation introduces a multiplier \(\lambda\). Differentiating \(\tfrac12x^TWx-\lambda^T(Ax-b)\) gives</p>
+<div class="math display">\[Wx=A^T\lambda.\]</div>
+<p>Substituting in the constraints yields</p>
 <div class="math display equation-chain"><div class="equation-step">\[(AW^{-1}A^T)\lambda=b,\]</div><div class="equation-step">\[x=W^{-1}A^T(AW^{-1}A^T)^{-1}b .\]</div></div>
 <p>The reduced matrix is positive definite for independent constraint rows. For any feasible perturbation \(h\) with \(Ah=0\), the cross term in the objective vanishes:</p>
 <div class="math display">\[(x+h)^TW(x+h)-x^TWx=2\lambda^TAh+h^TWh=h^TWh .\]</div>
@@ -78,7 +82,9 @@
 <h2 id="decide-how-many-responses-a-reduced-map-must-reproduce">Decide how many responses a reduced map must reproduce</h2>
 <p>Suppose the four singular values of a unit-scaled instrument model are 8, 3, 2 and 1. A rank-two approximation has best possible worst-case gain error two and Frobenius error \(\sqrt{2^2+1^2}=\sqrt5\). Its relative squared Frobenius loss is \(5/(64+9+4+1)=5/78\), approximately 6.41 percent. Describing this as a loss of just 6.41 percent can be misleading if the experiment deliberately excites the third singular direction. For that unit input, the exact output has length two and the compressed output is zero, giving complete loss of the signal of interest.</p>
 <p>Suppose instead inputs have equal independent unit variance in all four right singular coordinates. Then the expected squared error in the output is the sum of the discarded squared gains, exactly five. If the third coordinate is excited with variance one hundred while the others retain variance one, the error from truncating that coordinate alone becomes 400. Under that different usage distribution the meaningful objective is \(\|(A-B)C^{1/2}\|_F\), where \(C\) is the input covariance.</p>
-<p>In these diagonal coordinates the weighted gains become \(8,3,20,1\). The best rank-two design for expected output error now retains directions three and one, and the discarded expected squared error becomes \(3^2+1^2=10\). The ranking changed because the physical question changed. It did not change the optimality theorem for the unweighted matrix; it changed which matrix correctly represents the intended error measure.</p>
+<p>In these diagonal coordinates the weighted gains become \(8,3,20,1\). The best rank-two design for expected output error now retains directions three and one, and the discarded expected squared error becomes</p>
+<div class="math display">\[3^2+1^2=10.\]</div>
+<p>The ranking changed because the physical question changed. It did not change the optimality theorem for the unweighted matrix; it changed which matrix correctly represents the intended error measure.</p>
 <p>When an input covariance is singular, some directions are never excited under the stated design. The weighted objective can be indifferent to large errors in just those directions. A later change of operating regime may activate them, so a reduced model qualified for one input ensemble should retain the conditions under which its ranking was derived.</p>
 </section>
 <section class="worked-plot"><h2 id="worked-plot">Decide whether a low-rank approximation is worthwhile</h2>

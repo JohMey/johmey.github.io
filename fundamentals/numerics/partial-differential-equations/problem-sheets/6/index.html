@@ -39,16 +39,22 @@
 <h2 id="test-exact-coarse-correction">Test exact coarse correction</h2>
 <p>Use \(A=\left(\begin{smallmatrix}2&amp;-1\\-1&amp;2\end{smallmatrix}\right)\), \(P=(1,1)^T\), \(R=P^T/2\). Find the coarse operator and the coarse correction for true error \((3,1)^T\). Verify the restricted residual afterward.</p>
 <details><summary>Worked solution</summary>
-<p>\(AP=(1,1)^T\) and \(RAP=1\). The initial residual is \(A(3,1)^T=(5,-1)^T\). Its restriction is 2, giving coarse correction \(P\,2=(2,2)^T\).</p>
+<p>\(AP=(1,1)^T\) and \(RAP=1\). The initial residual is</p>
+<div class="math display">\[A(3,1)^T=(5,-1)^T.\]</div>
+<p>Its restriction is 2, giving coarse correction \(P\,2=(2,2)^T\).</p>
 <p>The remaining error is \((1,-1)^T\), with residual \((3,-3)^T\). Restricting gives zero even though the fine error remains. An exact coarse solve eliminated only the represented component.</p>
 </details>
 </section>
 <section>
 <h2 id="use-the-transpose">Use the transpose</h2>
-<p>Let \(A=\left(\begin{smallmatrix}2&amp;1\\0&amp;3\end{smallmatrix}\right)\), \(c=(1,0)^T\), and suppose a computed state's residual is \(r=(0,0.3)^T\). Compute the observation error with an adjoint, verify it by solving \(Ae=r\), and explain the sign.</p>
+<p>Let \(A=\left(\begin{smallmatrix}2&amp;1\\0&amp;3\end{smallmatrix}\right)\), \(c=(1,0)^T\), and suppose a computed state's residual is</p>
+<div class="math display">\[r=(0,0.3)^T.\]</div>
+<p>Compute the observation error with an adjoint, verify it by solving \(Ae=r\), and explain the sign.</p>
 <details><summary>Worked solution</summary>
 <p>Solving \(A^Tz=c\) gives \(2z_1=1,\ z_1+3z_2=0\), so \(z=(1/2,-1/6)^T\). Its dot product with \(r\) is −0.05.</p>
-<p>The error equation gives \(e_2=0.1,\ 2e_1+0.1=0\), hence \(c^Te=-0.05\). A positive second-row defect forces a negative first-component change through the positive off-diagonal coupling. Using \(A\) instead of its transpose for the dual would miss that effect.</p>
+<p>The error equation gives \(e_2=0.1,\ 2e_1+0.1=0\), hence</p>
+<div class="math display">\[c^Te=-0.05.\]</div>
+<p>A positive second-row defect forces a negative first-component change through the positive off-diagonal coupling. Using \(A\) instead of its transpose for the dual would miss that effect.</p>
 </details>
 </section>
 <section class="course-synthesis"><h2 id="course-synthesis">Decide if another grid refinement answers the engineering question</h2>

@@ -30,16 +30,20 @@
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Finding a turning point without using the load as a coordinate</h1><p class="lead">Use tangent geometry to continue across a fold, and distinguish branch sensitivity from an ill-posed choice of variable in an equilibrium computation.</p><p class="byline">Chapter 17 of 18</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#two-equilibria-share-one-control-value">Two equilibria share one control value</a><a href="#add-a-geometric-condition">Add a geometric condition</a><a href="#a-step-that-crosses-the-maximum">A step that crosses the maximum</a><a href="#test-the-predictor-before-trusting-it">Test the predictor before trusting it</a><a href="#tutorial-on-the-experimental-meaning">Tutorial on the experimental meaning</a><a href="#long-form">Study the full derivation</a></nav></aside><article class="prose reference"><section>
 <h2 id="two-equilibria-share-one-control-value">Two equilibria share one control value</h2>
 <p>Use the scaled normal form \(F(x,p)=x^2+p=0\). The equilibrium curve is \(p=-x^2\). At \(p=-0.01\) two displacements, \(x=\pm0.1\), give the same load. Direct continuation in \(p\) uses \(dx/dp=-F_p/F_x=-1/(2x)\). The derivative diverges at the fold. Plotting \(p\) against \(x\), however, produces a smooth curve there.</p>
+
+<details class="study-aside"><summary>Background · Backward error</summary><div class="math display">\[F(\hat x)+\delta F=0\]</div><p>Specify how perturbations in data or equations are measured. A tiny perturbation making the computed value exact can coexist with a large solution error near a fold.</p></details>
 </section>
 <section>
 <h2 id="add-a-geometric-condition">Add a geometric condition</h2>
 <p>At a known point \(y_0=(x_0,p_0)\), let \(t\) be a unit tangent perpendicular to \((2x_0,1)\). A predictor \(y_*=y_0+\Delta s\,t\) lies on the tangent. Correct it by solving \(F(x,p)=0\) together with \(t\cdot(y-y_*)=0\), which confines corrections to a line normal to the old tangent. At the fold the Jacobian of this pair is</p>
-<div class="math display equation-chain"><div class="equation-step">\[J=\begin{pmatrix}0&1\\t_x&t_p\end{pmatrix},\]</div><div class="equation-step">\[\det J=-t_x.\]</div></div>
+<div class="math display">\[J=\begin{pmatrix}0&1\\t_x&t_p\end{pmatrix},\qquad \det J=-t_x.\]</div>
 <p>With the tangent aligned with the displacement axis, \(t_x\) is nonzero. The pair remains locally invertible where load control alone fails. This is a change in the computation's coordinate, not removal of the physical multiple equilibria at a fixed load.</p>
 </section>
 <section>
 <h2 id="a-step-that-crosses-the-maximum">A step that crosses the maximum</h2>
-<p>Start at \(x_0=-0.1,p_0=-0.01\) with increasing \(x\), so \(t=(1,0.2)/\sqrt{1.04}\). A step of length 0.2 predicts \(x_*\simeq0.0961,p_*\simeq0.0292\), which is off the curve and has positive load. The correction line satisfies \(x+0.2p=x_*+0.2p_*\). Substitute \(p=-x^2\) to obtain \(x-0.2x^2\simeq0.1020\). The nearby root is about 0.1041 and the corrected load about −0.0108. Both endpoints have negative load despite crossing the maximum.</p>
+<p>Start at \(x_0=-0.1,p_0=-0.01\) with increasing \(x\), so \(t=(1,0.2)/\sqrt{1.04}\). A step of length 0.2 predicts \(x_*\simeq0.0961,p_*\simeq0.0292\), which is off the curve and has positive load. The correction line satisfies</p>
+<div class="math display">\[x+0.2p=x_*+0.2p_*.\]</div>
+<p>Substitute \(p=-x^2\) to obtain \(x-0.2x^2\simeq0.1020\). The nearby root is about 0.1041 and the corrected load about −0.0108. Both endpoints have negative load despite crossing the maximum.</p>
 </section>
 <section>
 <h2 id="test-the-predictor-before-trusting-it">Test the predictor before trusting it</h2>

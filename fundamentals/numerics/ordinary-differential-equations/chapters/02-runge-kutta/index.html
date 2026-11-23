@@ -35,7 +35,9 @@
 <div class="math display">\[y(t+h)-y(t)=hf+\frac{h^2}{2}(f_t+f_y f)+O(h^3).\]</div>
 <p>Construct a second slope at a fraction \(c\) of the interval. The exact intermediate state is unknown, so predict it with the first slope \(k_1=f(t,y)\). Expand the new evaluation:</p>
 <div class="math display">\[k_2=f(t+ch,y+ch k_1)=f+ch(f_t+f_y f)+O(h^2).\]</div>
-<p>Take a weighted average of both slopes, \(y_{n+1}=y_n+h(b_1 k_1+b_2 k_2)\). Matching the exact coefficients of \(h\) and \(h^2\) imposes two conditions:</p>
+<p>Take a weighted average of both slopes,</p>
+<div class="math display">\[y_{n+1}=y_n+h(b_1 k_1+b_2 k_2).\]</div>
+<p>Matching the exact coefficients of \(h\) and \(h^2\) imposes two conditions:</p>
 <div class="math display equation-chain"><div class="equation-step">\[b_1+b_2=1,\]</div><div class="equation-step">\[b_2c=\tfrac12 .\]</div></div>
 <p>Choose \(c=1/2\) and the first slope guides the midpoint location while the second supplies the whole update. Choose \(c=1\) and the two slopes receive equal weights. Both constructions have local defect \(O(h^3)\); they can disagree at the next order because slope matching has imposed no condition on cubic terms.</p>
 </section>
@@ -50,7 +52,9 @@
 <p class="example-label">Worked example</p><h3 id="worked-example">Compare one nonlinear growth step</h3>
 <p>For \(y'=y^2\), \(y(0)=1\) and \(h=0.100\), explicit midpoint uses \(a=1/2\) and \(y_+=1+0.1(1.05)^2=1.11025\). Heun uses \(a=1\), averages \(1\) and \((1.10)^2\), and gives \(1.11050\). The exact solution \(1/(1-t)\) yields \(1.11111\). Both underpredict; Heun happens to be closer on this step. That comparison alone does not establish a generally higher order.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Construct a test unable to separate the methods</h3>
-<p>With \(y'=-2y\), \(y(0)=3\) and \(h=0.100\), every second-order member has amplification \(1+z+z^2/2\) at \(z=-0.200\). The output is \(3(0.820)=2.46\). The exact result is \(3e^{-0.2}=2.45619\). Matching between midpoint and Heun in this test checks their shared polynomial but cannot test the implementation of their nonlinear stage terms.</p>
+<p>With \(y'=-2y\), \(y(0)=3\) and \(h=0.100\), every second-order member has amplification \(1+z+z^2/2\) at \(z=-0.200\). The output is \(3(0.820)=2.46\). The exact result is</p>
+<div class="math display">\[3e^{-0.2}=2.45619.\]</div>
+<p>Matching between midpoint and Heun in this test checks their shared polynomial but cannot test the implementation of their nonlinear stage terms.</p>
 </section><section class="course-lab"><p class="reading-label">OneSimulation laboratory</p><h2 id="experiment">Compare time-step error with conservation</h2><p class="lab-prediction"><strong>Start from this chapter.</strong> Halve the step at the same final time. Use the fourth-order Runge–Kutta prediction for the error ratio and compare it with the maximum error over the whole trajectory.</p><p class="lab-access">Compare recorded OneSimulation runs on this page. To test your own inputs, <a href="/downloads/teaching/numerics/ordinary-differential-equations.py" download>download the Python model</a> and run the model in an <a href="/tutorials/install/">activated OneSimulation environment</a>.</p>
 <p>Run the isothermal reaction from \(A=1,\ B=0\) mol/m³ to \(t=5/k=6.25\) s. Measure the maximum A error over all stored times and the drift of \(A+B\). First double the number of RK4 steps. Then restore 100 steps and change the time integrator. <a href="/downloads/teaching/numerics/ordinary-differential-equations.py" download>Download the Python experiment</a> · <a href="/blog/first_order_reaction_decay/">OneSimulation first-order decay model</a>.</p>
 <pre><code>python ordinary-differential-equations.py
@@ -71,7 +75,9 @@ python ordinary-differential-equations.py --method euler</code></pre>
 <section>
 <h2 id="sample-slopes-without-solving-a-new-differential-equation">Sample slopes without solving a new differential equation</h2>
 <p>Euler uses a single slope at the start of a step. If the direction changes significantly over the interval, a second evaluation at a predicted point can estimate that change. Consider \(k_1=f(t,y)\), \(k_2=f(t+ch,y+ahk_1)\) and \(y_{new}=y+h(b_1k_1+b_2k_2)\). The time and state arguments of a stage must both be specified. In a forced system, evaluating a source at the old time while using a midpoint state can remove the expected order.</p>
-<p>Expand around the start of the step. The second stage is \(f+h(cf_t+af_y f)+O(h^2)\). The exact trajectory has \(y(t+h)=y+hf+h^2(f_t+f_y f)/2+O(h^3)\). Comparing coefficients gives \(b_1+b_2=1,\ b_2c=1/2,\ b_2a=1/2\). For the usual internally consistent stages \(a=c\). The explicit midpoint rule takes \(a=c=1/2,\ b_2=1\); the explicit trapezoidal or Heun rule takes \(a=c=1,\ b_1=b_2=1/2\). Both have order two globally under regularity and stable error propagation.</p>
+<p>Expand around the start of the step. The second stage is \(f+h(cf_t+af_y f)+O(h^2)\). The exact trajectory has \(y(t+h)=y+hf+h^2(f_t+f_y f)/2+O(h^3)\). Comparing coefficients gives</p>
+<div class="math display">\[b_1+b_2=1,\ b_2c=1/2,\ b_2a=1/2.\]</div>
+<p>For the usual internally consistent stages \(a=c\). The explicit midpoint rule takes \(a=c=1/2,\ b_2=1\); the explicit trapezoidal or Heun rule takes \(a=c=1,\ b_1=b_2=1/2\). Both have order two globally under regularity and stable error propagation.</p>
 </section>
 <section>
 <h2 id="compute-two-different-approximations-of-equal-order">Compute two different approximations of equal order</h2>
@@ -80,8 +86,54 @@ python ordinary-differential-equations.py --method euler</code></pre>
 </section>
 <section>
 <h2 id="check-what-a-higher-order-stage-sequence-buys">Check what a higher-order stage sequence buys</h2>
-<p>Classical RK4 evaluates one initial slope, two midpoint slopes based on successive predictions and one endpoint slope. It averages them with weights \(1,2,2,1\) divided by six. For a constant linear scalar mode \(y'=\lambda y\), substitution gives \(R(z)=1+z+z^2/2+z^3/6+z^4/24\), \(z=h\lambda\). Its first missing exponential term has degree five. This test explains fourth order on that mode. General nonlinear fourth order requires additional stage conditions because derivatives such as \(f_{yy}(f,f)\) and \(f_y f_y f\) are independent.</p>
+<p>Classical RK4 evaluates one initial slope, two midpoint slopes based on successive predictions and one endpoint slope. It averages them with weights \(1,2,2,1\) divided by six. For a constant linear scalar mode \(y'=\lambda y\), substitution gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[R(z)=1+z+z^2/2+z^3/6+z^4/24,\]</div><div class="equation-step">\[z=h\lambda.\]</div></div>
+<p>Its first missing exponential term has degree five. This test explains fourth order on that mode. General nonlinear fourth order requires additional stage conditions because derivatives such as \(f_{yy}(f,f)\) and \(f_y f_y f\) are independent.</p>
 <p>Take \(\lambda=-1,\ h=1\) and \(y_0=1\). The four slopes are \(-1,-0.5,-0.75,-0.25\), yielding \(y_1=0.375\) against \(e^{-1}=0.36788\). The two-stage midpoint rule gives 0.5 at the same endpoint. Cost matters: a comparison at equal steps lets RK4 use twice as many right-hand-side evaluations as a two-stage scheme. At equal evaluation budgets one can instead compare one RK4 step with two midpoint steps. Over a complex trajectory it is the measured work for an agreed error tolerance that answers which method is economical.</p>
+
+<details class="study-aside">
+<summary>OneSimulation · Measure numerical damping in a lossless oscillator</summary>
+<p>An undamped 1 kg oscillator has angular frequency 2 rad/s. The initial displacement is 1 m and the initial velocity is zero, giving constant energy 2 J. In energy-scaled coordinates the exact motion is a rotation. A classical RK4 step multiplies the two complex modes by \(R(\pm i z)\), with \(z=\omega h\). Consequently one step changes the energy by the exact factor</p>
+<div class="math display">\[\frac{E_{j+1}}{E_j}=|R(iz)|^2=1-\frac{z^6}{72}+\frac{z^8}{576}.\]</div>
+<p>OneSimulation advances the original position–velocity equations. For each step size the code checks the computed energy at 20 s against the factor raised to the number of steps. The accumulated losses are 15.44%, 0.556% and 0.0177% as the step is halved twice. For fixed final time and small \(h\), the number of steps grows like \(1/h\), so the leading energy loss is proportional to \(h^5\). This diagnostic has its own convergence rate even though the method is fourth order in the state.</p>
+<pre><code>"""Measure artificial energy loss over 20 seconds in an undamped oscillator."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.time import ClassicalRungeKutta4TimeIntegrator
+
+omega = 2.0  # rad/s
+mass = 1.0  # kg
+duration = 20.0  # s
+method = ClassicalRungeKutta4TimeIntegrator()
+
+def dynamics(state, time):
+    position, velocity = state
+    return (velocity, -omega**2 * position)
+
+fig, ax = plt.subplots(figsize=(6.8, 3.8), constrained_layout=True)
+losses = []
+for n, colour in [(50, "#a4492b"), (100, "#176879"), (200, "#3868a0")]:
+    h = duration / n
+    state = (1.0, 0.0)  # metres, metres per second
+    energies = []
+    for j in range(n + 1):
+        x, v = state
+        energies.append(0.5 * mass * (v*v + omega**2*x*x))
+        if j &lt; n:
+            state = method.advance(state, dynamics, h, time=j*h)
+    fraction = np.array(energies) / energies[0]
+    z = omega*h
+    assert np.isclose(fraction[-1], (1 - z**6/72 + z**8/576)**n)
+    losses.append(1 - fraction[-1])
+    ax.plot(np.arange(n + 1)*h, 100*(1 - fraction), color=colour, label=f"h = {h:g} s")
+print("Final percentage losses:", np.round(100*np.array(losses), 5))
+ax.set(xlabel="Time (s)", ylabel="Artificial energy loss (%)")
+ax.legend()
+ax.grid(alpha=0.2)
+fig.savefig("ordinary-differential-equations.png", dpi=160)</code></pre>
+<figure><img src="/assets/aside-figures/ordinary-differential-equations.png" width="1088" height="608" loading="lazy" alt="Cumulative artificial energy loss over 20 seconds is largest for 0.4 second steps and nearly zero for the smallest step."><figcaption>Energy decreases most with 0.4 s steps. The exact loss is zero at every time; the curves therefore measure damping introduced entirely by the discrete update.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/ordinary-differential-equations.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section>
 <h2 id="check-a-linear-invariant-at-the-internal-stages">Check a linear invariant at the internal stages</h2>
@@ -94,21 +146,37 @@ python ordinary-differential-equations.py --method euler</code></pre>
 </section>
 <section>
 <h2 id="collocation-stages">Derive implicit stages from polynomial collocation</h2>
-<p>Let \(U(\theta)\) denote a polynomial approximation to \(y(t_n+h\theta)\) on one time slab, with \(U(0)=y_n\). At \(s\) distinct nodes \(c_i\), require \(U'(c_i)=h f(t_n+hc_i,U(c_i))=hK_i\). A polynomial \(U\) of degree at most \(s\) has a derivative determined by those \(s\) values. With cardinal polynomials \(\ell_j\) through the nodes, integration gives \(U(\theta)=y_n+h\sum_j K_j\int_0^\theta\ell_j(r)\,dr\). Evaluating at the nodes and at the endpoint turns a polynomial matching problem into a Runge–Kutta scheme:</p>
-<div class="math display">\[a_{ij}=\int_0^{c_i}\ell_j(r)\,dr,\qquad b_j=\int_0^1\ell_j(r)\,dr,\qquad K_i=f(t_n+hc_i,y_n+h\sum_j a_{ij}K_j).\]</div>
+<p>Let \(U(\theta)\) denote a polynomial approximation to \(y(t_n+h\theta)\) on one time slab, with \(U(0)=y_n\). At \(s\) distinct nodes \(c_i\), require</p>
+<div class="math display">\[U'(c_i)=h f(t_n+hc_i,U(c_i))=hK_i.\]</div>
+<p>A polynomial \(U\) of degree at most \(s\) has a derivative determined by those \(s\) values. With cardinal polynomials \(\ell_j\) through the nodes, integration gives</p>
+<div class="math display">\[U(\theta)=y_n+h\sum_j K_j\int_0^\theta\ell_j(r)\,dr.\]</div>
+<p>Evaluating at the nodes and at the endpoint turns a polynomial matching problem into a Runge–Kutta scheme:</p>
+<div class="math display equation-chain"><div class="equation-step">\[a_{ij}=\int_0^{c_i}\ell_j(r)\,dr,\]</div><div class="equation-step">\[b_j=\int_0^1\ell_j(r)\,dr,\]</div><div class="equation-step">\[K_i=f(t_n+hc_i,y_n+h\sum_j a_{ij}K_j).\]</div></div>
 <p>The stage values generally depend on one another and must be solved simultaneously. With the single midpoint node this gives the implicit midpoint step, since \(\ell_1=1\), \(a_{11}=1/2\) and \(b_1=1\). With two Gaussian nodes \(c_{1,2}=1/2\mp\sqrt3/6\), integrating their linear cardinal functions gives weights \(1/2,1/2\), diagonal entries \(1/4\), and off-diagonal entries \(1/4-\sqrt3/6,\ 1/4+\sqrt3/6\) in row order.</p>
 <p>For \(y'=\lambda y\), write \(z=h\lambda\) and \(Y={\bf1}y_n+z A Y\) for the stage states. Solving this two-by-two system and substituting in \(y_{n+1}=y_n+z(Y_1+Y_2)/2\) gives amplification \((1+z/2+z^2/12)/(1-z/2+z^2/12)\). For \(y_0=1,\lambda=-3,h=1\), the result is \(1/13\approx0.07692\), against \(e^{-3}\approx0.04979\). The endpoint formula is fourth order as \(h\to0\). For arbitrarily large negative \(z\) this ratio tends to one. Accurate integration of smooth resolved trajectories and rapid removal of unresolved stiff modes remain distinct design goals.</p>
 <p class="source-note">Practise on sheet 1 · <a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/1/#transfer-collocation-inside">Measure a collocation curve between its Gaussian nodes</a>. Further reading · <a href="https://www.sam.math.ethz.ch/~grsam/SS22/na2/NAII/resources/lecture1.pdf#page=53">ETH Zürich · Numerical Methods for Ordinary Differential Equations · §4.4.1.1 Collocation methods, pp. 53–54</a>.</p>
 </section>
 <section>
 <h2 id="match-the-two-independent-third-order-terms">Match the two independent third-order terms</h2>
-<p>For an autonomous smooth vector field write \(J=f_y\) and \(f''\) for its second derivative. Differentiating \(y'=f(y)\) twice gives \(y''=Jf\) and \(y'''=f''(f,f)+J(Jf)\). A third-order step has to reproduce both distinct vector expressions. For Runge–Kutta stages \(k_i=f(y+h\sum_j a_{ij}k_j)\), put \(c_i=\sum_j a_{ij}\). Stage expansion gives \(k_i=f+h c_iJf+h^2[\sum_j a_{ij}c_j J(Jf)+(c_i^2/2) f''(f,f)]+O(h^3)\). Multiplying by the output weights \(hb_i\) and comparing independent Taylor terms gives the conditions.</p>
+<p>For an autonomous smooth vector field write \(J=f_y\) and \(f''\) for its second derivative. Differentiating \(y'=f(y)\) twice gives \(y''=Jf\) and \(y'''=f''(f,f)+J(Jf)\). A third-order step has to reproduce both distinct vector expressions. For Runge–Kutta stages \(k_i=f(y+h\sum_j a_{ij}k_j)\), put \(c_i=\sum_j a_{ij}\). Stage expansion gives</p>
+<div class="math display">\[k_i=f+h c_iJf+h^2[\sum_j a_{ij}c_j J(Jf)+(c_i^2/2) f''(f,f)]+O(h^3).\]</div>
+<p>Multiplying by the output weights \(hb_i\) and comparing independent Taylor terms gives the conditions.</p>
 <p>Besides \(\sum b_i=1\) and \(\sum b_ic_i=1/2\), they are \(\sum b_i c_i^2=1/3\) and \(\sum_{ij}b_i a_{ij}c_j=1/6\). The first additional condition concerns curvature of the vector field along a displacement; the second concerns propagation of one derivative through another stage. A single test equation with linear \(f\) makes the curvature term vanish, so matching an exponential stability polynomial cannot alone certify third order on general nonlinear systems. Smoothness over the region visited by all stages underlies the Taylor argument.</p>
 </section>
 <section>
 <h2 id="verify-a-three-stage-method-on-nonlinear-growth">Verify a three-stage method on nonlinear growth</h2>
-<p>Use the stages \(k_1=f(y)\), \(k_2=f(y+hk_1/2)\), \(k_3=f(y-hk_1+2hk_2)\) and output \(y+h(k_1+4k_2+k_3)/6\). The stage abscissae are \(0,1/2,1\). The squared-abscissa sum is \((4/6)(1/4)+(1/6)=1/3\). For the nested derivative only the third stage contributes: \(b_3 a_{32}c_2=(1/6)(2)(1/2)=1/6\). The two lower-order conditions are checked by summing the weights and their first moments. Together these calculations show why the intermediate stages are arranged this way.</p>
-<p>Take \(y'=y^2,\ y(0)=1,\ h=0.1\). The exact value is \(1/(1-h)=1.111111\ldots\). The stages are \(k_1=1,\ k_2=1.05^2=1.1025\), and \(k_3=(1-0.1+0.2\cdot1.1025)^2=1.1205^2=1.25552025\). Their weighted combination gives \(y_1=1+0.1(1+4.41+1.25552025)/6\approx1.11109200\). The local error is about \(-1.91\times10^{-5}\), small despite appreciable curvature in the vector field. The stages themselves are sampling states for evaluating slopes; their individual values are not third-order predictions at those times.</p>
+<p>Use the stages \(k_1=f(y)\), \(k_2=f(y+hk_1/2)\), \(k_3=f(y-hk_1+2hk_2)\) and output \(y+h(k_1+4k_2+k_3)/6\). The stage abscissae are \(0,1/2,1\). The squared-abscissa sum is</p>
+<div class="math display">\[(4/6)(1/4)+(1/6)=1/3.\]</div>
+<p>For the nested derivative only the third stage contributes:</p>
+<div class="math display">\[b_3 a_{32}c_2=(1/6)(2)(1/2)=1/6.\]</div>
+<p>The two lower-order conditions are checked by summing the weights and their first moments. Together these calculations show why the intermediate stages are arranged this way.</p>
+<p>Take \(y'=y^2,\ y(0)=1,\ h=0.1\). The exact value is</p>
+<div class="math display">\[1/(1-h)=1.111111\ldots.\]</div>
+<p>The stages are</p>
+<div class="math display equation-chain"><div class="equation-step">\[k_1=1,\ k_2=1.05^2=1.1025,\]</div><div class="equation-step">\[k_3=(1-0.1+0.2\cdot1.1025)^2=1.1205^2=1.25552025.\]</div></div>
+<p>Their weighted combination gives</p>
+<div class="math display">\[y_1=1+0.1(1+4.41+1.25552025)/6\approx1.11109200.\]</div>
+<p>The local error is about \(-1.91\times10^{-5}\), small despite appreciable curvature in the vector field. The stages themselves are sampling states for evaluating slopes; their individual values are not third-order predictions at those times.</p>
 <p>Near \(t=1\) the exact solution becomes unbounded, and the derivatives used to bound the truncation error grow sharply. A method's algebraic order is a local smoothness statement, not a promise that a fixed step will remain accurate up to a singularity. Comparing errors at successively refined fixed observation times below the singularity tests the claimed order under the assumptions actually used in the derivation.</p>
 <p>There is a quick nonlinear comparison showing why the two third-order conditions are genuinely needed. For a constant matrix equation the term \(f''(f,f)\) vanishes identically, so only the nested derivative contributes at cubic order. For a scalar quadratic field, both terms are generally nonzero. The exact-series test in the worked example can thus reveal defects that would escape every linear growth or decay test using the same code. One can isolate the curvature term more sharply by placing the initial state at a point where \(J=0\) but \(f\ne0\) and \(f''\ne0\), for example \(y'=1+y^2\) at \(y=0\). Its solution begins \(y=t+t^3/3+\cdots\), providing an independent check purely on the squared-abscissa moment.</p>
 <p>In fact \(y=\tan t\) in this test, and the coefficient of its cubic term can be measured directly without numerical reference integration.</p>

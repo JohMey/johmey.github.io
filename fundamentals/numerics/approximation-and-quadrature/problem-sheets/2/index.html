@@ -39,7 +39,11 @@
 <h2 id="identify-what-a-natural-endpoint-buys">Identify what a natural endpoint buys</h2>
 <p>At \(x=0,1,2\) a rod has displacements \(0,2,0\). Construct the first segment of the natural cubic spline and find its slope at 0 and its value at 0.5. Compare with the quadratic through all three data.</p>
 <details><summary>Worked solution</summary>
-<p>The natural curvatures are \(M_0=M_2=0\). The interior equation gives \(4M_1=6(0-4+0)=-24\), so \(M_1=-6\). Integrate \(S''=-6x\) and impose the first two values to get \(S=3x-x^3\). The initial slope is 3 and midpoint value 1.375.</p>
+<p>The natural curvatures are</p>
+<div class="math display">\[M_0=M_2=0.\]</div>
+<p>The interior equation gives \(4M_1=6(0-4+0)=-24\), so \(M_1=-6\). Integrate \(S''=-6x\) and impose the first two values to get</p>
+<div class="math display">\[S=3x-x^3.\]</div>
+<p>The initial slope is 3 and midpoint value 1.375.</p>
 <p>The global quadratic is \(4x-2x^2\), with initial slope 4 and midpoint value 1.5. Both match every measured value. The difference is detectable in unmeasured derivatives and in the interior prediction because the quadratic has nonzero end curvature.</p>
 </details>
 </section>
@@ -55,7 +59,10 @@
 <h2 id="transfer-romberg-exactness">Does three-level extrapolation integrate every smooth input exactly?</h2>
 <p>For \(f(x)=x^6\) on \([0,1]\), the trapezoids with one, two and four panels are \(1/2,\ 33/128,\ 1421/8192\). Compute the two first-column corrections and the final diagonal value. Compare it with the exact integral and identify the first uncancelled error power.</p>
 <details><summary>Worked solution</summary>
-<p>Removing the quadratic terms gives \(R_{1,1}=(4(33/128)-1/2)/3=17/96\) and \(R_{2,1}=(4(1421/8192)-33/128)/3=893/6144\). Removing the quartic term gives \((16(893/6144)-17/96)/15=55/384\).</p>
+<p>Removing the quadratic terms gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[R_{1,1}=(4(33/128)-1/2)/3=17/96,\]</div><div class="equation-step">\[R_{2,1}=(4(1421/8192)-33/128)/3=893/6144.\]</div></div>
+<p>Removing the quartic term gives</p>
+<div class="math display">\[(16(893/6144)-17/96)/15=55/384.\]</div>
 <p>The exact value is \(1/7\), so the excess is \(1/2688\). Both cancellations were exact algebraically, but the trapezoid expansion for this polynomial also contains an \(h^6\) term. Three grids remove two independent error coefficients. Exact integration of every smooth function cannot follow from that finite information.</p>
 </details>
 <p class="source-note">Revisit chapter 4 · <a href="/fundamentals/numerics/approximation-and-quadrature/chapters/04-composite-quadrature/#romberg-table">Build a Romberg table from nested panels</a>.</p>

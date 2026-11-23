@@ -34,29 +34,39 @@
 <p>If the matrix factors are already available, a correction solve uses those factors at much lower cost than a fresh factorization. In floating point suppose the solve acts like an exact solve with a matrix \(M\) close to \(A\). Ignoring rounding in the residual and final addition for the moment, the update gives</p>
 <div class="math display equation-chain"><div class="equation-step">\[x_{k+1}=x_k+M^{-1}r_k,\]</div><div class="equation-step">\[e_{k+1}=(I-M^{-1}A)e_k ,\]</div></div>
 <p>where \(e_k=x_k-x_*\). A norm of the error propagation matrix below one gives a contraction. Accurate residual evaluation matters because its own rounding error becomes new correction data. A tiny change in the iterate can mean either that the equations are satisfied or that small corrections are being rounded away. The scaled residual distinguishes these cases.</p>
+
+<details class="study-aside"><summary>Background · Residual</summary><div class="math display">\[r=b-A\hat x\]</div><p>A small residual tests the computed equation. Converting it into an error estimate needs information on the inverse or the troublesome singular directions.</p></details>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Show why a componentwise backward error survives a change of units</h2>
 <p>Equations and unknowns often have very different numerical scales. A componentwise backward error measures how much each coefficient and measured load must change relative to its own magnitude to make a computed state exact. For fixed \(\widehat x\), ask for perturbations satisfying \((A+\Delta A)\widehat x=b+\Delta b\) with \(|\Delta A|\le\eta|A|\) and \(|\Delta b|\le\eta|b|\), entrywise. The residual then obeys</p>
-<div class="math display equation-chain"><div class="equation-step">\[r=b-A\widehat x=\Delta A\,\widehat x-\Delta b,\]</div><div class="equation-step">\[|r_i|\le\eta\bigl(|A||\widehat x|+|b|\bigr)_i .\]</div></div>
+<div class="math display">\[r=b-A\widehat x=\Delta A\,\widehat x-\Delta b,\qquad |r_i|\le\eta\bigl(|A||\widehat x|+|b|\bigr)_i .\]</div>
 <p>Each row can attain any imbalance between these two extremes by choosing signs for its coefficient and load perturbations and scaling them together. Therefore the smallest admissible common relative tolerance is</p>
 <div class="math display">\[\eta_*=\max_i\frac{|r_i|}{(|A||\widehat x|+|b|)_i}.\]</div>
 <p>A zero denominator means that row has zero imbalance for the specified state; assign its ratio zero. Now change equation units with a positive diagonal \(D\) and coordinate scales with another positive diagonal \(S\). Use \(A'=DAS,\ b'=Db,\ \widehat x'=S^{-1}\widehat x\). Direct substitution gives</p>
 <div class="math display equation-chain"><div class="equation-step">\[r'=Dr,\]</div><div class="equation-step">\[|A'||\widehat x'|+|b'|=D\bigl(|A||\widehat x|+|b|\bigr).\]</div></div>
 <p>Every row ratio is unchanged. The plain norm of a residual can instead change by orders of magnitude under exactly the same re-expression. A small componentwise error means a nearby model fits; the forward uncertainty also depends on the conditioning of that model.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Compare two differently scaled balances</h3>
-<p>For \(A=\operatorname{diag}(2,1000)\), \(b=(2,1000)^T\), and \(\widehat x=(1.01,0.999)^T\), the residual is \((-0.020,1)^T\). Row ratios are \(0.020/4.020=0.00498\) and \(1/1999=0.000500\). The first equation sets the backward error despite the larger absolute residual in the second.</p>
+<p>For \(A=\operatorname{diag}(2,1000)\), \(b=(2,1000)^T\), and \(\widehat x=(1.01,0.999)^T\), the residual is \((-0.020,1)^T\). Row ratios are</p>
+<div class="math display equation-chain"><div class="equation-step">\[0.020/4.020=0.00498,\]</div><div class="equation-step">\[1/1999=0.000500.\]</div></div>
+<p>The first equation sets the backward error despite the larger absolute residual in the second.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Change coordinate and equation units simultaneously</h3>
-<p>For a scalar balance \(3x=12\), test \(\widehat x=3.9\). Its backward error is \(0.3/(11.7+12)=0.01266\). Express \(x=100x'\) and multiply the equation by \(0.01\). The transformed equation is \(3x'=0.12\), with \(\widehat x'=0.039\), residual \(0.003\), and denominator \(0.237\). Their ratio again gives \(0.01266\), verifying invariance directly.</p>
+<p>For a scalar balance \(3x=12\), test \(\widehat x=3.9\). Its backward error is</p>
+<div class="math display">\[0.3/(11.7+12)=0.01266.\]</div>
+<p>Express \(x=100x'\) and multiply the equation by \(0.01\). The transformed equation is \(3x'=0.12\), with \(\widehat x'=0.039\), residual \(0.003\), and denominator \(0.237\). Their ratio again gives \(0.01266\), verifying invariance directly.</p>
 </section>
 <section>
 <h2 id="a-correction-equation">A correction equation</h2>
 <p>Suppose a large matrix has already been factored at modest precision. Let \(x\) be the resulting approximation and recompute \(r=b-Ax\) using the original coefficients. The exact missing correction solves \(Ad=r\). Reusing the approximate factors is cheap because the expensive elimination has finished. If their effective matrix is \(M\), one refinement step solves \(Md=r\) and updates \(x\leftarrow x+d\). Forming the residual from the factors themselves could erase the very discrepancy being measured.</p>
-<p>With \(e=x_\star-x\), the residual equals \(Ae\) in exact arithmetic. Substitution yields \(e_{\mathrm{new}}=(I-M^{-1}A)e\). Thus a sufficient convergence condition in a chosen induced norm is \(\|I-M^{-1}A\|&lt;1\). The size of the initial error affects how many corrections are needed, while the quality of the approximate inverse controls the contraction. The availability of more accurate residual arithmetic matters once cancellation in \(b-Ax\) competes with the true defect.</p>
+<p>With \(e=x_\star-x\), the residual equals \(Ae\) in exact arithmetic. Substitution yields</p>
+<div class="math display">\[e_{\mathrm{new}}=(I-M^{-1}A)e.\]</div>
+<p>Thus a sufficient convergence condition in a chosen induced norm is \(\|I-M^{-1}A\|&lt;1\). The size of the initial error affects how many corrections are needed, while the quality of the approximate inverse controls the contraction. The availability of more accurate residual arithmetic matters once cancellation in \(b-Ax\) competes with the true defect.</p>
 </section>
 <section>
 <h2 id="diagonal-model-for-imperfect-factors">Diagonal model for imperfect factors</h2>
-<p>Take \(A=\operatorname{diag}(3,7)\), \(b=(3,7)^T\), and use \(M=\operatorname{diag}(3,8)\) throughout. The first approximate solve gives \(x_0=(1,0.875)^T\). Its residual is \((0,0.875)^T\), and the inexpensive correction is \((0,0.109375)^T\). Hence the second component becomes 0.984375. The corresponding errors in that coordinate decrease from \(1/8\) to \(1/64\). Each further update divides the error by eight because \(1-7/8=1/8\). The exact first component stays fixed.</p>
+<p>Take \(A=\operatorname{diag}(3,7)\), \(b=(3,7)^T\), and use \(M=\operatorname{diag}(3,8)\) throughout. The first approximate solve gives</p>
+<div class="math display">\[x_0=(1,0.875)^T.\]</div>
+<p>Its residual is \((0,0.875)^T\), and the inexpensive correction is \((0,0.109375)^T\). Hence the second component becomes 0.984375. The corresponding errors in that coordinate decrease from \(1/8\) to \(1/64\). Each further update divides the error by eight because \(1-7/8=1/8\). The exact first component stays fixed.</p>
 <p>If the incorrect factor were 3 instead of 8 in the second equation, its error multiplier would be \(1-7/3=-4/3\). Iterating would alternate across the solution with increasing amplitude. Extra residual accuracy could reveal that failure promptly but could never turn this correction matrix into a contraction.</p>
 </section>
 <section>
@@ -75,7 +85,8 @@
 </section>
 <section>
 <h2 id="track-residual-error-through-the-correction-equation">Track residual error through the correction equation</h2>
-<p>Let the approximate correction solve use a nonsingular matrix \(M\). Suppose residual evaluation returns \(\hat r=Ae+\delta r\), where \(\delta r\) includes accumulated rounding, and the state update has an additional absolute error \(\delta x\). One correction yields \(e_{\rm new}=(I-M^{-1}A)e-M^{-1}\delta r-\delta x\) if \(e=x_\star-x\). A contraction \(\|I-M^{-1}A\|\le q&lt;1\) shrinks the first term, but every iteration injects new errors. If their combined effect is bounded by \(d\), induction gives \(\|e_k\|\le q^k\|e_0\|+d(1-q^k)/(1-q)\).</p>
+<p>Let the approximate correction solve use a nonsingular matrix \(M\). Suppose residual evaluation returns \(\hat r=Ae+\delta r\), where \(\delta r\) includes accumulated rounding, and the state update has an additional absolute error \(\delta x\). One correction yields \(e_{\rm new}=(I-M^{-1}A)e-M^{-1}\delta r-\delta x\) if \(e=x_\star-x\). A contraction \(\|I-M^{-1}A\|\le q&lt;1\) shrinks the first term, but every iteration injects new errors. If their combined effect is bounded by \(d\), induction gives</p>
+<div class="math display">\[\|e_k\|\le q^k\|e_0\|+d(1-q^k)/(1-q).\]</div>
 <p>This inequality separates an initial geometric improvement from a possible long-run floor. A residual-evaluation bound must use scales of the terms being subtracted, such as \(|b|+|A||x|\), rather than the size of the tiny mathematical residual alone. Also distinguish errors in evaluating the residual from the final rounding of \(x+d\): very small corrections may be accurate but cannot change a stored state if they fall below its local spacing. Computing residuals in higher precision helps only when that residual error is a limiting contribution.</p>
 </section>
 <section>

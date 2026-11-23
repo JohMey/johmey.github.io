@@ -39,7 +39,9 @@
 <h2 id="which-modes-deserve-space">Which modes deserve space?</h2>
 <p>Let \(f(x)=1+0.6\sin x+0.8\cos(4x)\). Compute its mean square, the root-mean-square error after retaining frequencies at most one, and the best additional single real basis function among all higher-frequency sine and cosine modes.</p>
 <details><summary>Worked solution</summary>
-<p>Pairwise orthogonality gives \(1+0.36/2+0.64/2=1.5\). Omitting the fourth cosine leaves root-mean-square error \(\sqrt{0.32}\approx0.566\).</p>
+<p>Pairwise orthogonality gives</p>
+<div class="math display">\[1+0.36/2+0.64/2=1.5.\]</div>
+<p>Omitting the fourth cosine leaves root-mean-square error \(\sqrt{0.32}\approx0.566\).</p>
 <p>The only omitted nonzero coefficient multiplies \(\cos(4x)\). Adding this mode removes the entire remaining mean-square error. Choosing an intermediate frequency for its lower index would make no change for this specific signal.</p>
 </details>
 </section>
@@ -47,15 +49,21 @@
 <h2 id="project-an-odd-function">Project an odd function</h2>
 <p>Find the best linear mean-square approximation to \(x^3\) on \([-1,1]\) with unit weight. Compute its squared integrated error and compare the optimum slope with endpoint interpolation.</p>
 <details><summary>Worked solution</summary>
-<p>Symmetry forces zero constant. Orthogonality to \(x\) requires \(a=\int x^4/\int x^2=(2/5)/(2/3)=3/5\).</p>
-<p>Expanding the square gives \(2/7-2(3/5)(2/5)+(9/25)(2/3)=8/175\). Endpoint interpolation gives slope 1. The least-squares line trades endpoint accuracy for lower integrated loss.</p>
+<p>Symmetry forces zero constant. Orthogonality to \(x\) requires</p>
+<div class="math display">\[a=\int x^4/\int x^2=(2/5)/(2/3)=3/5.\]</div>
+<p>Expanding the square gives</p>
+<div class="math display">\[2/7-2(3/5)(2/5)+(9/25)(2/3)=8/175.\]</div>
+<p>Endpoint interpolation gives slope 1. The least-squares line trades endpoint accuracy for lower integrated loss.</p>
 </details>
 </section>
 <section><h2 id="fft-repeated-record">Find the zeros in an eight-sample spectrum without eight long sums</h2>
 <p>A sensor returns \((1,2,0,0,1,2,0,0)\) at eight equally spaced times. Before computing any transforms, predict which four Fourier bins vanish. Use a four-point transform to find the other bins and verify the discrete energy identity for the unnormalised DFT.</p>
 <details><summary>Worked solution</summary>
-<p>Pair sample \(n\) with \(n+4\). The second weight differs by \(e^{-i\pi k}=(-1)^k\), so all odd bins cancel. For even \(k=2j\) the two halves reinforce and give twice the four-point DFT of \((1,2,0,0)\). Its entries are \(3,1-2i,-1,1+2i\). Thus \(X_0=6,\ X_2=2-4i,\ X_4=-2,\ X_6=2+4i\).</p>
-<p>The sample energy is \(2(1^2+2^2)=10\). The frequency-domain squared magnitudes sum to \(36+20+4+20=80\). Dividing by eight gives 10. Both the zeros and the energy check depend on the adopted transform convention. Reversing the exponent sign conjugates these coefficients and leaves their squared magnitudes unchanged.</p>
+<p>Pair sample \(n\) with \(n+4\). The second weight differs by \(e^{-i\pi k}=(-1)^k\), so all odd bins cancel. For even \(k=2j\) the two halves reinforce and give twice the four-point DFT of \((1,2,0,0)\). Its entries are \(3,1-2i,-1,1+2i\). Thus</p>
+<div class="math display">\[X_0=6,\ X_2=2-4i,\ X_4=-2,\ X_6=2+4i.\]</div>
+<p>The sample energy is</p>
+<div class="math display">\[2(1^2+2^2)=10.\]</div>
+<p>The frequency-domain squared magnitudes sum to \(36+20+4+20=80\). Dividing by eight gives 10. Both the zeros and the energy check depend on the adopted transform convention. Reversing the exponent sign conjugates these coefficients and leaves their squared magnitudes unchanged.</p>
 </details><p class="source-note">Revisit chapter 9 · <a href="/fundamentals/numerics/approximation-and-quadrature/chapters/09-fourier/#radix-two-fft">Factor the discrete Fourier transform into short transforms</a>.</p>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/10-orthogonal-projection/">Chapter 10 · Weighted projections and Legendre polynomials</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/11-endpoint-behaviour/">Chapter 11 · Quadrature near singularities and oscillations</a></span></nav></article></div>
 </main>

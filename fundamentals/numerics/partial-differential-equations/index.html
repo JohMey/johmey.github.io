@@ -41,7 +41,11 @@
 </section>
 <section>
 <h3 id="worked">Use an exact sine mode to predict the discrete amplitude</h3>
-<p>Prescribe \(u(0)=u(1)=0\) and \(f(x)=\pi^2\sin(\pi x)\). The exact solution is \(u_\star=\sin(\pi x)\). For its grid samples \(s_i=\sin(\pi ih)\), the sine addition formula yields \(A_hs=\lambda_hs\), with \(\lambda_h=4\sin^2(\pi h/2)/h^2\). The right-hand side is \(\pi^2s\), so the discrete solution has the same nodal shape and amplitude \(\pi^2/\lambda_h\).</p>
+<p>Prescribe \(u(0)=u(1)=0\) and \(f(x)=\pi^2\sin(\pi x)\). The exact solution is</p>
+<div class="math display">\[u_\star=\sin(\pi x).\]</div>
+<p>For its grid samples \(s_i=\sin(\pi ih)\), the sine addition formula yields</p>
+<div class="math display">\[A_hs=\lambda_hs,\]</div>
+<p>with \(\lambda_h=4\sin^2(\pi h/2)/h^2\). The right-hand side is \(\pi^2s\), so the discrete solution has the same nodal shape and amplitude \(\pi^2/\lambda_h\).</p>
 <p>With four intervals, \(\lambda_h=64\sin^2(\pi/8)=9.3726\) and the numerical midspan value is 1.0530. The exact value is 1. The sign makes sense: the discrete stiffness of this mode is below \(\pi^2\), so the same load produces a larger amplitude. Expansion gives \(\pi^2/\lambda_h=1+\pi^2h^2/12+O(h^4)\), predicting a fourfold error reduction on refinement.</p>
 </section>
 <section>
@@ -51,7 +55,9 @@
 <details><summary>Show the calculation</summary><p>Since \(u_\star''=-2\), use \(f=2\). The centred second difference of any quadratic equals its exact second derivative. The nodal vector therefore solves the discrete equations exactly. It is a useful stencil consistency check, but its zero leading error prevents a meaningful order measurement from a ratio of errors.</p></details>
 <h4>Manufacture a source for variable diffusion</h4>
 <p>On the unit square let \(D(x)=1+x\), \(u_\star=\sin(ax)\sin(ay)\), and \(a=m\pi\) for positive integer \(m\), using metre coordinates. What forcing makes \(-\nabla\cdot(D\nabla u)+2u=f\) hold with zero boundary values?</p>
-<details><summary>Show the calculation</summary><p>Apply the product rule, \(-\nabla\cdot(D\nabla u)=-D\Delta u-D'(x)u_x\). Here \(\Delta u_\star=-2a^2u_\star\) and \(D'=1\). Thus \(f=[2(1+x)a^2+2]u_\star-a\cos(ax)\sin(ay)\). Each boundary has a zero sine factor. Omitting \(D'u_x\) would produce a continuous modelling error that persists even when the mesh is refined.</p></details>
+<details><summary>Show the calculation</summary><p>Apply the product rule,</p>
+<div class="math display">\[-\nabla\cdot(D\nabla u)=-D\Delta u-D'(x)u_x.\]</div>
+<p>Here \(\Delta u_\star=-2a^2u_\star\) and \(D'=1\). Thus \(f=[2(1+x)a^2+2]u_\star-a\cos(ax)\sin(ay)\). Each boundary has a zero sine factor. Omitting \(D'u_x\) would produce a continuous modelling error that persists even when the mesh is refined.</p></details>
 </section>
 
 <section class="course-lab"><p class="reading-label">OneSimulation laboratory</p><h3 id="experiment">Measure spatial convergence on a known field</h3><p class="lab-access">Compare recorded OneSimulation runs on this page. To test your own inputs, <a href="/downloads/teaching/numerics/partial-differential-equations.py" download>download the Python model</a> and run the model in an <a href="/tutorials/install/">activated OneSimulation environment</a>.</p>

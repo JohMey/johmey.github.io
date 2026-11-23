@@ -38,7 +38,9 @@
 <p>For the inverse-response conditions this is positive. The steady value diagnosis alone would see only \(a-b\); a short test would reveal mostly the fast negative path. Identifying both requires measurements on both time scales. When the fast and slow slopes exactly match, the numerator loses its s term and the finite zero moves to infinity.</p>
 </section>
 <section><h2 id="cancellation">Read a time-domain constraint directly from the zero</h2>
-<p>For a bounded causal unit-step response \(Y(s)=G(s)/s\). At the zero \(Y(z)=0\), hence \(\int_0^\infty e^{-zt}y(t)\,dt=0\). An output ultimately settling to a positive constant cannot stay positive at every time while obeying this weighted integral. A controller implementing the exact inverse \(1/G\) would have a pole at z and an exponentially growing response to small errors in its internal state. Shaping the command over a longer interval can reduce an undershoot without introducing that unstable inversion.</p>
+<p>For a bounded causal unit-step response \(Y(s)=G(s)/s\). At the zero \(Y(z)=0\), hence</p>
+<div class="math display">\[\int_0^\infty e^{-zt}y(t)\,dt=0.\]</div>
+<p>An output ultimately settling to a positive constant cannot stay positive at every time while obeying this weighted integral. A controller implementing the exact inverse \(1/G\) would have a pole at z and an exponentially growing response to small errors in its internal state. Shaping the command over a longer interval can reduce an undershoot without introducing that unstable inversion.</p>
 </section>
 <section><h2 id="examples">Two experiments with the same final reading</h2>
 <p>Take \(a=2,\ b=1,\ T_s=4\) s and \(T_f=0.50\) s. The zero is at \(1/3\) s⁻¹. The initial slope is \(0.5-2=-1.5\) s⁻¹ and the minimum occurs at 0.792 s. Evaluating the response gives about −0.435 before it ultimately reaches +1. This initial dip can look like a sensor wired with the wrong sign until the slow path has had time to act.</p>
@@ -49,7 +51,9 @@
 <span id="practice"></span><section><h2 id="tutorial">Tutorial · infer a hidden fast time constant</h2>
 <p>A fitted slow path has \(a=2,\ T_s=4\) s. The steady step response is 1 and the measured initial slope is −0.75 s⁻¹. Infer b, \(T_f\), the zero position and the time of minimum.</p>
 <details><summary>Show the parameter recovery</summary>
-<p>The final reading gives \(b=a-1=1\). The initial slope gives \(1/T_f=2/4+0.75=1.25\) s⁻¹, so \(T_f=0.80\) s. The zero is \(1/(4-1.6)=0.417\) s⁻¹ and \(t_{\min}=\ln(4/1.6)/(1.25-0.25)=0.916\) s. Combining a static observation with a dynamic one makes both path parameters identifiable in this ideal two-path model.</p>
+<p>The final reading gives</p>
+<div class="math display">\[b=a-1=1.\]</div>
+<p>The initial slope gives \(1/T_f=2/4+0.75=1.25\) s⁻¹, so \(T_f=0.80\) s. The zero is \(1/(4-1.6)=0.417\) s⁻¹ and \(t_{\min}=\ln(4/1.6)/(1.25-0.25)=0.916\) s. Combining a static observation with a dynamic one makes both path parameters identifiable in this ideal two-path model.</p>
 </details>
 <p class="source-note">Further reading · <a href="https://www.cds.caltech.edu/~murray/books/AM08/pdf/fbs-limits_24Jul2020.pdf">Åström and Murray, Feedback Systems · chapter 14 on fundamental limits</a></p>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/16-delay-margin/">Chapter 16 · How much transport delay a feedback loop can tolerate</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/18-phase-lead/">Chapter 18 · Designing a lead network at a specified gain crossover</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>

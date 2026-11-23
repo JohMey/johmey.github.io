@@ -33,12 +33,18 @@
 <p>The boundary term at the clamp disappears because that displacement is prescribed. The unknown reaction can later be recovered by equilibrium. This formulation requires only first derivatives of trial displacements. Piecewise linear displacements are therefore admissible even though their slopes may jump at internal nodes.</p>
 </section>
 <section><h2 id="element">Compute the stiffness rather than memorising it</h2>
-<p>On an element from \(x=0\) to \(h\), interpolate the two nodal displacements linearly: \(u=(1-x/h)u_1+(x/h)u_2\). Let the test displacement have the same two basis functions. A virtual change of the first or second node gives the corresponding row of the balance. Both derivatives are constant with opposite signs.</p>
-<div class="math display equation-chain"><div class="equation-step">\[B=\begin{bmatrix}-1/h&amp;1/h\end{bmatrix},\]</div><div class="equation-step">\[K_e=\int_0^h B^T EA B\,dx=\frac{EA}{h}\begin{bmatrix}1&amp;-1\\-1&amp;1\end{bmatrix}.\]</div></div>
+<p>On an element from \(x=0\) to \(h\), interpolate the two nodal displacements linearly:</p>
+<div class="math display">\[u=(1-x/h)u_1+(x/h)u_2.\]</div>
+<p>Let the test displacement have the same two basis functions. A virtual change of the first or second node gives the corresponding row of the balance. Both derivatives are constant with opposite signs.</p>
+<div class="math display">\[B=\begin{bmatrix}-1/h&amp;1/h\end{bmatrix},\qquad K_e=\int_0^h B^T EA B\,dx=\frac{EA}{h}\begin{bmatrix}1&amp;-1\\-1&amp;1\end{bmatrix}.\]</div>
 <p>For a constant distributed load, each basis function integrates to \(h/2\), so each node receives equivalent load \(qh/2\). The two rows of stiffness sum to zero. A uniform translation stores no strain energy. At a shared node the neighbouring virtual-work contributions add because both elements refer to the same unknown displacement.</p>
 </section>
 <section><h2 id="exact">Worked example · compare a nodal value with the stress in a cell</h2>
-<p>Take a 1 m bar with \(EA=2.0\) MN, uniform \(q=1200\) N/m and free right end. Exact balance integrated from \(N(L)=0\) gives \(N=q(L-x)\). Integrating strain from the clamp produces \(u=q(Lx-x^2/2)/(EA)\). The free-end displacement is 0.300 mm. With a single element the free row of the discrete system has stiffness \(EA/L\) and load \(qL/2\), giving the same displacement. Yet its piecewise constant axial force is \(EAu(L)/L=600\) N. The exact force ranges from 1200 N at the clamp to zero at the free end. The numerical force represents the mean over the cell.</p>
+<p>Take a 1 m bar with \(EA=2.0\) MN, uniform \(q=1200\) N/m and free right end. Exact balance integrated from \(N(L)=0\) gives</p>
+<div class="math display">\[N=q(L-x).\]</div>
+<p>Integrating strain from the clamp produces \(u=q(Lx-x^2/2)/(EA)\). The free-end displacement is 0.300 mm. With a single element the free row of the discrete system has stiffness \(EA/L\) and load \(qL/2\), giving the same displacement. Yet its piecewise constant axial force is</p>
+<div class="math display">\[EAu(L)/L=600\,\mathrm{N}.\]</div>
+<p>The exact force ranges from 1200 N at the clamp to zero at the free end. The numerical force represents the mean over the cell.</p>
 </section>
 <section><h2 id="refine">Worked example · see what doubling resolution changes</h2>
 <p>Divide the bar into two equal elements. The middle node receives 600 N from both halves together, while the free node receives 300 N. The right element carries 300 N. Equilibrium of the middle node then puts 900 N in the left element. Their extensions are \(900(0.5)/(2\times10^6)=0.225\) mm and 0.075 mm. Nodal displacements agree with the exact quadratic at both nodes. The largest one-sided stress-resultant error within either element is now 300 N instead of 600 N. Comparing only tip displacements would hide this improvement.</p>

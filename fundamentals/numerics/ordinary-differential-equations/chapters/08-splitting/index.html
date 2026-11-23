@@ -47,9 +47,15 @@
 <div class="math display equation-chain"><div class="equation-step">\[y_{SD}-y_{\rm exact}=-s\lambda h^2/2+O(h^3),\]</div><div class="equation-step">\[y_{\rm sym}-y_{\rm exact}=s\lambda^2h^3/12+O(h^4).\]</div></div>
 <p>The opposite one-sided order has leading error of the opposite sign. With a fixed final time, repeated errors usually reduce the respective global orders by one. If \(\lambda=0\) or \(s=0\), all orders coincide exactly. A stationary state in each individual subproblem would be preserved by composition, whereas this full-system equilibrium arises from cancellation of two nonzero rates.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Compare a single step at the exact equilibrium</h3>
-<p>Let \(s=2.00\) units/s, \(\lambda=2.00\) s⁻¹, \(h=0.500\) s and \(y_n=y_*=1.00\). Exact evolution remains at one. The two split orders give \(2e^{-1}=0.73576\) and \(1+e^{-1}=1.36788\). The symmetric sequence gives \(0.5+1.5e^{-1}=1.05182\). Symmetry reduces the drift markedly without eliminating it.</p>
+<p>Let \(s=2.00\) units/s, \(\lambda=2.00\) s⁻¹, \(h=0.500\) s and \(y_n=y_*=1.00\). Exact evolution remains at one. The two split orders give</p>
+<div class="math display equation-chain"><div class="equation-step">\[2e^{-1}=0.73576,\]</div><div class="equation-step">\[1+e^{-1}=1.36788.\]</div></div>
+<p>The symmetric sequence gives</p>
+<div class="math display">\[0.5+1.5e^{-1}=1.05182.\]</div>
+<p>Symmetry reduces the drift markedly without eliminating it.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Predict the long-time state of the discrete map</h3>
-<p>Iterating the symmetric step eventually reaches its own fixed point \(y_h=(sh/2)(1+e^{-z})/(1-e^{-z})\). With the preceding data this is \(1.08198\), not the true value \(1.00\). Halving \(h\) gives \(0.25(1+e^{-0.5})/(1-e^{-0.5})=1.02075\). The excess falls by a factor close to four, consistent with a second-order bias in a long-running equilibrium calculation.</p>
+<p>Iterating the symmetric step eventually reaches its own fixed point \(y_h=(sh/2)(1+e^{-z})/(1-e^{-z})\). With the preceding data this is \(1.08198\), not the true value \(1.00\). Halving \(h\) gives</p>
+<div class="math display">\[0.25(1+e^{-0.5})/(1-e^{-0.5})=1.02075.\]</div>
+<p>The excess falls by a factor close to four, consistent with a second-order bias in a long-running equilibrium calculation.</p>
 </section>
 <section>
 <h2 id="two-solvable-subproblems">Two solvable subproblems</h2>
@@ -77,9 +83,13 @@
 <section>
 <h2 id="test-a-physical-equilibrium-that-neither-subflow-preserves">Test a physical equilibrium that neither subflow preserves</h2>
 <p>Set \(a=b=1,\ u_0=1\). The complete model is exactly stationary because growth and saturation cancel. Choose \(h=\log2\), so an isolated growth step doubles the state. Growth followed by saturation gives \(2/(1+2\log2)\approx0.8381\). Saturation followed by growth gives \(2/(1+\log2)\approx1.1812\). Neither result is the stationary true value. Powering either map through many long intervals would move the solution toward a numerical equilibrium different from the physical one, although each individual substep is solved without approximation.</p>
-<p>A symmetric growth–saturation–growth step gives \(u_1=2/(1+\sqrt2\log2)\approx1.0100\). Symmetry has cancelled the leading ordering discrepancy without enforcing exact preservation of the steady state. To predict the long-run drift of the first ordering, solve its nonzero fixed-point equation \(u=2u/(1+2hu)\), giving \(u=1/(2h)\approx0.7213\). For the opposite ordering the numerical equilibrium is \(1/h\approx1.4427\). These values expose a persistent bias that a one-step comparison can understate.</p>
+<p>A symmetric growth–saturation–growth step gives</p>
+<div class="math display">\[u_1=2/(1+\sqrt2\log2)\approx1.0100.\]</div>
+<p>Symmetry has cancelled the leading ordering discrepancy without enforcing exact preservation of the steady state. To predict the long-run drift of the first ordering, solve its nonzero fixed-point equation \(u=2u/(1+2hu)\), giving \(u=1/(2h)\approx0.7213\). For the opposite ordering the numerical equilibrium is \(1/h\approx1.4427\). These values expose a persistent bias that a one-step comparison can understate.</p>
 <p>A steady physical reference is particularly informative when a splitting method is used to integrate dynamics near a balance of large opposing processes. Compare the numerical equilibrium and the relaxation rate toward it. An implementation can improve its order by a symmetric composition while still requiring much finer steps, or a different assignment of source terms, to maintain the equilibrium accuracy a physical application demands.</p>
-<p>A refinement study can use the exact nonzero fixed point formulas to separate local error from accumulated drift. For arbitrary positive \(h\), the growth-first numerical fixed point is \((1-e^{-h})/h=1-h/2+O(h^2)\), while the saturation-first fixed point is \((e^h-1)/h=1+h/2+O(h^2)\). Thus their steady-state biases have opposite signs and are first order even though the individual one-step defects from the physical equilibrium start at second order. An empirical comparison based on the first step and another measured after equilibration should not be expected to return the same power of the step size.</p>
+<p>A refinement study can use the exact nonzero fixed point formulas to separate local error from accumulated drift. For arbitrary positive \(h\), the growth-first numerical fixed point is \((1-e^{-h})/h=1-h/2+O(h^2)\), while the saturation-first fixed point is</p>
+<div class="math display">\[(e^h-1)/h=1+h/2+O(h^2).\]</div>
+<p>Thus their steady-state biases have opposite signs and are first order even though the individual one-step defects from the physical equilibrium start at second order. An empirical comparison based on the first step and another measured after equilibration should not be expected to return the same power of the step size.</p>
 <p>The two steady-state formulas also converge toward the same physical value as the step tends to zero.</p>
 </section>
 <section class="worked-plot"><h2 id="worked-plot">Measure order lost by composing two exact subflows</h2>

@@ -32,12 +32,19 @@
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Initial values and propagated error</h1><p class="lead">Derive an error bound for forward Euler and distinguish a poor approximation of a well-posed trajectory from uncertainty in the starting state.</p><p class="byline">Chapter 1 of 18</p><nav class="study-links chapter-jumps" aria-label="Study this chapter"><a href="#first-principles">First principles</a><a href="#derivation">Derivation</a><a href="#worked-example">Worked examples</a><a href="#experiment">OneSimulation lab</a><a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/1/">Problem sheet 1</a><a class="chapter-outline-link" href="#chapter-outline">All sections</a></nav></header><div class="shell article-layout"><aside class="article-nav" id="chapter-outline"><nav aria-label="On this page"><a href="#first-principles">Follow one local error through the remaining steps</a><a href="#derivation">Estimate an endpoint error from two grids that share the same endpoint</a><a href="#experiment">Compare time-step error with conservation</a><a href="#specify-what-the-trajectory-represents">Specify what the trajectory represents</a><a href="#accumulate-one-step-errors">Accumulate one-step errors</a><a href="#test-the-prediction-against-exact-exponential-growth">Test the prediction against exact exponential growth</a><a href="#use-a-manufactured-trajectory-to-test-a-solver">Use a manufactured trajectory to test a solver</a><a href="#measure-the-defect-of-an-entire-reconstructed-trajectory">Measure the defect of an entire reconstructed trajectory</a><a href="#check-a-polynomial-approximation-to-a-driven-relaxation">Check a polynomial approximation to a driven relaxation</a><a href="#worked-plot">Propagate a persistent local defect through an evolution</a><a href="#long-form">Study the full derivation</a></nav></aside><article class="prose reference"><section class="first-principles">
 <p class="reading-label">From first principles</p><h2 id="first-principles">Follow one local error through the remaining steps</h2>
 <p>An initial-value problem specifies a rate \(y'=f(t,y)\) and a starting value. Integrating the rate over a short interval gives the exact change. Approximating the integrand by the rate at the left endpoint is forward Euler. Suppose the solution is twice differentiable with \(\lVert y''\rVert\le M\). Taylor’s theorem bounds the defect made by a single step starting at the exact value:</p>
-<div class="math display equation-chain"><div class="equation-step">\[y(t_{n+1})=y(t_n)+h f(t_n,y(t_n))+d_n,\]</div><div class="equation-step">\[\lVert d_n\rVert\le Mh^2/2.\]</div></div>
+<div class="math display">\[y(t_{n+1})=y(t_n)+h f(t_n,y(t_n))+d_n,\qquad \lVert d_n\rVert\le Mh^2/2.\]</div>
 <p>The next step generally starts at a computed value \(y_n\). If changing the input state changes the rate by at most \(L\) times that change in norm, then for \(e_n=y(t_n)-y_n\) subtraction gives</p>
 <div class="math display">\[\lVert e_{n+1}\rVert\le(1+hL)\lVert e_n\rVert+Mh^2/2.\]</div>
 <p>Each earlier defect can therefore be amplified by every later step. With exact initial data, sum the resulting geometric series up to fixed time \(T=nh\), for \(L&gt;0\):</p>
-<div class="math display">\[\lVert e_n\rVert\le \frac{Mh}{2L}\big[(1+hL)^n-1\big]\le\frac{Mh}{2L}(e^{LT}-1).\]</div>
+<div class="math display">\[\begin{aligned}
+\lVert e_n\rVert
+  &amp;\leq \frac{Mh^2}{2}\sum_{j=0}^{n-1}(1+hL)^j\\
+  &amp;= \frac{Mh}{2L}\big[(1+hL)^n-1\big]\\
+  &amp;\leq \frac{Mh}{2L}\big(e^{LT}-1\big).
+\end{aligned}\]</div>
 <p>The local \(h^2\) becomes global \(h\) because the number of terms grows on refinement. When \(L=0\), their sum is \(MTh/2\). An uncertain initial value contributes a separate amplified initial-error term.</p>
+
+<details class="study-aside"><summary>Background · Local truncation error</summary><div class="math display">\[d_{n+1}=y(t_{n+1})-\Phi_h(y(t_n))\]</div><p>This is the one-step defect from exact starting data. Some conventions divide it by h. State the convention before comparing local and global orders.</p></details>
 </section>
 <section class="chapter-derivation"><p class="reading-label">Derivation and applications</p><h2 id="derivation">Estimate an endpoint error from two grids that share the same endpoint</h2>
 <p>A local defect need not equal the error in a reported final state. A practical test for a smooth nonstiff initial-value problem is to integrate to the identical physical time on two or more nested time grids. Suppose the method has global order \(p\) and its leading error varies smoothly with step size. Write \(Y_h\) for its value at the final time and \(y\) for the exact value there. The asymptotic expansion and its version on the refined grid are</p>
@@ -48,7 +55,9 @@
 <div class="math display">\[p_{\rm obs}=\log_2\left|\frac{Y_h-Y_{h/2}}{Y_{h/2}-Y_{h/4}}\right|.\]</div>
 <p>If two differences have incompatible signs or are close to roundoff, this diagnostic becomes unreliable. A nonsmooth switch, an approximate event location or comparing different physical final times can also destroy the shared expansion. The estimate concerns the specific endpoint output; a zero leading error there need not indicate higher order throughout the trajectory.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Extrapolate a smooth decay calculation</h3>
-<p>For \(y'=-y\), \(y(0)=1\), integrate to \(t=1\) with Euler steps \(h=1/4\) and \(1/8\). The endpoint values are \((3/4)^4=0.316406\) and \((7/8)^8=0.343609\). For \(p=1\) the fine estimate needs a positive correction of \(0.027203\), giving \(Y_{\rm ext}=0.370812\). The exact value \(e^{-1}=0.367879\) lies much closer to the extrapolation than either raw value. Extrapolation removes the leading bias but does not make an exact solution.</p>
+<p>For \(y'=-y\), \(y(0)=1\), integrate to \(t=1\) with Euler steps \(h=1/4\) and \(1/8\). The endpoint values are</p>
+<div class="math display equation-chain"><div class="equation-step">\[(3/4)^4=0.316406,\]</div><div class="equation-step">\[(7/8)^8=0.343609.\]</div></div>
+<p>For \(p=1\) the fine estimate needs a positive correction of \(0.027203\), giving \(Y_{\rm ext}=0.370812\). The exact value \(e^{-1}=0.367879\) lies much closer to the extrapolation than either raw value. Extrapolation removes the leading bias but does not make an exact solution.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Check the order before trusting an error bar</h3>
 <p>A different endpoint measurement returns \(1.2480\), \(1.2120\) and \(1.2030\) on successive halvings. Their differences are \(0.0360\) and \(0.0090\), yielding \(p_{\rm obs}=2.00\). The finest correction is \(-0.0090/(4-1)=-0.0030\), so the extrapolated endpoint is \(1.2000\). Using a first-order denominator would triple the estimated correction.</p>
 </section><section class="course-lab"><p class="reading-label">OneSimulation laboratory</p><h2 id="experiment">Compare time-step error with conservation</h2><p class="lab-prediction"><strong>Start from this chapter.</strong> For a scalar exponential decay, the exact one-step amplification is known. Accumulate the numerical factor to predict the final concentration, then check a separate conserved sum.</p><p class="lab-access">Compare recorded OneSimulation runs on this page. To test your own inputs, <a href="/downloads/teaching/numerics/ordinary-differential-equations.py" download>download the Python model</a> and run the model in an <a href="/tutorials/install/">activated OneSimulation environment</a>.</p>
@@ -70,14 +79,26 @@ python ordinary-differential-equations.py --method euler</code></pre>
 </section>
 <section>
 <h2 id="accumulate-one-step-errors">Accumulate one-step errors</h2>
-<p>Write the exact integral from \(t_n\) to \(t_n+h\). Approximating the integrand by its value at the start gives \(y_{n+1}=y_n+h f(t_n,y_n)\). Inserting an exact smooth solution in this update produces a one-step defect bounded by \(Mh^2/2\), where \(M\) bounds \(|y''|\) over the interval. This defect starts a step from the exact state. Actual steps generally start from an already perturbed state.</p>
-<p>Let \(e_n=|y(t_n)-y_n|\), with state Lipschitz bound \(L\). Adding and subtracting a step started at the exact value gives \(e_{n+1}\leq(1+hL)e_n+Mh^2/2\). Iterate this inequality as a geometric series. For \(L&gt;0\) and elapsed time \(T=nh\), use \((1+hL)^n\leq e^{LT}\) to conclude</p>
+<p>Write the exact integral from \(t_n\) to \(t_n+h\). Approximating the integrand by its value at the start gives</p>
+<div class="math display">\[y_{n+1}=y_n+h f(t_n,y_n).\]</div>
+<p>Inserting an exact smooth solution in this update produces a one-step defect bounded by \(Mh^2/2\), where \(M\) bounds \(|y''|\) over the interval. This defect starts a step from the exact state. Actual steps generally start from an already perturbed state.</p>
+<p>Let \(e_n=|y(t_n)-y_n|\), with state Lipschitz bound \(L\). Adding and subtracting a step started at the exact value gives</p>
+<div class="math display">\[e_{n+1}\leq(1+hL)e_n+Mh^2/2.\]</div>
+<p>Iterate this inequality as a geometric series. For \(L&gt;0\) and elapsed time \(T=nh\), use \((1+hL)^n\leq e^{LT}\) to conclude</p>
 <div class="math display">\[e_n\leq e^{LT}e_0+\frac{Mh}{2L}(e^{LT}-1).\]</div>
 <p>For \(L=0\) the second term becomes \(MTh/2\). A local error of order two gives order one over fixed time, while the initial uncertainty contributes separately. The bound treats every perturbation as if amplified. A dissipative system may damp them strongly, so a more problem-specific calculation can be much sharper.</p>
+
+<details class="study-aside">
+<summary>Background · Which direction does an earlier local error take?</summary>
+<p>For the two-component system \(y'=Ay\), an additive state error introduced at time \(t_j\) contributes \(e^{A(T-t_j)}d_j\) to the endpoint. A norm estimate counts the magnitudes of those contributions. Their directions can reinforce or cancel. For undamped rotation at angular speed \(\omega\), equal displacement errors introduced half a period apart reach the endpoint in opposite directions and cancel exactly.</p>
+<p>This is why error bounds add absolute contributions while an experiment can show a much smaller final error. A single endpoint near cancellation gives a poor estimate of an integration method’s order. Check errors at more than one observation time, or use a maximum-in-time norm, when the quantity of interest covers the entire path.</p>
+</details>
 </section>
 <section>
 <h2 id="test-the-prediction-against-exact-exponential-growth">Test the prediction against exact exponential growth</h2>
-<p>Take \(y'=y,\ y(0)=1\) over one time unit. Forward Euler with two steps gives \(1.5^2=2.25\); with four it gives \(1.25^4=2.44141\). The exact result is \(e=2.71828\). The errors 0.46828 and 0.27688 decrease by a factor about 1.69. The limiting factor of two requires a finer asymptotic regime. Expanding \(N\log(1+1/N)=1-1/(2N)+O(N^{-2})\) predicts \(e-(1+1/N)^N=e/(2N)+O(N^{-2})\).</p>
+<p>Take \(y'=y,\ y(0)=1\) over one time unit. Forward Euler with two steps gives \(1.5^2=2.25\); with four it gives</p>
+<div class="math display">\[1.25^4=2.44141.\]</div>
+<p>The exact result is \(e=2.71828\). The errors 0.46828 and 0.27688 decrease by a factor about 1.69. The limiting factor of two requires a finer asymptotic regime. Expanding \(N\log(1+1/N)=1-1/(2N)+O(N^{-2})\) predicts \(e-(1+1/N)^N=e/(2N)+O(N^{-2})\).</p>
 <p>If the initial value is actually 1.01, its exact trajectory at time one differs from the nominal one by \(0.01e\). Mesh refinement of the nominal solver cannot decide which initial reading is correct. To evaluate an integration scheme experimentally, fix the model and initial data, compare at a common endpoint and record the norm used. Resampling a coarse trajectory at extra plot positions changes the reported curve but does not alter the integration error accumulated at its original nodes.</p>
 </section>
 <section>
@@ -87,14 +108,20 @@ python ordinary-differential-equations.py --method euler</code></pre>
 </section>
 <section>
 <h2 id="measure-the-defect-of-an-entire-reconstructed-trajectory">Measure the defect of an entire reconstructed trajectory</h2>
-<p>Suppose a time integrator supplies a differentiable curve \(U(t)\) between its stored nodes. Its continuous defect is \(d(t)=U'(t)-f(t,U(t))\), the forcing that would make the reconstructed curve satisfy a perturbed differential equation exactly. For a scalar linear equation \(y'=a(t)y+b(t)\), the state error \(e=U-y\) satisfies \(e'=a(t)e+d(t)\). Multiplication by an integrating factor gives the exact identity</p>
+<p>Suppose a time integrator supplies a differentiable curve \(U(t)\) between its stored nodes. Its continuous defect is \(d(t)=U'(t)-f(t,U(t))\), the forcing that would make the reconstructed curve satisfy a perturbed differential equation exactly. For a scalar linear equation \(y'=a(t)y+b(t)\), the state error \(e=U-y\) satisfies</p>
+<div class="math display">\[e'=a(t)e+d(t).\]</div>
+<p>Multiplication by an integrating factor gives the exact identity</p>
 <div class="math display">\[e(T)=\exp\!\left(\int_0^T a\right)e(0)+\int_0^T\exp\!\left(\int_s^T a(\xi)\,d\xi\right)d(s)\,ds.\]</div>
 <p>This equation distinguishes defects by when they occur. In a dissipative equation with \(a\le-\alpha&lt;0\), older defects receive exponentially smaller weights. If \(|d|\le D\), the resulting bound is \(e^{-\alpha T}|e(0)|+D(1-e^{-\alpha T})/\alpha\). Simply multiplying the worst defect by the duration misses this damping. For a growing mode the weighting reverses: even a modest defect introduced early can dominate the final state. A defect must be examined between nodes; sampling only locations where a collocation method enforces the equation can return zero by construction.</p>
 </section>
 <section>
 <h2 id="check-a-polynomial-approximation-to-a-driven-relaxation">Check a polynomial approximation to a driven relaxation</h2>
 <p>Take \(y'=-2y+t,\ y(0)=0\), and on \([0,1]\) use the approximate curve \(U(t)=t^2/2\), obtained by integrating the input while ignoring damping. Then \(U'=t\), while the actual right-hand side at \(U\) is \(t-t^2\). The defect is \(d(t)=t^2\), zero initially and largest at the final time. Its sign shows that the approximate curve is receiving an artificial positive input. The crude bound with \(D=1,\alpha=2\) gives final error at most \((1-e^{-2})/2\approx0.4323\), already tighter than the undamped bound of one.</p>
-<p>Solve the true equation with an integrating factor: \(y(t)=t/2-1/4+e^{-2t}/4\). At the endpoint the error is \(0.5-(0.25+e^{-2}/4)=(1-e^{-2})/4\approx0.2162\). Independently integrating the defect with the correct damping weight gives \(\int_0^1 e^{-2(1-s)}s^2ds=(1-e^{-2})/4\), exactly reproducing it. The difference between the two estimates has an interpretation: the simpler bound assumed the worst defect was present throughout, while the actual curve develops most of its error only near the end.</p>
+<p>Solve the true equation with an integrating factor:</p>
+<div class="math display">\[y(t)=t/2-1/4+e^{-2t}/4.\]</div>
+<p>At the endpoint the error is</p>
+<div class="math display">\[0.5-(0.25+e^{-2}/4)=(1-e^{-2})/4\approx0.2162.\]</div>
+<p>Independently integrating the defect with the correct damping weight gives \(\int_0^1 e^{-2(1-s)}s^2ds=(1-e^{-2})/4\), exactly reproducing it. The difference between the two estimates has an interpretation: the simpler bound assumed the worst defect was present throughout, while the actual curve develops most of its error only near the end.</p>
 <p>One can even use the defect to form a correction by solving the linear error equation and subtracting the estimated error from \(U\). For a nonlinear problem linearising around the reconstructed path introduces a new remainder and the correction is no longer exact. Still, it targets the right mechanism: identify where the reconstructed curve fails the original equation and propagate that imbalance to the particular observation time instead of judging a trajectory only by its nodal appearance.</p>
 <p>The same forcing identity can distinguish two curves passing through identical initial and final data. One curve may solve the differential equation nearly everywhere, while another contains positive and negative defects whose weighted integrals cancel exactly at the final time. If the experiment also observes a midpoint, that cancellation no longer guarantees agreement there. A dense-output validation should therefore compare defect over the full interval and state error at the actual observation times, especially when a numerical interpolant is used for later event finding.</p>
 </section>

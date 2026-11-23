@@ -29,13 +29,23 @@
 <main id="content">
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Where should a random quadrature spend its samples?</h1><p class="lead">Derive the weight that corrects a nonuniform sampling density and see why an unbiased quadrature can nevertheless have infinite variance.</p><p class="byline">Chapter 17 of 18</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#change-the-experiment-while-preserving-its-mean">Change the experiment while preserving its mean</a><a href="#a-finite-expectation-with-an-infinite-error-bar">A finite expectation with an infinite error bar</a><a href="#compare-sampling-plans-on-the-same-draws">Compare sampling plans on the same draws</a><a href="#tutorial-on-signs-and-diagnostics">Tutorial on signs and diagnostics</a><a href="#long-form">Study the full derivation</a></nav></aside><article class="prose reference"><section>
 <h2 id="change-the-experiment-while-preserving-its-mean">Change the experiment while preserving its mean</h2>
-<p>For \(I=\int_0^1 f(x)\,dx\), choose a probability density \(p(x)>0\) wherever \(f\ne0\). If \(X\) is drawn from \(p\), then averaging \(W=f(X)/p(X)\) gives \(E[W]=\int (f/p)p=I\). With independent draws and finite second moment, the estimator variance is \([\int f^2/p-I^2]/N\). Merely changing the point distribution without changing the weight would compute a different integral.</p>
-<p>For nonnegative \(f\), Cauchy–Schwarz gives \((\int f)^2\le(\int f^2/p)(\int p)\). Equality holds if \(p\) is proportional to \(f\). The ideal distribution would give identical weights, although constructing its exact normaliser frequently requires already knowing the answer. It remains a guide to choosing an approximate density.</p>
+<p>For \(I=\int_0^1 f(x)\,dx\), choose a probability density \(p(x)>0\) wherever \(f\ne0\). If \(X\) is drawn from \(p\), then averaging \(W=f(X)/p(X)\) gives</p>
+<div class="math display">\[E[W]=\int (f/p)p=I.\]</div>
+<p>With independent draws and finite second moment, the estimator variance is \([\int f^2/p-I^2]/N\). Merely changing the point distribution without changing the weight would compute a different integral.</p>
+<p>For nonnegative \(f\), Cauchy–Schwarz gives</p>
+<div class="math display">\[(\int f)^2\le(\int f^2/p)(\int p).\]</div>
+<p>Equality holds if \(p\) is proportional to \(f\). The ideal distribution would give identical weights, although constructing its exact normaliser frequently requires already knowing the answer. It remains a guide to choosing an approximate density.</p>
+
+<details class="study-aside"><summary>Background · Monte Carlo standard error</summary><div class="math display">\[\mathrm{SE}(\bar f)=\sigma_f/\sqrt{N}\]</div><p>Independent samples with finite variance give this ideal error scale. Importance weights and correlations can substantially alter the variance of the actual estimator.</p></details>
 </section>
 <section>
 <h2 id="a-finite-expectation-with-an-infinite-error-bar">A finite expectation with an infinite error bar</h2>
-<p>For \(f(x)=x^{-1/2}\) the integral is 2. Uniform sampling produces weights \(X^{-1/2}\) whose second moment is \(\int_0^1 x^{-1}\,dx=\infty\). The estimate has the right expected value, but its usual finite-variance standard error has no foundation.</p>
-<p>Take \(p_a(x)=(a+1)x^a\) with \(a>-1\). An inverse-CDF draw is \(X=U^{1/(a+1)}\) for a uniform \(U\). For \(f=x^b\), the second moment is \(1/[(a+1)(2b-a+1)]\) when \(2b-a>-1\). At \(b=a=-1/2\), \(X=U^2\) and every weight equals exactly two. At \(b=-1/2,a=-1/4\), the second moment is \(1/(0.75\times0.25)=5.3333\). The variance is 1.3333 and 100 independent draws have standard deviation about 0.1155.</p>
+<p>For \(f(x)=x^{-1/2}\) the integral is 2. Uniform sampling produces weights \(X^{-1/2}\) whose second moment is</p>
+<div class="math display">\[\int_0^1 x^{-1}\,dx=\infty.\]</div>
+<p>The estimate has the right expected value, but its usual finite-variance standard error has no foundation.</p>
+<p>Take \(p_a(x)=(a+1)x^a\) with \(a>-1\). An inverse-CDF draw is \(X=U^{1/(a+1)}\) for a uniform \(U\). For \(f=x^b\), the second moment is \(1/[(a+1)(2b-a+1)]\) when \(2b-a>-1\). At \(b=a=-1/2\), \(X=U^2\) and every weight equals exactly two. At \(b=-1/2,a=-1/4\), the second moment is</p>
+<div class="math display">\[1/(0.75\times0.25)=5.3333.\]</div>
+<p>The variance is 1.3333 and 100 independent draws have standard deviation about 0.1155.</p>
 </section>
 <section>
 <h2 id="compare-sampling-plans-on-the-same-draws">Compare sampling plans on the same draws</h2>

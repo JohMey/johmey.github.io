@@ -34,7 +34,11 @@
 <div class="math display">\[\frac d{dt}\int_V\rho\,dV+\oint_{\partial V}\rho\mathbf u\cdot\mathbf n\,dA=0 .\]</div>
 <p>For a stationary control volume the time derivative can be taken inside the integral. The divergence theorem changes the boundary integral to a volume integral. Since the resulting balance holds for every sufficiently small volume in a smooth flow, its integrand must vanish.</p>
 <div class="math display equation-chain"><div class="equation-step">\[\partial_t\rho+\nabla\cdot(\rho\mathbf u)=0,\]</div><div class="equation-step">\[\frac{D\rho}{Dt}+\rho\,\nabla\cdot\mathbf u=0 .\]</div></div>
-<p>Here \(D/Dt=\partial_t+\mathbf u\cdot\nabla\) follows a moving parcel. Constant parcel density therefore gives \(\nabla\cdot\mathbf u=0\). In a steady single-inlet, single-outlet incompressible duct, integration reduces this statement to \(A_1\bar u_1=A_2\bar u_2\).</p>
+<p>Here \(D/Dt=\partial_t+\mathbf u\cdot\nabla\) follows a moving parcel. Constant parcel density therefore gives</p>
+<div class="math display">\[\nabla\cdot\mathbf u=0.\]</div>
+<p>In a steady single-inlet, single-outlet incompressible duct, integration reduces this statement to \(A_1\bar u_1=A_2\bar u_2\).</p>
+
+<details class="study-aside"><summary>Background · Material acceleration</summary><div class="math display">\[D\mathbf u/Dt=\partial_t\mathbf u+(\mathbf u\cdot\nabla)\mathbf u\]</div><p>A fluid parcel can accelerate as it follows a steady but spatially varying velocity. A probe fixed in space measures only the local time history.</p></details>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Distinguish a parcel trajectory from an instantaneous streamline</h2>
@@ -52,16 +56,38 @@
 </section>
 <section><h2 id="field">Look at a point or follow a parcel</h2>
 <p>At a contraction in an otherwise steady pipe, a parcel of water speeds up. A probe fixed at the throat reports a constant speed throughout the experiment. Both observations are compatible because a field can vary along the path even when it has no explicit time dependence. Eulerian measurements describe velocity at a place. Following a marked parcel gives its changing position and velocity.</p>
-<p>Write the velocity field as \(\mathbf u(\mathbf x,t)\). During \(dt\) the parcel advances through \(d\mathbf x=\mathbf u\,dt\). The chain rule along that trajectory gives \(\mathbf a=\partial_t\mathbf u+(\mathbf u\cdot\nabla)\mathbf u\). The first term is local acceleration and the second is convective acceleration. In steady one-dimensional flow \(a_x=u\,du/dx\). A streamline is tangent to the instantaneous velocity. In a steady flow pathlines and streamlines coincide, whereas in an unsteady field the curve traced by a parcel can differ from a single snapshot’s streamlines.</p>
+<p>Write the velocity field as \(\mathbf u(\mathbf x,t)\). During \(dt\) the parcel advances through \(d\mathbf x=\mathbf u\,dt\). The chain rule along that trajectory gives</p>
+<div class="math display">\[\mathbf a=\partial_t\mathbf u+(\mathbf u\cdot\nabla)\mathbf u.\]</div>
+<p>The first term is local acceleration and the second is convective acceleration. In steady one-dimensional flow \(a_x=u\,du/dx\). A streamline is tangent to the instantaneous velocity. In a steady flow pathlines and streamlines coincide, whereas in an unsteady field the curve traced by a parcel can differ from a single snapshot’s streamlines.</p>
+
+<details class="study-aside">
+<summary>Background · Can a sequence of photographs identify the acceleration of one parcel?</summary>
+<p>A fixed camera that records velocity at one pixel measures an Eulerian history. A particle may enter a different pixel long before the next frame. For the planar velocity field \(\mathbf u=(a x,-a y)\) with constant \(a\), all fixed pixels record an unchanging field. A parcel released on the positive \(x\) axis instead obeys \(x(t)=x_0e^{at}\).</p>
+<div class="math display">\[\frac{D\mathbf u}{Dt}=\partial_t\mathbf u+(\mathbf u\cdot\nabla)\mathbf u=(a^2x,a^2y).\]</div>
+<p>At \(a=2~\mathrm{s}^{-1}\) and \(x=0.10\) m on the axis, the downstream acceleration is 0.40 m/s². The parcel moves into faster neighbouring fluid. Estimating acceleration from an image pair therefore requires either tracking the same particle or combining the local time difference with spatial velocity gradients.</p>
+</details>
 </section>
 <section><h2 id="balance">Count the mass crossing a surface</h2>
 <p>Enclose part of a fluid system in a fixed control volume. A small surface element with outward normal \(\mathbf n\) passes volume \((\mathbf u\cdot\mathbf n)dA\,dt\) in time \(dt\). Multiply by density and add over the whole boundary. Normal inflow is negative, reducing the net outward flux. Conservation of mass is</p>
 <div class="math display">\[\frac{d}{dt}\int_{\rm CV}\rho\,dV+\int_{\rm CS}\rho\,\mathbf u\cdot\mathbf n\,dA=0.\]</div>
-<p>In steady operation the mass flow rate entering all inlets equals that leaving all outlets. A one-inlet, one-outlet reduction with uniform cross-sectional density gives \(\rho_1 A_1\bar u_1=\rho_2 A_2\bar u_2\). The mean velocity is the area integral of the normal component divided by area. A centreline speed is seldom that mean. For variable density the volume rate can change along a duct while mass rate remains constant.</p>
+<p>In steady operation the mass flow rate entering all inlets equals that leaving all outlets. A one-inlet, one-outlet reduction with uniform cross-sectional density gives</p>
+<div class="math display">\[\rho_1 A_1\bar u_1=\rho_2 A_2\bar u_2.\]</div>
+<p>The mean velocity is the area integral of the normal component divided by area. A centreline speed is seldom that mean. For variable density the volume rate can change along a duct while mass rate remains constant.</p>
 </section>
 <section><h2 id="example">Accelerate water in a contraction</h2>
-<p>Water of density 1000 kg/m³ enters a straight circular nozzle 60 mm in diameter with mean speed 1.50 m/s. The outlet is 30 mm in diameter. The area ratio is four, giving \(Q=1.50\pi(0.060)^2/4=4.24\times10^{-3}\,\mathrm{m^3/s}\), \(\dot m=4.24\) kg/s and \(\bar u_2=6.00\) m/s. These speeds already determine the change in streamwise momentum flux if both profiles are nearly uniform. The pressure and wall forces responsible for that change require a momentum balance.</p>
-<p>Suppose along a centreline segment of length 0.30 m the speed is approximately linear from 1.50 to 6.0 m/s. Its gradient is 15 s⁻¹. At a local speed of 3.0 m/s the convective acceleration is 45 m/s². The transit time through the segment is \(\int dx/u=\ln(6/1.5)/15=0.0924\) s. Dividing distance by the arithmetic mean of the two speeds gives a different answer because a particle spends a larger fraction of its time in the slower region.</p>
+<p>Water of density 1000 kg/m³ enters a straight circular nozzle 60 mm in diameter with a mean speed of 1.50 m/s. The outlet is 30 mm in diameter. First use the inlet area to find the volume and mass passing per second.</p>
+<div class="math display">\[\begin{aligned}
+Q&=\bar u_1\frac{\pi D_1^2}{4}
+   =4.24\times10^{-3}~\mathrm{m^3/s},\\
+\dot m&=\rho Q=4.24~\mathrm{kg/s}.
+\end{aligned}\]</div>
+<p>For steady incompressible flow the same volume per second must pass through an outlet of one quarter the inlet area. The mean speed increases accordingly.</p>
+<div class="math display">\[\bar u_2=\bar u_1\left(\frac{D_1}{D_2}\right)^2
+=1.50\left(\frac{60}{30}\right)^2~\mathrm{m/s}=6.00~\mathrm{m/s}.\]</div>
+<p>These speeds determine the change in streamwise momentum flux if both profiles are nearly uniform. The pressure and wall forces responsible for that change require a momentum balance.</p>
+<p>Suppose along a centreline segment of length 0.30 m the speed is approximately linear from 1.50 to 6.0 m/s. Its gradient is 15 s⁻¹. At a local speed of 3.0 m/s the convective acceleration is 45 m/s². The transit time through the segment is</p>
+<div class="math display">\[\int dx/u=\ln(6/1.5)/15=0.0924\,\mathrm{s}.\]</div>
+<p>Dividing distance by the arithmetic mean of the two speeds gives a different answer because a particle spends a larger fraction of its time in the slower region.</p>
 </section>
 <section><h2 id="storage">Let the control volume fill</h2>
 <p>A vented tank receives 4 L/s and initially delivers 2 L/s through a controlled outlet. In a constant horizontal tank section of 0.50 m² the water level rises at \((0.004-0.002)/0.50=0.0040\) m/s. The storage term remains essential even if both inlet and outlet flow meters have steady readings. A free-surface tank can therefore act as an independent calibration: the measured volume increase over a timed interval should equal the integrated difference between inflow and outflow. If the outlet is driven by the changing hydrostatic head, its rate will cease to be constant and the balance becomes a differential equation for the depth.</p>
@@ -73,15 +99,21 @@
 <p>A flow meter on a translating piston does not see the same volume rate as a stationary meter at the same instant. Start with a material system, whose total mass is constant. Over a short time \(dt\), a patch of control surface of area \(dA\) moves a distance \(\mathbf v_s\cdot\mathbf n\,dt\) in its outward normal direction. Fluid moves a distance \(\mathbf v\cdot\mathbf n\,dt\) in that direction. The volume swept through the moving patch is the difference times \(dA\). Converting this volume into mass gives the moving-control-volume form of continuity:</p>
 <div class="math display">\[\frac{d}{dt}\int_{CV(t)}\rho\,dV+\int_{CS(t)}\rho(\mathbf v-\mathbf v_s)\cdot\mathbf n\,dA=0 .\]</div>
 <p>The storage term differentiates the mass inside the actual changing volume. A boundary following a parcel has zero relative normal velocity there, even when the parcel and the boundary move quickly in the laboratory. On an impermeable wall this no-penetration condition applies to its normal movement; the mass balance alone imposes no constraint on tangential slip. Setting \(\mathbf v_s=0\) recovers the fixed-volume formula. Making the entire surface material removes the flux term and recovers conservation of the system mass.</p>
-<p>For constant density, differentiating the geometric volume and using the outward convention gives \(dV/dt=\int\mathbf v_s\cdot\mathbf n\,dA\). Substitution shows how the familiar \(\int\mathbf v\cdot\mathbf n\,dA=0\) can hold for an instantaneous surface even while its enclosed volume is growing. Relative flux and volume storage must be paired consistently.</p>
+<p>For constant density, differentiating the geometric volume and using the outward convention gives</p>
+<div class="math display">\[dV/dt=\int\mathbf v_s\cdot\mathbf n\,dA.\]</div>
+<p>Substitution shows how the familiar \(\int\mathbf v\cdot\mathbf n\,dA=0\) can hold for an instantaneous surface even while its enclosed volume is growing. Relative flux and volume storage must be paired consistently.</p>
 </section>
 <section><h2 id="piston-meter">Interpret a flow reading on a moving piston</h2>
 <p>A horizontal cylinder of area \(0.010\,\mathrm{m^2}\) has an inlet in its fixed left end and a small outlet passing through a piston at its right end. The piston moves to the right at 0.040 m/s while the cylinder stays full of incompressible water. A fixed inlet meter measures \(0.00070\,\mathrm{m^3/s}\). The volume occupied by water grows at \(0.010(0.040)=0.00040\,\mathrm{m^3/s}\). Therefore the relative outlet flux through the piston is \(0.00070-0.00040=0.00030\,\mathrm{m^3/s}\), or 0.30 L/s.</p>
-<p>The outlet area is \(2.0\times10^{-4}\,\mathrm{m^2}\) and flow exits to the right. Its mean velocity relative to the piston is 1.50 m/s, while its laboratory velocity at the moving outlet is \(1.50+0.040=1.54\,\mathrm{m/s}\). Multiplying that laboratory velocity directly by the outlet area gives 0.308 L/s, too high for the outlet flow measured by an instrument carried on the piston. If the piston moved to the right at 0.070 m/s, the entire inlet rate would fill the new volume and relative outlet discharge would be zero. These conclusions assume no leakage past the piston rim and that the outlet area is part of the moving boundary; a fixed downstream collection nozzle would require its own control surface and storage terms.</p>
+<p>The outlet area is \(2.0\times10^{-4}\,\mathrm{m^2}\) and flow exits to the right. Its mean velocity relative to the piston is 1.50 m/s, while its laboratory velocity at the moving outlet is</p>
+<div class="math display">\[1.50+0.040=1.54\,\mathrm{m/s}.\]</div>
+<p>Multiplying that laboratory velocity directly by the outlet area gives 0.308 L/s, too high for the outlet flow measured by an instrument carried on the piston. If the piston moved to the right at 0.070 m/s, the entire inlet rate would fill the new volume and relative outlet discharge would be zero. These conclusions assume no leakage past the piston rim and that the outlet area is part of the moving boundary; a fixed downstream collection nozzle would require its own control surface and storage terms.</p>
 <p>A downstream weighing tank that travels with the piston would collect 0.30 kg per second at water density 1000 kg/m³. This is the discharge relative to that apparatus. The distinction is measurable and does not depend on any pressure-loss assumption for the outlet.</p>
 </section>
 <section class="worked-plot"><h2 id="worked-plot">Can a steady flow accelerate a fluid particle?</h2>
-<p>Let the cross-sectional area in a straight nozzle be \(A(x)/A_0=1-a x/L\). In an ideal steady quasi-one-dimensional incompressible flow, continuity gives \(u=U_0/(1-a x/L)\). The material acceleration is \(u\,du/dx\) although every stationary probe measures a constant velocity.</p>
+<p>Let the cross-sectional area in a straight nozzle be \(A(x)/A_0=1-a x/L\). In an ideal steady quasi-one-dimensional incompressible flow, continuity gives</p>
+<div class="math display">\[u=U_0/(1-a x/L).\]</div>
+<p>The material acceleration is \(u\,du/dx\) although every stationary probe measures a constant velocity.</p>
 <figure class="paper-figure"><img src="/assets/worked-figures/fluid-mechanics/01-kinematics.png" alt="Can a steady flow accelerate a fluid particle?. Horizontal axis: Distance / nozzle length. Vertical axis: Acceleration × length / inlet speed². Data follow the figure." width="1155" height="652" loading="lazy"><figcaption>Reducing the area to 60% of its inlet value gives an exit acceleration of approximately 1.85 U₀²/L. The concentrating acceleration comes from both the increasing speed and its increasing gradient.</figcaption></figure>
 <details class="plot-data" data-csv="/downloads/lecture-data/fluid-mechanics/01-kinematics.csv"><summary>Read values from the plot</summary><div class="table-scroll"><table><caption>Acceleration × length / inlet speed² at selected values of Distance / nozzle length.</caption><thead><tr><th scope="col">Distance / nozzle length</th><th scope="col">Outlet / inlet area = 0.80</th><th scope="col">Outlet / inlet area = 0.60</th><th scope="col">Outlet / inlet area = 0.40</th></tr></thead><tbody><tr><th scope="row">0</th><td>0.2</td><td>0.4</td><td>0.6</td></tr><tr><th scope="row">0.25</th><td>0.23327</td><td>0.5487</td><td>0.977</td></tr><tr><th scope="row">0.5</th><td>0.27435</td><td>0.78125</td><td>1.7493</td></tr><tr><th scope="row">0.75</th><td>0.32567</td><td>1.1662</td><td>3.6063</td></tr><tr><th scope="row">1</th><td>0.39062</td><td>1.8519</td><td>9.375</td></tr></tbody></table></div><p><a href="/downloads/lecture-data/fluid-mechanics/01-kinematics.csv" download>Download all 201 plotted samples (CSV)</a></p></details></section>
 <nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Course contents</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/02-hydrostatics/">Chapter 2 · Hydrostatic pressure and forces on submerged surfaces</a></span></nav></article></div>

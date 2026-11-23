@@ -30,11 +30,15 @@
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>How two decaying modes produce a growing signal</h1><p class="lead">Solve a triangular system exactly, derive the energy growth criterion and separate a real transient from numerical instability.</p><p class="byline">Chapter 16 of 18</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-coupling-hidden-by-the-eigenvalues">A coupling hidden by the eigenvalues</a><a href="#which-initial-directions-grow-at-the-initial-instant">Which initial directions grow at the initial instant?</a><a href="#a-numerical-check-with-a-false-lead">A numerical check with a false lead</a><a href="#tutorial-on-transient-amplification">Tutorial on transient amplification</a></nav></aside><article class="prose reference"><section>
 <h2 id="a-coupling-hidden-by-the-eigenvalues">A coupling hidden by the eigenvalues</h2>
 <p>Let \(y_1'=-y_1+K y_2,\ y_2'=-2y_2\), with time in scaled units. The eigenvalues are −1 and −2 for every \(K\). Their negative real parts guarantee asymptotic decay of this system. They do not say that \(\|y(t)\|\) must decay monotonically. The second component acts as a temporary source in the first component before being damped away.</p>
-<p>With initial state \((0,1)\), \(y_2=e^{-2t}\). Multiply the first equation by \(e^t\) and integrate from zero to \(t\). The result is \(y_1=K(e^{-t}-e^{-2t})\). The largest absolute excursion of the first component occurs when \(2e^{-2t}=e^{-t}\), giving \(t=\log2\) and \(y_1=K/4\). At \(K=12\), a unit initial state generates a measured first component of 3.</p>
+<p>With initial state \((0,1)\), \(y_2=e^{-2t}\). Multiply the first equation by \(e^t\) and integrate from zero to \(t\). The result is</p>
+<div class="math display">\[y_1=K(e^{-t}-e^{-2t}).\]</div>
+<p>The largest absolute excursion of the first component occurs when \(2e^{-2t}=e^{-t}\), giving \(t=\log2\) and \(y_1=K/4\). At \(K=12\), a unit initial state generates a measured first component of 3.</p>
 </section>
 <section>
 <h2 id="which-initial-directions-grow-at-the-initial-instant">Which initial directions grow at the initial instant?</h2>
-<p>Write \(E=\|y\|_2^2/2\). Differentiation gives \(E'=y^T S y\), with \(S=(A+A^T)/2\). Here \(S\) has diagonal \((-1,-2)\) and off-diagonal \(K/2\). A positive eigenvalue appears when the determinant \(2-K^2/4\) becomes negative. Thus some direction has positive instantaneous energy growth for \(|K|>\sqrt8\). The specific initial vector above nevertheless has \(E'(0)=-2\). Existence of a growing direction and immediate growth of every chosen initial condition are separate statements.</p>
+<p>Write \(E=\|y\|_2^2/2\). Differentiation gives</p>
+<div class="math display">\[E'=y^T S y,\]</div>
+<p>with \(S=(A+A^T)/2\). Here \(S\) has diagonal \((-1,-2)\) and off-diagonal \(K/2\). A positive eigenvalue appears when the determinant \(2-K^2/4\) becomes negative. Thus some direction has positive instantaneous energy growth for \(|K|>\sqrt8\). The specific initial vector above nevertheless has \(E'(0)=-2\). Existence of a growing direction and immediate growth of every chosen initial condition are separate statements.</p>
 </section>
 <section>
 <h2 id="a-numerical-check-with-a-false-lead">A numerical check with a false lead</h2>
@@ -47,7 +51,8 @@
 <p>Can a normal matrix with only negative real eigenvalues produce this Euclidean-norm amplification?</p>
 <details><summary>Worked solution</summary><p>A normal matrix is unitarily diagonalizable. Its evolution is a unitary change of independent decaying factors, giving a norm at most one for \(t\ge0\). Nonorthogonality of the damped directions matters here.</p></details>
 <p>Change the initial state to \((1,1)\) at \(K=6\). What is the initial energy slope?</p>
-<details><summary>Worked solution</summary><p>\(E'=-y_1^2-2y_2^2+K y_1y_2=-1-2+6=3\). The instrumental first-component peak and the maximum total Euclidean norm generally occur at different times.</p></details>
+<details><summary>Worked solution</summary><div class="math display">\[E'=-y_1^2-2y_2^2+K y_1y_2=-1-2+6=3.\]</div>
+<p>The instrumental first-component peak and the maximum total Euclidean norm generally occur at different times.</p></details>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/15-collocation-and-shooting/">Chapter 15 · Why a boundary value problem can be easier than its shooting equation</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/17-grazing-events/">Chapter 17 · Locating a grazing event between time steps</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">

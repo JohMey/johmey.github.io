@@ -52,25 +52,74 @@
 <p>A resistance gauge aligned with a line on a free surface records extension along that line. A single gauge cannot distinguish uniaxial tension from combined stretching and shear arranged to give the same directional extension. Bond three gauges at different angles near enough together that the local strain is approximately uniform. A rectangular rosette uses directions of zero, 45 and 90 degrees, all referred to the same positive surface axis.</p>
 <p>Under infinitesimal deformation, a unit direction vector \(n=(\cos\theta,\sin\theta)\) experiences normal strain \(n^T\boldsymbol{\varepsilon}n\). Engineering shear strain \(\gamma_{xy}\) is twice the off-diagonal strain tensor component. Expanding the directional expression yields</p>
 <div class="math display">\[\varepsilon_\theta=\varepsilon_x\cos^2\theta+\varepsilon_y\sin^2\theta+\gamma_{xy}\sin\theta\cos\theta .\]</div>
-<p>The zero and 90° readings give \(\varepsilon_x,\varepsilon_y\) directly. The middle reading gives \(\gamma_{xy}=2\varepsilon_{45}-\varepsilon_x-\varepsilon_y\). A gauge at minus 45° measures the opposite shear contribution. A sketch of the physical gauge labels avoids reversing the inferred shear sign during data reduction.</p>
+<p>The zero and 90° readings give \(\varepsilon_x,\varepsilon_y\) directly. The middle reading gives</p>
+<div class="math display">\[\gamma_{xy}=2\varepsilon_{45}-\varepsilon_x-\varepsilon_y.\]</div>
+<p>A gauge at minus 45° measures the opposite shear contribution. A sketch of the physical gauge labels avoids reversing the inferred shear sign during data reduction.</p>
 </section>
 <section><h2 id="material">Introduce the local stress assumption</h2>
 <p>At an unloaded outer surface the normal and shear tractions on that surface vanish. With \(z\) normal to it, this gives local plane stress. For isotropic linear elasticity and mechanical strains obtained after temperature correction, invert the plane-stress compliance equations and use the shear modulus for the remaining component.</p>
-<div class="math display">\[\sigma_x=\frac{E}{1-\nu^2}(\varepsilon_x+\nu\varepsilon_y),\qquad \sigma_y=\frac{E}{1-\nu^2}(\varepsilon_y+\nu\varepsilon_x),\qquad \tau_{xy}=\frac{E\gamma_{xy}}{2(1+\nu)} .\]</div>
+<div class="math display equation-chain"><div class="equation-step">\[\sigma_x=\frac{E}{1-\nu^2}(\varepsilon_x+\nu\varepsilon_y),\]</div><div class="equation-step">\[\sigma_y=\frac{E}{1-\nu^2}(\varepsilon_y+\nu\varepsilon_x),\]</div><div class="equation-step">\[\tau_{xy}=\frac{E\gamma_{xy}}{2(1+\nu)} .\]</div></div>
 <p>A strain rosette measures only the in-plane quantities. A nonzero through-thickness strain is consistent with plane stress because the in-plane stresses cause Poisson contraction. Beneath a contact patch the local traction condition changes, so the same stress recovery would need additional information.</p>
 </section>
 <section><h2 id="measurement">Interpret the readings on a plate</h2>
 <p>Suppose a steel surface gives \(400,\ 250,\ -100\) microstrain at zero, 45 and 90 degrees. The recovered shear strain is \(500-400+100=200\) microstrain. With \(E=210\,\mathrm{GPa}\) and \(\nu=0.30\), the stresses are \(85.38,\ 4.62,\ 16.15\,\mathrm{MPa}\) for \(x,y,xy\), respectively. The shear is positive under the stated gauge orientation. Converting microstrain to \(10^{-6}\) before multiplying by MPa is essential.</p>
-<p>The principal stresses are the eigenvalues of this symmetric matrix. Its mean normal stress is 45.0 MPa, and its Mohr-circle radius is \(\sqrt{[(85.38-4.62)/2]^2+16.15^2}=43.50\,\mathrm{MPa}\). Thus the two in-plane principal stresses are approximately 88.5 and 1.5 MPa. The major direction is \(\tfrac12\operatorname{atan2}(2\tau,\sigma_x-\sigma_y)=10.9^\circ\) from the zero gauge. A strain reading of −100 microstrain along \(y\) therefore does not imply compressive normal stress along that axis: Poisson contraction from the dominant \(x\) load accounts for much of that reading.</p>
+<p>The principal stresses are the eigenvalues of this symmetric matrix. Its mean normal stress is 45.0 MPa, and its Mohr-circle radius is</p>
+<div class="math display">\[\sqrt{[(85.38-4.62)/2]^2+16.15^2}=43.50\,\mathrm{MPa}.\]</div>
+<p>Thus the two in-plane principal stresses are approximately 88.5 and 1.5 MPa. The major direction is \(\tfrac12\operatorname{atan2}(2\tau,\sigma_x-\sigma_y)=10.9^\circ\) from the zero gauge. A strain reading of −100 microstrain along \(y\) therefore does not imply compressive normal stress along that axis: Poisson contraction from the dominant \(x\) load accounts for much of that reading.</p>
 </section>
 <section><h2 id="temperature">Resolve a uniform thermal signal</h2>
 <p>Uniform heating of an unconstrained isotropic plate adds the same free thermal strain \(\alpha\Delta T\) to each gauge reading, after allowing for the gauge instrumentation itself. It cancels from the inferred engineering shear because \(2-1-1=0\), but it persists in both recovered normal components. For a 20 K temperature rise and linear expansion \(12\times10^{-6}\,\mathrm{K^{-1}}\), subtract 240 microstrain from each reading before applying the mechanical plane-stress relation.</p>
 </section>
 <section><h2 id="arbitrary-angles">Reconstruct a surface strain from a delta rosette</h2>
 <p>The zero, 45 and 90 degree rosette is convenient but not the only useful placement. Introduce the strain-circle coordinates \(m=(\varepsilon_x+\varepsilon_y)/2,\ d=(\varepsilon_x-\varepsilon_y)/2,\ g=\gamma_{xy}/2\). Then each directional reading is \(e_\theta=m+d\cos 2\theta+g\sin2\theta\). Every installed gauge supplies one linear equation in these three unknowns. Gauge directions that are nearly parallel give nearly dependent equations, so a small error in an individual reading can then cause a large error in a recovered component.</p>
-<p>For a delta rosette take directions \(0,60,120^\circ\). The doubled angles are equally spaced round the strain circle, so their cosine and sine values each sum to zero. Adding all three readings gives \(m=(e_0+e_{60}+e_{120})/3\). The first reading then gives \(d=e_0-m\); subtracting the last two cancels both \(m\) and their identical cosine terms and gives \(g=(e_{60}-e_{120})/\sqrt3\). The in-plane principal strains and their physical orientation follow without a material assumption:</p>
-<div class="math display">\[e_{1,2}=m\pm\sqrt{d^2+g^2},\qquad \theta_1=\tfrac12\operatorname{atan2}(g,d).\]</div>
+<p>For a delta rosette take directions \(0,60,120^\circ\). The doubled angles are equally spaced round the strain circle, so their cosine and sine values each sum to zero. Adding all three readings gives</p>
+<div class="math display">\[m=(e_0+e_{60}+e_{120})/3.\]</div>
+<p>The first reading then gives</p>
+<div class="math display">\[d=e_0-m;\]</div>
+<p>subtracting the last two cancels both \(m\) and their identical cosine terms and gives</p>
+<div class="math display">\[g=(e_{60}-e_{120})/\sqrt3.\]</div>
+<p>The in-plane principal strains and their physical orientation follow without a material assumption:</p>
+<div class="math display equation-chain"><div class="equation-step">\[e_{1,2}=m\pm\sqrt{d^2+g^2},\]</div><div class="equation-step">\[\theta_1=\tfrac12\operatorname{atan2}(g,d).\]</div></div>
 <p>The half-angle is necessary because a straight gauge has the same reading after a physical rotation of 180°. For an isotropic elastic solid the principal stress directions coincide with these strain directions. Orthotropic laminates can give stress and strain axes that differ, so converting a strain circle into stresses would require the material compliance in the specimen’s axes.</p>
+
+<details class="study-aside">
+<summary>OneSimulation · How does a small gauge error become a large transverse strain?</summary>
+<p>A bonded gauge observes the normal strain along its axis. Reconstruct the two normal components and the engineering shear from three readings. Give only the middle reading a positive bias of 5 µε. The factor multiplying the shear in the observation matrix follows from rotating a symmetric tensor with \(\epsilon_{xy}=\gamma_{xy}/2\).</p>
+<div class="math display">\[\epsilon_\theta=\epsilon_x\cos^2\theta+\epsilon_y\sin^2\theta+\gamma_{xy}\sin\theta\cos\theta.\]</div>
+<p>OneSimulation solves the same three-unknown system for two different layouts. At 0°, 45° and 90°, the last gauge directly measures transverse strain. At 0°, 10° and 20°, all gauges see mostly the longitudinal direction. The reconstructed transverse strain now misses by −155.8 µε. Fitting three readings exactly supplies no independent check on accuracy.</p>
+<pre><code>"""Compare strain-rosette geometries with the same middle-gauge error."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+
+true_strain = np.array([100., -60., 80.])  # ex, ey, engineering shear in µε
+bias = 5.0  # µε added to the middle gauge
+rotation = np.arange(0, 181)
+
+def gauge_rows(degrees):
+    angle = np.deg2rad(degrees)
+    c, s = np.cos(angle), np.sin(angle)
+    return np.column_stack((c**2, s**2, c*s))
+
+fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+for spacing, colour in [(45, "#19596a"), (10, "#a5442e")]:
+    layout = gauge_rows([0, spacing, 2*spacing])
+    readings = layout @ true_strain
+    assert np.allclose(solve_dense(layout, readings), true_strain)
+    readings[1] += bias
+    inferred = solve_dense(layout, readings)
+    error = gauge_rows(rotation) @ (inferred - true_strain)
+    ax.plot(rotation, error, color=colour, label=f"Gauge spacing {spacing}°")
+    print(f"{spacing}°: error at 90° = {error[90]:.2f} µε")
+
+ax.axhline(0, color="0.5", linewidth=0.7)
+ax.set(xlabel="Direction of predicted normal strain (degrees)",
+       ylabel="Prediction error (µε)", xlim=(0, 180))
+ax.legend()
+fig.savefig("engineering-mechanics.png", dpi=170)</code></pre>
+<figure><img src="/assets/aside-figures/engineering-mechanics.png" width="1190" height="680" alt="The error in the predicted strain along arbitrary directions reaches across 150 microstrain for tightly grouped gauges and remains small for a rectangular rosette." loading="lazy"><figcaption>Change the middle-gauge bias and rerun. Its error remains 5 µε at that gauge; the much larger error occurs in directions far outside the narrow set of measured angles.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/engineering-mechanics.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section><h2 id="delta-test">Check an installed rosette using an independent gauge</h2>
 <p>On a loaded aluminium plate a delta rosette reads \(e_0=350,\ e_{60}=200,\ e_{120}=-100\) microstrain. The mean is 150 microstrain; \(d=200\) and \(g=300/\sqrt3=173.2\) microstrain. Thus \(\varepsilon_x=350,\varepsilon_y=-50,\gamma_{xy}=346.4\) microstrain. The strain-circle radius is \(\sqrt{200^2+173.2^2}=264.6\) microstrain. Principal strains are 414.6 and −114.6 microstrain, with largest extension along \(\theta_1=20.45^\circ\) from the zero gauge.</p>

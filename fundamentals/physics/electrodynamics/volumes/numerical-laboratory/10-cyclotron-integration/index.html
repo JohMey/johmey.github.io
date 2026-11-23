@@ -39,16 +39,22 @@
 </section>
 <section>
 <h2 id="solve-a-centred-magnetic-step-exactly">Solve a centred magnetic step exactly</h2>
-<p>Use the time-centred velocity in the Lorentz force: \(\mathbf v_+-\mathbf v=d J(\mathbf v_++\mathbf v)/2\). Premultiply by the transpose of \(\mathbf v_++\mathbf v\). The left side is the difference of squared speeds and the right side vanishes, so the update preserves speed for every \(d\) in exact arithmetic. Rearranging yields a two-dimensional linear solve; using \(J^2=-I\) turns it into a rotation,</p>
+<p>Use the time-centred velocity in the Lorentz force:</p>
+<div class="math display">\[\mathbf v_+-\mathbf v=d J(\mathbf v_++\mathbf v)/2.\]</div>
+<p>Premultiply by the transpose of \(\mathbf v_++\mathbf v\). The left side is the difference of squared speeds and the right side vanishes, so the update preserves speed for every \(d\) in exact arithmetic. Rearranging yields a two-dimensional linear solve; using \(J^2=-I\) turns it into a rotation,</p>
 <div class="math display equation-chain"><div class="equation-step">\[\mathbf v_+=\frac{1-t^2}{1+t^2}\mathbf v+\frac{2t}{1+t^2}J\mathbf v,\]</div><div class="equation-step">\[t=d/2.\]</div></div>
 <p>These coefficients are \(\cos\alpha\) and \(\sin\alpha\) for \(\alpha=2\arctan(d/2)\). This is the magnetic rotation used in the nonrelativistic Boris integrator. For simultaneous electric fields, the usual split step adds two half electric impulses around the magnetic rotation. The current experiment isolates the magnetic part; it makes no claim about a nonuniform electric field or the accuracy of interpolation from a field mesh to particles.</p>
 <p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/10-cyclotron-integration/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-cyclotron-integration"></div>
 </section>
 <section>
 <h2 id="speed-conservation-does-not-fix-arrival-time">Speed conservation does not fix arrival time</h2>
-<p>At small \(d\), \(\alpha=d-d^3/12+O(d^5)\). A speed-preserving orbit lags in gyrophase, even when its energy plot stays perfectly flat. After four true orbits at 24 steps per orbit the predicted lag is about 8.14 degrees. The browser advances the Euler and rotation velocities and reports both norm and lag. The y-axis rescales to fit both curves, so a sharply growing Euler error can flatten the appearance of the well-behaved curve. Inspect numerical values as well as the picture.</p>
+<p>At small \(d\),</p>
+<div class="math display">\[\alpha=d-d^3/12+O(d^5).\]</div>
+<p>A speed-preserving orbit lags in gyrophase, even when its energy plot stays perfectly flat. After four true orbits at 24 steps per orbit the predicted lag is about 8.14 degrees. The browser advances the Euler and rotation velocities and reports both norm and lag. The y-axis rescales to fit both curves, so a sharply growing Euler error can flatten the appearance of the well-behaved curve. Inspect numerical values as well as the picture.</p>
 <p>Suppose an optical pickup observes the time at which a dilute ion tracer first crosses a known line of sight after several orbits. A phase error can be an important measurement error even when the speed is exact. To use the trajectory as a reference, refine the step until the crossing time changes by less than the experimental timing resolution. If the required integration spans many revolutions, a uniform field permits exact substeps. In realistic fields one can retain a structure-preserving rotation while resolving spatial variation independently.</p>
-<p>A separate diagnostic is time reversal. Starting from the final velocity and applying the rotation with \(-d\) exactly inverts a centred step, up to rounding. Forward Euler with \(-d\) after \(+d\) gives \((I-dJ)(I+dJ)=(1+d^2)I\). A forward/backward test detects the lost reversibility without knowing a single experimental constant.</p>
+<p>A separate diagnostic is time reversal. Starting from the final velocity and applying the rotation with \(-d\) exactly inverts a centred step, up to rounding. Forward Euler with \(-d\) after \(+d\) gives</p>
+<div class="math display">\[(I-dJ)(I+dJ)=(1+d^2)I.\]</div>
+<p>A forward/backward test detects the lost reversibility without knowing a single experimental constant.</p>
 </section>
 <section>
 <h2 id="tutorial">Tutorial</h2>

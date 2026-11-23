@@ -62,8 +62,46 @@
 </section>
 <section><h2 id="derive-temperature-and-time-sensitivities">Derive temperature and time sensitivities</h2>
 <p>Consider \(c=c_0e^{-kt}\) with \(k=k_r\exp[-(E/R)(1/T-1/T_r)]\). Estimate \(\theta=\ln k_r\) and \(E\), taking \(c_0\) as known. At fixed \(T\) the derivatives are</p>
-<div class="math display">\[\partial_\theta c=-ktc,\qquad \partial_E c=(ktc/R)(1/T-1/T_r).\]</div>
+<div class="math display equation-chain"><div class="equation-step">\[\partial_\theta c=-ktc,\]</div><div class="equation-step">\[\partial_E c=(ktc/R)(1/T-1/T_r).\]</div></div>
 <p>Within one temperature series all sensitivity rows are parallel in this two-parameter space, however many sampling times are used. Exactly at \(T_r\) the second component vanishes. Temperatures on opposite sides of the reference rotate the rows in opposite directions and can reduce parameter correlation. For equal absolute concentration uncertainty, the factor \(kt e^{-kt}\) peaks at \(kt=1\). A wider temperature range changes the rate as well as the orientation, so a time schedule informative at one temperature can miss the decay at another.</p>
+
+<details class="study-aside">
+<summary>OneSimulation · When should the second thermometer reading be taken?</summary>
+<p>A vessel cools toward a known ambient temperature. The temperature excess is \(A e^{-kt}\), with nominal amplitude 4 K and nominal rate 0.4 per hour. Two independent readings, each with standard deviation 0.08 K, are available. One is taken at time zero. If the amplitude were known exactly, the time sensitivity to the rate would peak in magnitude at \(t=1/k\). But the first reading estimates the unknown amplitude and introduces uncertainty into the rate estimate.</p>
+<p>The OneSimulation solve computes the local two-parameter covariance from the sensitivity matrix. Another derivation comes from taking the log ratio of the readings and propagating their errors to first order. The variance of the estimated rate is</p>
+<div class="math display">\[\operatorname{Var}(\hat k)\simeq\frac{\sigma^2}{A^2t^2}\left(e^{2kt}+1\right).\]</div>
+<p>Writing \(z=kt\), the minimum satisfies \(z=1+e^{-2z}\). Thus the preferred time is about 2.77 h, slightly later than the 2.50 h optimum with a known amplitude. Two close readings hardly discriminate a rate; a very late reading is nearly lost in absolute instrument noise. The curve is a local design calculation at the nominal rate, before observing any temperatures.</p>
+<pre><code>"""Choose a sampling time for a cooling rate when its amplitude is also unknown."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+
+amplitude = 4.0  # K above a known ambient temperature
+rate = 0.4  # per hour
+noise = 0.08  # K, standard deviation of each independent measurement
+times = np.linspace(0.15, 10.0, 400)  # first reading at 0 h; vary the second
+standard_errors = []
+for t in times:
+    decay = np.exp(-rate*t)
+    sensitivity = np.array([[1., 0.], [decay, -amplitude*t*decay]])
+    covariance = solve_dense(sensitivity.T @ sensitivity / noise**2, np.eye(2))
+    standard_errors.append(np.sqrt(covariance[1, 1]))
+known_amplitude = noise * np.exp(rate*times) / (amplitude*times)
+analytic = noise * np.sqrt(1 + np.exp(2*rate*times)) / (amplitude*times)
+assert np.allclose(standard_errors, analytic)
+best = np.argmin(standard_errors)
+print(f"Optimal second reading on grid: {times[best]:.2f} h; rate SE {standard_errors[best]:.4f} /h")
+fig, ax = plt.subplots(figsize=(6.8, 3.8), constrained_layout=True)
+ax.semilogy(times, standard_errors, color="#176879", label="Estimate amplitude and rate")
+ax.semilogy(times, known_amplitude, "--", color="#a4492b", label="Amplitude known exactly")
+ax.scatter(times[best], standard_errors[best], color="#273d30", zorder=3)
+ax.set(xlabel="Time of the second reading (h)", ylabel="Local rate standard error (1/h)")
+ax.legend()
+ax.grid(alpha=0.2)
+fig.savefig("inverse-problems.png", dpi=160)</code></pre>
+<figure><img src="/assets/aside-figures/inverse-problems.png" width="1088" height="608" loading="lazy" alt="Rate standard error versus the time of the second reading; both error curves have a minimum, slightly later when amplitude is unknown."><figcaption>The solid curve allows for estimating the initial temperature. Early sampling is particularly expensive once that additional unknown is included.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/inverse-problems.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section><h2 id="compare-an-inference-with-three-numerical-experiments">Compare an inference with three numerical experiments</h2>
 <p>The <a href="/fundamentals/numerics/inverse-problems/#experiment">OneSimulation Arrhenius experiment</a> supplies three fits to noisy synthetic histories. First compare two runs at the wider temperature range: doubling the noise scale changes the reported standard error of \(E\) from 0.3636 to 0.7228 kJ/mol. Next restore the original noise and narrow the spacing between temperatures from 5 K to 1 K. The standard error reaches 1.4300 kJ/mol. The second change alters the geometry of the sensitivity rows, even though the number of observations stays the same. The exact factor also depends on the sampling times and nonlinear fit.</p>
@@ -75,12 +113,20 @@
 </section>
 <section>
 <h2 id="choose-a-design-for-the-prediction-that-will-be-reported">Choose a design for the prediction that will be reported</h2>
-<p>Consider a linear calibration \(y=a+bx+\epsilon\) on an instrument with two available settings \(x=-1,+1\). Assume independent errors of common known variance \(\sigma^2\). Any number of repetitions at the same setting estimates its mean response. Denote the two setting means by \(m_-\) and \(m_+\). The calibration then predicts the value at any target \(t\) by linear interpolation or extrapolation, \(Q(t)=(1-t)m_-/2+(1+t)m_+/2\). This expression follows by equating the coefficients of the constant and linear functions, both of which must be reproduced exactly.</p>
-<p>With \(n_-\) and \(n_+\) readings, the variance is \(\sigma^2[(1-t)^2/(4n_-)+(1+t)^2/(4n_+)]\). For a fixed budget \(N=n_-+n_+\), minimise over positive group sizes. Taking the derivative with respect to \(n_-\), or applying Cauchy–Schwarz, gives \(n_-:n_+=|1-t|:|1+t|\). The absolute values matter outside the calibration interval, where one interpolation weight becomes negative while its contribution to variance remains positive. This result assumes the slope law is trusted at the target and both settings cost the same.</p>
+<p>Consider a linear calibration \(y=a+bx+\epsilon\) on an instrument with two available settings \(x=-1,+1\). Assume independent errors of common known variance \(\sigma^2\). Any number of repetitions at the same setting estimates its mean response. Denote the two setting means by \(m_-\) and \(m_+\). The calibration then predicts the value at any target \(t\) by linear interpolation or extrapolation,</p>
+<div class="math display">\[Q(t)=(1-t)m_-/2+(1+t)m_+/2.\]</div>
+<p>This expression follows by equating the coefficients of the constant and linear functions, both of which must be reproduced exactly.</p>
+<p>With \(n_-\) and \(n_+\) readings, the variance is \(\sigma^2[(1-t)^2/(4n_-)+(1+t)^2/(4n_+)]\). For a fixed budget \(N=n_-+n_+\), minimise over positive group sizes. Taking the derivative with respect to \(n_-\), or applying Cauchy–Schwarz, gives</p>
+<div class="math display">\[n_-:n_+=|1-t|:|1+t|.\]</div>
+<p>The absolute values matter outside the calibration interval, where one interpolation weight becomes negative while its contribution to variance remains positive. This result assumes the slope law is trusted at the target and both settings cost the same.</p>
 </section>
 <section>
 <h2 id="allocate-twelve-readings-for-a-target-near-one-endpoint">Allocate twelve readings for a target near one endpoint</h2>
-<p>At \(t=1/2\) the target weights are \(1/4\) and \(3/4\). The optimal division of twelve readings is therefore three at the negative setting and nine at the positive setting. For unit measurement variance, the resulting prediction variance is \(1/(16\cdot3)+9/(16\cdot9)=1/12\). Splitting the readings equally instead gives \((1+9)/(16\cdot6)=5/48\). The first design reduces this particular variance by one fifth. Both designs can reconstruct the full line because both endpoints have been observed.</p>
+<p>At \(t=1/2\) the target weights are \(1/4\) and \(3/4\). The optimal division of twelve readings is therefore three at the negative setting and nine at the positive setting. For unit measurement variance, the resulting prediction variance is</p>
+<div class="math display">\[1/(16\cdot3)+9/(16\cdot9)=1/12.\]</div>
+<p>Splitting the readings equally instead gives</p>
+<div class="math display">\[(1+9)/(16\cdot6)=5/48.\]</div>
+<p>The first design reduces this particular variance by one fifth. Both designs can reconstruct the full line because both endpoints have been observed.</p>
 <p>If the target were a tight joint estimate of intercept and slope, the answer would change. The information matrix in these two parameters has diagonal entries \(N\) and off-diagonal entries \(n_+-n_-\) for unit variance. Its determinant is \(N^2-(n_+-n_-)^2=4n_-n_+\), maximised by a six–six design. For the three–nine design the determinant is 108 versus 144 when balanced. Giving up joint precision here buys precision specifically for the proposed positive-side prediction. A design decision cannot be assessed without knowing which quantity is intended for publication.</p>
 <p>As a further check, allow the physical calibration to contain an unmodelled quadratic term \(d x^2\). At both design points that contribution equals the same constant \(d\), so it is absorbed into the fitted intercept. At \(t=1/2\) its actual contribution is only \(d/4\). Every design using the two endpoints alone therefore incurs prediction bias \(3d/4\), however small its nominal variance. An additional interior validation setting can reveal this defect in a way that more repeated endpoint measurements cannot.</p>
 <p>A further constraint may come from instrument startup time. If changing between settings is expensive while taking repeated readings is cheap, run the readings in groups but randomise or balance their order across independent sessions. Otherwise a gradual drift can become indistinguishable from the slope. The independent-error variance derivation offers no protection against an unmodelled time effect confounded with the chosen temperature or excitation.</p>

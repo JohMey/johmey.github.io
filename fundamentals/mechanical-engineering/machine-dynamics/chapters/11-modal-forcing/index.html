@@ -31,11 +31,15 @@
 <main id="content">
 <header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Modal participation and absorber tuning</h1><p class="lead">Project external forcing onto vibration modes and determine when a vibration absorber suppresses displacement at a selected frequency.</p><p class="byline">Chapter 11 of 20</p><nav class="study-links chapter-jumps" aria-label="Study this chapter"><a href="#first-principles">First principles</a><a href="#derivation">Derivation</a><a href="#worked-example">Worked examples</a><a href="#experiment">OneSimulation lab</a><a href="/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/6/">Problem sheet 6</a><a class="chapter-outline-link" href="#chapter-outline">All sections</a></nav></header><div class="shell article-layout"><aside class="article-nav" id="chapter-outline"><nav aria-label="On this page"><a href="#first-principles">Project a physical force onto a vibration mode</a><a href="#derivation">Determine how a point force appears in collocated modal measurements</a><a href="#experiment">Separate the effect of mass from rotary inertia</a><a href="#projection">Recover motion from mode amplitudes</a><a href="#symmetry">Select a mode by choosing the actuator pattern</a><a href="#absorber">Cause the primary displacement to vanish</a><a href="#observation">Choose where to observe cancellation</a><a href="#distributed">Project a spatially distributed load onto a flexible member</a><a href="#cable-measurement">Estimate a cable’s displacement from its first few modes</a><a href="#worked-plot">What happens to the notch of a tuned absorber?</a><a href="#long-form">Study the full derivation</a></nav></aside><article class="prose reference"><section class="first-principles">
 <p class="reading-label">From first principles</p><h2 id="first-principles">Project a physical force onto a vibration mode</h2>
-<p>For small undamped motions a structure obeys \(M\ddot{\mathbf x}+K\mathbf x=\mathbf f(t)\) with symmetric mass and stiffness matrices. Its normal modes satisfy \(K\boldsymbol\phi_j=\omega_j^2M\boldsymbol\phi_j\). Expand displacement in these mode shapes, using time-dependent coefficients \(q_j\). Premultiply the result by the transpose of one mode.</p>
+<p>For small undamped motions a structure obeys \(M\ddot{\mathbf x}+K\mathbf x=\mathbf f(t)\) with symmetric mass and stiffness matrices. Its normal modes satisfy</p>
+<div class="math display">\[K\boldsymbol\phi_j=\omega_j^2M\boldsymbol\phi_j.\]</div>
+<p>Expand displacement in these mode shapes, using time-dependent coefficients \(q_j\). Premultiply the result by the transpose of one mode.</p>
 <div class="math display equation-chain"><div class="equation-step">\[\mathbf x=\sum_j\boldsymbol\phi_j q_j,\]</div><div class="equation-step">\[\sum_j(\boldsymbol\phi_i^\mathsf TM\boldsymbol\phi_j\,\ddot q_j+\boldsymbol\phi_i^\mathsf TK\boldsymbol\phi_j\,q_j)=\boldsymbol\phi_i^\mathsf T\mathbf f .\]</div></div>
 <p>For distinct frequencies, symmetry makes different modes orthogonal under both matrices. The corresponding off-diagonal products vanish, leaving a separate scalar oscillator for the selected mode.</p>
 <div class="math display equation-chain"><div class="equation-step">\[m_i\ddot q_i+m_i\omega_i^2q_i=Q_i(t),\]</div><div class="equation-step">\[m_i=\boldsymbol\phi_i^\mathsf TM\boldsymbol\phi_i,\]</div><div class="equation-step">\[Q_i=\boldsymbol\phi_i^\mathsf T\mathbf f .\]</div></div>
 <p>The force projection has a direct interpretation as work per unit modal displacement. A symmetric load can have zero projection onto an antisymmetric mode despite a large total force. The displacement at a particular sensor is obtained only after adding its components from all excited modes.</p>
+
+<details class="study-aside"><summary>Background · Modal participation</summary><div class="math display">\[Q_j=\phi_j^\mathsf T f\]</div><p>A mode is excited according to its overlap with the force. Always state how its mode vector and modal mass were normalised.</p></details>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Determine how a point force appears in collocated modal measurements</h2>
@@ -47,9 +51,13 @@
 <div class="math display">\[\frac{A_1}{A_2}=\frac{\omega_z^2-\omega_1^2}{\omega_2^2-\omega_z^2}.\]</div>
 <p>Separated force and response locations can give signed residues and change the interlacing. With damping a finite minimum commonly replaces the exact zero, so using its frequency as an exact antiresonance is an approximation.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Predict the dip of a two-mode stage</h3>
-<p>For \(\omega_1=10.0\) rad/s, \(\omega_2=20.0\) rad/s and \(A_1=2A_2\), the squared zero frequency is \((2\times400+100)/3=300\) s⁻², hence \(\omega_z=17.3\) rad/s. At that frequency the first contribution is \(2A_2/(100-300)=-0.0100A_2\) and the second is \(A_2/(400-300)=+0.0100A_2\). The sensor is stationary while both modes respond.</p>
+<p>For \(\omega_1=10.0\) rad/s, \(\omega_2=20.0\) rad/s and \(A_1=2A_2\), the squared zero frequency is \((2\times400+100)/3=300\) s⁻², hence \(\omega_z=17.3\) rad/s. At that frequency the first contribution is \(2A_2/(100-300)=-0.0100A_2\) and the second is</p>
+<div class="math display">\[A_2/(400-300)=+0.0100A_2.\]</div>
+<p>The sensor is stationary while both modes respond.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Recover a relative participation from a measured minimum</h3>
-<p>A different collocated test gives resonances at 30.0 and 50.0 Hz and a negligible-damping minimum at 40.0 Hz. Ratios of squared angular frequencies can equally be expressed through squared frequencies in hertz. The residue ratio is \((40^2-30^2)/(50^2-40^2)=7/9=0.778\). With equal modal masses the first shape magnitude at the force point is \(\sqrt{7/9}=0.882\) of the second.</p>
+<p>A different collocated test gives resonances at 30.0 and 50.0 Hz and a negligible-damping minimum at 40.0 Hz. Ratios of squared angular frequencies can equally be expressed through squared frequencies in hertz. The residue ratio is</p>
+<div class="math display">\[(40^2-30^2)/(50^2-40^2)=7/9=0.778.\]</div>
+<p>With equal modal masses the first shape magnitude at the force point is \(\sqrt{7/9}=0.882\) of the second.</p>
 </section><section class="course-lab"><p class="reading-label">OneSimulation laboratory</p><h2 id="experiment">Separate the effect of mass from rotary inertia</h2><p class="lab-prediction"><strong>Start from this chapter.</strong> Use the frequency shifts to identify which mode is most sensitive to an added rotary inertia. A forcing amplitude would also need a participation factor. The numerical experiment here computes free modes.</p><p class="lab-access">Compare recorded OneSimulation runs on this page. To test your own inputs, <a href="/downloads/teaching/planar_frame_point_mass_modes.zip" download>download the notebook and model files</a> and run the model in an <a href="/tutorials/install/">activated OneSimulation environment</a>.</p>
 <p>Run the frame example and read the row labelled “massless members”. Its baseline at <code>mass=200.0</code> and <code>rotary=60.0</code> is 5.048, 15.449 and 44.645 Hz. Record the light-frame and steel-frame results in separate columns.</p>
 <ol><li>Set <code>mass=400.0</code> kg and retain <code>rotary=60.0</code> kg·m². This represents adding mass close to the tip reference point. Expect light-frame frequencies of 3.666, 11.206 and 42.379 Hz. Which mode is least sensitive to the added translation inertia?</li><li>Reset <code>mass=200.0</code> and set <code>rotary=120.0</code>. This represents redistributing the same mass further from the rotation axis. Expect 4.798, 14.750 and 34.791 Hz. The highest mode now changes substantially. Compare these changes with the corresponding steel-frame frequencies at eight elements per member.</li></ol>
@@ -67,31 +75,87 @@
 <p>Problem sheet 2 · <a href="/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/2/#laboratory-problem">Estimate how a frame mode distributes its kinetic energy</a></p><p><a href="/fundamentals/mechanical-engineering/machine-dynamics/#case-study">Read the model setup and preparatory problems</a></p></section>
 <section><h2 id="projection">Recover motion from mode amplitudes</h2>
 <p>Knowing a structure’s natural frequencies does not yet tell you which frequencies a particular actuator will excite. For a linear undamped system write \(M\ddot x+Kx=f(t)\) and let \(\phi_j\) be a real mode shape solving \(K\phi_j=\omega_j^2M\phi_j\). Assume a complete set of independent modes and expand the displacement \(x=\sum_j\phi_j q_j\). Multiplying the equation by \(\phi_i^T\) uses mass and stiffness orthogonality to remove other modal coordinates.</p>
-<div class="math display">\[m_i\ddot q_i+k_iq_i=\phi_i^Tf(t),\qquad m_i=\phi_i^TM\phi_i,\quad k_i=\omega_i^2m_i .\]</div>
+<div class="math display equation-chain"><div class="equation-step">\[m_i\ddot q_i+k_iq_i=\phi_i^Tf(t),\]</div><div class="equation-step">\[m_i=\phi_i^TM\phi_i,\]</div><div class="equation-step">\[k_i=\omega_i^2m_i .\]</div></div>
 <p>Multiplying a mode shape by a constant changes the numerical modal mass and generalised force, while the reconstructed physical motion remains invariant. Thus a tabulated mode shape needs its normalisation if it is used to compute a physical response. A forcing pattern whose projection vanishes excites none of that mode from rest, even if the excitation frequency equals its natural frequency.</p>
 </section>
 <section><h2 id="symmetry">Select a mode by choosing the actuator pattern</h2>
-<p>Suppose two identical masses 2 kg each have mode shapes \((1,1)\) and \((1,-1)\), with frequencies 10 and 20 rad/s. Both modal masses are 4 kg. A 12 N harmonic force on the first mass projects 12 N onto each mode in this normalisation. At a forcing frequency of 5 rad/s the undamped steady modal amplitudes are \(12/[4(10^2-5^2)]=0.0400\,\mathrm m\) and \(12/[4(20^2-5^2)]=0.00800\,\mathrm m\). Recombination gives first and second physical amplitudes 0.0480 and 0.0320 m.</p>
+<p>Suppose two identical masses 2 kg each have mode shapes \((1,1)\) and \((1,-1)\), with frequencies 10 and 20 rad/s. Both modal masses are 4 kg. A 12 N harmonic force on the first mass projects 12 N onto each mode in this normalisation. At a forcing frequency of 5 rad/s the undamped steady modal amplitudes are</p>
+<div class="math display equation-chain"><div class="equation-step">\[12/[4(10^2-5^2)]=0.0400\,\mathrm m,\]</div><div class="equation-step">\[12/[4(20^2-5^2)]=0.00800\,\mathrm m.\]</div></div>
+<p>Recombination gives first and second physical amplitudes 0.0480 and 0.0320 m.</p>
 <p>Now distribute the same total force as 6 N on each mass in phase. The first projection stays 12 N and the second becomes \(6-6=0\). The masses now both move 0.0400 m. Relocating or phasing actuators can therefore change observed vibration without changing any mass, spring or natural frequency.</p>
 </section>
 <section><h2 id="absorber">Cause the primary displacement to vanish</h2>
-<p>Attach an auxiliary mass \(m_a\) by spring \(k_a\) to a primary mass \(m_p\) grounded by spring \(k_p\). A harmonic force of amplitude \(F\) acts on the primary mass. Seek displacement amplitudes \(X_p,X_a\). The absorber equation is \(-k_aX_p+(k_a-m_a\omega^2)X_a=0\). At \(\omega^2=k_a/m_a\) this enforces \(X_p=0\). The primary equation then gives \(X_a=-F/k_a\). The absorber’s spring force balances the excitation while the primary mass is stationary in this ideal steady response.</p>
-<p>For \(m_a=0.50\,\mathrm{kg}\), a measured forcing frequency of 20 Hz requires \(k_a=m_a(2\pi20)^2=7896\,\mathrm{N/m}\). An 8 N forcing amplitude gives absorber travel amplitude 1.01 mm. The two coupled resonances bracket this tuned antiresonance; startup or a change of shaft speed can pass through them. Damping limits the resonant peaks but generally prevents the exact cancellation obtained from these undamped equations.</p>
+<p>Attach an auxiliary mass \(m_a\) by spring \(k_a\) to a primary mass \(m_p\) grounded by spring \(k_p\). A harmonic force of amplitude \(F\) acts on the primary mass. Seek displacement amplitudes \(X_p,X_a\). The absorber equation is</p>
+<div class="math display">\[-k_aX_p+(k_a-m_a\omega^2)X_a=0.\]</div>
+<p>At \(\omega^2=k_a/m_a\) this enforces \(X_p=0\). The primary equation then gives</p>
+<div class="math display">\[X_a=-F/k_a.\]</div>
+<p>The absorber’s spring force balances the excitation while the primary mass is stationary in this ideal steady response.</p>
+<p>For \(m_a=0.50\,\mathrm{kg}\), a measured forcing frequency of 20 Hz requires</p>
+<div class="math display">\[k_a=m_a(2\pi20)^2=7896\,\mathrm{N/m}.\]</div>
+<p>An 8 N forcing amplitude gives absorber travel amplitude 1.01 mm. The two coupled resonances bracket this tuned antiresonance; startup or a change of shaft speed can pass through them. Damping limits the resonant peaks but generally prevents the exact cancellation obtained from these undamped equations.</p>
+
+<details class="study-aside">
+<summary>OneSimulation · How can two resonant modes cancel the primary displacement?</summary>
+<p>Apply a sinusoidal force to a 5 kg primary mass supported by a 500 N/m spring. An attached 0.5 kg absorber connects through a 50 N/m spring. At the undamped tuning frequency the absorber equation forces the primary displacement to zero. The full coupled system still has two distinct natural frequencies. With mass-normalised modes and the force and displacement at coordinate 1, the receptance is</p>
+<div class="math display">\[\frac{X_1}{F_1}=\sum_j\frac{\phi_{1j}^2}{\omega_j^2-\omega^2+2i\zeta_j\omega_j\omega}.\]</div>
+<p>OneSimulation obtains the eigenpairs from the mass-scaled stiffness. The eigenfrequencies are 1.36 and 1.86 Hz. Between these frequencies the two undamped real contributions have opposite signs. They cancel at 1.59 Hz. The code checks this zero and independently verifies the static compliance. Increase the common modal damping ratio and inspect the notch: losses shift the modal phases, so the exact zero becomes a finite minimum.</p>
+<pre><code>"""A force on the primary mass excites two modes of a tuned absorber."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigensystem
+
+mass = np.array([5., 0.5])  # kg, primary and absorber
+support, spring = 500., 50.  # N/m, support and connecting spring
+stiffness = np.array([[support+spring, -spring], [-spring, spring]])
+scale = np.diag(1/np.sqrt(mass))
+omega2, shapes = symmetric_eigensystem(scale @ stiffness @ scale)
+modes = scale @ shapes
+residues = modes[0]**2      # applied force and measured motion both at mass 1
+tuned = np.sqrt(spring/mass[1])
+assert abs(np.sum(residues/(omega2 - tuned**2))) &lt; 1e-12
+assert np.isclose(np.sum(residues/omega2), 1/support)
+
+frequency = np.linspace(1.0, 2.3, 600)  # Hz
+omega = 2*np.pi*frequency[:, None]
+fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+for damping, colour in [(0.005, "#19596a"), (0.04, "#a5442e")]:
+    denominator = omega2 - omega**2 + 2j*damping*np.sqrt(omega2)*omega
+    response = np.sum(residues / denominator, axis=1)
+    ax.semilogy(frequency, 1000*abs(response), color=colour,
+                label=f"Both modal damping ratios {100*damping:g}%")
+
+ax.axvline(tuned/(2*np.pi), color="0.5", linestyle=":", label="Undamped cancellation")
+ax.set(xlabel="Excitation frequency (Hz)", ylabel="Primary displacement / force (mm/N)")
+ax.legend(fontsize=8)
+fig.savefig("machine-dynamics.png", dpi=170)</code></pre>
+<figure><img src="/assets/aside-figures/machine-dynamics.png" width="1190" height="680" alt="Two resonant displacement peaks bracket a deep tuning notch; increasing modal damping reduces both peaks and raises the displaced minimum." loading="lazy"><figcaption>A low reading at the primary mass can coexist with substantial absorber motion. The plotted response and static-limit check both refer to the force application point.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/machine-dynamics.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section><h2 id="observation">Choose where to observe cancellation</h2>
 <p>At the tuned absorber frequency a sensor on the primary reports zero ideal steady displacement, while a sensor on the attached mass records finite motion. A force transducer between the bodies measures the full applied excitation in the opposing phase. Moving the sensor can therefore turn the same test from an apparent null into a readily measurable response, without altering the underlying eigenfrequencies.</p>
 </section>
 <section><h2 id="distributed">Project a spatially distributed load onto a flexible member</h2>
 <p>A beam or string has motion distributed along its length. Its modal forcing is determined by a spatial integral, analogous to the vector dot product for discrete coordinates. For a taut uniform string of length \(L\), linear density \(\mu\) and constant tension \(H\), small transverse displacement \(w(x,t)\) obeys \(\mu w_{tt}-H w_{xx}=p(x,t)\). The tension term follows from the difference in vertical tension components on a short segment. Assume both ends fixed in displacement and neglect bending stiffness, damping and the change of tension caused by stretching. The modes are \(\phi_n=\sin(n\pi x/L)\), with frequencies \(\omega_n=(n\pi/L)\sqrt{H/\mu}\).</p>
-<p>Expand \(w=\sum\phi_n q_n\), multiply by \(\phi_j\) and integrate over the length. The mass integral is \(m_j=\mu\int_0^L\phi_j^2dx=\mu L/2\). Integration by parts of the tension term gives the modal stiffness \(k_j=m_j\omega_j^2\), with the fixed-end boundary terms vanishing. The modal input becomes \(Q_j=\int_0^Lp\phi_jdx\). Under a uniform harmonic load amplitude \(p_0\),</p>
+<p>Expand \(w=\sum\phi_n q_n\), multiply by \(\phi_j\) and integrate over the length. The mass integral is</p>
+<div class="math display">\[m_j=\mu\int_0^L\phi_j^2dx=\mu L/2.\]</div>
+<p>Integration by parts of the tension term gives the modal stiffness \(k_j=m_j\omega_j^2\), with the fixed-end boundary terms vanishing. The modal input becomes</p>
+<div class="math display">\[Q_j=\int_0^Lp\phi_jdx.\]</div>
+<p>Under a uniform harmonic load amplitude \(p_0\),</p>
 <div class="math display">\[Q_j=\frac{p_0L}{j\pi}[1-(-1)^j].\]</div>
-<p>Even modes have zero generalised force because their positive and negative portions cancel exactly. A point load at \(x_0\) instead yields \(Q_j=F\phi_j(x_0)\). Moving an actuator or changing a load footprint can thus suppress a resonance by symmetry without changing the material, tension or natural frequency.</p>
+<p>Even modes have zero generalised force because their positive and negative portions cancel exactly. A point load at \(x_0\) instead yields</p>
+<div class="math display">\[Q_j=F\phi_j(x_0).\]</div>
+<p>Moving an actuator or changing a load footprint can thus suppress a resonance by symmetry without changing the material, tension or natural frequency.</p>
 </section>
 <section><h2 id="cable-measurement">Estimate a cable’s displacement from its first few modes</h2>
-<p>A laboratory cable spans 2.0 m under 200 N tension and has linear density 0.50 kg/m. Its wave speed is \(20\,\mathrm{m/s}\), so \(f_1=20/(2L)=5.0\,\mathrm{Hz}\) and \(m_j=0.50\,\mathrm{kg}\). Apply a distributed harmonic pressure-equivalent line load \(p_0=0.40\,\mathrm{N/m}\) at 2.0 Hz. For mode one, \(Q_1=2(0.40)(2)/\pi=0.509\,\mathrm N\), and its dynamic stiffness is \(0.50[(2\pi5)^2-(2\pi2)^2]=414.5\,\mathrm{N/m}\). Its modal amplitude is 1.23 mm.</p>
+<p>A laboratory cable spans 2.0 m under 200 N tension and has linear density 0.50 kg/m. Its wave speed is \(20\,\mathrm{m/s}\), so \(f_1=20/(2L)=5.0\,\mathrm{Hz}\) and \(m_j=0.50\,\mathrm{kg}\). Apply a distributed harmonic pressure-equivalent line load \(p_0=0.40\,\mathrm{N/m}\) at 2.0 Hz. For mode one, \(Q_1=2(0.40)(2)/\pi=0.509\,\mathrm N\), and its dynamic stiffness is</p>
+<div class="math display">\[0.50[(2\pi5)^2-(2\pi2)^2]=414.5\,\mathrm{N/m}.\]</div>
+<p>Its modal amplitude is 1.23 mm.</p>
 <p>The third mode has \(Q_3=0.170\,\mathrm N\), \(f_3=15\) Hz and amplitude \(0.170/\{0.50[(2\pi15)^2-(2\pi2)^2]\}=0.0390\,\mathrm{mm}\). At the midpoint \(\phi_1=+1\) while \(\phi_3=-1\), so the two-term prediction is approximately 1.19 mm. The next odd mode contributes with the opposite sign again, but is far stiffer at this drive frequency. In the static limit an independent check follows from the parabolic string solution \(w(L/2)=p_0L^2/(8H)=1.00\,\mathrm{mm}\). If a strong measured response appears at the symmetric load’s even-mode resonance, investigate load asymmetry, asymmetric support stiffness or a disturbed initial condition before assigning a nonzero ideal modal projection.</p>
 <p>The spatial convergence pattern can be estimated before adding many terms. For odd mode number \(n\) well above the forcing frequency, the uniform-load projection decreases as \(1/n\) while modal stiffness increases as \(n^2\). Each displacement contribution therefore decreases roughly as \(1/n^3\). A point actuator at midspan instead gives modal projections of essentially alternating constant magnitude for odd modes, producing only a \(1/n^2\) displacement decay. Hence a truncation that accurately predicts the response to a distributed flow load can be less accurate for an impulsive local tap. Strain or slope predictions may require still more terms because a spatial derivative introduces an additional factor of mode number. Choose the retained modes for the actual load and observed quantity.</p>
-<p>The uniform cable problem admits an independent harmonic calculation without modal truncation. Set \(w(x,t)=W(x)\cos\Omega t\). The governing equation gives \(W''+\kappa^2 W=-p_0/H\), \(\kappa=\Omega\sqrt{\mu/H}\). Symmetry about midspan and fixed ends select \(W(x)=[p_0/(\mu\Omega^2)]\{\cos[\kappa(x-L/2)]/\cos(\kappa L/2)-1\}\), provided the denominator is nonzero. For the test above \(\kappa L/2=0.6283\) and \(W(L/2)=0.40[1/\cos(0.6283)-1]/[0.50(2\pi2)^2]=1.196\,\mathrm{mm}\). This direct boundary-value result confirms both the signs and the scale of the first two odd-modal contributions.</p>
+<p>The uniform cable problem admits an independent harmonic calculation without modal truncation. Set \(w(x,t)=W(x)\cos\Omega t\). The governing equation gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[W''+\kappa^2 W=-p_0/H,\]</div><div class="equation-step">\[\kappa=\Omega\sqrt{\mu/H}.\]</div></div>
+<p>Symmetry about midspan and fixed ends select \(W(x)=[p_0/(\mu\Omega^2)]\{\cos[\kappa(x-L/2)]/\cos(\kappa L/2)-1\}\), provided the denominator is nonzero. For the test above \(\kappa L/2=0.6283\) and \(W(L/2)=0.40[1/\cos(0.6283)-1]/[0.50(2\pi2)^2]=1.196\,\mathrm{mm}\). This direct boundary-value result confirms both the signs and the scale of the first two odd-modal contributions.</p>
 <p>As the excitation approaches the first natural frequency, \(\kappa L/2\) approaches \(\pi/2\) and the undamped steady expression becomes singular. An actual time record may instead show progressively growing amplitude before damping or geometric effects intervene. At very low frequency expand \(\sec q\simeq1+q^2/2\); substituting \(q=\Omega L\sqrt{\mu/H}/2\) recovers the static midpoint displacement without subtracting two nearly equal numerical values. The modal and spatial calculations thus furnish independent checks in the static, off-resonant and resonant limits.</p>
 </section>
 <section class="worked-plot"><h2 id="worked-plot">What happens to the notch of a tuned absorber?</h2>

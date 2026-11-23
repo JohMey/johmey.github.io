@@ -53,33 +53,53 @@
 </section>
 <section>
 <h2 id="position-and-momentum-at-staggered-times">Position and momentum at staggered times</h2>
-<p>For unit mass and a time-independent potential \(V(q)\), the equations are \(q'=p,\ p'=-V'(q)\). Treat the potential force over a half step, drift with the updated momentum for a full step, then use the new position for the last half kick. This yields</p>
-<div class="math display">\[p_{n+1/2}=p_n-\tfrac h2V'(q_n),\quad q_{n+1}=q_n+hp_{n+1/2},\quad p_{n+1}=p_{n+1/2}-\tfrac h2V'(q_{n+1}).\]</div>
-<p>Successive half kicks at the same position share a force evaluation. Reversing the sign of \(h\) exactly undoes the steps in reverse order, in exact arithmetic. Subtracting consecutive position increments gives \(q_{n+1}-2q_n+q_{n-1}=-h^2V'(q_n)\). The starting position and velocity must initialise the very first half step correctly; using the full velocity as the half-step velocity injects an initial phase error.</p>
+<p>For unit mass and a time-independent potential \(V(q)\), the equations are</p>
+<div class="math display">\[q'=p,\ p'=-V'(q).\]</div>
+<p>Treat the potential force over a half step, drift with the updated momentum for a full step, then use the new position for the last half kick. This yields</p>
+<div class="math display equation-chain"><div class="equation-step">\[p_{n+1/2}=p_n-\tfrac h2V'(q_n),\]</div><div class="equation-step">\[q_{n+1}=q_n+hp_{n+1/2},\]</div><div class="equation-step">\[p_{n+1}=p_{n+1/2}-\tfrac h2V'(q_{n+1}).\]</div></div>
+<p>Successive half kicks at the same position share a force evaluation. Reversing the sign of \(h\) exactly undoes the steps in reverse order, in exact arithmetic. Subtracting consecutive position increments gives</p>
+<div class="math display">\[q_{n+1}-2q_n+q_{n-1}=-h^2V'(q_n).\]</div>
+<p>The starting position and velocity must initialise the very first half step correctly; using the full velocity as the half-step velocity injects an initial phase error.</p>
 </section>
 <section>
 <h2 id="the-oscillator-has-an-exactly-computable-modified-energy">The oscillator has an exactly computable modified energy</h2>
-<p>For \(V=\omega^2q^2/2\) define \(z=h\omega\). The position coefficient of \(q_n\) after one step is \(a=1-z^2/2\); the momentum coefficient of \(q_n\) is \(-h\omega^2(1-z^2/4)\). The full map has equal diagonal entries \(a\) and off-diagonal entries \(h,-hc\) with \(c=\omega^2(1-z^2/4)\). Since \(a^2+h^2c=1\), expanding squares shows \(p_{n+1}^2+cq_{n+1}^2=p_n^2+cq_n^2\).</p>
+<p>For \(V=\omega^2q^2/2\) define \(z=h\omega\). The position coefficient of \(q_n\) after one step is</p>
+<div class="math display">\[a=1-z^2/2;\]</div>
+<p>the momentum coefficient of \(q_n\) is \(-h\omega^2(1-z^2/4)\). The full map has equal diagonal entries \(a\) and off-diagonal entries \(h,-hc\) with \(c=\omega^2(1-z^2/4)\). Since \(a^2+h^2c=1\), expanding squares shows \(p_{n+1}^2+cq_{n+1}^2=p_n^2+cq_n^2\).</p>
 <p>When \(0&lt;z&lt;2\), \(c&gt;0\) and level sets of this invariant are bounded ellipses. The eigenvalues are \(e^{\pm i\theta}\) with \(\cos\theta=a\). Beyond two, one real eigenvalue has magnitude greater than one and trajectories generically grow. At exactly two the invariant loses control of position and a repeated eigenvalue can cause linear growth. An apparently bounded run starting from specially chosen data at the threshold cannot certify stability for arbitrary perturbations.</p>
 </section>
 <section>
 <h2 id="follow-a-step-and-its-timing">Follow a step and its timing</h2>
 <p>For \(\omega=1,h=1,q_0=1,p_0=0\), the half kick gives \(-0.5\), the drift gives \(q_1=0.5\), and the final half kick gives \(p_1=-0.75\). The physical energy decreases from 0.5 to 0.40625 in this first step. The modified energy \((p^2+0.75q^2)/2\) equals 0.375 at both points. The discrete phase is \(\theta=\pi/3\), so the computed trajectory returns after six steps. The true oscillator returns after \(2\pi\approx6.283\) seconds. A stable trajectory with a bounded energy error can therefore accumulate a large timing error over many cycles.</p>
-<p>For small \(z\), expanding \(\theta=2\arcsin(z/2)\) gives \(\theta=z+z^3/24+O(z^5)\). At a fixed final time the accumulated phase error is therefore second order in \(h\). A period estimate and an energy trace probe different aspects of long-time integration and should be reported separately.</p>
+<p>For small \(z\), expanding \(\theta=2\arcsin(z/2)\) gives</p>
+<div class="math display">\[\theta=z+z^3/24+O(z^5).\]</div>
+<p>At a fixed final time the accumulated phase error is therefore second order in \(h\). A period estimate and an energy trace probe different aspects of long-time integration and should be reported separately.</p>
 </section>
 <section>
 <h2 id="why-the-initial-velocity-test-matters">Why the initial velocity test matters</h2>
-<p>A test with only the initial position nonzero may conceal the borderline instability at \(h\omega=2\). At that boundary the update is \(q_{n+1}=-q_n+hp_n,\ p_{n+1}=-p_n\). For \(p_0=0\) the positions merely alternate sign forever. With \(q_0=0\) and \(p_0=1\), however, explicit iteration gives \(p_n=(-1)^n\) and \(q_n=(-1)^{n-1}nh\). The position magnitude grows linearly. A stability test must account for all independent starting directions or small perturbations of the chosen one, especially when an eigenvalue of modulus one is repeated.</p>
+<p>A test with only the initial position nonzero may conceal the borderline instability at \(h\omega=2\). At that boundary the update is</p>
+<div class="math display">\[q_{n+1}=-q_n+hp_n,\ p_{n+1}=-p_n.\]</div>
+<p>For \(p_0=0\) the positions merely alternate sign forever. With \(q_0=0\) and \(p_0=1\), however, explicit iteration gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[p_n=(-1)^n,\]</div><div class="equation-step">\[q_n=(-1)^{n-1}nh.\]</div></div>
+<p>The position magnitude grows linearly. A stability test must account for all independent starting directions or small perturbations of the chosen one, especially when an eigenvalue of modulus one is repeated.</p>
 </section>
 <section>
 <h2 id="prove-conservation-of-angular-momentum-by-individual-substeps">Prove conservation of angular momentum by individual substeps</h2>
-<p>For a particle of constant mass in a radial potential \(V(\|q\|)\), the force is parallel to the position vector. Its angular momentum is \(L=q\times p\). During a kick of duration \(\tau\), momentum changes by \(\tau F(q)\) at fixed position, so the change in \(L\) is \(\tau q\times F(q)=0\). During a drift, position changes by \(\tau p/m\) at fixed momentum, giving change \((\tau/m)p\times p=0\). The full kick–drift–kick map therefore preserves angular momentum exactly in arithmetic without rounding, for any step length for which these evaluations are defined.</p>
+<p>For a particle of constant mass in a radial potential \(V(\|q\|)\), the force is parallel to the position vector. Its angular momentum is \(L=q\times p\). During a kick of duration \(\tau\), momentum changes by \(\tau F(q)\) at fixed position, so the change in \(L\) is</p>
+<div class="math display">\[\tau q\times F(q)=0.\]</div>
+<p>During a drift, position changes by \(\tau p/m\) at fixed momentum, giving change \((\tau/m)p\times p=0\). The full kick–drift–kick map therefore preserves angular momentum exactly in arithmetic without rounding, for any step length for which these evaluations are defined.</p>
 <p>The proof uses radial force and the relationship between velocity and momentum. An external noncentral force exerts a physical torque, while a coordinate-dependent mass matrix changes the drift subflow. Under either modification the two zero cross products need rechecking. The argument also gives no bound on energy or phase. Exact conservation of angular momentum constrains orbital geometry but leaves freedom to move from the correct energy level onto a nearby one or to return to a point on the orbit at the wrong time.</p>
 </section>
 <section>
 <h2 id="compare-three-diagnostics-on-an-elliptical-oscillator-trajectory">Compare three diagnostics on an elliptical oscillator trajectory</h2>
-<p>Use unit mass and two-dimensional potential \(V=(x^2+y^2)/2\). Start at \(q=(1,0)\), \(p=(0,2)\), so \(L=2\) and physical energy is \(E=(1+4)/2=2.5\). At step \(h=0.5\), the first half kick gives \(p_{1/2}=(-0.25,2)\). The drift leads to \(q_1=(0.875,1)\). The last half kick subtracts \(0.25q_1\), giving \(p_1=(-0.46875,1.75)\). The resulting planar angular momentum is \(0.875(1.75)-1(-0.46875)=2\), exactly as proved.</p>
-<p>Calculate energy separately. The squared position is \(0.875^2+1=1.765625\), and the squared momentum is \(0.46875^2+1.75^2=3.2822265625\). Hence the physical energy after this step is 2.52392578125, about 0.96 percent above the initial value. The exact continuous position at this time is \((\cos0.5,2\sin0.5)\approx(0.87758,0.95885)\), so the position error is concentrated in the second coordinate. Angular momentum, physical energy and the individual trajectory coordinates expose three distinct properties of the same update.</p>
+<p>Use unit mass and two-dimensional potential \(V=(x^2+y^2)/2\). Start at \(q=(1,0)\), \(p=(0,2)\), so \(L=2\) and physical energy is</p>
+<div class="math display">\[E=(1+4)/2=2.5.\]</div>
+<p>At step \(h=0.5\), the first half kick gives</p>
+<div class="math display">\[p_{1/2}=(-0.25,2).\]</div>
+<p>The drift leads to \(q_1=(0.875,1)\). The last half kick subtracts \(0.25q_1\), giving \(p_1=(-0.46875,1.75)\). The resulting planar angular momentum is \(0.875(1.75)-1(-0.46875)=2\), exactly as proved.</p>
+<p>Calculate energy separately. The squared position is \(0.875^2+1=1.765625\), and the squared momentum is</p>
+<div class="math display">\[0.46875^2+1.75^2=3.2822265625.\]</div>
+<p>Hence the physical energy after this step is 2.52392578125, about 0.96 percent above the initial value. The exact continuous position at this time is \((\cos0.5,2\sin0.5)\approx(0.87758,0.95885)\), so the position error is concentrated in the second coordinate. Angular momentum, physical energy and the individual trajectory coordinates expose three distinct properties of the same update.</p>
 <p>Because the harmonic force is separable by coordinate, the modified invariant from the scalar oscillator adds across the two directions: \([\|p\|^2+(1-h^2/4)\|q\|^2]/2\) is constant. Substitution gives 2.46875 at both steps, independently checking the arithmetic. For a general radial potential this particular quadratic modified invariant no longer follows, while the angular momentum proof remains valid. A conservation claim should identify the symmetry responsible rather than assuming every observed invariant survives a change of potential.</p>
 <p>If there were a small constant transverse force, the physical change in angular momentum would be the time integral of \(q\times F_{\rm ext}\). A better diagnostic would subtract the accumulated applied torque from the measured change in \(L\), rather than demand that \(L\) remain fixed. This distinction also guards against a subtle implementation error: zeroing a real torque to improve a conservation plot would change the physical problem and could hide a significant trajectory bias.</p>
 <p>Measuring the signed torque makes its direction as well as its magnitude available for this balance check.</p>

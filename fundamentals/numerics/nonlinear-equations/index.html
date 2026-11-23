@@ -37,19 +37,27 @@
 <section>
 <h3 id="update">Trade guaranteed progress for local speed</h3>
 <p>Bisection evaluates \(F\) at the midpoint and keeps the half containing a sign change. Each iteration halves the interval width. The midpoint error is at most half the remaining width, even when derivatives are unavailable.</p>
-<p>Newton’s method draws the tangent at \(x_j\), \(F(x_j)+F'(x_j)(x-x_j)\), and takes its zero \(x_{j+1}=x_j-F(x_j)/F'(x_j)\). Near a simple root \(r\), Taylor expansion about \(x_j\) gives \(x_{j+1}-r=[F''(\xi)/(2F'(x_j))](x_j-r)^2\). If the derivative stays away from zero and the second derivative is bounded, this explains local quadratic convergence. Farther from the root, a practical safeguard is to replace a tangent step that leaves the bracket with bisection.</p>
-<p>Residual and temperature error have a particularly simple relation here. For an approximation \(x\) in the physical bracket, the mean value theorem gives \(|F(x)|=F'(\eta)|x-r|\geq|x-r|\). An absolute residual of \(10^{-6}\) K certifies a root error no greater than \(10^{-6}\) K for this scaled equation.</p>
+<p>Newton’s method draws the tangent at \(x_j\), \(F(x_j)+F'(x_j)(x-x_j)\), and takes its zero \(x_{j+1}=x_j-F(x_j)/F'(x_j)\). Near a simple root \(r\), Taylor expansion about \(x_j\) gives</p>
+<div class="math display">\[x_{j+1}-r=[F''(\xi)/(2F'(x_j))](x_j-r)^2.\]</div>
+<p>If the derivative stays away from zero and the second derivative is bounded, this explains local quadratic convergence. Farther from the root, a practical safeguard is to replace a tangent step that leaves the bracket with bisection.</p>
+<p>Residual and temperature error have a particularly simple relation here. For an approximation \(x\) in the physical bracket, the mean value theorem gives</p>
+<div class="math display">\[|F(x)|=F'(\eta)|x-r|\geq|x-r|.\]</div>
+<p>An absolute residual of \(10^{-6}\) K certifies a root error no greater than \(10^{-6}\) K for this scaled equation.</p>
 </section>
 <section>
 <h3 id="worked">Follow two tangent steps</h3>
-<p>Set \(T_n=2\) K, \(T_a=1\) K, \(h=1\) s and \(\beta=0.0015\) K⁻³s⁻¹. This deliberately scaled thermal example keeps the arithmetic visible. Starting at \(x_0=2\), the residual is \(0.0015(16-1)=0.0225\) K and the slope is \(1+4(0.0015)2^3=1.048\). The first update gives \(x_1=1.97853053\) K and \(F(x_1)\simeq1.65\times10^{-5}\) K.</p>
+<p>Set \(T_n=2\) K, \(T_a=1\) K, \(h=1\) s and \(\beta=0.0015\) K⁻³s⁻¹. This deliberately scaled thermal example keeps the arithmetic visible. Starting at \(x_0=2\), the residual is \(0.0015(16-1)=0.0225\) K and the slope is</p>
+<div class="math display">\[1+4(0.0015)2^3=1.048.\]</div>
+<p>The first update gives \(x_1=1.97853053\) K and \(F(x_1)\simeq1.65\times10^{-5}\) K.</p>
 <p>Re-evaluating the slope at \(x_1\) gives \(x_2=1.97851479\) K, with residual about \(8.7\times10^{-12}\) K before rounding the iterate for display. This is the root for one backward Euler step. It still differs from the continuous-time temperature at one second because the rate varied during that second.</p>
 </section>
 <section>
 <h3 id="case-exercises">Problem class</h3>
 <h4>Budget the bisections</h4>
 <p>Start from \([1,2]\) K. After how many bracket halvings is the midpoint guaranteed to be within \(10^{-5}\) K of the root without evaluating a derivative?</p>
-<details><summary>Show the calculation</summary><p>After \(n\) halvings, the width is \(2^{-n}\) K. Midpoint error is bounded by \(2^{-(n+1)}\) K. Thus \(n\geq\lceil\log_2(1/(2\times10^{-5}))\rceil=16\). Fifteen halvings still allow an error greater than the target.</p></details>
+<details><summary>Show the calculation</summary><p>After \(n\) halvings, the width is \(2^{-n}\) K. Midpoint error is bounded by \(2^{-(n+1)}\) K. Thus</p>
+<div class="math display">\[n\geq\lceil\log_2(1/(2\times10^{-5}))\rceil=16.\]</div>
+<p>Fifteen halvings still allow an error greater than the target.</p></details>
 <h4>Test a fixed-point iteration</h4>
 <p>Consider \(g(x)=2-h\beta(x^4-1)\). For \(h=1\) s and \(h=25\) s, does the maximum slope magnitude on \([1,2]\) certify contraction? What can a failed bound tell you?</p>
 <details><summary>Show the calculation</summary><p>The maximum \(|g'|\) is \(4h\beta\,2^3=0.048h\) with \(h\) in seconds. Both maps take the bracket into itself: at one second the image is \([1.9775,2]\), at 25 seconds it is \([1.4375,2]\). At one second the maximum slope is 0.048, which certifies convergence from anywhere in the bracket. At 25 seconds the maximum is 1.2. The global contraction test is then inconclusive. Local convergence depends on the slope near the root.</p></details>

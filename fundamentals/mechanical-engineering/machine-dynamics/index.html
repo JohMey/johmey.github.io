@@ -42,20 +42,30 @@
 <section>
 <h3 id="modes">Translation and rocking share the restoring energy</h3>
 <p>If only vertical inertia were retained, a 200 kg motor would give \(f=6.15\) Hz. In fact the column sways and the arm rotates when the motor moves vertically. In a light-frame approximation collect the tip coordinates in \(\mathbf q=(u_x,u_z,\theta)\), measured at the machine’s centre of mass. Apply a horizontal force, a vertical force and an end moment separately to obtain the three columns of the flexibility matrix \(\mathbf C\). Its off-diagonal entries measure the movement in one coordinate caused by a load in another. For linear elastic members reciprocity makes this matrix symmetric.</p>
-<p>The stiffness matrix is \(\mathbf K=\mathbf C^{-1}\). With motor mass \(m\) and rotary inertia \(J\), let \(\mathbf M=\mathrm{diag}(m,m,J)\). Substituting harmonic motion into \(\mathbf M\ddot{\mathbf q}+\mathbf K\mathbf q=0\) gives \(\mathbf K\boldsymbol\phi=\omega^2\mathbf M\boldsymbol\phi\). A mode shape \(\boldsymbol\phi\) describes a ratio of motions. The frequency \(f=\omega/(2\pi)\) is independent of the scale used to draw that shape.</p>
+<p>The stiffness matrix is \(\mathbf K=\mathbf C^{-1}\). With motor mass \(m\) and rotary inertia \(J\), let \(\mathbf M=\mathrm{diag}(m,m,J)\). Substituting harmonic motion into \(\mathbf M\ddot{\mathbf q}+\mathbf K\mathbf q=0\) gives</p>
+<div class="math display">\[\mathbf K\boldsymbol\phi=\omega^2\mathbf M\boldsymbol\phi.\]</div>
+<p>A mode shape \(\boldsymbol\phi\) describes a ratio of motions. The frequency \(f=\omega/(2\pi)\) is independent of the scale used to draw that shape.</p>
 <p>For \(m=200\) kg and \(J=60\,\mathrm{kg\,m^2}\), the three light-frame frequencies are 5.048, 15.449 and 44.645 Hz. If the steel frame’s distributed mass is included they fall to 4.701, 13.550 and 42.41 Hz. The first light-frame mode corresponds to about 303 rpm for an excitation that repeats once per revolution. Whether it produces a large vibration also depends on damping and on the projection of the applied force onto that mode. <a href="/fundamentals/multibody/">Explore how inertia affects the rotation of a rigid body</a>.</p>
 </section>
 <section>
 <h3 id="isolation">Transfer problem · Isolate a machine from floor vibration</h3>
-<p>A 50 kg instrument on a spring and viscous damper sits on a floor moving as \(y(t)\). The mount extends by \(x-y\), where \(x\) is the instrument’s absolute displacement. Force balance gives \(m\ddot{x}+c(\dot{x}-\dot{y})+k(x-y)=0\). For sinusoidal floor motion the ratio of instrument to floor amplitude follows by replacing each derivative by \(i\omega\):</p>
-<div class="math display">\[\frac{|X|}{|Y|}=\sqrt{\frac{1+(2\zeta r)^2}{(1-r^2)^2+(2\zeta r)^2}},\quad r=\omega/\omega_n,\quad \omega_n=\sqrt{k/m},\quad \zeta=\frac{c}{2m\omega_n}.\]</div>
-<p>Choose \(k=20\,000\) N/m and \(c=200\) N·s/m. Then \(\omega_n=20\) rad/s and \(\zeta=0.10\). At 40 rad/s, \(r=2\) and the ratio is \(\sqrt{1.16/9.16}=0.356\). A 1.0 mm floor oscillation gives 0.356 mm of instrument motion. At 20 rad/s the same mount amplifies motion by \(\sqrt{1.04/0.04}=5.10\). A mount selected for stable operation at one speed can amplify vibration as a machine runs up through resonance.</p>
+<p>A 50 kg instrument on a spring and viscous damper sits on a floor moving as \(y(t)\). The mount extends by \(x-y\), where \(x\) is the instrument’s absolute displacement. Force balance gives</p>
+<div class="math display">\[m\ddot{x}+c(\dot{x}-\dot{y})+k(x-y)=0.\]</div>
+<p>For sinusoidal floor motion the ratio of instrument to floor amplitude follows by replacing each derivative by \(i\omega\):</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{|X|}{|Y|}=\sqrt{\frac{1+(2\zeta r)^2}{(1-r^2)^2+(2\zeta r)^2}},\]</div><div class="equation-step">\[r=\omega/\omega_n,\]</div><div class="equation-step">\[\omega_n=\sqrt{k/m},\]</div><div class="equation-step">\[\zeta=\frac{c}{2m\omega_n}.\]</div></div>
+<p>Choose \(k=20\,000\) N/m and \(c=200\) N·s/m. Then \(\omega_n=20\) rad/s and \(\zeta=0.10\). At 40 rad/s, \(r=2\) and the ratio is</p>
+<div class="math display">\[\sqrt{1.16/9.16}=0.356.\]</div>
+<p>A 1.0 mm floor oscillation gives 0.356 mm of instrument motion. At 20 rad/s the same mount amplifies motion by \(\sqrt{1.04/0.04}=5.10\). A mount selected for stable operation at one speed can amplify vibration as a machine runs up through resonance.</p>
 </section>
 <section>
 <h3 id="case-exercises">Exercises</h3>
 <h4>1. Infer a frequency from measured sag</h4>
 <p>A light support with one vertical coordinate deflects 4.0 mm under a machine’s weight. Infer its natural frequency directly from the sag. Compare it with the forcing frequency of a once-per-revolution imbalance at 450 rpm.</p>
-<details><summary>Show the estimate</summary><p>From \(mg=k\delta\), \(k/m=g/\delta\). Hence \(f=(2\pi)^{-1}\sqrt{9.81/0.0040}=7.88\) Hz. The imbalance frequency is \(450/60=7.50\) Hz. The forcing is about 5% below the estimated frequency. Estimating a response amplitude would additionally require the forcing magnitude and damping.</p></details>
+<details><summary>Show the estimate</summary><p>From \(mg=k\delta\), \(k/m=g/\delta\). Hence</p>
+<div class="math display">\[f=(2\pi)^{-1}\sqrt{9.81/0.0040}=7.88\,\mathrm{Hz}.\]</div>
+<p>The imbalance frequency is</p>
+<div class="math display">\[450/60=7.50\,\mathrm{Hz}.\]</div>
+<p>The forcing is about 5% below the estimated frequency. Estimating a response amplitude would additionally require the forcing magnitude and damping.</p></details>
 <h4>2. Add a geometrically identical payload</h4>
 <p>For the light L-frame double both \(m\) and \(J\) while holding the support stiffness fixed. Predict the change in all three frequencies and the first critical speed. Does the same factor apply to a frame whose own mass stays fixed?</p>
 <details><summary>Show the modal scaling</summary><p>The entire tip mass matrix doubles. The same eigenvectors then solve the equation with each \(\omega^2\) halved. The three frequencies become 3.570, 10.924 and 31.569 Hz. The first once-per-revolution critical speed is about 214 rpm. With distributed frame mass only part of the assembled mass matrix doubles, so there is no common frequency scaling factor.</p></details>

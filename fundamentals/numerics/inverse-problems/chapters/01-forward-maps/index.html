@@ -32,9 +32,15 @@
 <p class="reading-label">From first principles</p><h2 id="first-principles">Decide what a measurement uniquely determines</h2>
 <p>A forward model predicts readings from a state. In a linear discretization write \(y=Ax\); row \(i\) lists the sensitivity of the \(i\)th reading to each state component. If two states give the same data, subtract their equations. Their difference must be invisible to every measurement,</p>
 <div class="math display">\[Ax_1=Ax_2\quad\Longleftrightarrow\quad A(x_1-x_2)=0 .\]</div>
-<p>Thus, if \(x_0\) is one solution, all exact solutions are \(x_0+h\) for \(h\) in the null space of \(A\). A reported quantity \(q=c^Tx\) can still be unique even if the full state is ambiguous: its value must be unchanged by every invisible displacement. A constructive test is to express its weight vector in terms of the measurement rows,</p>
-<div class="math display">\[A^Tw=c\quad\Longrightarrow\quad q=w^Ty .\]</div>
+<p>Thus, if \(x_0\) is one solution, all exact solutions are \(x_0+h\) for \(h\) in the null space of \(A\). A reported quantity \(q=c^Tx\) can still be unique even if the full state is ambiguous: its value must be unchanged by every invisible displacement. To test this, find a weight vector \(w\) that expresses \(c\) in terms of the measurement rows. Substituting it into the quantity of interest gives</p>
+<div class="math display">\[\begin{aligned}
+A^T w &amp;= c,\\
+q &amp;= c^Tx=(A^Tw)^Tx\\
+  &amp;= w^T(Ax)=w^Ty.
+\end{aligned}\]</div>
 <p>This equality identifies the quantity directly from the measurements. Small but nonzero sensitivities create a different difficulty: the state can be unique in exact arithmetic while realistic measurement errors leave its numerical value uncertain.</p>
+
+<details class="study-aside"><summary>Background · Forward operator</summary><div class="math display">\[y=G(m)+\eta\]</div><p>The operator maps parameters to predicted observations. The noise and discrepancy model must use the same physical units as the readout.</p></details>
 </section>
 <figure class="concept-diagram" id="concept-diagram">
 <a class="diagram-enlarge" href="/assets/fundamentals-figures/inverse-problems.png" target="_blank" rel="noopener"><img src="/assets/fundamentals-figures/inverse-problems.png" alt="An elongated band shows parameter changes compatible with a single measurement. Ellipses bound the region after a second independent measurement is added." width="918" height="646"><span>Open full-size diagram</span></a>
@@ -51,12 +57,16 @@
 <div class="math display">\[\operatorname{sd}(\widehat k)\simeq\frac{\sqrt{s_1^2+s_2^2}}{t_2-t_1}.\]</div>
 <p>A shared multiplicative calibration factor cancels from the ratio exactly. A shared additive background generally does not cancel, particularly once the signal becomes small. Choosing measurements far apart helps at fixed fractional precision; under fixed absolute noise the later signal may lose sufficient precision to reverse that benefit. Two data can fit two parameters exactly and consequently do not check whether a single exponential describes intermediate times.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Recover a decay and test an unused observation</h3>
-<p>At \(t=1\) and \(4\,\mathrm s\), a sensor reads 12 and 3 in the same units. The inferred rate is \(\ln4/3=0.4621\,\mathrm{s^{-1}}\) and \(A=12e^{0.4621}=19.05\). At \(2.5\,\mathrm s\), halfway between the observations, the model predicts the geometric mean \(\sqrt{12\times3}=6\). A third reading of 7 reveals a deviation that the exact two-point fit could not show.</p>
+<p>At \(t=1\) and \(4\,\mathrm s\), a sensor reads 12 and 3 in the same units. The inferred rate is</p>
+<div class="math display equation-chain"><div class="equation-step">\[\ln4/3=0.4621\,\mathrm{s^{-1}},\]</div><div class="equation-step">\[A=12e^{0.4621}=19.05.\]</div></div>
+<p>At \(2.5\,\mathrm s\), halfway between the observations, the model predicts the geometric mean \(\sqrt{12\times3}=6\). A third reading of 7 reveals a deviation that the exact two-point fit could not show.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Specify the timing separation required for precision</h3>
 <p>For a second instrument the fractional standard deviation is 0.030 in both channels. To achieve rate standard deviation \(0.010\,\mathrm{s^{-1}}\), the separation must be at least \(\sqrt2(0.030)/0.010=4.24\,\mathrm s\) under these noise assumptions. Observations separated by only \(0.50\,\mathrm s\) give \(0.0849\,\mathrm{s^{-1}}\), even though they still determine a unique mathematical solution.</p>
 </section>
 <section><h2 id="turn-a-measurement-protocol-into-an-operator">Turn a measurement protocol into an operator</h2>
-<p>Imagine reconstructing the temperatures of two adjoining cells, \(x_1,x_2\), from sensor readings. A sensor averaging both cells gives \(y=(x_1+x_2)/2\). The vector \(x\) describes physical properties; the forward map predicts what this particular instrument will report. A second instrument may measure the same properties through a different map. Include spatial averaging, response time and calibration in that map if they are significant. Treating a finite-width sensor as an exact point sample can make an accurate experiment look inconsistent.</p>
+<p>Imagine reconstructing the temperatures of two adjoining cells, \(x_1,x_2\), from sensor readings. A sensor averaging both cells gives</p>
+<div class="math display">\[y=(x_1+x_2)/2.\]</div>
+<p>The vector \(x\) describes physical properties; the forward map predicts what this particular instrument will report. A second instrument may measure the same properties through a different map. Include spatial averaging, response time and calibration in that map if they are significant. Treating a finite-width sensor as an exact point sample can make an accurate experiment look inconsistent.</p>
 <p>For a linear experiment write \(y=Ax+\epsilon\), separating the ideal response from data error. With the averaging sensor, \(x=(20,24)\) and \((21,23)\) both give 22. The difference is a multiple of \((1,-1)\), which \(A\) maps to zero. The data specify an affine family \(x=x_0+z\), \(z\in\ker A\). More decimal places for the very same measurement cannot select one member. A unique reported answer may therefore reflect a chosen convention such as minimum norm or smoothness instead of new physical information.</p>
 </section>
 <section>
@@ -64,6 +74,13 @@
 <p>How does a detector reading become a row of a matrix? In a simple transmission scanner, assume a narrow monochromatic beam, negligible scattering into the detector and a known incident intensity \(I_0\). Over a short path segment \(ds\), the fractional intensity loss is \(\mu(s)\,ds\) to first order. Dividing the resulting differential equation \(dI/ds=-\mu I\) by \(I\), then integrating along the ray \(\gamma_i\), gives</p>
 <div class="math display">\[y_i=-\log(I_i/I_0)=\int_{\gamma_i}\mu(s)\,ds=\sum_j\ell_{ij}\mu_j .\]</div>
 <p>The last equality assumes the attenuation is constant within each model cell. The coefficient \(\ell_{ij}\) is the length of the path through cell \(j\). An unvisited cell contributes zero. Model refinement changes these lengths and the number of columns. With lengths in centimetres and attenuation in inverse centimetres, each log reading is dimensionless. This construction models individual rays. A finite detector that pools their intensities requires an additional averaging step in the forward model.</p>
+
+<details class="study-aside">
+<summary>Background · Why does a logarithm change the statistical weight of a ray?</summary>
+<p>Photon transmission with a known incident mean \(I_0\) produces a mean outgoing count \(\mu=I_0 e^{-a^Tx}\). Geometry becomes linear in optical depth after taking a logarithm. The resulting noise is no longer constant across rays. If the detected count \(N\) is Poisson and reasonably large, its variance is \(\mu\). Linearising \(y=-\log(N/I_0)\) therefore gives</p>
+<div class="math display">\[\operatorname{Var}(y)\simeq\left(\frac{-1}{\mu}\right)^2\mu=\frac{1}{\mu}.\]</div>
+<p>A ray with 100 expected counts has an optical-depth standard deviation near 0.10, compared with roughly 0.01 for 10,000 counts. Equal weights in the log-transformed fit give these readings equal influence despite their different precision. At very low intensities, zero counts make the logarithm undefined; fitting a count likelihood preserves those observations.</p>
+</details>
 <h3>Which extra direction resolves a four-cell ambiguity?</h3>
 <p>Arrange four square cells of side \(1\) cm in two rows and list them in row-major order. Two horizontal and two vertical centre rays have log readings \(0.4,0.6,0.5,0.5\). Each traversed cell contributes one centimetre. The sum of the two horizontal readings equals the sum of the vertical readings, leaving three independent equations. If the top-left attenuation is \(t\), successive substitutions give the family</p>
 <div class="math display">\[(\mu_1,\mu_2,\mu_3,\mu_4)=(t,\,0.4-t,\,0.5-t,\,0.1+t)\quad{\rm cm}^{-1}.\]</div>
@@ -72,10 +89,14 @@
 </section>
 <section><h2 id="find-the-observable-combinations">Find the observable combinations</h2>
 <p>Every row of \(A\) is a measured linear combination. Every vector in its null space is orthogonal to all those rows. Thus a derived linear quantity \(c^\mathsf{T}x\) is uniquely determined by ideal data exactly when \(c\) lies in the row space. If \(c=A^\mathsf{T}w\), compute it as \(w^\mathsf{T}y\). Conversely, any component of \(c\) along a null direction changes the quantity while leaving the data unchanged. This test can rescue a useful question from an underdetermined experiment. Both temperatures may be ambiguous while their mean is measured precisely.</p>
-<p>Take a second reading \((x_1+x_2)/2+\eta(x_1-x_2)/2\). Subtract the first reading to isolate the contrast, \(x_1-x_2=2(y_2-y_1)/\eta\). With \(\eta\ne0\) both temperatures are identifiable in exact arithmetic. At \(\eta=0.01\), a difference error of just 0.02 K changes the recovered contrast by 4 K. Algebraic rank has improved, but the measurement has barely separated the two states. Changing the second sensor's spatial weighting can be much more effective than repeating its reading.</p>
+<p>Take a second reading \((x_1+x_2)/2+\eta(x_1-x_2)/2\). Subtract the first reading to isolate the contrast,</p>
+<div class="math display">\[x_1-x_2=2(y_2-y_1)/\eta.\]</div>
+<p>With \(\eta\ne0\) both temperatures are identifiable in exact arithmetic. At \(\eta=0.01\), a difference error of just 0.02 K changes the recovered contrast by 4 K. Algebraic rank has improved, but the measurement has barely separated the two states. Changing the second sensor's spatial weighting can be much more effective than repeating its reading.</p>
 </section>
 <section><h2 id="translate-a-nonlinear-ambiguity-into-an-experiment">Translate a nonlinear ambiguity into an experiment</h2>
-<p>For a decay \(y(t)=A e^{-kt}\), an observation at \(t=0\) identifies \(A\) and says nothing about \(k\). A single later observation allows the continuum \(A=y(t)e^{kt}\). Two exact positive observations at distinct times yield \(k=\ln[y(t_1)/y(t_2)]/(t_2-t_1)\). This identifies both parameters under the assumed model. When the times are almost equal the denominator is small, which makes the slope sensitive to measurement noise. Late measurements can also be difficult when responses approach the instrument's noise floor.</p>
+<p>For a decay \(y(t)=A e^{-kt}\), an observation at \(t=0\) identifies \(A\) and says nothing about \(k\). A single later observation allows the continuum \(A=y(t)e^{kt}\). Two exact positive observations at distinct times yield</p>
+<div class="math display">\[k=\ln[y(t_1)/y(t_2)]/(t_2-t_1).\]</div>
+<p>This identifies both parameters under the assumed model. When the times are almost equal the denominator is small, which makes the slope sensitive to measurement noise. Late measurements can also be difficult when responses approach the instrument's noise floor.</p>
 <p>Always state the admissible parameter set. A power reading \(y=p^2\) determines \(|p|\); if physics requires \(p\ge0\), the sign ambiguity disappears, though sensitivity near zero still needs attention. In later chapters we will assess local sensitivity with derivatives. A full-rank local derivative distinguishes sufficiently close parameters under suitable regularity; widely separated alternatives can remain.</p>
 </section>
 <section><h2 id="establish-a-baseline-for-a-reconstruction">Establish a baseline for a reconstruction</h2>

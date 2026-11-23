@@ -47,9 +47,13 @@
 <div class="math display">\[A=\begin{pmatrix}1&amp;0\\c/a&amp;1\end{pmatrix}\begin{pmatrix}a&amp;0\\0&amp;s\end{pmatrix}\begin{pmatrix}1&amp;c/a\\0&amp;1\end{pmatrix}.\]</div>
 <p>Small \(s\) means one combined motion changes the energy very little. A large resulting displacement can therefore be a property of the model even if the elimination is performed accurately.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Compute the effective load after eliminating a support</h3>
-<p>Let \(a=4\), \(c=-2\), \(d=3\) in \(\mathrm{N/m}\), with loads \(f=2\) and \(g=1\,\mathrm N\). The retained stiffness is \(3-4/4=2\,\mathrm{N/m}\). Its effective load is \(1-(-2)(2)/4=2\,\mathrm N\), so \(v=1\,\mathrm m\) and \(u=(2+2)/4=1\,\mathrm m\). Substitution gives original loads \(4-2=2\) and \(-2+3=1\).</p>
+<p>Let \(a=4\), \(c=-2\), \(d=3\) in \(\mathrm{N/m}\), with loads \(f=2\) and \(g=1\,\mathrm N\). The retained stiffness is</p>
+<div class="math display">\[3-4/4=2\,\mathrm{N/m}.\]</div>
+<p>Its effective load is \(1-(-2)(2)/4=2\,\mathrm N\), so \(v=1\,\mathrm m\) and \(u=(2+2)/4=1\,\mathrm m\). Substitution gives original loads \(4-2=2\) and \(-2+3=1\).</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Diagnose loss of stability without computing eigenvalues</h3>
-<p>With \(a=9\), \(d=4\), and \(c=6\) the second pivot vanishes. The trial motion \(u=-2v/3\) has zero quadratic energy for every \(v\). Changing only \(c\) to \(6.3\) gives \(s=4-6.3^2/9=-0.41\). Minimizing over \(u\) at \(v=2\) and zero load now yields \(E=s v^2/2=-0.82\), demonstrating an unstable direction in the supposed stiffness model.</p>
+<p>With \(a=9\), \(d=4\), and \(c=6\) the second pivot vanishes. The trial motion \(u=-2v/3\) has zero quadratic energy for every \(v\). Changing only \(c\) to \(6.3\) gives</p>
+<div class="math display">\[s=4-6.3^2/9=-0.41.\]</div>
+<p>Minimizing over \(u\) at \(v=2\) and zero load now yields \(E=s v^2/2=-0.82\), demonstrating an unstable direction in the supposed stiffness model.</p>
 </section><section class="course-lab"><p class="reading-label">OneSimulation laboratory</p><h2 id="experiment">Separate algebraic error from mesh error</h2><p class="lab-prediction"><strong>Start from this chapter.</strong> Use the direct factorisation as a fixed-mesh reference. Compare it with a converged iterative solve, then check why the peak temperature itself moves on a different mesh.</p><p class="lab-access">Compare recorded OneSimulation runs on this page. To test your own inputs, <a href="/downloads/teaching/numerics/linear-algebra.py" download>download the Python model</a> and run the model in an <a href="/tutorials/install/">activated OneSimulation environment</a>.</p>
 <p>A unit cube has conductivity 1 W/(m·K), uniform heating 1 W/m³ and zero temperature rise on every face. The script compares CG and a direct solver on the same trilinear finite-element mesh. Predict the effects of first refining the mesh and then relaxing only the CG tolerance. <a href="/downloads/teaching/numerics/linear-algebra.py" download>Download the Python experiment</a> · <a href="/tutorials/solvers/#linear-solvers-and-preconditioners">OneSimulation linear solvers</a>.</p>
 <pre><code>python linear-algebra.py
@@ -79,15 +83,25 @@ python linear-algebra.py --cells 10 --rtol 0.05</code></pre>
 <section>
 <h2 id="factor-once-and-load-twice">Factor once and load twice</h2>
 <p>Consider \(A=\left(\begin{smallmatrix}2&amp;1&amp;0\\1&amp;3&amp;1\\0&amp;1&amp;2\end{smallmatrix}\right)\). Subtract half the first row from the second to get \((0,2.5,1)\). Subtract 0.4 times the new second row from the third to get \((0,0,1.6)\). Thus \(U\) has diagonal \(2,2.5,1.6\) with ones immediately above, and \(L\) has multipliers 0.5 and 0.4 immediately below its unit diagonal. This matrix needs no pivot exchange. Multiplying the two factors recovers the original entries and gives a quick arithmetic check.</p>
-<p>For the load \(b=(1,2,3)^T\), forward substitution yields \(y=(1,1.5,2.4)^T\). Back substitution starts with \(x_3=2.4/1.6=1.5\), then gives \(x_2=(1.5-1.5)/2.5=0\) and \(x_1=(1-0)/2=0.5\). A second load \(b=(0,1,0)^T\) gives \(y=(0,1,-0.4)^T\) and \(x=(-0.25,0.5,-0.25)^T\). Both calculations are short once the triangular factors are available.</p>
+<p>For the load \(b=(1,2,3)^T\), forward substitution yields</p>
+<div class="math display">\[y=(1,1.5,2.4)^T.\]</div>
+<p>Back substitution starts with \(x_3=2.4/1.6=1.5\), then gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[x_2=(1.5-1.5)/2.5=0,\]</div><div class="equation-step">\[x_1=(1-0)/2=0.5.\]</div></div>
+<p>A second load \(b=(0,1,0)^T\) gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[y=(0,1,-0.4)^T,\]</div><div class="equation-step">\[x=(-0.25,0.5,-0.25)^T.\]</div></div>
+<p>Both calculations are short once the triangular factors are available.</p>
 </section>
 <section>
 <h2 id="tridiagonal-sweeps">Eliminate a chain in two linear-time sweeps</h2>
 <p>In a chain of nearest-neighbour balances, row \(i\) contains only a left coefficient \(a_i\), diagonal \(d_i\), and right coefficient \(c_i\). Subtracting a multiple of the preceding, already reduced row removes the left coefficient and updates just one diagonal and one load. Write the reduced pivot and load as \(p_i,g_i\). The first pair is \(p_1=d_1,\ g_1=b_1\). Thereafter the multiplier, pivot and load satisfy</p>
-<div class="math display">\[m_i=a_i/p_{i-1},\qquad p_i=d_i-m_ic_{i-1},\qquad g_i=b_i-m_ig_{i-1}.\]</div>
-<p>The last equation gives \(x_n=g_n/p_n\). Proceed backwards with \(x_i=(g_i-c_ix_{i+1})/p_i\). This is the Thomas algorithm. Each row costs a fixed number of operations and only three coefficient diagonals need storage. On repeated load cases the pivots and multipliers depend only on the original coefficient matrix and can be retained. Symmetric positive definiteness guarantees positive pivots here. An arbitrary nonsingular tridiagonal matrix can still have a zero leading pivot and require pivoting.</p>
+<div class="math display equation-chain"><div class="equation-step">\[m_i=a_i/p_{i-1},\]</div><div class="equation-step">\[p_i=d_i-m_ic_{i-1},\]</div><div class="equation-step">\[g_i=b_i-m_ig_{i-1}.\]</div></div>
+<p>The last equation gives</p>
+<div class="math display">\[x_n=g_n/p_n.\]</div>
+<p>Proceed backwards with \(x_i=(g_i-c_ix_{i+1})/p_i\). This is the Thomas algorithm. Each row costs a fixed number of operations and only three coefficient diagonals need storage. On repeated load cases the pivots and multipliers depend only on the original coefficient matrix and can be retained. Symmetric positive definiteness guarantees positive pivots here. An arbitrary nonsingular tridiagonal matrix can still have a zero leading pivot and require pivoting.</p>
 <h3>A four-node diffusion chain</h3>
-<p>With conductance one between successive nodes and fixed end values 1 and 2, the four internal balances have diagonal two, neighbours minus one and load \((1,0,0,2)^T\). The reduced pivots are \(2,3/2,4/3,5/4\). The corresponding loads are \(1,1/2,1/3,9/4\). The last unknown is \((9/4)/(5/4)=9/5\). One step back gives \((1/3+9/5)/(4/3)=8/5\), then \(7/5\) and \(6/5\). Each of the five temperature differences is one fifth, as conservation without an interior source requires. A dense factorisation would return the same field but would obscure why a million-node chain is computationally tractable.</p>
+<p>With conductance one between successive nodes and fixed end values 1 and 2, the four internal balances have diagonal two, neighbours minus one and load \((1,0,0,2)^T\). The reduced pivots are \(2,3/2,4/3,5/4\). The corresponding loads are \(1,1/2,1/3,9/4\). The last unknown is</p>
+<div class="math display">\[(9/4)/(5/4)=9/5.\]</div>
+<p>One step back gives \((1/3+9/5)/(4/3)=8/5\), then \(7/5\) and \(6/5\). Each of the five temperature differences is one fifth, as conservation without an interior source requires. A dense factorisation would return the same field but would obscure why a million-node chain is computationally tractable.</p>
 <p class="source-note">Practise on sheet 1 · <a href="/fundamentals/numerics/linear-algebra/problem-sheets/1/#transfer-tridiagonal-pivots">Reuse chain factors after a load change</a>. Further reading · <a href="https://sites.lsa.umich.edu/shixumeng/wp-content/uploads/sites/629/2020/02/Thomas.pdf">University of Limerick · MS6021 Scientific Computation, W. T. Lee · Tridiagonal Matrices: Thomas Algorithm, sections I–II, Stage 1 and Stage 2</a>.</p>
 </section>
 <section>
@@ -99,7 +113,9 @@ python linear-algebra.py --cells 10 --rtol 0.05</code></pre>
 <section>
 <h2 id="use-symmetry-when-the-physics-supplies-it">Use symmetry when the physics supplies it</h2>
 <p>For a symmetric positive definite stiffness matrix, Cholesky factorisation represents \(A=CC^T\) with a lower triangular \(C\) and positive real diagonal. The first diagonal entry is \(\sqrt{a_{11}}\). Entries below it are fixed by the first column of the product, and subtracting that column’s outer product leaves a smaller positive definite Schur complement. Positivity follows by minimising the full quadratic energy over the eliminated variable for every fixed nonzero remaining vector.</p>
-<p>For \(A=\left(\begin{smallmatrix}4&amp;2\\2&amp;5\end{smallmatrix}\right)\), the first column of \(C\) is \((2,1)^T\). The remaining diagonal is \(\sqrt{5-1^2}=2\). A zero or negative candidate under the square root signals that the positive definite assumption or numerical precision needs inspection. Unrestrained mechanical assemblies can have rigid modes of zero energy. Supplying appropriate physical constraints addresses that singularity directly instead of treating it as a pivot-ordering problem.</p>
+<p>For \(A=\left(\begin{smallmatrix}4&amp;2\\2&amp;5\end{smallmatrix}\right)\), the first column of \(C\) is \((2,1)^T\). The remaining diagonal is</p>
+<div class="math display">\[\sqrt{5-1^2}=2.\]</div>
+<p>A zero or negative candidate under the square root signals that the positive definite assumption or numerical precision needs inspection. Unrestrained mechanical assemblies can have rigid modes of zero energy. Supplying appropriate physical constraints addresses that singularity directly instead of treating it as a pivot-ordering problem.</p>
 </section>
 <section>
 <h2 id="trace-element-growth-during-pivoted-elimination">Trace element growth during pivoted elimination</h2>

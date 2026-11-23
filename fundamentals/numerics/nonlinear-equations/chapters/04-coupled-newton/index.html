@@ -34,35 +34,57 @@
 <p>If the derivatives are locally Lipschitz and the linear model is reliable, choose the correction that cancels both leading residuals together,</p>
 <div class="math display equation-chain"><div class="equation-step">\[J(x)s=-F(x),\]</div><div class="equation-step">\[x_{\rm new}=x+s .\]</div></div>
 <p>A nonsingular Jacobian guarantees a unique local correction. Solving the system directly avoids constructing its inverse. A final small residual can only establish accurate state variables if the balances are sufficiently sensitive to changes in those variables. Scaling each quantity by a physically meaningful reference helps distinguish genuine insensitivity from a misleading comparison between different units.</p>
+
+<details class="study-aside"><summary>Background · Newton correction</summary><div class="math display">\[J(x_k)s_k=-F(x_k)\]</div><p>The correction solves a local linear model. Quadratic local convergence needs a suitable nonsingular derivative and a sufficiently close starting point.</p></details>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Eliminate a coupled balance without losing its derivative</h2>
-<p>Some models contain one equation that can be solved quickly for an auxiliary variable. Suppose \(F(u,v)=0,\ G(u,v)=0\) and, locally, \(G_v\ne0\). If the auxiliary equation gives \(v=g(u)\), the reduced residual is \(H(u)=F(u,g(u))\). Differentiating \(G(u,g(u))=0\) first accounts for the effect of a changed \(u\) on the auxiliary state,</p>
+<p>Some models contain one equation that can be solved quickly for an auxiliary variable. Suppose \(F(u,v)=0,\ G(u,v)=0\) and, locally, \(G_v\ne0\). If the auxiliary equation gives \(v=g(u)\), the reduced residual is</p>
+<div class="math display">\[H(u)=F(u,g(u)).\]</div>
+<p>Differentiating \(G(u,g(u))=0\) first accounts for the effect of a changed \(u\) on the auxiliary state,</p>
 <div class="math display equation-chain"><div class="equation-step">\[g'=-G_u/G_v,\]</div><div class="equation-step">\[H'=F_u-F_vG_u/G_v .\]</div></div>
 <p>This same combination arises even when the current auxiliary state is not perfectly equilibrated. The full two-row Newton system gives a formula for the auxiliary correction from the second row. Substituting it into the first row yields</p>
-<div class="math display equation-chain"><div class="equation-step">\[\delta v=\frac{-G-G_u\delta u}{G_v},\]</div><div class="equation-step">\[\left(F_u-\frac{F_vG_u}{G_v}\right)\delta u=-F+\frac{F_vG}{G_v}.\]</div></div>
+<div class="math display">\[\delta v=\frac{-G-G_u\delta u}{G_v},\qquad \left(F_u-\frac{F_vG_u}{G_v}\right)\delta u=-F+\frac{F_vG}{G_v}.\]</div>
 <p>At an equilibrated state \(G=0\), this is exactly Newton’s scalar step for \(H\). The second row’s imbalance contributes to the right-hand side otherwise. The determinant identity</p>
 <div class="math display">\[\det J=F_uG_v-F_vG_u=G_vH'\]</div>
 <p>shows why an apparently harmless derivative \(F_u\) can hide a nearly singular coupled model. After a finite step, directly recomputing \(g(u+\delta u)\) can differ from \(v+\delta v\) by a second-order term when \(g\) is curved. Both choices share the same first-order model.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Calculate a simultaneous correction from an imbalanced state</h3>
-<p>Take \(F=u+2v-5,\ G=v-u^2\), initially \((u,v)=(1,0.8)\). Then \(F=-2.4,\ G=-0.2,\ G_u=-2,\ G_v=1\). The reduced derivative is 5 and the corrected right side is \(2.4-0.4=2.0\). Thus \(\delta u=0.4,\ \delta v=1.0\). The new state \((1.4,1.8)\) satisfies the linear \(F\) balance exactly; the remaining \(G=-0.16\) is the neglected quadratic term.</p>
+<p>Take \(F=u+2v-5,\ G=v-u^2\), initially \((u,v)=(1,0.8)\). Then</p>
+<div class="math display">\[F=-2.4,\ G=-0.2,\ G_u=-2,\ G_v=1.\]</div>
+<p>The reduced derivative is 5 and the corrected right side is</p>
+<div class="math display">\[2.4-0.4=2.0.\]</div>
+<p>Thus</p>
+<div class="math display">\[\delta u=0.4,\ \delta v=1.0.\]</div>
+<p>The new state \((1.4,1.8)\) satisfies the linear \(F\) balance exactly; the remaining \(G=-0.16\) is the neglected quadratic term.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Identify a cancellation in a reduced slope</h3>
 <p>In a second model \(F=2u-v-1,\ G=v-1.99u\). The individual slope \(F_u=2\), but eliminating \(v\) leaves \(H(u)=0.01u-1\). Starting at zero the correct Newton correction is 100, giving \(v=199\), an exact solution of both linear balances. Using the partial slope of 2 while holding \(v\) fixed would instead propose \(u=0.5\) and miss the compensating response.</p>
 </section>
 <section>
 <h2 id="linearise-the-whole-model-at-one-state">Linearise the whole model at one state</h2>
 <p>Two unknown physical quantities may influence both measured balances. Changing one to erase one residual can disrupt the other. The vector Taylor expansion \(F(x+s)=F(x)+J(x)s+O(\|s\|^2)\) collects the simultaneous first-order response. Entry \(J_{ij}\) is the derivative of residual \(i\) with respect to unknown \(j\) while holding the other unknowns fixed. A Newton step solves the linear system \(J(x)s=-F(x)\) and sets \(x_{new}=x+s\). Factor or iteratively solve that system rather than explicitly computing an inverse.</p>
-<p>Suppose \(J\) is Lipschitz with constant \(L\) near a root, and the inverses in that neighbourhood satisfy \(\|J^{-1}\|\leq K\). Integrate \(J\) along the line from the current point to the root. The error left by replacing \(J\) with its value at the start is bounded by \(L\|x-r\|^2/2\). Multiplying by the inverse yields the local Newton bound \(KL\|x-r\|^2/2\). This derivation makes explicit which objects must stay well behaved: derivative variation and amplification by the linear solve.</p>
+<p>Suppose \(J\) is Lipschitz with constant \(L\) near a root, and the inverses in that neighbourhood satisfy</p>
+<div class="math display">\[\|J^{-1}\|\leq K.\]</div>
+<p>Integrate \(J\) along the line from the current point to the root. The error left by replacing \(J\) with its value at the start is bounded by \(L\|x-r\|^2/2\). Multiplying by the inverse yields the local Newton bound \(KL\|x-r\|^2/2\). This derivation makes explicit which objects must stay well behaved: derivative variation and amplification by the linear solve.</p>
 </section>
 <section>
 <h2 id="intersect-an-energy-constraint-with-a-matching-condition">Intersect an energy constraint with a matching condition</h2>
-<p>Take the dimensionless equations \(F_1=x^2+y^2-1,\ F_2=x-y\), and choose the positive branch. The linearised system at \((0.8,0.6)\) has \(F=(0,0.2)\) and rows \((1.6,1.2),(1,-1)\). The point already lies on the unit circle but violates matching. Newton requires \(s_y=s_x+0.2\); substituting in the first row gives \(2.8s_x=-0.24\). Thus \(s_x=-0.0857143,\ s_y=0.114286\) and the new state is \((5/7,5/7)\).</p>
-<p>The linear constraint is now exact. The circle residual is \(2(5/7)^2-1=1/49\), a second-order consequence of moving along its tangent rather than along the circle itself. At the next iteration the two corrections are equal. Solving \((20/7)s=-1/49\) gives \(s=-1/140\), hence \(x=y=99/140=0.707143\). The desired value is \(1/\sqrt2=0.707107\). A different initial state could lead to the negative intersection. Physical admissibility must therefore supplement the algebraic equations.</p>
+<p>Take the dimensionless equations \(F_1=x^2+y^2-1,\ F_2=x-y\), and choose the positive branch. The linearised system at \((0.8,0.6)\) has \(F=(0,0.2)\) and rows \((1.6,1.2),(1,-1)\). The point already lies on the unit circle but violates matching. Newton requires</p>
+<div class="math display">\[s_y=s_x+0.2;\]</div>
+<p>substituting in the first row gives \(2.8s_x=-0.24\). Thus \(s_x=-0.0857143,\ s_y=0.114286\) and the new state is \((5/7,5/7)\).</p>
+<p>The linear constraint is now exact. The circle residual is \(2(5/7)^2-1=1/49\), a second-order consequence of moving along its tangent rather than along the circle itself. At the next iteration the two corrections are equal. Solving \((20/7)s=-1/49\) gives \(s=-1/140\), hence</p>
+<div class="math display">\[x=y=99/140=0.707143.\]</div>
+<p>The desired value is</p>
+<div class="math display">\[1/\sqrt2=0.707107.\]</div>
+<p>A different initial state could lead to the negative intersection. Physical admissibility must therefore supplement the algebraic equations.</p>
 </section>
 <section>
 <h2 id="frozen-jacobian">Quantify the cost of freezing a Jacobian</h2>
-<p>A new Jacobian factorisation at every iterate can dominate the work of solving a coupled equilibrium. Fix \(B=J(x_0)\), factor it once, and take \(x_{k+1}=x_k-B^{-1}F(x_k)\). Near a simple root \(r\) write \(e=x-r\). Taylor expansion gives \(e_+=(I-B^{-1}J(r))e+O(\|e\|^2)\). With a current exact Jacobian the first-order term vanishes. A frozen Jacobian normally retains it, so convergence is generally linear and even local convergence requires control of this iteration matrix. A sufficient condition on a neighbourhood is \(\sup_x\|I-B^{-1}J(x)\|&lt;1\), together with an invariant neighbourhood.</p>
-<p>Consider \(F(x,y)=(x^2+y-3,x-y)^T\), starting at \((1,1)\). The fixed matrix has rows \((2,1)\) and \((1,-1)\). The second residual remains zero if both coordinates change equally. On that line the correction satisfies \(3s=-(x^2+x-3)\). The first increment is \(1/3\). The new first residual is \(1/9\). Reusing the factors gives the next increment \(-1/27\) and the state \(x=y=35/27\approx1.29630\). Refactoring at \(4/3\) would instead give increment \(-1/33\), reaching \(43/33\approx1.30303\). The exact positive root is \((\sqrt{13}-1)/2\approx1.30278\).</p>
+<p>A new Jacobian factorisation at every iterate can dominate the work of solving a coupled equilibrium. Fix \(B=J(x_0)\), factor it once, and take \(x_{k+1}=x_k-B^{-1}F(x_k)\). Near a simple root \(r\) write \(e=x-r\). Taylor expansion gives</p>
+<div class="math display">\[e_+=(I-B^{-1}J(r))e+O(\|e\|^2).\]</div>
+<p>With a current exact Jacobian the first-order term vanishes. A frozen Jacobian normally retains it, so convergence is generally linear and even local convergence requires control of this iteration matrix. A sufficient condition on a neighbourhood is \(\sup_x\|I-B^{-1}J(x)\|&lt;1\), together with an invariant neighbourhood.</p>
+<p>Consider \(F(x,y)=(x^2+y-3,x-y)^T\), starting at \((1,1)\). The fixed matrix has rows \((2,1)\) and \((1,-1)\). The second residual remains zero if both coordinates change equally. On that line the correction satisfies</p>
+<div class="math display">\[3s=-(x^2+x-3).\]</div>
+<p>The first increment is \(1/3\). The new first residual is \(1/9\). Reusing the factors gives the next increment \(-1/27\) and the state \(x=y=35/27\approx1.29630\). Refactoring at \(4/3\) would instead give increment \(-1/33\), reaching \(43/33\approx1.30303\). The exact positive root is \((\sqrt{13}-1)/2\approx1.30278\).</p>
 <p>The local error multiplier along this line is \(1-\sqrt{13}/3\approx-0.202\), predicting alternating errors for the frozen calculation. Reusing a poor factorisation indefinitely can cost more residual evaluations than it saves. Compare actual reduction against the expected local factor and refresh the Jacobian when model changes make reuse ineffective.</p>
 <p class="source-note">Practise on sheet 2 · <a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/2/#transfer-frozen-refresh">Decide when a reused slope is still informative</a>. Further reading · <a href="https://people.math.ethz.ch/~grsam/NCSE21/NumCSE_Lecture_Document.pdf#page=625">ETH Zürich · Numerical Methods for Computational Science and Engineering · Remark 8.5.1.43, Simplified Newton method, and Code 8.5.1.44, p. 625</a>.</p>
 </section>
@@ -73,17 +95,25 @@
 </section>
 <section>
 <h2 id="separate-state-sensitivity-from-linearisation-error">Separate state sensitivity from linearisation error</h2>
-<p>Suppose the matching constraint in the intersection example is perturbed to \(x-y=\epsilon\), while the unit-circle measurement remains exact. About the positive root \(x=y=1/\sqrt2\), differentiating the circle implies \(\delta x+\delta y=0\). Differentiating the matching constraint gives \(\delta x-\delta y=\epsilon\). Thus a measurement offset of 0.02 moves the coordinates by approximately \(+0.01\) and \(-0.01\), even if the perturbed nonlinear equations are solved to roundoff.</p>
+<p>Suppose the matching constraint in the intersection example is perturbed to \(x-y=\epsilon\), while the unit-circle measurement remains exact. About the positive root \(x=y=1/\sqrt2\), differentiating the circle implies \(\delta x+\delta y=0\). Differentiating the matching constraint gives</p>
+<div class="math display">\[\delta x-\delta y=\epsilon.\]</div>
+<p>Thus a measurement offset of 0.02 moves the coordinates by approximately \(+0.01\) and \(-0.01\), even if the perturbed nonlinear equations are solved to roundoff.</p>
 <p>Geometrically, uncertainty becomes much larger when the two constraint curves meet almost tangentially. Their Jacobian rows then point in nearly the same direction, leaving a poorly resolved transverse displacement. Reducing the Newton tolerance improves the algebraic solution of the supplied measurements, but cannot increase their independence. Inspecting singular directions of the scaled Jacobian near the converged state helps distinguish this physical uncertainty from difficulties caused by a poor initial guess.</p>
 </section>
 <section>
 <h2 id="analyse-the-basins-of-a-coupled-two-dimensional-problem">Analyse the basins of a coupled two-dimensional problem</h2>
 <p>Identify a real state \((x,y)\) with \(z=x+iy\). Solving \(z^2-1=0\) is equivalent to solving \(x^2-y^2-1=0,\ 2xy=0\) for two real unknowns. The real Jacobian has rows \((2x,-2y)\) and \((2y,2x)\), with determinant \(4(x^2+y^2)\). It is nonsingular away from the origin. Complex division by \(2z\) implements exactly the real Newton correction for this system. Therefore the full update is \(N(z)=(z+1/z)/2\), and both roots \(+1\) and \(-1\) have local quadratic convergence.</p>
-<p>To determine which root is selected, set \(w=(z-1)/(z+1)\), excluding the already solved point \(-1\). Direct substitution shows \(N(z)-1=(z-1)^2/(2z)\) and \(N(z)+1=(z+1)^2/(2z)\). Dividing yields \(w_{\rm new}=w^2\). Hence \(w_k=w_0^{2^k}\) as long as the updates remain defined. If \(|w_0|&lt;1\), this tends to zero and \(z=(1+w)/(1-w)\) tends to one. The condition means the starting point is closer to \(+1\) than to \(-1\), precisely the open right half-plane. The left half-plane similarly converges to the other root.</p>
+<p>To determine which root is selected, set \(w=(z-1)/(z+1)\), excluding the already solved point \(-1\). Direct substitution shows \(N(z)-1=(z-1)^2/(2z)\) and \(N(z)+1=(z+1)^2/(2z)\). Dividing yields</p>
+<div class="math display">\[w_{\rm new}=w^2.\]</div>
+<p>Hence \(w_k=w_0^{2^k}\) as long as the updates remain defined. If \(|w_0|&lt;1\), this tends to zero and \(z=(1+w)/(1-w)\) tends to one. The condition means the starting point is closer to \(+1\) than to \(-1\), precisely the open right half-plane. The left half-plane similarly converges to the other root.</p>
 </section>
 <section>
 <h2 id="predict-a-basin-and-trace-a-boundary-failure">Predict a basin and trace a boundary failure</h2>
-<p>Start at \(z_0=1+i\), so \(1/z_0=(1-i)/2\). The first update is \(z_1=0.75+0.25i\). Its inverse equals \(1.2-0.4i\), giving \(z_2=0.975-0.075i\). The iterates moved from above to below the real axis, but both remained in the basin of \(+1\). In transformed coordinates \(w_0=i/(2+i)=(1+2i)/5\), of magnitude \(1/\sqrt5\); after two steps the magnitude is \(1/25\). This quantifies progress without estimating the distance from \(z_1\) to either root by visual inspection.</p>
+<p>Start at \(z_0=1+i\), so</p>
+<div class="math display">\[1/z_0=(1-i)/2.\]</div>
+<p>The first update is</p>
+<div class="math display">\[z_1=0.75+0.25i.\]</div>
+<p>Its inverse equals \(1.2-0.4i\), giving \(z_2=0.975-0.075i\). The iterates moved from above to below the real axis, but both remained in the basin of \(+1\). In transformed coordinates \(w_0=i/(2+i)=(1+2i)/5\), of magnitude \(1/\sqrt5\); after two steps the magnitude is \(1/25\). This quantifies progress without estimating the distance from \(z_1\) to either root by visual inspection.</p>
 <p>The basin boundary is completely different. For \(z_0=i\), the first update is zero and the next Jacobian is singular. More generally a purely imaginary nonzero start remains purely imaginary for as long as the map is defined, because both \(z\) and \(1/z\) have zero real part. It cannot converge to either real root while staying on this line. Infinitesimal perturbations toward opposite sides of the line select different roots. A solver reporting a converged root from a point numerically very close to this boundary should identify which initial or rounding perturbations could change that result.</p>
 <p>This example makes global multiplicity observable in a system whose local steps are cheap and whose Jacobian is invertible almost everywhere. A small final residual confirms that the reported state solves the equations. It says little about whether the originally intended physical branch was selected. Additional physical conditions or a continuation path from a known state can supply information that the equations and a nominal starting vector alone do not specify.</p>
 <p>Initial guesses only \(10^{-6}\) to the right and left of the imaginary axis can therefore give final real parts differing by two. That discontinuity concerns the map from starting guess to selected solution, not a discontinuity of the original polynomial equations. It is one reason to report how physical branch selection was imposed when several roots correspond to substantially different states, even when every final residual is small.</p>

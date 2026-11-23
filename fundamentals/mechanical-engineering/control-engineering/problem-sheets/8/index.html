@@ -38,7 +38,9 @@
 <p>Hold \(r=2\) for six seconds. Solve for plant output and integral state while the actuator is saturated. At \(t=6\) replace the reference by 0.4. Estimate how long the plain PI controller keeps the actuator at its upper limit after this switch.</p>
 <details><summary>Integrate the actual plant input rather than the requested command</summary>
 <p>During the high reference \(u=1\), hence \(y=1-e^{-t}\). Error is \(1+e^{-t}\), so \(I=t+1-e^{-t}\). At six seconds \(y=0.9975\) and \(I=6.9975\). Immediately after the drop, \(v=2(0.4-0.9975)+6.9975\simeq5.80\), so the actuator still clips at one even though the error is now negative. The plant remains near one while the integrator slowly unwinds.</p>
-<p>Let \(s\) denote time after switching during this second saturated interval. Then \(y=1-e^{-6-s}\), and \(I=I(6)-0.6s+e^{-6}(1-e^{-s})\). Substituting into the command gives \(v=5.8-0.6s+e^{-6-s}\). Setting \(v=1\) gives approximately 8.00 further seconds at the upper limit. A first-order plant with a one-second time constant can therefore appear unresponsive much longer than its own transient. Inspecting the actual and requested commands makes the cause identifiable.</p>
+<p>Let \(s\) denote time after switching during this second saturated interval. Then \(y=1-e^{-6-s}\), and \(I=I(6)-0.6s+e^{-6}(1-e^{-s})\). Substituting into the command gives</p>
+<div class="math display">\[v=5.8-0.6s+e^{-6-s}.\]</div>
+<p>Setting \(v=1\) gives approximately 8.00 further seconds at the upper limit. A first-order plant with a one-second time constant can therefore appear unresponsive much longer than its own transient. Inspecting the actual and requested commands makes the cause identifiable.</p>
 </details>
 </section>
 <section><h2 id="tracking">Derive a back-calculation update and test its consequences</h2>

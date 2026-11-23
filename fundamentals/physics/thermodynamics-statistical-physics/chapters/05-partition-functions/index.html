@@ -34,6 +34,8 @@
 <p>A large bath changes temperature negligibly over the small system’s range of exchanged energies. Expand its entropy to first order, using \(\partial S_{\rm bath}/\partial E=1/T\); an arbitrary energy reference contributes only a common factor. Normalizing the resulting probabilities gives</p>
 <div class="math display equation-chain"><div class="equation-step">\[P_i=\frac{e^{-\beta E_i}}{Z},\]</div><div class="equation-step">\[Z=\sum_j e^{-\beta E_j},\]</div><div class="equation-step">\[\beta=\frac1{k_BT}.\]</div></div>
 <p>The sum called the partition function counts every microstate, so equal-energy states contribute separately. Differentiating it yields the mean energy \(U=-\partial_\beta\ln Z\) when the energy levels are temperature independent. A constant shift of all levels changes \(Z\) and \(U\) but leaves the normalized probabilities unchanged.</p>
+
+<details class="study-aside"><summary>Background · Inverse temperature</summary><div class="math display">\[\beta=1/(k_BT)\]</div><p>It is conjugate to energy in a canonical weight and has units of reciprocal energy. Temperatures in Boltzmann factors are absolute.</p></details>
 </section>
 <section class="chapter-derivation">
 <p class="reading-label">Derivation and applications</p><h2 id="derivation">Measure a static response from spontaneous fluctuations</h2>
@@ -45,9 +47,13 @@
 <div class="math display equation-chain"><div class="equation-step">\[\tfrac12kx^2-fx=\tfrac12 k(x-f/k)^2-\frac{f^2}{2k},\]</div><div class="equation-step">\[\langle x\rangle_f=\frac{f}{k},\]</div><div class="equation-step">\[\operatorname{var}x=\frac{k_BT}{k}.\]</div></div>
 <p>The same stiffness controls response and equilibrium noise. For an anharmonic potential the general variance identity still gives the local response at the current force, although the compliance can change at larger loads. A finite exposure time can average away rapid motion, so measured positions must resolve the fluctuating coordinate.</p>
 <p class="example-label">Worked example</p><h3 id="worked-example">Calibrate a bead trap at thermal equilibrium</h3>
-<p>A bead suspended in a harmonic optical trap at \(295\,\mathrm K\) has a measured one-coordinate standard deviation of \(40.0\,\mathrm{nm}\). Its stiffness is \(k=k_BT/(40.0\times10^{-9})^2=2.55\times10^{-6}\,\mathrm{N/m}\). A steady force of \(0.100\,\mathrm{pN}\) should shift the mean by \(39.3\,\mathrm{nm}\). Resolving such a shift requires averaging over many statistically independent positions.</p>
+<p>A bead suspended in a harmonic optical trap at \(295\,\mathrm K\) has a measured one-coordinate standard deviation of \(40.0\,\mathrm{nm}\). Its stiffness is</p>
+<div class="math display">\[k=k_BT/(40.0\times10^{-9})^2=2.55\times10^{-6}\,\mathrm{N/m}.\]</div>
+<p>A steady force of \(0.100\,\mathrm{pN}\) should shift the mean by \(39.3\,\mathrm{nm}\). Resolving such a shift requires averaging over many statistically independent positions.</p>
 <p class="example-label">Second application</p><h3 id="transfer-example">Predict noise from a measured mechanical compliance</h3>
-<p>A second device near a fixed bias force responds to an extra \(0.500\,\mathrm{pN}\) with a mean displacement of \(10.0\,\mathrm{nm}\). Its local compliance is \(2.00\times10^4\,\mathrm{m/N}\). At \(310\,\mathrm K\) the expected displacement standard deviation is \(\sqrt{k_BT(2.00\times10^4)}=9.25\,\mathrm{nm}\). This inference uses only local linear response and thermal equilibrium, so it remains applicable even if the device is nonlinear over a larger displacement range.</p>
+<p>A second device near a fixed bias force responds to an extra \(0.500\,\mathrm{pN}\) with a mean displacement of \(10.0\,\mathrm{nm}\). Its local compliance is \(2.00\times10^4\,\mathrm{m/N}\). At \(310\,\mathrm K\) the expected displacement standard deviation is</p>
+<div class="math display">\[\sqrt{k_BT(2.00\times10^4)}=9.25\,\mathrm{nm}.\]</div>
+<p>This inference uses only local linear response and thermal equilibrium, so it remains applicable even if the device is nonlinear over a larger displacement range.</p>
 </section>
 <section><h2 id="put-a-small-system-in-a-heat-bath">Put a small system in a heat bath</h2>
 <p>A spectroscopic probe may resolve two energy levels even when a bulk thermometer gives only one temperature. Consider many independent units with ground energy zero and excitation energy \(\Delta&gt;0\). Each unit has two nondegenerate states and is weakly coupled to a much larger bath at temperature \(T\). Weak coupling lets us assign energies to the unit while still permitting energy exchange over the measurement time.</p>
@@ -58,31 +64,79 @@
 <div class="math display">\[C=\frac{\partial\langle E\rangle}{\partial T}=\frac{\langle E^2\rangle-\langle E\rangle^2}{k_BT^2}.\]</div>
 <p>Hold fixed the external parameters that set the energy levels while taking this derivative. A change of magnetic field or volume can shift the levels and introduce an additional energy response. For independent identically prepared units, variances add. The standard deviation of total energy grows as the square root of the number of units, while its mean grows in proportion to that number. Relative fluctuations consequently shrink as a macroscopic sample is assembled.</p>
 <figure class="paper-figure"><img src="/assets/lecture-figures/two-level-heat.png" width="1264" height="720" loading="lazy" alt="As temperature increases, the excited-state probability approaches one half while the heat capacity rises to a peak and then falls."><figcaption>The two-level heat-capacity maximum marks the temperature range where changing the temperature most rapidly redistributes occupation between the levels.</figcaption></figure>
+
+<details class="study-aside">
+<summary>OneSimulation · A finite ring has two routes for a spin correlation</summary>
+<p>Take \(N\) classical spins \(s=\pm1\) on a ring with nearest-neighbour energy \(-J s_i s_{i+1}\) and zero external field. Assign the Boltzmann weight of one bond to a two-by-two matrix \(T_{ss&#x27;}=\exp[Jss&#x27;/(k_BT)]\). Matrix multiplication sums over each intermediate spin. Taking the trace joins the last spin back to the first, so \(Z=\mathrm{tr}(T^N)\). To measure two spins insert their signs into the same trace at the chosen sites.</p>
+<div class="math display equation-chain"><div class="equation-step">\[C(r)=\langle s_0s_r\rangle=\frac{\mathrm{tr}(S T^r S T^{N-r})}{\mathrm{tr}(T^N)},\]</div><div class="equation-step">\[S=\mathrm{diag}(1,-1).\]</div></div>
+<p>The OneSimulation eigensystem computes all separations from the same two modes. At fixed separation, moving the far side of the ring farther away weakens the contribution that wraps around. Distances \(r\) and \(N-r\) give the same pair correlation even when the infinite-chain approximation predicts very different answers.</p>
+<pre><code>"""Finite periodic Ising chain: spin correlations from a transfer matrix."""
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigensystem
+
+coupling_over_kT = 0.90
+spin = np.array([1.0, -1.0])
+transfer = np.exp(coupling_over_kT * np.outer(spin, spin))
+eigenvalues, vectors = symmetric_eigensystem(transfer)
+ratios = eigenvalues / eigenvalues[-1]  # common scale cancels from the correlation
+spin_in_modes = vectors.T @ np.diag(spin) @ vectors
+u = np.tanh(coupling_over_kT)
+fig, ax = plt.subplots(figsize=(6.6, 3.5), layout="constrained")
+for length in (10, 24):
+    distances = np.arange(length + 1)
+    values = []
+    for r in distances:
+        numerator = np.sum(spin_in_modes**2 * ratios[:, None]**r * ratios[None, :]**(length-r))
+        values.append(numerator / np.sum(ratios**length))
+    exact = (u**distances + u**(length-distances)) / (1 + u**length)
+    assert np.allclose(values, exact)
+    print(f"{length} sites: antipodal correlation {values[length//2]:.4f}")
+    ax.plot(distances, values, "o-", markersize=3, label=f"Ring of {length} sites")
+ax.plot(distances, u**distances, "--", label="Infinite chain")
+ax.set(xlabel="Separation (lattice spacings)", ylabel="Spin correlation")
+ax.grid(alpha=0.2)
+ax.legend()
+fig.savefig("thermodynamics-statistical-physics.png", dpi=180)</code></pre>
+<figure><img src="/assets/aside-figures/thermodynamics-statistical-physics.png" width="1188" height="630" loading="lazy" alt="The correlations dip halfway round each finite ring and return to one at a full turn. The infinite-chain curve decreases throughout."><figcaption>For J/(kBT) = 0.90 the antipodal correlation is 0.364 for ten spins and 0.0365 for 24. At a full turn the observable is the original spin squared.</figcaption></figure>
+<p><a href="/downloads/fundamentals/examples/thermodynamics-statistical-physics.py" download>Download the Python example</a></p>
+</details>
 </section>
 <section><h2 id="locate-the-heat-capacity-peak">Locate the heat-capacity peak</h2>
-<p>For one two-level unit, \(Z=1+e^{-x}\) with \(x=\Delta/(k_BT)\). Its excited-state probability is \(p=1/(1+e^x)\). Hence \(\langle E\rangle=\Delta p\), the variance is \(\Delta^2p(1-p)\) and the heat capacity is \(C/k_B=x^2e^x/(1+e^x)^2\). At low temperature the excited population is exponentially small and little energy can be absorbed by a small temperature increase. At high temperature the two populations approach one half, so changing temperature redistributes them only weakly. A maximum must occur between these limits.</p>
-<p>Setting the derivative of \(\ln C\) with respect to \(x\) to zero gives \(2/x=\tanh(x/2)\). Its positive solution is about 2.40, placing the peak at \(T\simeq0.417\Delta/k_B\). This broadened heat-capacity feature is the Schottky anomaly of a two-level population. No collective phase transition is required to produce it. Degeneracy of either level would change the population ratio and modify the peak position.</p>
+<p>For one two-level unit, \(Z=1+e^{-x}\) with \(x=\Delta/(k_BT)\). Its excited-state probability is</p>
+<div class="math display">\[p=1/(1+e^x).\]</div>
+<p>Hence \(\langle E\rangle=\Delta p\), the variance is \(\Delta^2p(1-p)\) and the heat capacity is \(C/k_B=x^2e^x/(1+e^x)^2\). At low temperature the excited population is exponentially small and little energy can be absorbed by a small temperature increase. At high temperature the two populations approach one half, so changing temperature redistributes them only weakly. A maximum must occur between these limits.</p>
+<p>Setting the derivative of \(\ln C\) with respect to \(x\) to zero gives</p>
+<div class="math display">\[2/x=\tanh(x/2).\]</div>
+<p>Its positive solution is about 2.40, placing the peak at \(T\simeq0.417\Delta/k_B\). This broadened heat-capacity feature is the Schottky anomaly of a two-level population. No collective phase transition is required to produce it. Degeneracy of either level would change the population ratio and modify the peak position.</p>
 </section>
 <section><h2 id="infer-an-energy-scale-and-observe-a-fluctuation">Infer an energy scale and observe a fluctuation</h2>
-<p>Take \(\Delta=12.0\) meV, so \(\Delta/k_B\simeq139\) K. A peak near 58 K is expected. At \(T=139\) K one has \(x\simeq1\), \(p=0.269\), mean energy 3.23 meV and \(C\simeq0.197k_B\) per unit. For a single unit the standard deviation of the energy is \(\Delta\sqrt{p(1-p)}=5.32\) meV. The standard deviation exceeding the mean is possible because most single observations return the ground energy and a minority return the full excitation energy.</p>
+<p>Take \(\Delta=12.0\) meV, so \(\Delta/k_B\simeq139\) K. A peak near 58 K is expected. At \(T=139\) K one has \(x\simeq1\), \(p=0.269\), mean energy 3.23 meV and \(C\simeq0.197k_B\) per unit. For a single unit the standard deviation of the energy is</p>
+<div class="math display">\[\Delta\sqrt{p(1-p)}=5.32\,\mathrm{meV}.\]</div>
+<p>The standard deviation exceeding the mean is possible because most single observations return the ground energy and a minority return the full excitation energy.</p>
 <p>For a million independent units at the same temperature, the mean total energy scales up by a million and the standard deviation by a thousand. A calorimeter measuring the bulk value will therefore see a much smoother response than a single-unit spectroscopic probe. If measured fluctuations scale faster than this independent-unit prediction, correlations, common temperature fluctuations or instrumental noise deserve investigation before assigning a microscopic heat capacity.</p>
 <p>For a noninteracting collection the total partition function factorizes into one factor per unit. Taking its logarithm converts that product into a sum, so mean energy and heat capacity become extensive. The variance of total energy also grows in proportion to the number of units when correlations vanish. The standard deviation grows only as the square root of that number, explaining how a large specimen can display a reproducible macroscopic energy while its microscopic constituents exchange energy continuously with the bath.</p>
 </section>
 <section><h2 id="grand-canonical-fluctuations">Predict particle-number fluctuations in an open subsystem</h2>
 <p>The canonical partition function sums over energies for a fixed particle number. A small region that exchanges both particles and energy with a large bath requires another weight. If the region gains energy \(E\) and \(N\) particles at fixed volume, the bath entropy changes to first order by \((-E+\mu N)/T\), from \(dS=(dU-\mu\,dN)/T\). With \(\beta=1/(k_BT)\) and fixed reservoir chemical potential \(\mu\), sum over the states of each particle-number sector,</p>
-<div class="math display">\[\Xi(T,V,\mu)=\sum_{N=0}^{\infty}e^{\beta\mu N} Z_N(T,V),\qquad \langle N\rangle=\partial_{\beta\mu}\ln\Xi,\qquad \operatorname{var}N=\partial_{\beta\mu}^2\ln\Xi .\]</div>
-<p>These derivatives are taken at fixed temperature and volume. Each derivative brings down a factor of \(N\) from the exponential, and differentiating the normalization supplies the subtraction of \(\langle N\rangle^2\). The grand potential is \(-k_BT\ln\Xi\). Number fluctuations therefore measure a thermodynamic response, \(\operatorname{var}N=k_BT(\partial\langle N\rangle/\partial\mu)_{T,V}\).</p>
+<div class="math display equation-chain"><div class="equation-step">\[\Xi(T,V,\mu)=\sum_{N=0}^{\infty}e^{\beta\mu N} Z_N(T,V),\]</div><div class="equation-step">\[\langle N\rangle=\partial_{\beta\mu}\ln\Xi,\]</div><div class="equation-step">\[\operatorname{var}N=\partial_{\beta\mu}^2\ln\Xi .\]</div></div>
+<p>These derivatives are taken at fixed temperature and volume. Each derivative brings down a factor of \(N\) from the exponential, and differentiating the normalization supplies the subtraction of \(\langle N\rangle^2\). The grand potential is \(-k_BT\ln\Xi\). Number fluctuations therefore measure a thermodynamic response,</p>
+<div class="math display">\[\operatorname{var}N=k_BT(\partial\langle N\rangle/\partial\mu)_{T,V}.\]</div>
 <p>Suppose 200 independent adsorption sites are exposed to a large particle reservoir. Each site can be empty with zero energy or contain one particle of energy \(\epsilon\). The single-site grand sum is \(1+e^{\beta(\mu-\epsilon)}\) and the sample sum is its 200th power. Choose \(\mu-\epsilon=-k_BT\ln3\): occupancy probability is \(1/4\), mean population is 50, variance is \(200(1/4)(3/4)=37.5\) and standard deviation is 6.12 particles. Doubling the number of sites doubles mean and variance, while relative fluctuations fall by \(\sqrt2\). If the entire sample were sealed with exactly 50 particles, its total-number variance would instead be zero. A small observation window inside it could still fluctuate.</p>
 <p class="source-note">Practise on sheet 3 · <a href="/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/3/#exercise-open-sites">Infer a chemical potential difference from a fluctuating surface</a>. Further reading · <a href="https://davidtong.org/pdfs/teaching/statistical-physics/statphys1.pdf">University of Cambridge · David Tong, Statistical Physics · §1.4.1 Grand Canonical Ensemble and §1.4.2 Grand Canonical Potential</a>.</p>
 </section>
 <section><h2 id="count-rotational-states-of-a-diatomic-molecule">Count rotational states of a diatomic molecule</h2>
 <p>A partition sum can also show how a continuous-looking thermal degree of freedom switches on. Model a heteronuclear diatomic molecule as a rigid rotor of fixed bond length and moment of inertia \(I\) about an axis perpendicular to the bond. Ignore rotation about the bond, vibrational excitation, electronic excitation and intermolecular interactions. Its quantum levels are \(E_J=\hbar^2J(J+1)/(2I)=k_B\Theta_rJ(J+1)\), with degeneracy \(2J+1\) from the independent projections of angular momentum. Thus</p>
-<div class="math display">\[Z_{\rm rot}=\sum_{J=0}^\infty(2J+1)e^{-\Theta_rJ(J+1)/T},\qquad \Theta_r=\frac{\hbar^2}{2Ik_B}.\]</div>
+<div class="math display equation-chain"><div class="equation-step">\[Z_{\rm rot}=\sum_{J=0}^\infty(2J+1)e^{-\Theta_rJ(J+1)/T},\]</div><div class="equation-step">\[\Theta_r=\frac{\hbar^2}{2Ik_B}.\]</div></div>
 <p>At temperatures large compared with \(\Theta_r\), many \(J\) values contribute and the sum is well approximated by an integral. Substitute \(u=J(J+1)\), which supplies \(du=(2J+1)dJ\). The integral is then \(T/\Theta_r\). Differentiating \(\ln Z\) gives \(U_{\rm rot}\simeq k_BT\) and \(C_{\rm rot}\simeq k_B\) per molecule. The two classical quadratic rotational degrees of freedom each supply one half of this energy.</p>
 <p>At very low temperature the first excited level lies \(2k_B\Theta_r\) above the ground state and has degeneracy three. Keeping just \(J=0,1\) gives \(Z\simeq1+3e^{-2\Theta_r/T}\). Its excitation probability is the second term divided by \(Z\). The mean rotational energy and heat capacity become exponentially small. If nuclei are identical, exchange symmetry can change allowed rotational populations through nuclear-spin weights; the deliberately heteronuclear model avoids that extra counting condition.</p>
 </section>
 <section><h2 id="infer-when-the-first-rotational-line-becomes-populated">Infer when the first rotational line becomes populated</h2>
-<p>Use an illustrative rotor with \(\Theta_r=25.0\) K. At \(T=10.0\) K the weight of \(J=1\) is \(3e^{-5}=0.0202\) and that of \(J=2\) is \(5e^{-15}=1.53\times10^{-6}\). Neglecting the latter gives excited fraction \(0.0198\). The gap is \(50.0k_B\) K, giving mean energy per molecule approximately \(0.990k_B\) K. The two-level variance formula gives \(C_{\rm rot}/k_B=(50/10)^2p(1-p)=0.486\). The heat capacity is a derivative and can already be appreciable even when the excited-state fraction is only two percent.</p>
+<p>Use an illustrative rotor with \(\Theta_r=25.0\) K. At \(T=10.0\) K the weight of \(J=1\) is \(3e^{-5}=0.0202\) and that of \(J=2\) is</p>
+<div class="math display">\[5e^{-15}=1.53\times10^{-6}.\]</div>
+<p>Neglecting the latter gives excited fraction \(0.0198\). The gap is \(50.0k_B\) K, giving mean energy per molecule approximately \(0.990k_B\) K. The two-level variance formula gives</p>
+<div class="math display">\[C_{\rm rot}/k_B=(50/10)^2p(1-p)=0.486.\]</div>
+<p>The heat capacity is a derivative and can already be appreciable even when the excited-state fraction is only two percent.</p>
 <p>At \(T=250\) K many rotational states contribute and the leading high-temperature sum gives \(Z\simeq10\) and molar rotational heat capacity near \(R\). The line positions also constrain structure. Inverting \(\Theta_r=\hbar^2/(2Ik_B)\) gives \(I=1.61\times10^{-47}\) kg m². With independently known reduced nuclear mass \(\mu=1.50\times10^{-27}\) kg, the effective bond length \(\sqrt{I/\mu}=0.104\) nm. Calorimetry and rotational spectroscopy can thus test the same moment of inertia through distinct observables.</p>
 <p>Absolute line intensities provide an additional check on the rotor model. A line originating from the first excited rotational manifold samples its occupation, but a measured signal also contains transition matrix elements and instrument response. To compare with the 1.98-percent prediction, either calibrate those factors or compare the same line across temperatures. The gap can then be estimated from the slope of a logarithmic population ratio against inverse temperature, while the ratio's intercept contains the degeneracy. This separates a genuine error in moment of inertia from an omitted factor counting the allowed projection states.</p>
 <p>At higher temperatures vibrational excitation can add to rotational calorimetry. An energy-resolved line measurement helps identify which internal degree of freedom has actually become populated.</p>
