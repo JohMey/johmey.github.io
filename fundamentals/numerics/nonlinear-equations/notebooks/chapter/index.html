@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A bracket can collapse onto a pole · OneSimulation</title>
+<meta name="description" content="Compare a continuous zero crossing with a discontinuous sign reversal at exactly the same location. Keep a separate record of spatial width and measured residual on every iteration.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A bracket can collapse onto a pole · OneSimulation">
+<meta property="og:description" content="Compare a continuous zero crossing with a discontinuous sign reversal at exactly the same location. Keep a separate record of spatial width and measured residual on every iteration.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/notebooks/">Notebooks</a></p><h1>A bracket can collapse onto a pole</h1><p class="lead">Compare a continuous zero crossing with a discontinuous sign reversal at exactly the same location. Keep a separate record of spatial width and measured residual on every iteration.</p><nav class="study-links"><a href="/fundamentals/numerics/nonlinear-equations/chapters/01-bracketing/#notebook-example">Read the derivation</a><a href="/fundamentals/numerics/nonlinear-equations/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/nonlinear-equations-chapter.ipynb" download="nonlinear-equations-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="17" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+location = np.sqrt(2)/4
+rounds = 20
+assert 0 &lt; location &lt; 1 and 5 &lt;= rounds &lt;= 35
+def bisect_record(f, tie_residual):
+    lo,hi=0.,1.
+    data=[]
+    for j in range(rounds):
+        mid=(lo+hi)/2
+        if mid==location:
+            data.append((mid,hi-lo,tie_residual))
+            break
+        value=f(mid)
+        data.append((mid,hi-lo,abs(value)))
+        if np.signbit(value)==np.signbit(f(lo)):lo=mid
+        else:hi=mid
+    return np.array(data)
+zero=bisect_record(lambda x:x-location,0.)
+pole=bisect_record(lambda x:1/(x-location),np.inf)
+regular=np.isfinite(pole[:,2])
+assert np.allclose(zero[:,:2],pole[:,:2])
+assert np.allclose(zero[regular,2]*pole[regular,2],1)
+if not regular[-1]: print(&quot;Exact midpoint hit: the linear signal vanishes and the reciprocal is undefined.&quot;)
+print(&quot;Final width&quot;,zero[-1,1],&quot;zero residual&quot;,zero[-1,2],&quot;pole magnitude&quot;,pole[-1,2])</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Change the observable as well as the tolerance</h2><p>Both candidates go through identical midpoints, although only one residual can approach zero. Take two new distances from the candidate and compare how the output scales.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="16" wrap="off" spellcheck="false" autocapitalize="off">fig,(shape,error)=plt.subplots(1,2,figsize=(10,4),layout=&quot;constrained&quot;)
+margin = min(.01,location/2,(1-location)/2)
+for xs in (np.linspace(0,location-margin,180),np.linspace(location+margin,1,240)):
+    shape.plot(xs,1/(xs-location),color=&quot;#b94626&quot;)
+shape.plot([0,1],[-location,1-location],color=&quot;#145c71&quot;,label=&quot;continuous crossing&quot;)
+shape.plot([],[],color=&quot;#b94626&quot;,label=&quot;pole&quot;)
+shape.set(xlabel=&quot;x&quot;,ylabel=&quot;Signal&quot;,ylim=(-10,10),title=&quot;Same endpoint signs&quot;)
+shape.legend()
+j=np.arange(1,len(zero)+1)
+for data,c,label in [(zero,&quot;#145c71&quot;,&quot;absolute zero residual&quot;),(pole,&quot;#b94626&quot;,&quot;absolute pole residual&quot;)]:
+    error.semilogy(j[regular],data[regular,2],&quot;.-&quot;,color=c,label=label)
+error.semilogy(j,zero[:,1],&quot;:&quot;,color=&quot;black&quot;,label=&quot;bracket width&quot;)
+error.set(xlabel=&quot;Iteration&quot;,ylabel=&quot;Magnitude&quot;,title=&quot;A width test cannot certify continuity&quot;)
+error.legend(fontsize=8)
+for ax in (shape,error):ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watch a wetting front approach the capillary height · OneSimulation</title>
+<meta name="description" content="Dip two clean glass tubes of different inner radii into the same wetting liquid. A microscope following only the first few millimetres of rise can give a different impression of which tube fills more readily than a photograph taken at equilibrium. Start with the force on one meniscus, derive a transient relation including gravity, and learn which measurements can distinguish a change of viscosity from a change of surface condition.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Watch a wetting front approach the capillary height · OneSimulation">
+<meta property="og:description" content="Dip two clean glass tubes of different inner radii into the same wetting liquid. A microscope following only the first few millimetres of rise can give a different impression of which tube fills more readily than a photograph taken at equilibrium. Start with the force on one meniscus, derive a transient relation including gravity, and learn which measurements can distinguish a change of viscosity from a change of surface condition.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/">Notebooks</a></p><h1>Watch a wetting front approach the capillary height</h1><p class="lead">Dip two clean glass tubes of different inner radii into the same wetting liquid. A microscope following only the first few millimetres of rise can give a different impression of which tube fills more readily than a photograph taken at equilibrium. Start with the force on one meniscus, derive a transient relation including gravity, and learn which measurements can distinguish a change of viscosity from a change of surface condition.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/20-capillary-rise-with-gravity/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/fluid-mechanics-workshop.ipynb" download="fluid-mechanics-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Guess whether a wider vertical tube fills faster during the first few millimetres and whether it eventually rises higher. Edit the first cell, then compare the exact viscous trajectory against the early-time square-root law. The assumed tube is slender, the contact angle constant and the reservoir large.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+radius = 100e-6       # inner radius, m
+mu, rho = .012, 1000. # viscosity, Pa s; density, kg/m³
+sigma = .060          # surface tension, N/m
+angle = 30.           # static advancing angle, degrees
+g = 9.81              # m/s²
+assert min(radius,mu,rho,sigma,g)&gt;0 and 0 &lt;= angle &lt; 90</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Recover time from the meniscus-force balance</h2><p>Use the fraction of equilibrium height as the independent coordinate. The formula for time is monotone and avoids starting an ODE solver at the formal infinite initial speed of this viscous approximation. The series at very small fractions avoids subtracting nearly equal numbers.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="15" wrap="off" spellcheck="false" autocapitalize="off">def scales(a):
+    head = 2*sigma*np.cos(np.deg2rad(angle))/(rho*g*a)
+    mobility = rho*g*a*a/(8*mu)
+    return head, head/mobility
+
+def scaled_time(s):
+    s = np.asarray(s,dtype=float)
+    if np.any((s&lt;0)|(s&gt;=1)): raise ValueError(&quot;Require 0 ≤ height fraction &lt; 1.&quot;)
+    return np.where(s&lt;1e-4,s*s*(.5+s/3+s*s/4),-s-np.log1p(-s))
+
+H,tau = scales(radius)
+for frac in (.25,.5,.9):
+    print(f&quot;{100*frac:.0f}% of {1000*H:.2f} mm at {tau*scaled_time(frac):.2f} s&quot;)
+assert np.isclose(scaled_time(.5), np.log(2)-.5)
+assert np.isclose(scaled_time(.00001)/(.00001**2/2),1.,rtol=1e-5)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Reconstruct height as a function of laboratory time</h2><p>When time is given, monotone bisection finds the height fraction. Each iteration halves the remaining interval independently for every entry in the requested time vector.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="17" wrap="off" spellcheck="false" autocapitalize="off">def height_at(times, a):
+    h, t = scales(a)
+    times = np.asarray(times)
+    lo, hi = np.zeros_like(times,dtype=float), np.ones_like(times,dtype=float)
+    for _ in range(50):
+        mid = (lo+hi)/2
+        smaller = scaled_time(mid) &lt; times/t
+        lo,hi = np.where(smaller,mid,lo), np.where(smaller,hi,mid)
+    return h*(lo+hi)/2
+
+assert np.isclose(height_at(np.array([tau*scaled_time(.5)]),radius)[0], H/2)
+sec = np.linspace(0,tau*2.5,400)
+fig, ax = plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+for a,style in [(radius,&quot;-&quot;),(1.5*radius,&quot;--&quot;)]:
+    h,t = scales(a)
+    ax[0].plot(sec,1000*height_at(sec,a),style,label=f&quot;Radius {a*1e6:.0f} µm&quot;)
+    ax[0].axhline(h*1000,ls=&quot;:&quot;,lw=.8,color=&quot;0.6&quot;)
+f = np.linspace(.002,.93,240)
+ax[1].plot(f,scaled_time(f)/(f*f/2),label=&quot;Gravity / early-law time&quot;)
+ax[1].axhline(1,ls=&quot;:&quot;,color=&quot;0.5&quot;)
+ax[0].set(xlabel=&quot;Elapsed time (s)&quot;,ylabel=&quot;Meniscus height (mm)&quot;,title=&quot;Two wetting tubes&quot;)
+ax[1].set(xlabel=&quot;Fraction of static rise&quot;,ylabel=&quot;Time ratio&quot;,title=&quot;When the early approximation fails&quot;)
+for p in ax:
+    p.grid(alpha=.22); p.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Infer an unknown and challenge the model</h2><p>Choose a radius, record the time to 50% height, and hide the viscosity. Recover it from that single time using the known static head. A contaminated surface may change the contact angle. Decide which second observation would let you separate a change of viscosity from a change of capillary pressure.</p><h2>Set the camera clock and invert the time law</h2><p>The film gives elapsed time and the theory gives time as a function of height. Invert that map for an entire list of frames using OneSimulation&#x27;s vectorised bracketed inverse when it is installed. The browser uses the previously derived bisection. Compare the recovered heights to the dimensional marks.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="14" wrap="off" spellcheck="false" autocapitalize="off">camera_times = tau * np.array([0.1, 0.5, 1.0])
+try:
+    from onesim.numerics.nonlinear.kernels.local_solvers.inversion.bracketed_inverse import bisect_increasing
+except ImportError:
+    checked_heights = height_at(camera_times, radius)
+    method = &quot;Notebook bisection&quot;
+else:
+    target_times = camera_times / tau
+    fractions = bisect_increasing(scaled_time, target_times, 0.0, 0.999)
+    checked_heights = H * fractions
+    method = &quot;OneSimulation bracketed inverse&quot;
+
+assert np.allclose(tau * scaled_time(checked_heights/H), camera_times)
+print(f&quot;{method}: camera heights (mm)&quot;, np.round(1000 * checked_heights, 3))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

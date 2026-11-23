@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a passenger and a tyre feel on the same road · OneSimulation</title>
+<meta name="description" content="Two vehicles encounter the same nearly sinusoidal series of road undulations. In one vehicle the occupant feels little vibration, yet its contact force varies substantially. The other transmits a more noticeable body acceleration. Build a two-degree-of-freedom model from force balances, calculate the two responses to a prescribed road geometry, and test which changes in suspension damping improve one measurement at the expense of another.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What a passenger and a tyre feel on the same road · OneSimulation">
+<meta property="og:description" content="Two vehicles encounter the same nearly sinusoidal series of road undulations. In one vehicle the occupant feels little vibration, yet its contact force varies substantially. The other transmits a more noticeable body acceleration. Build a two-degree-of-freedom model from force balances, calculate the two responses to a prescribed road geometry, and test which changes in suspension damping improve one measurement at the expense of another.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/notebooks/">Notebooks</a></p><h1>What a passenger and a tyre feel on the same road</h1><p class="lead">Two vehicles encounter the same nearly sinusoidal series of road undulations. In one vehicle the occupant feels little vibration, yet its contact force varies substantially. The other transmits a more noticeable body acceleration. Build a two-degree-of-freedom model from force balances, calculate the two responses to a prescribed road geometry, and test which changes in suspension damping improve one measurement at the expense of another.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/20-road-excitation-and-dynamic-tyre-load/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/machine-dynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/machine-dynamics-workshop.ipynb" download="machine-dynamics-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>A repeating surface profile produces a temporal excitation whose frequency depends on travel speed. Before running, predict whether doubling the road speed must increase the passenger acceleration. Change the first cell, rerun, and compare the two observables in the plot.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="10" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+ms, mu = 250.0, 35.0   # sprung and unsprung masses, kg
+ks, kt = 15000., 160000.  # suspension and tyre stiffnesses, N/m
+c = 1200.               # suspension damping, N s/m
+road_amplitude = .003   # m, sinusoidal height amplitude
+wavelength = 4.0        # m per cycle
+speed = 12.0            # m/s
+assert min(ms, mu, ks, kt, c, road_amplitude, wavelength, speed) &gt; 0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Find the two undamped modes</h2><p>Mass-normalising the stiffness produces a symmetric eigenproblem. The eigenvectors in these normalised coordinates must be mapped back to physical displacements. In an environment with OneSimulation this cell uses its symmetric eigensystem solver.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="12" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigensystem
+except ImportError:
+    symmetric_eigensystem = np.linalg.eigh
+K = np.array([[ks,-ks],[-ks,ks+kt]])
+Minvhalf = np.diag([ms**-.5,mu**-.5])
+omega2, modes = symmetric_eigensystem(Minvhalf @ K @ Minvhalf)
+natural = np.sqrt(omega2)/(2*np.pi)
+physical = Minvhalf @ modes
+print(&quot;Undamped frequencies (Hz):&quot;, np.round(natural,3))
+print(&quot;Body displacement / wheel displacement in each mode:&quot;, np.round(physical[0]/physical[1],3))
+assert np.all(omega2 &gt; 0)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Turn a road height into body acceleration and tyre force</h2><p>Complex displacements below are per unit road amplitude. The tyre force is determined by the difference between wheel and road positions, so its phase matters.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="17" wrap="off" spellcheck="false" autocapitalize="off">def response(freq, damping):
+    w = 2*np.pi*np.asarray(freq)
+    s = ks + 1j*w*damping
+    a, b = s - ms*w*w, s + kt - mu*w*w
+    det = a*b - s*s
+    return s*kt/det, a*kt/det
+
+def observables(freq, damping):
+    body, wheel = response(freq,damping)
+    acc = (2*np.pi*freq)**2*np.abs(body)*road_amplitude
+    force = kt*np.abs(wheel-1)*road_amplitude
+    return acc,force
+
+physical_frequency = speed/wavelength
+a0, f0 = observables(physical_frequency,c)
+print(f&quot;At {physical_frequency:.3f} Hz: body acceleration amplitude {a0:.3f} m/s², dynamic tyre force amplitude {f0:.1f} N&quot;)
+assert np.allclose(response(0., c), [1,1])
+assert np.allclose(response(physical_frequency,c), np.linalg.solve(
+    K-(2*np.pi*physical_frequency)**2*np.diag([ms,mu])+1j*2*np.pi*physical_frequency*c*np.array([[1,-1],[-1,1]]),[0,kt]))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare damping for the same input</h2><p>Follow the two dashed vertical markers from the low- to the high-frequency mode. The solid and dashed responses differ only in the suspension damping.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="12" wrap="off" spellcheck="false" autocapitalize="off">f = np.geomspace(.25,35.,550)
+fig, ax = plt.subplots(1,2,figsize=(9.2,3.6),layout=&quot;constrained&quot;)
+for factor,style in [(1,&quot;-&quot;),(2,&quot;--&quot;)]:
+    a,force = observables(f,c*factor)
+    ax[0].loglog(f,a,style,label=f&quot;c = {c*factor:.0f} N s/m&quot;)
+    ax[1].loglog(f,force,style,label=f&quot;c = {c*factor:.0f} N s/m&quot;)
+for p in ax:
+    for mode in natural: p.axvline(mode,color=&quot;0.65&quot;,lw=.8,ls=&quot;:&quot;)
+    p.set_xlabel(&quot;Road excitation (Hz)&quot;); p.grid(which=&quot;major&quot;,alpha=.24); p.legend(fontsize=8)
+ax[0].set(ylabel=&quot;Acceleration amplitude (m/s²)&quot;,title=&quot;Sprung mass&quot;)
+ax[1].set(ylabel=&quot;Dynamic contact force amplitude (N)&quot;,title=&quot;Tyre against the road&quot;)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Investigate</h2><p>Find a frequency band where greater damping increases passenger acceleration. Translate each natural frequency to a road speed at the chosen wavelength. Check the maximum dynamic tyre force against the static corner load \((m_s+m_u)g\). If their ratio exceeds one, the linear model predicts tensile contact during part of a cycle and its contact assumption has failed.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

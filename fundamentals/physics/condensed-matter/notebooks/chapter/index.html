@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why an optically injected electron–hole packet spreads at one rate · OneSimulation</title>
+<meta name="description" content="A light pulse makes equal excess electron and hole densities. A small internal electric field can make their particle fluxes agree even when their mobilities are very different. Compare this coupled motion with two independent Gaussian packets.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/condensed-matter/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why an optically injected electron–hole packet spreads at one rate · OneSimulation">
+<meta property="og:description" content="A light pulse makes equal excess electron and hole densities. A small internal electric field can make their particle fluxes agree even when their mobilities are very different. Compare this coupled motion with two independent Gaussian packets.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/condensed-matter/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/condensed-matter/">Condensed matter and band theory</a> / <a href="/fundamentals/physics/condensed-matter/notebooks/">Notebooks</a></p><h1>Why an optically injected electron–hole packet spreads at one rate</h1><p class="lead">A light pulse makes equal excess electron and hole densities. A small internal electric field can make their particle fluxes agree even when their mobilities are very different. Compare this coupled motion with two independent Gaussian packets.</p><nav class="study-links"><a href="/fundamentals/physics/condensed-matter/chapters/05-semiconductors/#notebook-example">Read the derivation</a><a href="/fundamentals/physics/condensed-matter/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/condensed-matter-chapter.ipynb" download="condensed-matter-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="10" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+T_K=300.
+mu_n=.12             # m²/(V s)
+mu_p=.04
+n_over_p=1.0         # local equilibrium density ratio for the linearised coefficients
+time_us=1.
+initial_width_um=20.
+assert min(T_K,mu_n,mu_p,n_over_p,initial_width_um)&gt;0 and time_us&gt;=0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Impose vanishing total charge current</h2><p>Take a slowly varying neutral excess with gradients equal for electrons and holes. Mobilities and background densities are uniform on the packet scale. The Einstein relation supplies diffusion constants for nondegenerate carriers.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="8" wrap="off" spellcheck="false" autocapitalize="off">thermal_voltage=8.617333262e-5*T_K
+Dn,Dp=mu_n*thermal_voltage,mu_p*thermal_voltage
+Da=(mu_n*n_over_p*Dp+mu_p*Dn)/(mu_n*n_over_p+mu_p)
+def width(D,t):
+    return np.sqrt(initial_width_um**2+2*D*1e6*t)
+print(&quot;Coupled diffusion coefficient (m²/s) and width (µm):&quot;, Da,width(Da,time_us))
+assert min(Dn,Dp)&lt;=Da+1e-15 and Da&lt;=max(Dn,Dp)+1e-15
+if n_over_p==1:assert np.isclose(Da,2*Dn*Dp/(Dn+Dp))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare profiles and slope estimates</h2><p>All plotted profiles have the same integrated excess. The spatial variance, rather than its square root, grows linearly. Include a longer time interval before estimating a slope from noisy data.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="10" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.9),layout=&quot;constrained&quot;)
+xx=np.linspace(-4*width(max(Dn,Dp),time_us),4*width(max(Dn,Dp),time_us),300)
+ts=np.linspace(0,max(2*time_us,.1),180)
+for D,name,col in [(Dn,&quot;Electrons alone&quot;,&quot;#375b9a&quot;),(Dp,&quot;Holes alone&quot;,&quot;#a23d21&quot;),(Da,&quot;Neutral packet&quot;,&quot;#175868&quot;)]:
+    w=width(D,time_us)
+    ax[0].plot(xx,np.exp(-.5*(xx/w)**2)/(np.sqrt(2*np.pi)*w),color=col,label=name)
+    ax[1].plot(ts,width(D,ts)**2,color=col,label=name)
+ax[0].set(xlabel=&quot;Position (µm)&quot;,ylabel=&quot;Normalised density (1/µm)&quot;,title=&quot;Profiles at the selected delay&quot;);ax[0].legend(fontsize=8)
+ax[1].set(xlabel=&quot;Delay (µs)&quot;,ylabel=&quot;Spatial variance (µm²)&quot;,title=&quot;Extract the diffusion coefficient&quot;);ax[1].legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

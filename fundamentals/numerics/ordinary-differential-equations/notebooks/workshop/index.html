@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A constrained integrator can get the circle right and the clock wrong · OneSimulation</title>
+<meta name="description" content="A frictionless bead moves on an ideal circular guide. Its exact path, speed and angular phase can all be calculated by hand. Use this unusually informative reference to derive RATTLE&#x27;s two constraint corrections and see which numerical errors would escape a camera that measured position alone.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A constrained integrator can get the circle right and the clock wrong · OneSimulation">
+<meta property="og:description" content="A frictionless bead moves on an ideal circular guide. Its exact path, speed and angular phase can all be calculated by hand. Use this unusually informative reference to derive RATTLE&#x27;s two constraint corrections and see which numerical errors would escape a camera that measured position alone.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/notebooks/">Notebooks</a></p><h1>A constrained integrator can get the circle right and the clock wrong</h1><p class="lead">A frictionless bead moves on an ideal circular guide. Its exact path, speed and angular phase can all be calculated by hand. Use this unusually informative reference to derive RATTLE&#x27;s two constraint corrections and see which numerical errors would escape a camera that measured position alone.</p><nav class="study-links"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/18-rattle-and-the-clock-of-a-constrained-orbit/">Read the derivation</a><a href="/fundamentals/numerics/ordinary-differential-equations/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/ordinary-differential-equations-workshop.ipynb" download="ordinary-differential-equations-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Observe three independent diagnostics: radius, tangency and phase. A force-free bead in a circular guide has an exact orbit with which to compare both a constrained step and a simple normalisation. NumPy and Matplotlib are sufficient.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="17" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+omega = 1.6                      # s^-1, unit radius in metres
+h = .25                          # seconds
+steps = 80
+assert .1 &lt;= omega &lt;= 3 and .01 &lt;= h and h*omega &lt; .93 and 8 &lt;= steps &lt;= 300
+
+def constrained_step(q, v, dt):
+    transverse = dt*v
+    # The inward impulse is represented by a multiple of the old unit normal q.
+    radial = np.sqrt(1-np.dot(transverse,transverse))
+    new_q = radial*q + transverse
+    v_half = (new_q-q)/dt
+    new_v = v_half - np.dot(v_half,new_q)*new_q
+    return new_q, new_v
+
+def normalised_drift(q, v, dt):
+    new_q = q+dt*v
+    new_q = new_q/np.linalg.norm(new_q)
+    new_v = v-np.dot(new_q,v)*new_q
+    return new_q,new_v
+
+def trajectory(advance, dt, count):
+    q, v = np.array([1.,0.]), np.array([0.,omega])
+    positions, velocities = [q.copy()], [v.copy()]
+    for _ in range(count):
+        q,v = advance(q,v,dt)
+        positions.append(q.copy())
+        velocities.append(v.copy())
+    return np.array(positions),np.array(velocities)
+
+q, v = trajectory(constrained_step,h,steps)
+qn, vn = trajectory(normalised_drift,h,steps)
+time = np.arange(steps+1)*h
+phase = np.unwrap(np.arctan2(q[:,1],q[:,0]))
+ang = q[:,0]*v[:,1]-q[:,1]*v[:,0]
+print(&quot;Largest position/tangency defects:&quot;,np.max(abs(np.linalg.norm(q,axis=1)-1)), np.max(abs((q*v).sum(axis=1))))
+print(f&quot;Final phase lead {phase[-1]-omega*time[-1]:.6f} rad; angular momentum change {ang[-1]-ang[0]:.3e}&quot;)
+assert np.max(abs(ang-omega)) &lt; 2e-10 and np.max(abs(phase-np.arange(steps+1)*np.arcsin(h*omega))) &lt; 1e-9</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Read both the shape and the clock</h2><p>The left panel samples the first part of the trajectory. On the right, unwrapped angles are compared at the same physical times. Halve the step and double the number of steps to retain the final time.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="14" wrap="off" spellcheck="false" autocapitalize="off">fig, (path, drift) = plt.subplots(1,2,figsize=(10,4),layout=&quot;constrained&quot;)
+theta = np.linspace(0,2*np.pi,241)
+path.plot(np.cos(theta),np.sin(theta),color=&quot;grey&quot;,lw=1,label=&quot;exact guide&quot;)
+show = min(steps+1, max(4, int(2*np.pi/(omega*h))+1))
+path.plot(q[:show,0],q[:show,1],&quot;o-&quot;,ms=3,color=&quot;#145c71&quot;,label=&quot;RATTLE nodes&quot;)
+path.plot(qn[:show,0],qn[:show,1],&quot;.--&quot;,ms=4,color=&quot;#b94626&quot;,label=&quot;normalised drift&quot;)
+path.set(aspect=&quot;equal&quot;,xlabel=&quot;x (m)&quot;,ylabel=&quot;y (m)&quot;,title=&quot;Both sets of points lie on the guide&quot;)
+path.legend(fontsize=8)
+drift.plot(time, phase-omega*time,color=&quot;#145c71&quot;,label=&quot;RATTLE&quot;)
+drift.plot(time,np.unwrap(np.arctan2(qn[:,1],qn[:,0]))-omega*time,&quot;--&quot;,color=&quot;#b94626&quot;,label=&quot;normalised drift&quot;)
+drift.set(xlabel=&quot;Time (s)&quot;,ylabel=&quot;Phase error (rad)&quot;,title=&quot;Constraint satisfaction and timing&quot;)
+drift.legend()
+for ax in (path,drift): ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare a different local solver</h2><p>An installed OneSimulation environment also lets you integrate the continuous Cartesian acceleration with classical RK4. This alternative implements the centripetal force directly and has no algebraic projection. Compare the end radius with the constrained run at the same step.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="14" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.time import ClassicalRungeKutta4TimeIntegrator
+except ImportError:
+    print(&quot;The constrained and exact references above are complete. OneSimulation comparison is available locally.&quot;)
+else:
+    method = ClassicalRungeKutta4TimeIntegrator()
+    def rhs(z, clock):
+        pos, vel = np.asarray(z[:2]), np.asarray(z[2:])
+        acc = -(vel@vel)/(pos@pos)*pos
+        return (*vel, *acc)
+    state = (1.,0.,0.,omega)
+    for n in range(steps):
+        state = method.advance(state,rhs,h,time=n*h)
+    print(&quot;OneSimulation RK4 end-radius error (m):&quot;,np.linalg.norm(state[:2])-1)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where a thermoelectric cooler rejects its heat · OneSimulation</title>
+<meta name="description" content="A detector has to operate ten kelvin below the laboratory air temperature. A thermoelectric module beneath it can transport heat against that temperature difference when an electric current flows. Increasing the current also generates heat inside the module and warms its heat sink. Build an energy balance that predicts when additional current helps, when it costs more than it delivers and why a nominal cooling-capacity figure alone cannot specify an operating point.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Where a thermoelectric cooler rejects its heat · OneSimulation">
+<meta property="og:description" content="A detector has to operate ten kelvin below the laboratory air temperature. A thermoelectric module beneath it can transport heat against that temperature difference when an electric current flows. Increasing the current also generates heat inside the module and warms its heat sink. Build an energy balance that predicts when additional current helps, when it costs more than it delivers and why a nominal cooling-capacity figure alone cannot specify an operating point.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/notebooks/">Notebooks</a></p><h1>Where a thermoelectric cooler rejects its heat</h1><p class="lead">A detector has to operate ten kelvin below the laboratory air temperature. A thermoelectric module beneath it can transport heat against that temperature difference when an electric current flows. Increasing the current also generates heat inside the module and warms its heat sink. Build an energy balance that predicts when additional current helps, when it costs more than it delivers and why a nominal cooling-capacity figure alone cannot specify an operating point.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/20-thermoelectric-cooling-and-sink-resistance/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/engineering-thermodynamics-workshop.ipynb" download="engineering-thermodynamics-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>A temperature-controlled sensor is colder than its laboratory surroundings. Increase the current in a thermoelectric module and predict how the available cooling capacity changes. The model treats the effective properties of the entire module as constant. Edit the inputs and rerun the notebook.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+Tc, Ta = 288., 298.       # cold plate and ambient, K
+alpha = .05               # module Seebeck coefficient, V/K
+R, K = 2.0, .60           # electrical resistance (ohm), thermal conductance (W/K)
+Rs = .45                  # sink-to-air thermal resistance, K/W
+selected = 2.5            # operating current, A
+assert min(Tc,Ta,alpha,R,K,selected)&gt;0 and Rs &gt;= 0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Close the hot-side balance before computing cold-side capacity</h2><p>Use the convective sink relation \(T_h=T_a+R_s Q_h\) to eliminate \(Q_h\). Heat transport at the hot face contains Peltier heat, half of the electrical dissipation and heat conducted back toward the cold plate. Current is positive in the cooling direction.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="15" wrap="off" spellcheck="false" autocapitalize="off">def operating(I, sink):
+    denom = 1+sink*(K-alpha*I)
+    if np.any(denom &lt;= 0):
+        raise ValueError(&quot;The chosen hot-side equilibrium is outside the stable constant-property branch.&quot;)
+    Th = (Ta+sink*(K*Tc + .5*R*I**2))/denom
+    Qc = alpha*Tc*I - .5*R*I**2 - K*(Th-Tc)
+    volts = R*I + alpha*(Th-Tc)
+    Qh = alpha*Th*I + .5*R*I**2 - K*(Th-Tc)
+    return Th,Qc,volts,Qh
+
+Th,Qc,V,Qh = operating(selected,Rs)
+print(f&quot;Hot face {Th:.2f} K; cold-side capacity {Qc:.2f} W; supply {V:.3f} V; hot-side load {Qh:.2f} W&quot;)
+print(&quot;Cooling COP:&quot;, round(Qc/(V*selected),3) if Qc&gt;0 else &quot;no net cooling&quot;)
+assert np.isclose(Qh-Qc,selected*V)
+assert np.isclose(Th-Ta,Rs*Qh)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare the current sweep for two heat sinks</h2><p>The coefficient of performance is plotted only where the module removes heat and consumes positive electrical power. A passive thermal leak at zero current can therefore appear below zero on the capacity panel.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="15" wrap="off" spellcheck="false" autocapitalize="off">amps = np.linspace(0,8.,420)
+fig, ax = plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+for resistance,style in [(0.,&quot;--&quot;),(Rs,&quot;-&quot;)]:
+    t,q,v,qh = operating(amps,resistance)
+    power = amps*v
+    cop = np.divide(q,power,out=np.full_like(q,np.nan),where=(q&gt;0)&amp;(power&gt;0))
+    ax[0].plot(amps,q,style,label=f&quot;Sink {resistance:.2f} K/W&quot;)
+    ax[1].plot(amps,cop,style,label=f&quot;Sink {resistance:.2f} K/W&quot;)
+    best = np.argmax(q)
+    print(f&quot;In this sweep, sink {resistance:.2f} K/W: capacity peaks near {amps[best]:.2f} A&quot;)
+ax[0].set(xlabel=&quot;Current (A)&quot;,ylabel=&quot;Heat removed at cold plate (W)&quot;,title=&quot;Cooling capacity&quot;)
+ax[1].set(xlabel=&quot;Current (A)&quot;,ylabel=&quot;Cooling COP&quot;,title=&quot;Cooling per unit electrical input&quot;)
+for a in ax:
+    a.axvline(selected,color=&quot;0.5&quot;,ls=&quot;:&quot;,lw=1); a.grid(alpha=.22); a.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Decide which operating point serves the measurement</h2><p>Suppose the sensor dissipates 15 W. Use the arrays to find its lowest feasible drive current on the grid and compare the cooling margin with the point of maximum capacity. Repeat with an ambient temperature 5 K higher. Check whether the hot-face temperature remains within the range where your assumed constant properties are credible.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="4" wrap="off" spellcheck="false" autocapitalize="off">target = 15.0
+_,capacity,_,_ = operating(amps,Rs)
+indices = np.flatnonzero(capacity &gt;= target)
+print(f&quot;First current in sweep supplying {target:g} W: {amps[indices[0]]:.3f} A&quot; if len(indices) else &quot;Target unavailable in this sweep&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Resolve a cooling threshold between sweep points</h2><p>A sampled current sweep can miss the exact point at which a heat load is first served. Use the rising flank as a bracket for a scalar solve and check the remaining heat-balance error. A local OneSimulation installation supplies its monotone inverse. The browser performs bisection with the same limits.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="17" wrap="off" spellcheck="false" autocapitalize="off">if len(indices) and indices[0] &gt; 0:
+    first = indices[0]
+    lower, upper = amps[first - 1], amps[first]
+    def cooling(current):
+        return operating(current, Rs)[1]
+
+    try:
+        from onesim.numerics.nonlinear.kernels.local_solvers.inversion.bracketed_inverse import bisect_increasing
+    except ImportError:
+        for _ in range(50):
+            centre = (lower + upper) / 2
+            if cooling(centre) &lt; target:
+                lower = centre
+            else:
+                upper = centre
+        threshold = (lower + upper) / 2
+        method = &quot;Notebook bisection&quot;
+    else:
+        threshold = float(bisect_increasing(cooling, target, lower, upper))
+        method = &quot;OneSimulation bracketed inverse&quot;
+
+    print(f&quot;{method}: lower load threshold {threshold:.6f} A&quot;)
+    assert np.isclose(cooling(threshold), target)
+else:
+    print(&quot;No interior lower crossing for this load and current range.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

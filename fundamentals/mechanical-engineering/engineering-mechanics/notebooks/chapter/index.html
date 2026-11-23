@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How much torque does the sleeve actually carry? · OneSimulation</title>
+<meta name="description" content="The core and the sleeve have equal twist per length because they are bonded. Predict which material carries more torque before editing the radii or either shear modulus. Run all cells after changing an input.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How much torque does the sleeve actually carry? · OneSimulation">
+<meta property="og:description" content="The core and the sleeve have equal twist per length because they are bonded. Predict which material carries more torque before editing the radii or either shear modulus. Run all cells after changing an input.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/notebooks/">Notebooks</a></p><h1>How much torque does the sleeve actually carry?</h1><p class="lead">The core and the sleeve have equal twist per length because they are bonded. Predict which material carries more torque before editing the radii or either shear modulus. Run all cells after changing an input.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/07-torsion/#notebook-example">Read the derivation</a><a href="/fundamentals/mechanical-engineering/engineering-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/engineering-mechanics-chapter.ipynb" download="engineering-mechanics-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="7" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+a, b = .012, .020      # core and outer radii, m
+Gc, Gs = 79e9, 27e9   # core and sleeve shear moduli, Pa
+torque, length = 100., .60   # N m, m
+assert 0 &lt; a &lt; b and min(Gc,Gs,length) &gt; 0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compatibility sets the twist; equilibrium sets its magnitude</h2><p>The stresses differ across the material interface even though the tangential displacement is continuous. Check the torque independently by integrating the lever-arm weighted shear traction over the end face.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="10" wrap="off" spellcheck="false" autocapitalize="off">Jc,Js=np.pi*a**4/2,np.pi*(b**4-a**4)/2
+twist=torque/(Gc*Jc+Gs*Js)
+Tc,Ts=Gc*Jc*twist,Gs*Js*twist
+r1,r2=np.linspace(0,a,140),np.linspace(a,b,140)
+def integrate(y,x):
+    return np.sum(np.diff(x)*(y[1:]+y[:-1])/2)
+Tnum=integrate(2*np.pi*r1**2*Gc*twist*r1,r1)+integrate(2*np.pi*r2**2*Gs*twist*r2,r2)
+assert np.isclose(Tnum,torque,rtol=1e-4)
+print(f&quot;Torque shares {Tc:.2f} and {Ts:.2f} N m; end rotation {np.rad2deg(twist*length):.3f} degrees&quot;)
+print(f&quot;Shear just inside/outside the interface: {Gc*a*twist/1e6:.2f} / {Gs*a*twist/1e6:.2f} MPa&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Distinguish a local stress peak from a total torque</h2><p>The left panel is the actual section. The right panel sweeps the core radius at constant outer radius and material properties.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="11" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+ax[0].plot(r1*1e3,Gc*twist*r1/1e6,label=&quot;Core&quot;)
+ax[0].plot(r2*1e3,Gs*twist*r2/1e6,label=&quot;Sleeve&quot;)
+ax[0].set(xlabel=&quot;Radius (mm)&quot;,ylabel=&quot;End-face shear stress (MPa)&quot;,title=&quot;Bonded cross section&quot;)
+fraction=np.linspace(.01,.99,250)
+share=Gc*fraction**4/(Gc*fraction**4+Gs*(1-fraction**4))
+ax[1].plot(fraction,share,label=&quot;Core share&quot;)
+ax[1].plot(fraction,1-share,&quot;--&quot;,label=&quot;Sleeve share&quot;)
+ax[1].set(xlabel=&quot;Core / outer radius&quot;,ylabel=&quot;Fraction of torque&quot;,title=&quot;Changing the core size&quot;)
+for p in ax: p.legend(fontsize=8);p.grid(alpha=.22)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Set the two moduli equal. Does the stress jump persist? Find the radius fraction for equal torque share and verify by changing the input.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which resistor can carry its current through another path? · OneSimulation</title>
+<meta name="description" content="A short circuit diagram leads to a matrix that describes both voltage differences and sensitivity to losing an edge. Change one conductance and follow where the current goes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/notebooks/linear-algebra-methods/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Which resistor can carry its current through another path? · OneSimulation">
+<meta property="og:description" content="A short circuit diagram leads to a matrix that describes both voltage differences and sensitivity to losing an edge. Change one conductance and follow where the current goes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/notebooks/linear-algebra-methods/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/notebooks/">Notebooks</a></p><h1>Which resistor can carry its current through another path?</h1><p class="lead">A short circuit diagram leads to a matrix that describes both voltage differences and sensitivity to losing an edge. Change one conductance and follow where the current goes.</p><nav class="study-links"><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/05-edge-leverage-in-a-resistor-network/">Read the derivation</a><a href="/fundamentals/numerics/linear-algebra/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/linear-algebra-linear-algebra-methods.ipynb" download="linear-algebra-linear-algebra-methods.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Ground a node and derive the electrical leverage</h2><p>Nodes A, B and C form a triangular loop. Node D connects only to C. Every edge is an ideal linear resistor. Orient an edge from node \(i\) to node \(j\) and give it an incidence vector \(b_e\) with a +1 at \(i\) and a −1 at \(j\). Its current under nodal voltages \(v\) is \(g_e b_e^T v\), where conductance \(g_e\) is measured in siemens. Kirchhoff&#x27;s current law sums all outgoing currents into the net injection \(f\). It gives</p><div class="math display">\[Lv=f,\qquad L=\sum_e g_e b_eb_e^T.\]</div><p>Adding a constant to every potential preserves all currents. Fix the potential of D at zero and remove its row and column. For a connected network the resulting grounded matrix is positive definite. Inject one ampere at one end of an edge and withdraw it at the other. With grounded coordinates the voltage difference per unit current is the effective resistance \(R_e=b_e^T L_g^{-1} b_e\). The fraction of this test current that flows through the tested edge is \(\ell_e=g_eR_e\). A bridge carries the full ampere. A parallel path reduces its share.</p><p>There is also a global check on the calculation. The sum of all the leverages is \(\mathrm{tr}(L_g^{-1}\sum_e g_e b_e b_e^T)=n-1\) on a connected graph with \(n\) nodes. Each leverage depends only on the graph and its conductances. The actual current in a specified operating condition also depends on the chosen source and sink.</p><h2>Solve the triangle by hand</h2><p>With 1 S on every branch, the detour A–C–B consists of two 1 Ω resistors in series. Inject 1 A at A and extract it at B. The detour&#x27;s 0.5 S combines with the direct 1 S, so the measured drop is \(1/1.5=2/3\) V. The direct current is 2/3 A. The dead-end C–D branch carries zero current in this experiment. When tested between its own endpoints, however, C–D carries the entire test current. The four leverages are consequently \(2/3,2/3,2/3,1\) and sum to three.</p><p>Double A–B&#x27;s conductance to 2 S. Its leverage rises to \(2/2.5=0.8\), while the voltage needed for the same 1 A drops to 0.4 V. This is why the two traces in the experiment have opposite slopes. Rerun with a weaker bridge. Its resistance increases, yet its leverage stays equal to one.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="3" wrap="off" spellcheck="false" autocapitalize="off">direct_siemens = 1.0
+bridge_siemens = 1.0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="17" wrap="off" spellcheck="false" autocapitalize="off">assert direct_siemens &gt; 0 and bridge_siemens &gt; 0
+edges = [(0, 1), (1, 2), (2, 0), (2, 3)]
+B = np.zeros((4, 4))
+for col, (i, j) in enumerate(edges):
+    B[i, col], B[j, col] = 1, -1
+grounded = B[:-1]
+
+def network(g):
+    weights = np.array([g, 1., 1., bridge_siemens])
+    L = (grounded * weights) @ grounded.T
+    voltage = np.linalg.solve(L, grounded)
+    R = np.sum(grounded * voltage, axis=0)
+    return R, weights * R
+
+resistance, leverage = network(direct_siemens)
+assert np.isclose(leverage.sum(), 3) and np.isclose(leverage[-1], 1)
+assert np.isclose(resistance[0], 1/(direct_siemens + .5))
+print(&quot;Edge    resistance (ohm)    leverage&quot;)
+for label, r, share in zip([&quot;AB&quot;,&quot;BC&quot;,&quot;CA&quot;,&quot;CD&quot;], resistance, leverage):
+    print(f&quot;{label:3} {r:13.5f} {share:12.5f}&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="14" wrap="off" spellcheck="false" autocapitalize="off">coords = np.array([[-1.,0],[1.,0],[0,1.3],[0,2.25]])
+fig, ax = axes(&quot;Network position&quot;, &quot;Network position&quot;)
+for (i,j), share in zip(edges, leverage):
+    ends = coords[[i,j]]
+    ax.plot(*ends.T, color=teal, lw=1.5+3*share, zorder=1)
+    center = ends.mean(axis=0)
+    ax.text(*center, f&quot;{share:.3f}&quot;, ha=&quot;center&quot;, va=&quot;center&quot;,
+            bbox=dict(facecolor=&quot;white&quot;, edgecolor=&quot;none&quot;, pad=2))
+for (x,y), label in zip(coords,&quot;ABCD&quot;):
+    ax.scatter(x,y,s=440,color=blue,zorder=3)
+    ax.text(x,y,label,ha=&quot;center&quot;,va=&quot;center&quot;,color=&quot;white&quot;,zorder=4)
+ax.set_aspect(&quot;equal&quot;); ax.set_xlim(-1.35,1.35); ax.set_ylim(-.3,2.56)
+ax.axis(&quot;off&quot;)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Each label gives the share of a separate one-ampere test between that edge&#x27;s endpoints. The pendant branch remains at unity for any positive conductance.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="10" wrap="off" spellcheck="false" autocapitalize="off">sweep = np.geomspace(min(.05, direct_siemens),max(20, direct_siemens),120)
+result = [network(g) for g in sweep]
+fig, ax = axes(&quot;Direct conductance AB (S)&quot;, &quot;Current share (dimensionless)&quot;)
+ax.semilogx(sweep, [s[0] for r,s in result], color=teal, label=&quot;AB current share&quot;)
+ax.scatter(direct_siemens, leverage[0], color=teal)
+right = ax.twinx(); right.set_ylabel(&quot;Effective resistance AB (Ω)&quot;)
+right.plot(sweep, [r[0] for r,s in result], color=orange, label=&quot;Effective resistance&quot;)
+right.scatter(direct_siemens, resistance[0], color=orange)
+ax.legend(loc=&quot;center left&quot;); right.legend(loc=&quot;center right&quot;)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The current-share curve tends to one as the direct branch dominates the detour. The voltage per ampere falls from two ohms toward zero.</p><h2>Exercise · remove the direct branch</h2><p>How much does the terminal resistance rise when the 1 S direct edge is removed? What changes if the bridge is removed instead?</p><p>For A and B the sole remaining connection consists of two 1 Ω resistors, so resistance rises from 2/3 Ω to 2 Ω, an increase of 4/3 Ω. Removing C–D instead isolates D. Measurements within the triangle remain finite, but a test injecting current at D and withdrawing it at C no longer has a finite DC voltage solution.</p><h2>Exercise · differentiate the measured voltage</h2><p>Under a fixed one-ampere A-to-B test, find the sensitivity of the terminal resistance to the direct conductance at 1 S.</p><p>For variable \(g\) the resistance is \(1/(g+0.5)\). Differentiation gives \(-1/(g+0.5)^2=-4/9\) Ω/S at the chosen point. The magnitude equals the square of the voltage drop per ampere across that branch. Differentiating \(L_gv=f\) at fixed injection gives the same result for any branch, \(\partial (f^Tv)/\partial g_e=-(b_e^Tv)^2\) for the unit test.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

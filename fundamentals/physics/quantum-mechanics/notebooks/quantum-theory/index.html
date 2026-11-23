@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measure geometric phase from three spin overlaps · OneSimulation</title>
+<meta name="description" content="A numerical eigensolver is free to choose a new complex phase for every eigenvector. A product of three measured overlaps removes these arbitrary choices. Relate its argument to a spherical triangle, then see why a vanishing overlap destroys phase information.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/notebooks/quantum-theory/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measure geometric phase from three spin overlaps · OneSimulation">
+<meta property="og:description" content="A numerical eigensolver is free to choose a new complex phase for every eigenvector. A product of three measured overlaps removes these arbitrary choices. Relate its argument to a spherical triangle, then see why a vanishing overlap destroys phase information.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/notebooks/quantum-theory/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a> / <a href="/fundamentals/physics/quantum-mechanics/notebooks/">Notebooks</a></p><h1>Measure geometric phase from three spin overlaps</h1><p class="lead">A numerical eigensolver is free to choose a new complex phase for every eigenvector. A product of three measured overlaps removes these arbitrary choices. Relate its argument to a spherical triangle, then see why a vanishing overlap destroys phase information.</p><nav class="study-links"><a href="/fundamentals/physics/quantum-mechanics/volumes/quantum-theory/13-geometric-phase-from-three-overlaps/">Read the derivation</a><a href="/fundamentals/physics/quantum-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/quantum-mechanics-quantum-theory.ipynb" download="quantum-mechanics-quantum-theory.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Close a loop before assigning a phase</h2><p>Choose three normalised spinors \(|A\rangle,|B\rangle,|C\rangle\). Their individual phases change under \(|j\rangle\mapsto e^{i\gamma_j}|j\rangle\). In the cyclic product \(Z=\langle A|B\rangle\langle B|C\rangle\langle C|A\rangle\) every phase occurs once with each sign. This product is a gauge-independent complex quantity although none of the three overlap phases separately is.</p><p>Take \(A\) at the north pole of the Bloch sphere, \(B\) on its equator at longitude zero and \(C\) on the equator at longitude \(\varphi\) with \(-\pi&lt;\varphi&lt;\pi\). Choose \(A=(1,0)\), \(B=(1,1)/\sqrt2\) and \(C=(1,e^{i\varphi})/\sqrt2\). Direct multiplication gives</p><div class="math display">\[Z=\frac{1+e^{i\varphi}}4=\frac{\cos(\varphi/2)}2 e^{i\varphi/2}.\]</div><p>The oriented triangle bounded by the two meridians and the shortest equator arc has solid angle \(\Omega=\int_0^\varphi d\phi\int_0^{\pi/2}\sin\theta\,d\theta=\varphi\). The overlap product therefore has argument \(+\Omega/2\) for this order. The geometric phase of a ket parallel-transported along the oriented shortest geodesics is the negative of this overlap-product argument. Stating which sign is reported prevents an apparent contradiction. This construction requires no arbitrary differentiation of eigenvector phases.</p><h2>Separate a well-defined angle from an observable signal</h2><p>At 90 degrees longitude the triangle encloses \(\pi/2\) steradians. The complex product is \((1+i)/4\), its magnitude is about 0.354 and its argument is \(\pi/4\). As longitude approaches 180 degrees, the equatorial states approach orthogonality. The magnitude tends to zero, and even a small absolute uncertainty in the measured complex product yields a large angular uncertainty. Exactly at orthogonality there is no unique shortest equatorial arc or measurable phase of the zero complex number.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="3" wrap="off" spellcheck="false" autocapitalize="off">longitude_deg=90.
+extra_phases=np.array([.42,-1.1,.73])</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="8" wrap="off" spellcheck="false" autocapitalize="off">assert -180&lt;longitude_deg&lt;180
+phi=np.deg2rad(longitude_deg)
+states=np.array([[1,0],[1/np.sqrt(2),1/np.sqrt(2)],[1/np.sqrt(2),np.exp(1j*phi)/np.sqrt(2)]],dtype=complex)
+def cyclic(v):
+    return np.vdot(v[0],v[1])*np.vdot(v[1],v[2])*np.vdot(v[2],v[0])
+product=cyclic(states)
+assert np.allclose(cyclic(states*np.exp(1j*extra_phases)[:,None]),product)
+print(f&quot;|Z|={abs(product):.5f}; overlap phase={np.angle(product):.5f} rad; transported phase={-np.angle(product):.5f} rad&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="9" wrap="off" spellcheck="false" autocapitalize="off">circle=np.linspace(0,2*np.pi,241);arc=np.linspace(0,phi,151)
+fig,ax=axes(&quot;Projected Bloch coordinate x&quot;,&quot;Projected Bloch coordinate y&quot;)
+ax.plot(np.cos(circle),np.sin(circle),color=&quot;grey&quot;,lw=1)
+ax.fill(np.r_[0,np.cos(arc),0],np.r_[0,np.sin(arc),0],color=teal,alpha=.18)
+ax.plot(np.r_[0,np.cos(arc),0],np.r_[0,np.sin(arc),0],color=teal)
+for xx,yy,name in [(0,0,&quot;A&quot;),(1,0,&quot;B&quot;),(np.cos(phi),np.sin(phi),&quot;C&quot;)]:
+    ax.plot(xx,yy,&quot;o&quot;,color=orange);ax.annotate(name,(xx,yy),xytext=(4,4),textcoords=&quot;offset points&quot;)
+ax.set_aspect(&quot;equal&quot;,adjustable=&quot;box&quot;)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The north pole projects to the centre and the equator to the rim. The filled planar region illustrates the path, whereas its solid angle is integrated on the sphere.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="5" wrap="off" spellcheck="false" autocapitalize="off">angles=np.linspace(-np.pi,np.pi,301); locus=(1+np.exp(1j*angles))/4
+fig,ax=axes(&quot;Real cyclic overlap&quot;,&quot;Imaginary cyclic overlap&quot;)
+ax.plot(locus.real,locus.imag,color=teal);ax.plot([0,product.real],[0,product.imag],color=orange,label=&quot;Selected overlap&quot;)
+ax.plot(product.real,product.imag,&quot;o&quot;,color=orange);ax.set_aspect(&quot;equal&quot;,adjustable=&quot;box&quot;);ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>At the origin the overlap phase is undefined. Reversing the circuit reflects the complex product across the real axis.</p><h2>Exercise · reverse the circuit</h2><p>What happens to amplitude and phase if the experiment uses \(A,C,B\) in place of \(A,B,C\)?</p><p>Hermitian symmetry conjugates every overlap while the scalar factors can be reordered. The new product equals \(Z^*\). Its magnitude stays fixed and both signed phase conventions reverse.</p><h2>Exercise · estimate the angular uncertainty</h2><p>A measured overlap has magnitude 0.02 and a small perpendicular complex uncertainty of magnitude 0.002. What is the first-order phase uncertainty? Compare with a magnitude of 0.4.</p><p>For a small transverse displacement the angular change is \(\delta\theta\simeq|\delta Z_\perp|/|Z|\). The answers are 0.10 rad and 0.005 rad. Identical absolute detector noise therefore gives very different phase precision near an orthogonal pair.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

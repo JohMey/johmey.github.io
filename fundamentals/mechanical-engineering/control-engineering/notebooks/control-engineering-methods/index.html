@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which sampling times reveal the velocity of an oscillator? · OneSimulation</title>
+<meta name="description" content="A sensor measures displacement while a controller needs velocity as well. Use the exact free vibration between two readings to recover the missing state, then quantify how a poorly chosen sample interval amplifies measurement noise.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/notebooks/control-engineering-methods/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Which sampling times reveal the velocity of an oscillator? · OneSimulation">
+<meta property="og:description" content="A sensor measures displacement while a controller needs velocity as well. Use the exact free vibration between two readings to recover the missing state, then quantify how a poorly chosen sample interval amplifies measurement noise.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/notebooks/control-engineering-methods/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/notebooks/">Notebooks</a></p><h1>Which sampling times reveal the velocity of an oscillator?</h1><p class="lead">A sensor measures displacement while a controller needs velocity as well. Use the exact free vibration between two readings to recover the missing state, then quantify how a poorly chosen sample interval amplifies measurement noise.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/05-sampling-a-position-only-oscillator/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/control-engineering/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/control-engineering-control-engineering-methods.ipynb" download="control-engineering-control-engineering-methods.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Observe a rotation through one coordinate</h2><p>For an undamped, unforced oscillator \(\ddot x+\omega^2x=0\), use the state \(z=[x,\dot x/\omega]^T\). Both entries then have units of length. A delay \(\Delta t\) advances phase by \(\theta=\omega\Delta t\). Integrating the equation exactly gives \(x(t+\Delta t)=x(t)\cos\theta+[\dot x(t)/\omega]\sin\theta\). The velocity equation follows by differentiating with respect to \(\Delta t\). Together they rotate the state by a matrix with first row \((\cos\theta,\sin\theta)\) and second row \((-\sin\theta,\cos\theta)\).</p><p>The position sensor has observation row \((1,0)\). At consecutive samples its noiseless readings obey</p><div class="math display">\[\begin{bmatrix}y_0\\y_1\end{bmatrix}=\underbrace{\begin{bmatrix}1&amp;0\\\cos\theta&amp;\sin\theta\end{bmatrix}}_{O}\begin{bmatrix}x_0\\v_0/\omega\end{bmatrix}.\]</div><p>The determinant is \(\sin\theta\). At integer half-period intervals the sensor measures the same direction in the state plane twice, allowing opposite velocities to produce exactly the same pair of readings. Away from those intervals, \(v_0=\omega(y_1-y_0\cos\theta)/\sin\theta\). The determinant diagnoses whether an exact reconstruction exists. The singular values describe whether that reconstruction will tolerate small errors. Because \(OO^T\) has diagonal entries one and off-diagonal entries \(\cos\theta\), its eigenvalues are \(1\pm|\cos\theta|\). Their square roots are the singular values of \(O\) in the chosen state scaling.</p><h2>Propagate the uncertainty in two readings</h2><p>Suppose each recorded position has independent zero-mean noise of standard deviation \(\sigma_x\). A linear combination \(y_1-y_0\cos\theta\) has variance \(\sigma_x^2(1+\cos^2\theta)\). Multiply by the square of the velocity gain to obtain \(\sigma_v=\omega\sigma_x\sqrt{1+\cos^2\theta}/|\sin\theta|\). An exact knowledge of the sample times and natural frequency is assumed in this expression.</p><p>A 2 Hz oscillator has period 0.5 s and angular frequency \(4\pi\) rad/s. With a 0.125 s interval the second reading directly measures \(v_0/\omega\). For 0.10 mm position noise the recovered velocity has standard deviation 1.257 mm/s. Increasing the delay to 0.240 s moves the second observation close to the direction opposite the first. The same position uncertainty now produces 14.12 mm/s of velocity uncertainty, although the mathematical reconstruction still exists. The notebook varies the sampling interval continuously and checks the formula against noise propagation through the inverse matrix.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="5" wrap="off" spellcheck="false" autocapitalize="off">frequency_hz = 2.0
+sample_interval_s = 0.125
+position_mm = 1.0
+velocity_mm_s = 10.0
+noise_mm = 0.10</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="17" wrap="off" spellcheck="false" autocapitalize="off">assert min(frequency_hz, sample_interval_s) &gt; 0 and noise_mm &gt;= 0
+omega = 2*np.pi*frequency_hz
+period = 1/frequency_hz
+theta = omega*sample_interval_s
+c, s = np.cos(theta), np.sin(theta)
+observation = np.array([[1.0, 0.0], [c, s]])
+state = np.array([position_mm, velocity_mm_s/omega])
+readings = observation @ state
+print(f&quot;Pair of noiseless readings (mm): {readings.round(5)}&quot;)
+if abs(s) &lt; 1e-10:
+    print(&quot;At this sample interval both readings are independent of the initial velocity.&quot;)
+else:
+    velocity_est = omega*(readings[1]-c*readings[0])/s
+    sigma_v = omega*noise_mm*np.sqrt(1+c*c)/abs(s)
+    inverse = np.linalg.inv(observation)
+    expected_variance = omega**2*noise_mm**2*(inverse @ inverse.T)[1,1]
+    assert np.isclose(sigma_v**2, expected_variance) and np.isclose(velocity_est, velocity_mm_s)
+    print(f&quot;Inferred velocity: {velocity_est:.4g} mm/s; standard deviation: {sigma_v:.4g} mm/s&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="13" wrap="off" spellcheck="false" autocapitalize="off">time_s = np.linspace(0, 1.05*period, 400)
+fig, ax = axes(&quot;Time (s)&quot;, &quot;Displacement (mm)&quot;)
+other_velocity = velocity_mm_s + max(5.0, abs(velocity_mm_s))
+for vel, color in [(velocity_mm_s, teal), (other_velocity, orange)]:
+    motion = position_mm*np.cos(omega*time_s) + vel/omega*np.sin(omega*time_s)
+    ax.plot(time_s, motion, color=color, label=f&quot;Initial velocity {vel:.2g} mm/s&quot;)
+    selected_time = sample_interval_s % period
+    observed = position_mm*np.cos(omega*selected_time)+vel/omega*np.sin(omega*selected_time)
+    ax.scatter([selected_time], [observed], color=color, zorder=4)
+half_times = period*np.array([0, 0.5, 1])
+ax.scatter(half_times, position_mm*np.array([1, -1, 1]), color=&quot;black&quot;, zorder=5, label=&quot;Half-period samples&quot;)
+ax.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Compare the equal half-period readings with the selected off-grid observation. Continuous motion between sample points can carry information that the readings discard.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="10" wrap="off" spellcheck="false" autocapitalize="off">fraction = np.linspace(0.002, 0.998, 1001)
+ss, cc = np.sin(2*np.pi*fraction), np.cos(2*np.pi*fraction)
+gain = np.sqrt(1+cc**2) / np.maximum(abs(ss), 1e-14)
+gain[abs(ss) &lt; 0.02] = np.nan
+fig, ax = axes(&quot;Sampling interval / oscillator period&quot;, &quot;Velocity noise gain relative to ωσₓ&quot;)
+ax.semilogy(fraction, gain, color=teal, label=&quot;Two-position estimate&quot;)
+ax.axvline(0.5, color=orange, linestyle=&quot;--&quot;, label=&quot;Unobservable half-period&quot;)
+ax.plot([0.25, 0.75], [1, 1], &quot;ko&quot;, label=&quot;Quarter-period optima&quot;)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The smallest uncertainty occurs at the quarter-period points where the second position reading depends only on the initial velocity.</p><h2>Problem 1 · Take more readings at exactly one half-period</h2><p>A colleague proposes collecting 100 equally spaced positions to recover velocity at \(\Delta t=T/2\). Does the larger data set recover the missing state for this exact model?</p><p>After \(k\) steps the observation row is \((\cos k\pi,\sin k\pi)=((-1)^k,0)\). Every reading measures only the initial position, up to its alternating sign. Averaging can reduce the noise in \(x_0\), while the initial velocity remains arbitrary. One extra measured position at a known quarter-period after the first would add row \((0,1)\) and restore the missing independent equation.</p><h2>Problem 2 · Relate observability to a finite difference</h2><p>For \(\omega\Delta t\ll1\), derive the leading noise in the reconstructed velocity. Explain why decreasing the interval can increase the velocity error here.</p><p>Use \(\sin\theta\simeq\theta=\omega\Delta t\) and \(\cos\theta\simeq1\). The estimate becomes \((y_1-y_0)/\Delta t\) to leading order and \(\sigma_v\simeq\sqrt{2}\sigma_x/\Delta t\). The actual displacement accumulated over a short interval shrinks, while the two independent noise samples have a difference of fixed standard deviation. This result applies to the two-reading estimate; fitting many accurately timed readings over a fixed observation duration uses different information.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a beam spreads a point load through an elastic support · OneSimulation</title>
+<meta name="description" content="A long rail rests on a strip of elastic material. An instrument foot applies a vertical load near the middle. Which part of the strip carries that load? If the rail were completely rigid the answer would depend on its full length. A flexible rail selects a local length through the competition between bending and support compression. Derive that length, calculate a displacement that can be measured by a dial gauge, and recover the answer independently by minimising the energy of a discrete beam.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a beam spreads a point load through an elastic support · OneSimulation">
+<meta property="og:description" content="A long rail rests on a strip of elastic material. An instrument foot applies a vertical load near the middle. Which part of the strip carries that load? If the rail were completely rigid the answer would depend on its full length. A flexible rail selects a local length through the competition between bending and support compression. Derive that length, calculate a displacement that can be measured by a dial gauge, and recover the answer independently by minimising the energy of a discrete beam.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/notebooks/">Notebooks</a></p><h1>How a beam spreads a point load through an elastic support</h1><p class="lead">A long rail rests on a strip of elastic material. An instrument foot applies a vertical load near the middle. Which part of the strip carries that load? If the rail were completely rigid the answer would depend on its full length. A flexible rail selects a local length through the competition between bending and support compression. Derive that length, calculate a displacement that can be measured by a dial gauge, and recover the answer independently by minimising the energy of a discrete beam.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/20-load-spreading-on-an-elastic-foundation/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/engineering-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/engineering-mechanics-workshop.ipynb" download="engineering-mechanics-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Imagine looking under a long workbench rail carried on an elastic strip. Guess which part of the strip supports half the load. Compute the deflection and the cumulative reaction below. The default parameters describe a bilateral linear support. Change the four numbers in the first cell and run the cells in order.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="8" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+E = 70e9             # Young modulus, Pa
+width, depth = 0.04, 0.02  # rectangular rail, m
+k = 1.5e6            # foundation force per length per displacement, N/m²
+P = 150.0            # downward point load, N
+assert min(E, width, depth, k, P) &gt; 0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Construct the field from the half-line solution</h2><p>The support reaction per unit length is \(k w\). Symmetry makes the slope zero at the load. The jump in the third derivative supplies the concentrated force. The cumulative signed reaction within a symmetric interval follows by integrating the resulting field.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="17" wrap="off" spellcheck="false" autocapitalize="off">I = width * depth**3 / 12
+EI = E * I
+beta = (k / (4*EI))**0.25
+length_scale = 1/beta
+w0 = P*beta/(2*k)
+
+def deflection(x):
+    s = beta * np.abs(x)
+    return w0*np.exp(-s)*(np.cos(s) + np.sin(s))
+
+def captured(distance):
+    s = beta * np.abs(distance)
+    return 1 - np.exp(-s)*np.cos(s)
+
+print(f&quot;EI = {EI:.3f} N m²; decay length = {length_scale:.4f} m&quot;)
+print(f&quot;Centre deflection = {w0*1e3:.4f} mm&quot;)
+print(f&quot;Fraction within one decay length = {captured(length_scale):.5f}&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Solve an independently discretised beam</h2><p>Represent the curvature by second differences on a long simply supported interval. Form the energy Hessian and solve for the nodal displacement. The middle force is divided by the grid spacing to express it as a load per length. The cells below run with NumPy; a local OneSimulation installation can supply the same linear solve.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="17" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+    backend = &quot;OneSimulation dense linear solver&quot;
+except ImportError:
+    solve_dense = np.linalg.solve
+    backend = &quot;NumPy linear solver&quot;
+
+def discrete_beam(points):
+    edge = 8*length_scale
+    x = np.linspace(-edge, edge, points+2)[1:-1]
+    h = x[1]-x[0]
+    D2 = (-2*np.eye(points) + np.eye(points,k=1) + np.eye(points,k=-1))/h**2
+    force = np.zeros(points)
+    force[points//2] = P/h
+    w = solve_dense(EI*(D2.T @ D2) + k*np.eye(points), force)
+    return x, w
+
+for count in (65,129):
+    x_grid, w_grid = discrete_beam(count)
+    discrepancy = abs(w_grid[count//2]/w0-1)
+    print(f&quot;{backend}, {count} unknowns: centre error {100*discrepancy:.3f}%&quot;)
+assert discrepancy &lt; 0.015
+assert abs(captured(12*length_scale)-1) &lt; 1e-5</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Observe the field and the signed support force</h2><p>The bending moment has a different shape from the displacement. The right panel integrates reactions outward from the load. The reference at one marks the full applied force.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="14" wrap="off" spellcheck="false" autocapitalize="off">x = np.linspace(-4*length_scale,4*length_scale,501)
+d = np.linspace(0,5*length_scale,320)
+fig, ax = plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+ax[0].plot(x,1e3*deflection(x),label=&quot;Infinite-beam solution&quot;)
+mask = np.abs(x_grid) &lt;= 4*length_scale
+ax[0].plot(x_grid[mask][::2],1e3*w_grid[mask][::2],&quot;o&quot;,ms=3,label=&quot;Discrete energy solution&quot;)
+ax[0].axhline(0,color=&quot;0.5&quot;,lw=0.8)
+ax[0].set(xlabel=&quot;Rail coordinate (m)&quot;,ylabel=&quot;Downward deflection (mm)&quot;,title=&quot;Local rail displacement&quot;)
+ax[1].plot(d,captured(d),label=&quot;Signed reaction / load&quot;)
+ax[1].axhline(1,color=&quot;0.45&quot;,ls=&quot;:&quot;,label=&quot;Applied load&quot;)
+ax[1].set(xlabel=&quot;Distance on each side (m)&quot;,ylabel=&quot;Fraction of load&quot;,title=&quot;Reaction collected under the rail&quot;)
+for a in ax:
+    a.grid(alpha=.22); a.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Change the experiment</h2><p>Double the rail depth before rerunning. Compare the ratio of decay lengths to \(2^{3/4}\). Hold the section fixed and increase the foundation stiffness sixteenfold. Explain any values above one in the cumulative reaction. Which part of the plotted deflection would make a support that can only push lose contact?</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

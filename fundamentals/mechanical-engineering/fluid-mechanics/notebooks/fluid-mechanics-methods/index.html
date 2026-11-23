@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How long does a moving wall take to set a fluid layer in motion? · OneSimulation</title>
+<meta name="description" content="Start the top of a narrow gap suddenly and follow the velocity, volume flow and wall stresses as viscous diffusion builds a Couette profile.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/fluid-mechanics-methods/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How long does a moving wall take to set a fluid layer in motion? · OneSimulation">
+<meta property="og:description" content="Start the top of a narrow gap suddenly and follow the velocity, volume flow and wall stresses as viscous diffusion builds a Couette profile.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/fluid-mechanics-methods/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/">Notebooks</a></p><h1>How long does a moving wall take to set a fluid layer in motion?</h1><p class="lead">Start the top of a narrow gap suddenly and follow the velocity, volume flow and wall stresses as viscous diffusion builds a Couette profile.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/05-momentum-diffusion-between-moving-walls/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/fluid-mechanics-fluid-mechanics-methods.ipynb" download="fluid-mechanics-fluid-mechanics-methods.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Remove the final state before separating variables</h2><p>Take two large, parallel plates separated by \(H\), with \(y=0\) at the fixed plate. The liquid starts from rest. At \(t=0\) the upper plate begins to move at constant speed \(U\). For an incompressible Newtonian liquid with no imposed pressure gradient, the unidirectional velocity \(u(y,t)\) has zero convective acceleration. The streamwise momentum balance on a thin slice then reduces to \(\rho\,\partial_tu=\partial_y(\mu\,\partial_yu)\). With constant viscosity, kinematic viscosity \(\nu=\mu/\rho\) is the momentum diffusivity.</p><p>Use \(\eta=y/H\) and \(F=\nu t/H^2\). The linear profile \(u/U=\eta\) solves the eventual steady equation and both wall conditions. Subtract it by setting \(w=u/U-\eta\). Both boundaries now require \(w=0\), which selects eigenfunctions \(\sin(n\pi\eta)\) for \(w_F=w_{\eta\eta}\). Each amplitude decays as \(\exp(-n^2\pi^2 F)\). The interior initially has \(w=-\eta\). Multiplying by a sine and integrating from zero to one gives \(b_n=-2\int_0^1\eta\sin(n\pi\eta)\,d\eta=2(-1)^n/(n\pi)\). Combining the parts gives</p><div class="math display">\[\frac{u}{U}=\eta+\frac{2}{\pi}\sum_{n=1}^{\infty}\frac{(-1)^n}{n}\sin(n\pi\eta)e^{-n^2\pi^2 F}.\]</div><p>For any positive time, higher modes decay rapidly. At the initial top corner the sudden change in surface velocity conflicts with the initially resting liquid. The mathematical wall gradient there diverges as \(t\downarrow0\). A finite starting acceleration would regularize that prediction. Fluid well away from that wall sees little change until the diffusion distance, of order \(\sqrt{\nu t}\), becomes comparable with its distance to the moving surface.</p><h2>Distinguish stored momentum from transmitted shear</h2><p>Integrating the profile over the gap eliminates the even sine modes. The dimensionless volume flow per unit span becomes \(q/(UH)=1/2-(4/\pi^2)\sum_{n\ {\rm odd}} e^{-n^2\pi^2 F}/n^2\). Differentiating at the walls gives \(\tau_\mathrm{top}/(\mu U/H)=1+2\sum_n e^{-n^2\pi^2F}\) and \(\tau_\mathrm{bottom}/(\mu U/H)=1+2\sum_n(-1)^n e^{-n^2\pi^2 F}\). Here both symbols report \(\mu u_y\) evaluated in the positive \(y\) direction. The forces on the fluid act in opposite directions, so the net streamwise force per unit plate area is \(\tau_\mathrm{top}-\tau_\mathrm{bottom}\).</p><p>Set \(H=4\) mm, \(\nu=1.6\times10^{-5}\) m\(^2\)/s, \(\rho=900\) kg/m\(^3\) and \(U=0.20\) m/s. The gap diffusion time is 1 s. At 0.1 s the flow is \(0.34894 UH\), already 69.8% of its final value. The wall gradients still differ sharply, measuring 1.7843 and 0.2929 times the eventual shear of 0.72 Pa. Integrating the original momentum equation over the layer verifies that their difference accelerates the stored streamwise momentum, \(\rho\,dq/dt\).</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="5" wrap="off" spellcheck="false" autocapitalize="off">gap_m = 0.004
+speed_m_s = 0.20
+viscosity_m2_s = 1.6e-5
+density_kg_m3 = 900.0
+observe_s = 0.10</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="17" wrap="off" spellcheck="false" autocapitalize="off">assert min(gap_m, speed_m_s, viscosity_m2_s, density_kg_m3, observe_s) &gt; 0
+diffusion_s = gap_m**2 / viscosity_m2_s
+fourier_time = observe_s/diffusion_s
+assert fourier_time &gt;= 0.0005, &quot;Increase the observation time to resolve the startup with 100 modes.&quot;
+modes = np.arange(1, 101)
+odd = modes[modes % 2 == 1]
+def profile(eta, F):
+    amplitudes = 2*(-1.0)**modes*np.exp(-(modes*np.pi)**2*F)/(np.pi*modes)
+    return eta + np.sin(np.outer(eta, modes*np.pi)) @ amplitudes
+
+def scaled_flow(F):
+    return 0.5 - 4/np.pi**2*np.sum(np.exp(-(odd*np.pi)**2*F)/odd**2)
+
+def scaled_shear(F):
+    decay = np.exp(-(modes*np.pi)**2 * F)
+    return 1+2*decay.sum(), 1+2*((-1.0)**modes*decay).sum()
+
+top, bottom = scaled_shear(fourier_time)
+flow = scaled_flow(fourier_time)
+steady_pa = density_kg_m3*viscosity_m2_s*speed_m_s/gap_m
+derivative = 4*np.exp(-(odd*np.pi)**2*fourier_time).sum()
+assert np.isclose(derivative, top-bottom)
+print(f&quot;Diffusion time: {diffusion_s:.3g} s. Flow per width: {flow*speed_m_s*gap_m:.6g} m²/s.&quot;)
+print(f&quot;Top and bottom shear: {top*steady_pa:.4g} Pa, {bottom*steady_pa:.4g} Pa&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="7" wrap="off" spellcheck="false" autocapitalize="off">eta = np.linspace(0, 1, 160)
+fig, ax = axes(&quot;Streamwise velocity (m/s)&quot;, &quot;Height above fixed wall (mm)&quot;)
+for F, label, color in [(0.02, &quot;Early&quot;, blue), (fourier_time, &quot;Selected&quot;, orange), (0.40, &quot;Late&quot;, teal)]:
+    ax.plot(speed_m_s*profile(eta, F), 1000*gap_m*eta, color=color, label=f&quot;{label}: {F*diffusion_s:.3g} s&quot;)
+ax.plot(speed_m_s*eta, 1000*gap_m*eta, &quot;k--&quot;, label=&quot;Steady flow&quot;)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The top wall fixes the velocity at one end immediately. The curvature in the interior tracks how momentum is still entering the liquid.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="8" wrap="off" spellcheck="false" autocapitalize="off">times = np.geomspace(0.006, 1.2, 180)
+stresses = steady_pa*np.array([scaled_shear(F) for F in times])
+fig, ax = axes(&quot;Time after wall startup (s)&quot;, &quot;Wall shear (Pa)&quot;)
+ax.semilogx(times*diffusion_s, stresses[:,0], color=orange, label=&quot;Moving wall&quot;)
+ax.semilogx(times*diffusion_s, stresses[:,1], color=teal, label=&quot;Fixed wall&quot;)
+ax.axhline(steady_pa, color=&quot;black&quot;, linestyle=&quot;--&quot;, label=&quot;Steady value&quot;)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Initially the driving wall accelerates the upper layer. The fixed wall feels an appreciable force later, even as the force required at the driving wall declines.</p><h2>Problem 1 · Predict the flow-settling time</h2><p>Estimate when the flow reaches 99% of its final value. Why is one mode enough for this estimate?</p><p>Divide the missing flow by its final value to obtain \((8/\pi^2)\sum_{n\ {\rm odd}}e^{-n^2\pi^2 F}/n^2\). Its leading term reaches 0.01 at \(F=\ln[8/(0.01\pi^2)]/\pi^2=0.44532\), or 0.44532 s with the given gap. At this time the next contributing mode contains \(e^{-9\pi^2F}/9\), below \(10^{-17}\). At much earlier times several modes reconstruct the thin moving layer.</p><h2>Problem 2 · Double the gap</h2><p>The plate speed and liquid stay fixed while \(H\) doubles. Compare the 99% settling time, steady shear, and steady flow per unit width in the two gaps.</p><p>The dimensionless solution reaches the same settling criterion at the same \(F\). Since \(t=FH^2/\nu\), the wider gap takes four times as long, about 1.78 s. The steady gradient is \(U/H\), so its shear halves to 0.36 Pa. The steady flow is the area under a triangle of height \(U\) and width \(H\), namely \(UH/2\). It doubles to \(8.0\times10^{-4}\) m\(^2\)/s.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

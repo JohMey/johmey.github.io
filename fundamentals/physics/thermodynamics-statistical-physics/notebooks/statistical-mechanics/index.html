@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Put a thermometer on a bounded spin spectrum · OneSimulation</title>
+<meta name="description" content="A collection of identical two-level degrees of freedom has both a lowest and a highest energy. Count the accessible states at each energy and determine from adjacent entropy differences which way energy flows when two systems are brought into weak thermal contact.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/notebooks/statistical-mechanics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Put a thermometer on a bounded spin spectrum · OneSimulation">
+<meta property="og:description" content="A collection of identical two-level degrees of freedom has both a lowest and a highest energy. Count the accessible states at each energy and determine from adjacent entropy differences which way energy flows when two systems are brought into weak thermal contact.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/notebooks/statistical-mechanics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/notebooks/">Notebooks</a></p><h1>Put a thermometer on a bounded spin spectrum</h1><p class="lead">A collection of identical two-level degrees of freedom has both a lowest and a highest energy. Count the accessible states at each energy and determine from adjacent entropy differences which way energy flows when two systems are brought into weak thermal contact.</p><nav class="study-links"><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-mechanics/13-negative-temperatures-in-a-bounded-spin-system/">Read the derivation</a><a href="/fundamentals/physics/thermodynamics-statistical-physics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/thermodynamics-statistical-physics-statistical-mechanics.ipynb" download="thermodynamics-statistical-physics-statistical-mechanics.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Differentiate an entropy measured in counts</h2><p>Let \(N\) distinguishable, weakly coupled sites each carry energy zero or \(\varepsilon\). A state with \(n\) excitations has \(E_n=n\varepsilon\). The multiplicity of the narrow, fixed-energy shell equals the number of ways to place the excitations, \(W_n={N\choose n}\). Use the Boltzmann shell entropy \(S_n=k_B\ln W_n\). The temperature inferred from the population of two adjacent shells samples the derivative at an energy midway between them. Dividing their multiplicities before taking a logarithm gives an exact finite-system expression,</p><div class="math display">\[\beta_{n+1/2}\varepsilon=\frac{S_{n+1}-S_n}{k_B}=\ln\frac{N-n}{n+1},\qquad \beta=\frac{1}{k_BT}.\]</div><p>Adding an excitation near the bottom initially opens more arrangements. Beyond the middle, it closes them. The decreasing entropy on this upper branch assigns a negative inverse temperature to the population. In the limit of large \(N\) at fixed excitation fraction \(p\), the slope becomes \(\ln[(1-p)/p]\). The same relationship follows from \(p/(1-p)=\exp(-\beta\varepsilon)\) for a canonical two-level system.</p><p>The upper energy bound allows a distribution weighted towards high energy to normalise. In experiment the degrees of freedom considered must also equilibrate amongst themselves on a timescale shorter than their relaxation into ordinary, effectively unbounded environmental modes. This calculation describes the spin subsystem during that interval.</p><h2>Predict the direction of an exchange</h2><p>Take \(N=20\) and examine the transition from 15 to 16 excitations. The multiplicity ratio is \(5/16\), the dimensionless inverse temperature is −1.1632, and \(k_BT/\varepsilon\) is approximately −0.860. The reflected transition from 4 to 5 has ratio \(16/5\) and the opposite slope. The same number of possible arrangements at energies reflected about the midpoint gives opposite entropy gradients.</p><p>Suppose system A initially has 16 excitations and the same-sized system B has 4. Moving one quantum from A to B multiplies the product of their multiplicities by \((16/5)^2=10.24\). A weak contact that samples the available microstates favours transfer out of the inverted specimen. More generally, when A gives up a small positive energy \(q\), the entropy change is \(\Delta S/k_B\simeq(\beta_B-\beta_A)q\). An inverted subsystem therefore gives up heat to an ordinary positive-temperature subsystem when the coupling permits energy exchange.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="3" wrap="off" spellcheck="false" autocapitalize="off">sites = 20
+lower_excitation = 15</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="10" wrap="off" spellcheck="false" autocapitalize="off">from math import lgamma
+assert isinstance(sites,int) and sites &gt;= 2
+assert isinstance(lower_excitation,int) and 0 &lt;= lower_excitation &lt; sites
+n = np.arange(sites+1)
+log_count = np.array([lgamma(sites+1)-lgamma(int(j)+1)-lgamma(sites-int(j)+1) for j in n])
+midpoint = (n[:-1]+.5)/sites
+slope = np.log((sites-n[:-1])/(n[:-1]+1))
+assert np.allclose(np.diff(log_count), slope)
+assert np.allclose(slope, -slope[::-1])
+print(f&quot;Midpoint inverse temperature βε: {slope[lower_excitation]:.5f}&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="6" wrap="off" spellcheck="false" autocapitalize="off">fig,ax = axes(&quot;Fraction of sites excited&quot;, &quot;Shell entropy per site (in units of kB)&quot;)
+ax.plot(n/sites,log_count/sites,&quot;.-&quot;,color=teal)
+i=lower_excitation
+ax.plot(n[i:i+2]/sites,log_count[i:i+2]/sites,&quot;o-&quot;,color=orange,lw=3,label=&quot;Selected adjacent shells&quot;)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The segment joining the two highlighted shells measures the entropy difference used in the finite-system inverse temperature.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="7" wrap="off" spellcheck="false" autocapitalize="off">p = np.linspace(.015,.985,351)
+fig,ax = axes(&quot;Excitation fraction at the energy midpoint&quot;, &quot;Inverse temperature βε&quot;)
+ax.plot(p,np.log((1-p)/p),&quot;--&quot;,color=blue,label=&quot;Large-system curve&quot;)
+ax.plot(midpoint,slope,&quot;.&quot;,color=teal,label=&quot;Finite shell differences&quot;)
+ax.plot(midpoint[i],slope[i],&quot;o&quot;,color=orange)
+ax.axhline(0,color=&quot;grey&quot;,lw=.8);ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The discrete slope belongs between neighbouring energies. Compare finite sizes at the same fractional position to see where the large-system approximation converges first.</p><h2>Exercise · the temperature halfway up an odd spectrum</h2><p>For eleven sites find the adjacent shells with exactly zero inverse temperature. What site occupation does this represent in the canonical description?</p><p>Setting \(11-n=n+1\) gives \(n=5\). Five and six excitations have the same multiplicity, giving zero entropy slope at \(E=5.5\varepsilon\). In the canonical ensemble \(\beta=0\) gives equal probabilities for both site energies. The average excitation number is 5.5 although individual measurements return integers.</p><h2>Exercise · infer a population inversion</h2><p>A spin measurement yields three excited sites for every site in the lower state, in a sample large enough to neglect finite-size corrections. Calculate the inverse temperature and the mean energy of 100 equivalent sites.</p><p>Here \(p=3/4\). The Boltzmann ratio gives \(\beta\varepsilon=-\ln3\simeq-1.099\), and the mean energy is \(100p\varepsilon=75\varepsilon\). At the positive inverse temperature \(+\ln3/\varepsilon\) the mean falls to \(25\varepsilon\). The two occupations have the same binary mixing entropy and opposite response to an infinitesimal energy exchange.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

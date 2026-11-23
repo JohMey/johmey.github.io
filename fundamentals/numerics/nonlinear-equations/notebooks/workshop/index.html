@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newton&#x27;s method for an unknown covariance square root · OneSimulation</title>
+<meta name="description" content="A pair of independent unit-variance signals must be transformed to a prescribed covariance ellipse. One can solve a scalar square-root equation along each principal axis. A calibration that starts in a different frame exposes the genuinely matrix-valued derivative. Derive it, solve for its correction, and determine which residual will detect a wrong update.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Newton&#x27;s method for an unknown covariance square root · OneSimulation">
+<meta property="og:description" content="A pair of independent unit-variance signals must be transformed to a prescribed covariance ellipse. One can solve a scalar square-root equation along each principal axis. A calibration that starts in a different frame exposes the genuinely matrix-valued derivative. Derive it, solve for its correction, and determine which residual will detect a wrong update.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/notebooks/">Notebooks</a></p><h1>Newton&#x27;s method for an unknown covariance square root</h1><p class="lead">A pair of independent unit-variance signals must be transformed to a prescribed covariance ellipse. One can solve a scalar square-root equation along each principal axis. A calibration that starts in a different frame exposes the genuinely matrix-valued derivative. Derive it, solve for its correction, and determine which residual will detect a wrong update.</p><nav class="study-links"><a href="/fundamentals/numerics/nonlinear-equations/chapters/18-newton-sylvester-for-a-covariance-root/">Read the derivation</a><a href="/fundamentals/numerics/nonlinear-equations/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/nonlinear-equations-workshop.ipynb" download="nonlinear-equations-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>A target covariance is fixed in the laboratory axes. Start with a positive matrix whose axes are tilted, use the full matrix derivative, and compare the result with a spectral reference. NumPy and Matplotlib suffice.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="11" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+anisotropy = 9.0              # larger eigenvalue of target, smaller one is 1
+initial_angle = 35.0         # tilt of the starting estimate in degrees
+assert 1 &lt;= anisotropy &lt;= 100 and 0 &lt;= initial_angle &lt;= 90
+A = np.diag([float(anisotropy), 1.0])
+a = np.deg2rad(initial_angle)
+rotation = np.array([[np.cos(a), -np.sin(a)], [np.sin(a), np.cos(a)]])
+X0 = rotation @ np.diag([2., 1.]) @ rotation.T
+target_root = np.diag([np.sqrt(anisotropy), 1.0])</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Solve the Sylvester equation in the current eigenbasis</h2><p>The derivative of the square at X maps H to XH+HX. In the eigenbasis of a positive X each entry of that sum is an entry of H times a sum of two positive eigenvalues.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="17" wrap="off" spellcheck="false" autocapitalize="off">def correction(X, residual):
+    d, Q = np.linalg.eigh(X)
+    if np.min(d) &lt;= 0:
+        raise ValueError(&quot;The chosen positive branch has been left.&quot;)
+    transformed = Q.T @ residual @ Q
+    return Q @ (transformed / (d[:,None] + d[None,:])) @ Q.T
+
+history = [X0.copy()]
+for _ in range(30):
+    X = history[-1]
+    R = A-X@X
+    if np.linalg.norm(R) &lt;= 3e-14*np.linalg.norm(A):
+        break
+    H = correction(X, R)
+    history.append(X+H)
+    assert np.allclose(H@X + X@H, R, atol=2e-12)
+assert np.allclose(history[-1], target_root, atol=2e-10)
+wrong = 0.5*np.linalg.solve(X0, A-X0@X0)
+print(&quot;Initial residual of scalar-style derivative solve:&quot;, np.linalg.norm(X0@wrong+wrong@X0-(A-X0@X0)))
+print(&quot;Positive square root:&quot;)
+print(history[-1])</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>View the iteration as a change of ellipse</h2><p>A unit circle transformed by the root gives a one-standard-deviation covariance contour (its probability content depends on dimension). The right-hand graph charts the relative residual. Finite precision sets the visible floor.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="13" wrap="off" spellcheck="false" autocapitalize="off">fig, (ellipse, graph) = plt.subplots(1, 2, figsize=(10, 4.0), layout=&quot;constrained&quot;)
+theta = np.linspace(0, 2*np.pi, 241)
+circle = np.array([np.cos(theta), np.sin(theta)])
+for X, name, color, style in [(history[0], &quot;initial&quot;, &quot;#8b6816&quot;,&quot;--&quot;), (history[min(1,len(history)-1)], &quot;first iteration&quot;, &quot;#b94626&quot;,&quot;:&quot;), (target_root, &quot;required&quot;, &quot;#145c71&quot;,&quot;-&quot;)]:
+    coords = X@circle
+    ellipse.plot(coords[0], coords[1], style, color=color, label=name)
+ellipse.set(aspect=&quot;equal&quot;, title=&quot;Action on a unit circle&quot;, xlabel=&quot;First coordinate&quot;, ylabel=&quot;Second coordinate&quot;)
+ellipse.legend(fontsize=9)
+errors = [np.linalg.norm(A-X@X)/np.linalg.norm(A) for X in history]
+graph.semilogy(range(len(errors)), np.maximum(errors, 2e-16), &quot;o-&quot;, color=&quot;#145c71&quot;)
+graph.set(title=&quot;Residual of the matrix equation&quot;, xlabel=&quot;Accepted iteration&quot;, ylabel=&quot;Relative Frobenius residual&quot;)
+for ax in (ellipse, graph): ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Verify the derivative by vectorising it</h2><p>Column stacking converts the Sylvester equation into a four-by-four linear system. Compare the two constructions. In a local OneSimulation environment the explicit system uses its dense linear solver; elsewhere NumPy solves it.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="9" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense as solve
+except ImportError:
+    solve = np.linalg.solve
+R = A-X0@X0
+K = np.kron(np.eye(2), X0) + np.kron(X0.T, np.eye(2))
+H = solve(K, R.ravel(order=&quot;F&quot;)).reshape((2,2), order=&quot;F&quot;)
+assert np.allclose(H, correction(X0, R))
+print(&quot;Independent Sylvester check:&quot;, np.linalg.norm(K@H.ravel(order=&quot;F&quot;)-R.ravel(order=&quot;F&quot;)))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

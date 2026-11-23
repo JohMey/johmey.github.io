@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four contacts on a conductor of finite thickness · OneSimulation</title>
+<meta name="description" content="A voltmeter scarcely draws any current, yet its reading depends on how the current from a separate pair of leads spreads inside the specimen. Derive the conversion from a four-terminal reading to resistivity. Decide from the geometry whether the result describes a bulk material or a conducting sheet.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Four contacts on a conductor of finite thickness · OneSimulation">
+<meta property="og:description" content="A voltmeter scarcely draws any current, yet its reading depends on how the current from a separate pair of leads spreads inside the specimen. Derive the conversion from a four-terminal reading to resistivity. Decide from the geometry whether the result describes a bulk material or a conducting sheet.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/notebooks/">Notebooks</a></p><h1>Four contacts on a conductor of finite thickness</h1><p class="lead">A voltmeter scarcely draws any current, yet its reading depends on how the current from a separate pair of leads spreads inside the specimen. Derive the conversion from a four-terminal reading to resistivity. Decide from the geometry whether the result describes a bulk material or a conducting sheet.</p><nav class="study-links"><a href="/fundamentals/physics/electrodynamics/chapters/47-four-terminal-film/">Read the derivation</a><a href="/fundamentals/physics/electrodynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/electrodynamics-workshop.ipynb" download="electrodynamics-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Drive a current between two outer point contacts. Measure the open-circuit voltage between the equal-spaced inner contacts. Predict whether doubling all spacings changes the measured resistance before comparing the thin-film and bulk limits.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="10" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+rho_ohm_m = 2.0e-5
+thickness_um = 20.
+spacing_um = 80.
+current_mA = 5.
+assert rho_ohm_m &gt; 0 and thickness_um &gt; 0 and current_mA&gt;0
+s_over_h = spacing_um/thickness_um
+assert .04 &lt;= s_over_h &lt;= 15, &quot;Use spacing/thickness between 0.04 and 15&quot;</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Sum the image sources before subtracting large potentials</h2><p>In units of the thickness, a pair of mirror distances is a and b. Compute 1/a − 1/b by rationalising it. The resulting terms decay as the inverse cube of image index.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="12" wrap="off" spellcheck="false" autocapitalize="off">def scaled_resistance(z, images=6000):
+    z=np.atleast_1d(np.asarray(z,dtype=float))
+    n=2*np.arange(1,images+1,dtype=float)
+    a=np.hypot(z[:,None],n); b=np.hypot(2*z[:,None],n)
+    diff=3*z[:,None]**2/(a*b*(a+b))
+    return (1/(2*z)+2*diff.sum(axis=1))/np.pi
+
+sheet=rho_ohm_m/(thickness_um*1e-6)
+ratio=scaled_resistance(s_over_h)[0]
+voltage_mV=current_mA*sheet*ratio
+print(f&quot;Sheet resistance {sheet:.6g} ohm per square, voltage {voltage_mV:.6g} mV.&quot;)
+print(f&quot;Apparent sheet resistance from thin-film formula {np.pi*voltage_mV/(current_mA*np.log(2)):.6g} ohm per square.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>View the current geometry and the thickness crossover</h2><p>The left panel shows equipotentials of the ideal sheet geometry in the plane. The right panel solves the finite-thickness image problem and compares two asymptotes. The point contacts themselves lie outside the model&#x27;s finite potential range.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="14" wrap="off" spellcheck="false" autocapitalize="off">fig,axes=plt.subplots(1,2,figsize=(9,3.9),layout=&quot;constrained&quot;)
+x=np.linspace(-2.6,2.6,190); y=np.linspace(-1.55,1.55,130); X,Y=np.meshgrid(x,y)
+phi=np.log(np.hypot(X-1.5,Y)/np.hypot(X+1.5,Y))
+axes[0].contour(X,Y,phi,levels=[-2,-1.2,-.7,-.35,0,.35,.7,1.2,2],colors=&quot;#175868&quot;,linewidths=1.1)
+for pos,label,colour in zip([-1.5,-.5,.5,1.5],[&quot;+I&quot;,&quot;V₂&quot;,&quot;V₃&quot;,&quot;−I&quot;],[&quot;#a23d21&quot;,&quot;#375b9a&quot;,&quot;#375b9a&quot;,&quot;#a23d21&quot;]):
+    axes[0].plot(pos,0,&quot;o&quot;,color=colour);axes[0].text(pos,.17,label,ha=&quot;center&quot;,bbox=dict(fc=&quot;white&quot;,ec=&quot;none&quot;,pad=1))
+axes[0].set(xlabel=&quot;Along probes  x/s&quot;,ylabel=&quot;Across probes  y/s&quot;,aspect=&quot;equal&quot;,title=&quot;Infinite-sheet equipotentials&quot;)
+z=np.geomspace(.08,15,180)
+axes[1].loglog(z,scaled_resistance(z),label=&quot;Finite thickness&quot;,color=&quot;#175868&quot;,lw=2.4)
+axes[1].loglog(z,1/(2*np.pi*z),&quot;--&quot;,label=&quot;Bulk&quot;,color=&quot;#375b9a&quot;)
+axes[1].axhline(np.log(2)/np.pi,ls=&quot;:&quot;,label=&quot;Thin sheet&quot;,color=&quot;#a23d21&quot;)
+axes[1].plot(s_over_h,ratio,&quot;o&quot;,color=&quot;#a23d21&quot;);axes[1].legend(fontsize=9)
+axes[1].set(xlabel=&quot;Spacing / thickness  s/h&quot;,ylabel=&quot;Scaled resistance  (V/I)h/ρ&quot;,title=&quot;What the voltmeter measures&quot;)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Challenge the approximations</h2><p>Increase the image cutoff and compare the numerical uncertainty with the thin-sheet bias. At small spacing the voltage drop decreases approximately as 1/s. Explain why this also changes how a fixed voltmeter uncertainty propagates into a resistivity estimate.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="5" wrap="off" spellcheck="false" autocapitalize="off">value2=scaled_resistance(s_over_h,12000)[0]
+assert abs(value2-ratio) &lt; 5e-6
+assert np.isclose(scaled_resistance(.005)[0],1/(2*np.pi*.005),rtol=1e-5)
+assert abs(scaled_resistance(12)[0]-np.log(2)/np.pi) &lt; 2e-6
+print(&quot;Fractional thin-sheet bias:&quot;,np.pi*ratio/np.log(2)-1)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Optional OneSimulation fit with a thermoelectric offset</h2><p>A constant voltage offset should enter as a separate fit coefficient. The positive and negative current readings below share the same physical resistance and offset. The synthetic voltages have no random error, so an independent linear solve must recover the input parameters.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="12" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import least_squares_dense
+except ImportError:
+    print(&quot;The optional sensor fit runs in a local OneSimulation installation.&quot;)
+else:
+    spacings=np.array([.2,.5,1.,2.])
+    k=np.repeat(scaled_resistance(spacings),2)*np.tile([current_mA,-current_mA],len(spacings))
+    design=np.column_stack([k,np.ones(len(k))])
+    readings=k*sheet+0.012
+    recovered=least_squares_dense(design,readings)
+    print(&quot;Estimated sheet resistance in ohms and offset in mV:&quot;,recovered)
+    assert np.allclose(recovered,[sheet,.012])</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

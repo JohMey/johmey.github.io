@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which damping law produced the free-decay trace? · OneSimulation</title>
+<meta name="description" content="A carriage slides on a guide and a spring pulls it back to its resting position. Two dampers can be adjusted to give the same first peak reduction. Predict the following turning points and decide which measurement separates viscous loss from dry sliding friction.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/notebooks/machine-dynamics-methods/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Which damping law produced the free-decay trace? · OneSimulation">
+<meta property="og:description" content="A carriage slides on a guide and a spring pulls it back to its resting position. Two dampers can be adjusted to give the same first peak reduction. Predict the following turning points and decide which measurement separates viscous loss from dry sliding friction.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/notebooks/machine-dynamics-methods/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/notebooks/">Notebooks</a></p><h1>Which damping law produced the free-decay trace?</h1><p class="lead">A carriage slides on a guide and a spring pulls it back to its resting position. Two dampers can be adjusted to give the same first peak reduction. Predict the following turning points and decide which measurement separates viscous loss from dry sliding friction.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/05-separating-viscous-and-sliding-friction/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/machine-dynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/machine-dynamics-machine-dynamics-methods.ipynb" download="machine-dynamics-machine-dynamics-methods.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Use the turning points to identify the energy loss mechanism</h2><p>For a viscous damper the free equation is \(m\ddot x+c\dot x+kx=0\). In the underdamped regime let \(\omega_n=\sqrt{k/m}\), \(\zeta=c/(2\sqrt{km})\) and \(\omega_d=\omega_n\sqrt{1-\zeta^2}\). Released from \(x(0)=A_0\) with zero velocity, the displacement is \(A_0e^{-\zeta\omega_nt}[\cos\omega_dt+(\zeta\omega_n/\omega_d)\sin\omega_dt]\). Turning points occur every \(\pi/\omega_d\). Their absolute sizes have a constant ratio \(e^{-\pi\zeta/\sqrt{1-\zeta^2}}\).</p><p>Now let a dry guide exert a constant opposing force of magnitude \(F\). During a sliding half-cycle its sign remains fixed. Starting from a positive peak with \(kx&gt;F\), the spring accelerates the mass to the left while friction acts to the right. Subtract the shifted equilibrium \(F/k\) from the coordinate. The remainder obeys an undamped oscillator equation, so the next turning point after \(\pi/\omega_n\) is \(2F/k-x\). For a release from the other side, replace \(F/k\) by its signed counterpart. The magnitudes of successive peaks fall by \(2F/k\) while the mass still crosses the origin. At a turning point where \(|kx|\le F\), static friction can support the spring and the body sticks there. Here the static threshold is idealised as equal to the sliding force.</p><h2>Match the first peak and predict the next three</h2><p>Let \(m=1\) kg, \(k=1000\) N/m, \(F=0.6\) N and \(A_0=12\) mm. Dry friction subtracts 1.2 mm of magnitude per sliding half-cycle. The first return is at −10.8 mm. A viscous model can reproduce its magnitude if its half-period peak ratio is \(0.9\). Solving \(\delta=\pi\zeta/\sqrt{1-\zeta^2}\) for \(\delta=-\ln(0.9)\) gives \(\zeta=0.0335\). Its fourth half-cycle peak is \(12(0.9)^4=7.87\) mm, whereas the dry-friction prediction is 7.20 mm. A single peak pair cannot distinguish the models. Several peaks well above the instrument resolution can.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="4" wrap="off" spellcheck="false" autocapitalize="off">mass = 1.0
+stiffness = 1000.0
+friction = 0.6
+initial_mm = 12.0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="13" wrap="off" spellcheck="false" autocapitalize="off">A=initial_mm/1000.; a=friction/stiffness; wn=np.sqrt(stiffness/mass)
+assert mass&gt;0 and stiffness&gt;0 and 0&lt;2*a&lt;A
+first_ratio=1-2*a/A
+delta=-np.log(first_ratio)
+zeta=delta/np.hypot(np.pi,delta)
+wd=wn*np.sqrt(1-zeta*zeta)
+states=[A]
+while abs(states[-1])&gt;a*(1+1e-10):
+    x0=states[-1]; states.append(2*np.sign(x0)*a-x0)
+    assert len(states)&lt;10001, &quot;Select a resolvable sliding friction.&quot;
+states=np.array(states)
+assert np.isclose(abs(states[1]),A*first_ratio) and abs(states[-1])&lt;=a*(1+1e-10)
+print(f&quot;Matched viscous ratio {zeta:.4f}; sliding ends after {len(states)-1} half cycles at {1e3*states[-1]:.3f} mm.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="9" wrap="off" spellcheck="false" autocapitalize="off">t=np.linspace(0,max(.3,(len(states)+2)*np.pi/wn),1001)
+j=np.minimum((t/(np.pi/wn)).astype(int),len(states)-1)
+last=j==len(states)-1
+eq=np.sign(states[j])*a
+dry=np.where(last,states[-1],eq+(states[j]-eq)*np.cos(wn*(t-j*np.pi/wn)))
+vis=A*np.exp(-zeta*wn*t)*(np.cos(wd*t)+zeta*wn/wd*np.sin(wd*t))
+fig,ax=axes(&quot;Time (s)&quot;,&quot;Displacement (mm)&quot;)
+ax.plot(t,vis*1000,label=&quot;Viscous&quot;,color=teal);ax.plot(t,dry*1000,&quot;--&quot;,label=&quot;Dry sliding and sticking&quot;,color=orange)
+ax.legend();plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The sliding model is evaluated on exact half-cycle segments. A plateau is physical when the static force threshold can hold the carriage.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="5" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=axes(&quot;Half-cycle turning-point index&quot;,&quot;Absolute turning point (mm)&quot;)
+j=np.arange(len(states))
+ax.plot(j,1000*np.abs(states),&quot;o-&quot;,label=&quot;Dry friction&quot;,color=orange)
+ax.plot(j,1000*A*first_ratio**j,&quot;s--&quot;,label=&quot;Viscous&quot;,color=teal)
+ax.legend();plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Plotting amplitude against peak count makes an almost missed difference in the first displacement trace easier to measure.</p><h2>Exercise · estimate sliding friction</h2><p>A 1000 N/m guide returns through peak magnitudes 7.2, 6.0 and 4.8 mm. Estimate its friction and predict the following magnitude.</p><p>The decrement per half-cycle is 1.2 mm. The corresponding force is \(k(0.0012)/2=0.60\) N. The next alternating peak magnitude is 3.6 mm, still well above the sticking threshold of 0.6 mm.</p><h2>Exercise · check the last interval</h2><p>A positive turning point is 0.9 mm and \(F/k=0.6\) mm. Will the mass reach a negative turning point?</p><p>Sliding restarts because \(0.9&gt;0.6\). The next position is \(2(0.6)-0.9=0.3\) mm, still positive. Since \(0.3&lt;0.6\), static friction can hold it there. Extrapolating a positive linear amplitude envelope through zero would lose the actual final position.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

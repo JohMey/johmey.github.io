@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where should a numerical electrostatic domain end? · OneSimulation</title>
+<meta name="description" content="A finite mesh needs an outer boundary even when the physical field extends to infinity. Solve the artificial-boundary error exactly for a dipole and test whether enlarging the numerical domain or matching the exterior field is more effective.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/notebooks/numerical-laboratory/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Where should a numerical electrostatic domain end? · OneSimulation">
+<meta property="og:description" content="A finite mesh needs an outer boundary even when the physical field extends to infinity. Solve the artificial-boundary error exactly for a dipole and test whether enlarging the numerical domain or matching the exterior field is more effective.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/notebooks/numerical-laboratory/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/notebooks/">Notebooks</a></p><h1>Where should a numerical electrostatic domain end?</h1><p class="lead">A finite mesh needs an outer boundary even when the physical field extends to infinity. Solve the artificial-boundary error exactly for a dipole and test whether enlarging the numerical domain or matching the exterior field is more effective.</p><nav class="study-links"><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/13-truncating-an-open-field-domain/">Read the derivation</a><a href="/fundamentals/physics/electrodynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;, &quot;scipy&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/electrodynamics-numerical-laboratory.ipynb" download="electrodynamics-numerical-laboratory.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Match a harmonic in an empty outer shell</h2><p>At the surface of a source-containing sphere of radius \(a\) prescribe \(V(a,\theta)=V_a\cos\theta\). Outside this sphere there is no charge. Insert \(V=f(r)\cos\theta\) in Laplace&#x27;s equation. The angular Laplacian supplies the eigenvalue \(-2\), so \((r^2 f&#x27;)&#x27;-2f=0\). A power-law trial gives \(f=Ar+B/r^2\). Decay at infinity removes the growing term and the open-space reference is \(f_\infty=V_a(a/r)^2\).</p><p>Terminate the calculation at \(R\) and ground the artificial wall. The two boundary equations instead give</p><div class="math display">\[f_R(r)=V_a\left(\frac ar\right)^2\frac{1-(r/R)^3}{1-(a/R)^3}.\]</div><p>A well-converged interior solve can reproduce this answer perfectly while retaining a systematic exterior-domain bias. An alternative boundary condition is \(f&#x27;(R)+2f(R)/R=0\). It admits the decaying dipole and annihilates the unwanted growing coefficient. A single local coefficient matches one spherical-harmonic order exactly.</p><h2>Estimate the error before refining the mesh</h2><p>At \(r=2a\) with \(R=5a\), the grounded boundary gives \(f_R/f_\infty=(1-8/125)/(1-1/125)=117/124\). The amplitude error is about minus 5.65 percent. At a fixed observation radius, the leading bias decreases with the inverse cube of \(R\). Refining the interior grid at fixed \(R\) cannot remove it. Compare a second-order radial difference solution with both analytic curves to measure the two errors independently. To see what the linear solver actually controls, put a uniform grid on \(r/a\). Approximate the outgoing flux \(r^2 f&#x27;\) at the right face by \(r_{i+1/2}^2(f_{i+1}-f_i)/h\) and form the same quantity at the left face. Subtract the fluxes, divide by \(h\) and equate to \(2f_i\). The resulting tridiagonal system has positive diagonal \(2+(r_{i+1/2}^2+r_{i-1/2}^2)/h^2\). Move the known inner and outer boundary terms to the right-hand side. For the grounded wall the outer contribution is zero; the inner value is the amplitude unit.</p><p>At \(r/a=2\) the open-domain amplitude is 0.2500. The grounded reference gives 0.2359 when \(R/a=5\). Repeating at \(R/a=10\) raises that prediction to 0.24825. Keep the physical grid spacing fixed when making this domain comparison. If the cell count stays fixed, increasing the radius also coarsens the mesh, and the two effects can mask each other. The first figure supplies both analytical references needed to separate them.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="3" wrap="off" spellcheck="false" autocapitalize="off">outer_ratio = 5.0            # R / a
+probe_ratio = 2.0            # observation radius / a
+cells = 80</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="17" wrap="off" spellcheck="false" autocapitalize="off">from scipy.linalg import solve_banded
+assert 1&lt;probe_ratio&lt;outer_ratio and cells&gt;=8
+r=np.linspace(1,outer_ratio,cells+1)
+h=r[1]-r[0]
+mid=(r[:-1]+r[1:])/2
+lower,upper=mid[:-1]**2/h**2,mid[1:]**2/h**2
+diagonal=lower+upper+2
+bands=np.zeros((3,cells-1))
+bands[1]=diagonal
+bands[0,1:]=-upper[:-1]
+bands[2,:-1]=-lower[1:]
+rhs=np.zeros(cells-1)
+rhs[0]=lower[0]
+numeric=np.r_[1.,solve_banded((1,1),bands,rhs),0.]
+def ratio(x,R):
+    return (1-(x/R)**3)/(1-R**-3)
+finite=ratio(r,outer_ratio)/r**2
+reference=r**-2
+print(f&quot;Exact truncation bias at probe: {100*(ratio(probe_ratio,outer_ratio)-1):.3f}%&quot;)
+print(f&quot;Maximum field-amplitude discretisation error: {max(abs(numeric-finite)):.4g}&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="6" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=axes(&quot;Radius r/a&quot;,&quot;Dipole amplitude / prescribed value&quot;)
+ax.plot(r,reference,color=orange,label=&quot;Open domain&quot;)
+ax.plot(r,finite,color=teal,label=&quot;Grounded exterior&quot;)
+ax.plot(r[::max(1,cells//15)],numeric[::max(1,cells//15)],&quot;o&quot;,ms=3,color=blue,label=&quot;Finite differences&quot;)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The finite-difference solution follows the field selected by the grounded exterior wall. Its agreement with that curve says nothing about whether the wall models open space.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="6" wrap="off" spellcheck="false" autocapitalize="off">R=np.geomspace(1.03*probe_ratio,max(30,5*probe_ratio),140)
+fig,ax=axes(&quot;Outer radius R/a&quot;,&quot;Relative probe-amplitude error&quot;)
+ax.loglog(R,1-ratio(probe_ratio,R),color=teal,label=&quot;Exact boundary error&quot;)
+ax.loglog(R,(probe_ratio**3-1)/R**3,&quot;--&quot;,color=orange,label=&quot;Leading inverse cube&quot;)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Increasing the domain radius at fixed physical probe location shows the inverse-cube asymptote. A mesh study alone would miss this error.</p><h2>Exercise · size the exterior shell</h2><p>For a probe at \(2a\), require an error below one percent. What radius is needed?</p><p>The exact relative bias magnitude is \(7/[(R/a)^3-1]\). Hence \((R/a)^3&gt;701\) or \(R/a&gt;8.883\). A value of nine satisfies the condition before numerical discretisation is considered.</p><h2>Exercise · change the angular dependence</h2><p>What Robin coefficient would match a pure exterior quadrupole?</p><p>A decaying multipole of order \(\ell\) behaves as \(r^{-(\ell+1)}\). Its logarithmic slope at \(R\) is \(-(\ell+1)/R\), so the quadrupole needs \(3/R\). A superposition of orders requires angular information or an exterior operator that acts differently on each mode.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

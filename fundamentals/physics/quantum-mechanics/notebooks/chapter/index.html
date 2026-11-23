@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can changing a Gaussian width repair a missing cusp? · OneSimulation</title>
+<meta name="description" content="Two normalisable trial families compete for the ground state of a one-dimensional attractive contact potential. Each can vary its width. Predict which family can satisfy the derivative jump before inspecting its lowest energy.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Can changing a Gaussian width repair a missing cusp? · OneSimulation">
+<meta property="og:description" content="Two normalisable trial families compete for the ground state of a one-dimensional attractive contact potential. Each can vary its width. Predict which family can satisfy the derivative jump before inspecting its lowest energy.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a> / <a href="/fundamentals/physics/quantum-mechanics/notebooks/">Notebooks</a></p><h1>Can changing a Gaussian width repair a missing cusp?</h1><p class="lead">Two normalisable trial families compete for the ground state of a one-dimensional attractive contact potential. Each can vary its width. Predict which family can satisfy the derivative jump before inspecting its lowest energy.</p><nav class="study-links"><a href="/fundamentals/physics/quantum-mechanics/chapters/07-variational-energies/#notebook-example">Read the derivation</a><a href="/fundamentals/physics/quantum-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/quantum-mechanics-chapter.ipynb" download="quantum-mechanics-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="6" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+strength=1.         # units in which hbar = mass = 1
+scale=1.0           # common multiplier applied to optimal inverse decay lengths
+assert strength&gt;0 and scale&gt;0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compute the energy functional</h2><p>Use the quadratic-form kinetic energy ∫|ψ&#x27;|²/2 and the contact expectation −g|ψ(0)|². The Gaussian parameter b is defined by exp(−b² x²/2); the cusp parameter a appears in exp(−a|x|).</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="5" wrap="off" spellcheck="false" autocapitalize="off">b=2*strength/np.sqrt(np.pi)*scale; a=strength*scale
+def gaussian_energy(b):return b*b/4-strength*b/np.sqrt(np.pi)
+def cusp_energy(a):return a*a/2-strength*a
+print(&quot;Gaussian, cusp, and exact ground energies:&quot;,gaussian_energy(b),cusp_energy(a),-.5*strength**2)
+assert gaussian_energy(b)&gt;=-.5*strength**2-1e-12 and cusp_energy(a)&gt;=-.5*strength**2-1e-12</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare shapes and upper bounds</h2><p>Plot probability densities and energies versus the same scaled inverse-length parameter. Inspect where the smooth trial loses contact probability as it spreads its kinetic cost.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="10" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.9),layout=&quot;constrained&quot;)
+x=np.linspace(-4/strength,4/strength,401); v=np.linspace(.03,2.75,180)*strength
+ax[0].plot(x,b/np.sqrt(np.pi)*np.exp(-(b*x)**2),color=&quot;#375b9a&quot;,label=&quot;Gaussian&quot;)
+ax[0].plot(x,a*np.exp(-2*a*abs(x)),color=&quot;#a23d21&quot;,label=&quot;Cusp trial&quot;)
+ax[0].set(xlabel=&quot;Position (model units)&quot;,ylabel=&quot;Probability per unit length&quot;,title=&quot;Behaviour at the contact&quot;);ax[0].legend(fontsize=8)
+ax[1].plot(v/strength,gaussian_energy(v)/strength**2,color=&quot;#375b9a&quot;,label=&quot;Gaussian&quot;)
+ax[1].plot(v/strength,cusp_energy(v)/strength**2,color=&quot;#a23d21&quot;,label=&quot;Cusp trial&quot;)
+ax[1].axhline(-.5,color=&quot;#175868&quot;,ls=&quot;:&quot;,label=&quot;Exact ground&quot;)
+ax[1].set(xlabel=&quot;Inverse length / coupling&quot;,ylabel=&quot;Energy / coupling squared&quot;,title=&quot;Optimising one length scale&quot;);ax[1].legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

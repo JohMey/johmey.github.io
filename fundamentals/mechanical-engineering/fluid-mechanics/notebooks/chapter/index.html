@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Locate the force on an inclined circular viewing window · OneSimulation</title>
+<meta name="description" content="Two circular windows have the same area and centre depth. One is more steeply inclined. Predict whether the net force and its position both stay the same. The circular face is completely submerged and the opposite face is at atmospheric pressure.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Locate the force on an inclined circular viewing window · OneSimulation">
+<meta property="og:description" content="Two circular windows have the same area and centre depth. One is more steeply inclined. Predict whether the net force and its position both stay the same. The circular face is completely submerged and the opposite face is at atmospheric pressure.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/">Notebooks</a></p><h1>Locate the force on an inclined circular viewing window</h1><p class="lead">Two circular windows have the same area and centre depth. One is more steeply inclined. Predict whether the net force and its position both stay the same. The circular face is completely submerged and the opposite face is at atmospheric pressure.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/02-hydrostatics/#notebook-example">Read the derivation</a><a href="/fundamentals/mechanical-engineering/fluid-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/fluid-mechanics-chapter.ipynb" download="fluid-mechanics-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+radius,depth=.18,.42   # m, circular radius and vertical centre depth
+tilt=60.               # degrees from horizontal
+rho,g=998.,9.81        # kg/m³, m/s²
+assert radius&gt;0 and rho&gt;0 and g&gt;0 and 0&lt;=tilt&lt;=90
+sine=np.sin(np.deg2rad(tilt))
+assert depth&gt;radius*sine, &quot;This worksheet assumes a fully submerged window.&quot;</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Calculate both the resultant and the moment</h2><p>The first moment of area about the centre is zero. The second moment about an in-plane diameter is pi times the fourth power of radius divided by four. Integrate horizontal chord strips to check the resulting force location independently.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="11" wrap="off" spellcheck="false" autocapitalize="off">A=np.pi*radius**2
+force=rho*g*A*depth
+offset=radius**2*sine/(4*depth)
+edges=np.linspace(-radius,radius,3001)
+s=(edges[1:]+edges[:-1])/2
+area=2*np.sqrt(radius**2-s*s)*np.diff(edges)
+pressure=rho*g*(depth+s*sine)
+numerical=(pressure*area).sum()
+s_numeric=(pressure*s*area).sum()/numerical
+assert np.isclose(force,numerical,rtol=3e-5) and np.isclose(offset,s_numeric,atol=1e-5*radius)
+print(f&quot;Resultant {force:.2f} N, offset {1000*offset:.2f} mm down the slope.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Inspect which strips produce the moment</h2><p>Pressure rises linearly with depth but strip width vanishes at the rim. The right panel holds depth fixed as the angle varies and only draws submerged orientations.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="9" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+ax[0].plot(s*1000,pressure*2*np.sqrt(radius**2-s*s),label=&quot;Force per unit slope distance&quot;)
+ax[0].axvline(offset*1000,color=&quot;#ab532c&quot;,ls=&quot;--&quot;,label=&quot;Resultant location&quot;)
+ax[0].set(xlabel=&quot;Distance down window from centre (mm)&quot;,ylabel=&quot;Strip force density (N/m)&quot;,title=&quot;Integrated hydrostatic load&quot;)
+theta=np.linspace(0,90,120); valid=depth&gt;radius*np.sin(np.deg2rad(theta))
+ax[1].plot(theta[valid],1000*radius**2*np.sin(np.deg2rad(theta[valid]))/(4*depth),label=&quot;Centre of pressure&quot;)
+ax[1].set(xlabel=&quot;Tilt from horizontal (degrees)&quot;,ylabel=&quot;Down-slope offset (mm)&quot;,title=&quot;Location at fixed centre depth&quot;)
+for p in ax: p.grid(alpha=.22);p.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Try a horizontal window. Double the centre depth at fixed tilt and predict both readings. If the gas on the other side is pressurised, work with the pressure difference across the window before locating its resultant.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

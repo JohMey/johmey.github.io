@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How much work is lost when two finite bodies touch? · OneSimulation</title>
+<meta name="description" content="Two bodies in an insulated enclosure begin at different temperatures. A cyclic reversible device could extract work before their temperatures equalise. Compare this with simply putting the bodies in thermal contact. Change the heat capacities and initial temperatures, then rerun.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How much work is lost when two finite bodies touch? · OneSimulation">
+<meta property="og:description" content="Two bodies in an insulated enclosure begin at different temperatures. A cyclic reversible device could extract work before their temperatures equalise. Compare this with simply putting the bodies in thermal contact. Change the heat capacities and initial temperatures, then rerun.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/notebooks/">Notebooks</a></p><h1>How much work is lost when two finite bodies touch?</h1><p class="lead">Two bodies in an insulated enclosure begin at different temperatures. A cyclic reversible device could extract work before their temperatures equalise. Compare this with simply putting the bodies in thermal contact. Change the heat capacities and initial temperatures, then rerun.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/09-exergy/#notebook-example">Read the derivation</a><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/engineering-thermodynamics-chapter.ipynb" download="engineering-thermodynamics-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="6" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+Th,Tc=360.,280.         # initial temperatures, K
+Ch,Cc=1.2,1.2           # total heat capacities, kJ/K
+assert Th&gt;Tc&gt;0 and Ch&gt;0 and Cc&gt;0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Close separate entropy and energy balances</h2><p>A reversible final state has the initial total entropy. Direct contact preserves the initial total energy. Use these two balances separately to obtain the two different final temperatures.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="8" wrap="off" spellcheck="false" autocapitalize="off">Trev=np.exp((Ch*np.log(Th)+Cc*np.log(Tc))/(Ch+Cc))
+Tmix=(Ch*Th+Cc*Tc)/(Ch+Cc)
+W=(Ch+Cc)*(Tmix-Trev)
+deltaS=Ch*np.log(Tmix/Th)+Cc*np.log(Tmix/Tc)
+assert W&gt;0 and deltaS&gt;0
+assert abs(Ch*np.log(Trev/Th)+Cc*np.log(Trev/Tc))&lt;1e-11
+print(f&quot;Direct contact {Tmix:.3f} K; reversible end state {Trev:.3f} K; maximum work {W:.3f} kJ&quot;)
+print(f&quot;Entropy created in direct contact {deltaS:.5f} kJ/K.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Follow the reversible path</h2><p>Transfer equal entropy increments out of the hot body and into the cold one. Work is the difference between the released and absorbed energies. At equal temperatures the marginal work vanishes.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="12" wrap="off" spellcheck="false" autocapitalize="off">ds=np.linspace(0,Ch*np.log(Th/Trev),250)
+hot=Th*np.exp(-ds/Ch);cold=Tc*np.exp(ds/Cc)
+work=Ch*(Th-hot)-Cc*(cold-Tc)
+assert np.isclose(work[-1],W) and np.isclose(hot[-1],cold[-1])
+fig,ax=plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+ax[0].plot(ds,hot,label=&quot;Hot body&quot;);ax[0].plot(ds,cold,label=&quot;Cold body&quot;)
+ax[0].set(xlabel=&quot;Entropy transferred (kJ/K)&quot;,ylabel=&quot;Temperature (K)&quot;,title=&quot;Equal entropy exchanged&quot;)
+ax[1].plot(ds,work,label=&quot;Work delivered&quot;)
+ax[1].axhline(W,ls=&quot;:&quot;,color=&quot;0.45&quot;,label=&quot;Maximum&quot;)
+ax[1].set(xlabel=&quot;Entropy transferred (kJ/K)&quot;,ylabel=&quot;Accumulated work (kJ)&quot;,title=&quot;End of the work-producing path&quot;)
+for p in ax:p.grid(alpha=.22);p.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Double the cold body&#x27;s heat capacity without changing either temperature. Explain why the reversible end temperature approaches the cold initial temperature as the cold capacity becomes very large. Compare the area under the temperature-gap curve with the total delivered work.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

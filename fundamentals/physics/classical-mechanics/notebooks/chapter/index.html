@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When the moving centre of light hides a binary orbit · OneSimulation</title>
+<meta name="description" content="Change the companion&#x27;s mass and brightness independently. The detector sees the centre of light in a projected circular orbit; the centre of mass remains fixed. Decide in advance when the astrometric signal will vanish.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When the moving centre of light hides a binary orbit · OneSimulation">
+<meta property="og:description" content="Change the companion&#x27;s mass and brightness independently. The detector sees the centre of light in a projected circular orbit; the centre of mass remains fixed. Decide in advance when the astrometric signal will vanish.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a> / <a href="/fundamentals/physics/classical-mechanics/notebooks/">Notebooks</a></p><h1>When the moving centre of light hides a binary orbit</h1><p class="lead">Change the companion&#x27;s mass and brightness independently. The detector sees the centre of light in a projected circular orbit; the centre of mass remains fixed. Decide in advance when the astrometric signal will vanish.</p><nav class="study-links"><a href="/fundamentals/physics/classical-mechanics/chapters/07-two-body-gravity/#notebook-example">Read the derivation</a><a href="/fundamentals/physics/classical-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/classical-mechanics-chapter.ipynb" download="classical-mechanics-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+mass_fraction = .30       # M2 / (M1 + M2)
+light_fraction = .10      # L2 / (L1 + L2)
+separation_au = 1.0
+distance_pc = 20.
+inclination_deg = 55.
+assert 0&lt;mass_fraction&lt;1 and 0&lt;=light_fraction&lt;=1 and distance_pc&gt;0 and separation_au&gt;0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Construct the sky projection</h2><p>One astronomical unit at one parsec subtends one arcsecond. Use milliarcseconds (mas). Inclination foreshortens the minor axis but preserves the major semiaxis of a projected circular orbit.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="7" wrap="off" spellcheck="false" autocapitalize="off">phase=np.linspace(0,2*np.pi,181); theta=1000*separation_au/distance_pc
+relative=theta*np.array([np.cos(phase),np.cos(np.deg2rad(inclination_deg))*np.sin(phase)])
+p1=-mass_fraction*relative; p2=(1-mass_fraction)*relative
+centroid=(1-light_fraction)*p1+light_fraction*p2
+print(&quot;Centre-of-light semimajor axis (mas):&quot;,theta*abs(light_fraction-mass_fraction))
+assert np.allclose((1-mass_fraction)*p1+mass_fraction*p2,0)
+assert np.allclose(centroid,(light_fraction-mass_fraction)*relative)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Observe the sign flip as the brightness ratio changes</h2><p>A detector resolving only the photocentre cannot recover component separation without information about the component fractions. The second panel keeps an orientation sign that an amplitude alone would discard.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="8" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.9),layout=&quot;constrained&quot;)
+for position,name,colour in [(p1,&quot;Primary&quot;,&quot;#375b9a&quot;),(p2,&quot;Companion&quot;,&quot;#a23d21&quot;),(centroid,&quot;Centre of light&quot;,&quot;#175868&quot;)]:
+    ax[0].plot(*position,label=name,color=colour);ax[0].plot(*position[:,0],&quot;o&quot;,ms=4,color=colour)
+ax[0].set(xlabel=&quot;Sky x (mas)&quot;,ylabel=&quot;Sky y (mas)&quot;,aspect=&quot;equal&quot;,title=&quot;Projected circular orbits&quot;);ax[0].legend(fontsize=8)
+light=np.linspace(0,1,120);ax[1].plot(light,theta*(light-mass_fraction),color=&quot;#175868&quot;);ax[1].axhline(0,color=&quot;grey&quot;,lw=.8)
+ax[1].plot(light_fraction,theta*(light_fraction-mass_fraction),&quot;o&quot;,color=&quot;#a23d21&quot;)
+ax[1].set(xlabel=&quot;Companion light fraction&quot;,ylabel=&quot;Signed centroid semiaxis (mas)&quot;,title=&quot;Bias caused by unresolved light&quot;)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

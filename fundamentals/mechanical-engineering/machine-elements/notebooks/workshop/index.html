@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a polygonal sprocket imprints speed ripple on a roller chain · OneSimulation</title>
+<meta name="description" content="A small conveyor presents glass samples to an inspection camera. The driving shaft turns at accurately regulated speed and each revolution advances exactly twelve chain pitches. A camera triggered halfway between consecutive roller engagements nevertheless sees a varying sample velocity. Predict that variation from one chord of the sprocket. Then use a displacement measurement to decide what a pitch counter or a shaft encoder could have missed.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a polygonal sprocket imprints speed ripple on a roller chain · OneSimulation">
+<meta property="og:description" content="A small conveyor presents glass samples to an inspection camera. The driving shaft turns at accurately regulated speed and each revolution advances exactly twelve chain pitches. A camera triggered halfway between consecutive roller engagements nevertheless sees a varying sample velocity. Predict that variation from one chord of the sprocket. Then use a displacement measurement to decide what a pitch counter or a shaft encoder could have missed.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/notebooks/">Notebooks</a></p><h1>How a polygonal sprocket imprints speed ripple on a roller chain</h1><p class="lead">A small conveyor presents glass samples to an inspection camera. The driving shaft turns at accurately regulated speed and each revolution advances exactly twelve chain pitches. A camera triggered halfway between consecutive roller engagements nevertheless sees a varying sample velocity. Predict that variation from one chord of the sprocket. Then use a displacement measurement to decide what a pitch counter or a shaft encoder could have missed.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/20-chordal-action-in-a-roller-chain/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/machine-elements/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/machine-elements-workshop.ipynb" download="machine-elements-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Predict what happens to speed ripple when the tooth count doubles while the mean conveying speed is kept fixed. Change the first cell, run all cells, and compare speed, timing and displacement.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+pitch = .0127      # m between adjacent roller centres
+teeth = 12         # integer sprocket tooth count
+rpm = 120.0        # constant drive shaft speed
+sensor_phase = .25 # fraction of one engagement interval, 0 to 1
+assert int(teeth) == teeth and teeth &gt;= 4 and pitch &gt; 0 and rpm &gt; 0
+assert 0 &lt;= sensor_phase &lt;= 1</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Advance by one chord</h2><p>A roller centre sweeps an angle of \(2\pi/z\) over one engagement. Integrate the projection of its circular velocity on the straight strand. The difference in projected position between the interval endpoints has to be one pitch.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="17" wrap="off" spellcheck="false" autocapitalize="off">def chain(z, drive_rpm, phase):
+    a = np.pi/z
+    R = pitch/(2*np.sin(a))
+    omega = 2*np.pi*drive_rpm/60
+    theta = (2*np.asarray(phase)-1)*a
+    advance = R*(np.sin(theta)+np.sin(a))
+    velocity = omega*R*np.cos(theta)
+    mean = pitch*z*drive_rpm/60
+    return advance,velocity,mean
+
+phase = np.linspace(0,1,501)
+advance,v,mean = chain(teeth,rpm,phase)
+assert np.isclose(advance[-1]-advance[0],pitch)
+assert np.isclose(np.sum(np.diff(phase) * (v[:-1] + v[1:]) / 2)/mean,1,rtol=2e-6)
+print(f&quot;Mean strand speed {mean:.5f} m/s; tooth-pass frequency {teeth*rpm/60:.1f} Hz&quot;)
+print(f&quot;Full speed variation / mean = {100*(v.max()-v.min())/mean:.4f}%&quot;)
+x_obs,v_obs,_ = chain(teeth,rpm,sensor_phase)
+print(f&quot;At phase {sensor_phase:.3f}: advance = {1e3*x_obs:.4f} mm, speed = {v_obs:.5f} m/s&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare equal mean speeds</h2><p>The doubled-tooth sprocket must rotate half as fast to maintain the same pitch throughput. The phase coordinate stays comparable because the number of engagements per second is also unchanged.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="10" wrap="off" spellcheck="false" autocapitalize="off">fig, ax = plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+for z, r, style in [(teeth,rpm,&quot;-&quot;),(2*teeth,rpm/2,&quot;--&quot;)]:
+    x,u,m = chain(z,r,phase)
+    ax[0].plot(phase,100*(u/m-1),style,label=f&quot;{z} teeth&quot;)
+    ax[1].plot(phase,(x-phase*pitch)*1e6,style,label=f&quot;{z} teeth&quot;)
+ax[0].set(xlabel=&quot;Fraction of an engagement&quot;,ylabel=&quot;Speed departure from mean (%)&quot;,title=&quot;Instantaneous strand speed&quot;)
+ax[1].set(xlabel=&quot;Fraction of an engagement&quot;,ylabel=&quot;Position error (µm)&quot;,title=&quot;Relative to uniform advance&quot;)
+for p in ax:
+    p.axhline(0,color=&quot;0.55&quot;,lw=.8); p.grid(alpha=.23); p.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Try a tooth-count specification</h2><p>Find the smallest integer tooth count whose peak-to-peak speed variation is below 0.5% of the mean. Does increasing shaft speed change this percentage? Decide whether a sensor that counts only whole pitches would detect the position error drawn on the right.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="6" wrap="off" spellcheck="false" autocapitalize="off">for z in range(4,200):
+    a = np.pi/z
+    ripple = a*np.tan(a/2)
+    if ripple &lt; .005:
+        print(f&quot;First tooth count below 0.5%: {z}; ripple = {100*ripple:.4f}%&quot;)
+        break</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Check the mean with four velocity samples</h2><p>Use a four-point Gauss rule in engagement phase. Each node has a different integration weight. OneSimulation supplies the quadrature table in a local installation. The browser computes equivalent Gauss nodes and weights with NumPy.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="14" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.discretization.geometry.carriers.kernels.quadrature.rules.reference_quadrature import gauss_legendre
+    nodes, weights = np.asarray(gauss_legendre(4)).T
+    method = &quot;OneSimulation Gauss quadrature&quot;
+except ImportError:
+    nodes, weights = np.polynomial.legendre.leggauss(4)
+    method = &quot;NumPy Gauss quadrature&quot;
+
+# Map the reference interval [-1, 1] to one complete engagement.
+gauss_phase = (nodes + 1) / 2
+sampled_speed = chain(teeth, rpm, gauss_phase)[1]
+gauss_mean = weights @ sampled_speed / 2
+print(f&quot;{method} with four samples: {gauss_mean:.8f} m/s&quot;)
+assert np.isclose(gauss_mean, mean, rtol=1e-7)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

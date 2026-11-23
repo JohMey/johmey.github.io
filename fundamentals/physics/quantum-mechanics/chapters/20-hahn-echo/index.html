@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a spin echo can recover · OneSimulation</title>
+<meta name="description" content="A collection of coherent spins can give nearly zero transverse signal because the phases of its members disagree. Reverse just one part of the evolution with a pulse and ask how much signal returns. The time dependence of the answer turns an apparent loss of coherence into a measurement of environmental memory.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/chapters/20-hahn-echo/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What a spin echo can recover · OneSimulation">
+<meta property="og:description" content="A collection of coherent spins can give nearly zero transverse signal because the phases of its members disagree. Reverse just one part of the evolution with a pulse and ask how much signal returns. The time dependence of the answer turns an apparent loss of coherence into a measurement of environmental memory.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/chapters/20-hahn-echo/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a></p><h1>What a spin echo can recover</h1><p class="lead">A collection of coherent spins can give nearly zero transverse signal because the phases of its members disagree. Reverse just one part of the evolution with a pulse and ask how much signal returns. The time dependence of the answer turns an apparent loss of coherence into a measurement of environmental memory.</p><p class="byline">Chapter 20 of 20</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a><a href="/fundamentals/physics/quantum-mechanics/notebooks/workshop/">Open editable notebook</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#distinguish-the-state-of-a-spin-from-the-signal-of-a-collection">Distinguish the state of a spin from the signal of a collection</a><a href="#encode-a-pulse-sequence-by-its-signed-accumulation-time">Encode a pulse sequence by its signed accumulation time</a><a href="#evaluate-the-covariance-integral-and-inspect-its-limits">Evaluate the covariance integral and inspect its limits</a><a href="#translate-the-pulse-into-a-frequency-filter">Translate the pulse into a frequency filter</a><a href="#what-can-an-imperfect-apparatus-identify">What can an imperfect apparatus identify?</a><a href="#tutorial-on-timing-units-and-environmental-memory">Tutorial on timing, units and environmental memory</a></nav></aside><article class="prose reference"><section>
+<h2 id="distinguish-the-state-of-a-spin-from-the-signal-of-a-collection">Distinguish the state of a spin from the signal of a collection</h2>
+<p>Prepare each spin in the same equal superposition of the two \(z\) eigenstates. In a frame turning at the reference drive frequency, write its Hamiltonian during free evolution as \(H(t)=\hbar\,\delta(t)\sigma_z/2\). The frequency error \(\delta\) is angular frequency. At a constant detuning, the transverse spin vector simply rotates through angle \(\delta T\). Its length does not change. An ensemble detector, however, adds the individual vectors. Two equally large transverse vectors pointing in opposite directions give no net signal.</p>
+<p>It is useful to represent a transverse vector by a complex number and normalise its initially positive real value to one. The free-evolution contrast is the modulus of \(W(T)=\langle e^{i\phi}\rangle\) with \(\phi=\int_0^T\delta(t)\,dt\). The plus sign follows one choice of transverse quadrature and the modulus removes its arbitrary overall phase. If detunings are constant during each shot but Gaussian distributed between shots with standard deviation \(\sigma\), the characteristic function gives \(W=\exp(-\sigma^2T^2/2)\). Every spin can still be in a pure state even when this average is very small.</p>
+<p>Now apply an ideal \(\pi\) rotation about the \(x\) axis at \(T/2\). The Pauli identity \(\sigma_x\sigma_z\sigma_x=-\sigma_z\) reverses the sign of the detuning Hamiltonian in the frame that follows the pulse. This algebra gives more than the common picture of fast and slow runners. It specifies exactly which operator the reversal changes. A Hamiltonian proportional to \(\sigma_x\) would retain its sign, and irreversible transitions into other degrees of freedom generally would not be undone. Treat the pulse as instantaneous and perfect for the derivation, and take preparation and readout axes to be phase locked.</p>
+</section>
+<section>
+<h2 id="encode-a-pulse-sequence-by-its-signed-accumulation-time">Encode a pulse sequence by its signed accumulation time</h2>
+<p>Introduce the switching function \(y(t)\). It is one throughout a free experiment, and it is one up to \(T/2\) and minus one thereafter for a single echo. Observable dephasing is then controlled by \(\phi_y=\int y(t)\delta(t)\,dt\), up to a global sign. A constant \(\delta\) accumulates equal and opposite signed times and cancels exactly at the echo. For a linear drift \(\delta(t)=a+bt\), the constant term cancels while the residual phase is \(-bT^2/4\). The echo rejects a static error even when the distribution of that error is not Gaussian. The cancellation says nothing yet about time-dependent fields.</p>
+<p>Assume next a zero-mean stationary Gaussian process with covariance \(C(t-s)=\sigma^2e^{-|t-s|/\tau_c}\). Its integrated phase is again Gaussian because integration is a linear operation. The logarithm of the coherence is minus one half of the phase variance. Substituting the two integrals gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[W_y=e^{-\chi_y},\]</div><div class="equation-step">\[\chi_y=\frac12\int_0^T\!\!dt\int_0^T\!\!ds\,y(t)y(s)C(t-s).\]</div></div>
+<p>The double integral counts correlated pieces of phase accumulation. In free evolution every product \(y(t)y(s)\) is positive. For the echo, a time before the pulse and a time after it carry opposite signs. Long-lived correlations make substantial negative contributions that compensate the two positive within-half blocks. Noise whose memory is short cannot maintain a useful correlation across much of the pulse interval. Its effects are correspondingly harder to refocus.</p>
+</section>
+<section>
+<h2 id="evaluate-the-covariance-integral-and-inspect-its-limits">Evaluate the covariance integral and inspect its limits</h2>
+<p>For free evolution the integrand is symmetric about \(s=t\). Twice the area below that diagonal cancels the explicit one half. At fixed \(t\) the inner integral of the exponential covariance is \(\sigma^2\tau_c(1-e^{-t/\tau_c})\). Integrate once more and introduce \(x=T/\tau_c\). For the echo it is efficient to partition the square into two identical within-half blocks and two cross blocks. Across one cross block the exponential separates into one integral over the first half and one over the second; its integral is \(\sigma^2\tau_c^2(1-e^{-x/2})^2\). Combining these terms gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[\chi_{\rm free}=\sigma^2\tau_c^2(x-1+e^{-x}),\]</div><div class="equation-step">\[\chi_{\rm echo}=\sigma^2\tau_c^2(x-3+4e^{-x/2}-e^{-x}).\]</div></div>
+<p>A direct subtraction is revealing: \(\chi_{\rm free}-\chi_{\rm echo}=2\sigma^2\tau_c^2(1-e^{-x/2})^2\). It is nonnegative for this covariance at all \(T\). This inequality depends on the chosen positive exponential correlation. A coherent narrow-band field can accumulate more phase under the echo than under free motion at certain frequencies, as the frequency filter will show.</p>
+<p>For \(T\ll\tau_c\), expand the exponentials before inserting numbers. The leading free exponent is \(\sigma^2T^2/2\); the echo instead starts at \(\sigma^2T^3/(12\tau_c)\). A cubic leading exponent carries information that simply fitting a single decay time would throw away. For \(T\gg\tau_c\), both exponents grow with leading slope \(\sigma^2\tau_c\) but differ by a constant. The long-time experiments can therefore have equal logarithmic slopes and visibly unequal amplitudes. A result quoted as one fitted coherence time needs its sequence, fitting interval and underlying noise assumption.</p>
+</section>
+<section>
+<h2 id="translate-the-pulse-into-a-frequency-filter">Translate the pulse into a frequency filter</h2>
+<p>Test the same sequence using a single complex Fourier component of the detuning. Its contribution is proportional to \(Y(\omega)=\int_0^T y(t)e^{i\omega t}dt\). Integrating the two constant pieces, and taking moduli to eliminate irrelevant origin phases, gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[|Y_{\rm free}|^2=\frac{4\sin^2(\omega T/2)}{\omega^2},\]</div><div class="equation-step">\[|Y_{\rm echo}|^2=\frac{16\sin^4(\omega T/4)}{\omega^2}.\]</div></div>
+<p>Each quantity has units of time squared. At the origin take limits before evaluating: free accumulation gives \(T^2\) and the echo gives zero. At one complete noise cycle during \(T\), the free integral vanishes. The echo can instead turn the two signed halves into constructive accumulation, depending on the phase of the driving signal. Thus the relative response contains information about which frequencies contribute to the observed loss. Measuring a single echo is insufficient to reconstruct an arbitrary noise spectrum; many spectra have the same weighted integral.</p>
+<figure class="concept-diagram"><a class="diagram-enlarge" href="/assets/workshop-figures/quantum-mechanics.png" target="_blank" rel="noopener"><img src="/assets/workshop-figures/quantum-mechanics.png" alt="Free and echo contrast for exponentially correlated detuning, beside squared filters for noise cycles accumulated during a fixed measurement." width="1395" height="605"><span>Open full-size diagram</span></a>
+<figcaption>The midpoint pulse removes sensitivity to a constant offset. The right panel also shows frequencies at which it makes the experiment more sensitive than free evolution over the same total time.</figcaption></figure>
+<p>In the notebook take \(\sigma=1.2\) rad/ms, \(\tau_c=1.5\) ms and \(T=2.0\) ms. The free contrast is about 0.145 and the echo gives about 0.670. First vary only \(\tau_c\), keeping the instantaneous width \(\sigma\) fixed. Then compare the analytic result with a double sum over a time grid. Make the pulse lie on a cell boundary; an odd number of equal cells otherwise assigns unequal signed areas unless the central cell is split. A separate optional OneSimulation eigensolve constructs the propagator of one spin with a static detuning. Its unit return probability and the finite ensemble echo describe different preparations and different levels of modelling.</p>
+</section>
+<section>
+<h2 id="what-can-an-imperfect-apparatus-identify">What can an imperfect apparatus identify?</h2>
+<p>A uniform offset in pulse timing puts the nominal \(\pi\) pulse at \(T/2+\varepsilon\). A static detuning now accumulates signed time \(2\varepsilon\), so a Gaussian ensemble is attenuated by \(\exp[-2\sigma^2\varepsilon^2]\). A small flip-angle error also leaves part of the coherence in the wrong component. Neither effect is environmental loss of memory. One diagnostic is to vary the programmed pulse position slightly in both directions while holding the final observation time fixed. Static inhomogeneity predicts a peak centred at balanced signed times.</p>
+<p>Longitudinal relaxation, non-Gaussian telegraph noise, finite readout contrast and pulse bandwidth can all alter a measured sequence. An independently measured readout visibility can normalise the signal, while a separate population-relaxation measurement tests whether the transverse amplitude must decay even with perfect static refocusing. The Gaussian characteristic-function derivation uses the full probability law, not just its second moment. Specifying the same covariance for a non-Gaussian process need not reproduce the same contrast at strong coupling. The simpler second-moment calculation survives as a leading weak-phase approximation and can be challenged by repeating the experiment at different noise amplitudes.</p>
+</section>
+<div class="notebook-launch" id="try-it"><a class="button button-primary" href="/fundamentals/physics/quantum-mechanics/notebooks/workshop/">Open editable notebook</a> <a href="/downloads/fundamentals/notebooks/quantum-mechanics-workshop.ipynb" download>Download .ipynb</a></div><span id="practice"></span><section>
+<h2 id="tutorial-on-timing-units-and-environmental-memory">Tutorial on timing, units and environmental memory</h2>
+<p><strong>A static ensemble has an rms ordinary-frequency spread of 100 Hz. What free contrast and ideal echo contrast are expected after 2.0 ms?</strong></p>
+<details><summary>Work through the solution</summary><p>Convert cycles per second to angular frequency first. The dimensionless spread of phase is \(2\pi(100)(0.002)=1.257\), giving \(\exp[-1.257^2/2]\simeq0.454\) for the free contrast. The ideal echo cancels every static phase and returns unit contrast when there are no other losses. Inserting 100 directly as an angular frequency would substantially overestimate the free signal.</p></details>
+<p><strong>The midpoint pulse in that experiment is late by 0.20 ms. Compute the echo attenuation due only to this error.</strong></p>
+<details><summary>Work through the solution</summary><p>The remaining signed time is twice the timing error, or 0.40 ms. The rms residual phase is about 0.251 rad. Its characteristic function is about 0.969. A timing mistake can therefore look like a few per cent intrinsic signal loss even when every individual spin remains perfectly coherent.</p></details>
+<p><strong>A single-cycle sinusoidal disturbance causes little free dephasing over its exact period. Must the echo also remove it? Compare the normalised filter powers.</strong></p>
+<details><summary>Work through the solution</summary><p>For \(\omega T=2\pi\), the free numerator vanishes. The echo numerator contains \(\sin^4(\pi/2)=1\), giving \(|Y|^2/T^2=4/\pi^2\simeq0.405\). The phase of a deterministic sinusoid still matters for an individual shot. Averaging uniformly random starting phase turns the squared filter into the relevant sensitivity factor.</p></details>
+<p>Further reading · <a href="https://journals.aps.org/pr/abstract/10.1103/PhysRev.80.580">E. L. Hahn · Spin Echoes, original experiment</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/quantum-mechanics/chapters/19-avoided-crossing/">Chapter 19 · Adiabatic following and a finite sweep through an avoided crossing</a></span><span>Next<br><a href="/fundamentals/physics/quantum-mechanics/problem-sheets/7/">Problem sheet 7 · Measuring two phases with one interferometer</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

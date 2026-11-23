@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When diffusion destabilises a uniform state · OneSimulation</title>
+<meta name="description" content="Two scalar signals on a ring respond locally to each other and exchange signal with their neighbours. A single well-mixed cell returns to its reference state after a small disturbance. Can coupled cells amplify a spatial pattern? Derive a condition for this surprising outcome and test how faithfully a finite grid represents its wavelength.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When diffusion destabilises a uniform state · OneSimulation">
+<meta property="og:description" content="Two scalar signals on a ring respond locally to each other and exchange signal with their neighbours. A single well-mixed cell returns to its reference state after a small disturbance. Can coupled cells amplify a spatial pattern? Derive a condition for this surprising outcome and test how faithfully a finite grid represents its wavelength.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a> / <a href="/fundamentals/numerics/partial-differential-equations/notebooks/">Notebooks</a></p><h1>When diffusion destabilises a uniform state</h1><p class="lead">Two scalar signals on a ring respond locally to each other and exchange signal with their neighbours. A single well-mixed cell returns to its reference state after a small disturbance. Can coupled cells amplify a spatial pattern? Derive a condition for this surprising outcome and test how faithfully a finite grid represents its wavelength.</p><nav class="study-links"><a href="/fundamentals/numerics/partial-differential-equations/chapters/18-diffusion-driven-mode-selection/">Read the derivation</a><a href="/fundamentals/numerics/partial-differential-equations/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/partial-differential-equations-workshop.ipynb" download="partial-differential-equations-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Two linearly coupled scalar signals evolve on a periodic ring. The operator for each spatial Fourier mode is only two by two. Compare the wavelengths selected by the continuum equation with those selected by a finite-difference grid. The model describes small deviations; it contains no nonlinear saturation.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="17" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+length = 2*np.pi                  # nondimensional circumference
+cells = 32                       # even number of grid cells
+slow_diffusion = .02
+fast_diffusion = 1.
+assert 4 &lt;= length &lt;= 12 and cells % 2 == 0 and 16 &lt;= cells &lt;= 120
+assert .01 &lt;= slow_diffusion &lt;= .3 and .2 &lt;= fast_diffusion &lt;= 2.
+J = np.array([[1., 1.],[-3., -2.]])
+D = np.diag([slow_diffusion,fast_diffusion])
+
+def growth(q):
+    q = np.asarray(q)
+    trace = np.trace(J) - (slow_diffusion+fast_diffusion)*q
+    det = 1 - (fast_diffusion-2*slow_diffusion)*q + slow_diffusion*fast_diffusion*q*q
+    return (trace+np.sqrt((trace**2-4*det).astype(complex))).real/2
+
+indices = np.arange(cells//2+1)
+k = 2*np.pi*indices/length
+h = length/cells
+continuum = growth(k*k)
+q_mesh = (2*np.sin(k*h/2)/h)**2
+mesh = growth(q_mesh)
+print(&quot;Amplifying continuum modes on this mode list:&quot;, indices[continuum&gt;1e-10])
+print(&quot;Amplifying finite-grid modes:&quot;, indices[mesh&gt;1e-10])
+assert np.allclose(mesh,[np.linalg.eigvals(J-q*D).real.max() for q in q_mesh])</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare a dispersion curve with an exact linear wave experiment</h2><p>For each mode prepare the real part of its leading eigenvector and evolve the complex eigenmode before taking the real part. The phase and growth rates in this experiment follow the finite-grid operator exactly. The panels distinguish an incorrect spatial eigenvalue from time-stepping error. Initial amplitudes are small and intentionally comparable.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="17" wrap="off" spellcheck="false" autocapitalize="off">fig, (curve, traceplot) = plt.subplots(1,2,figsize=(10,4),layout=&quot;constrained&quot;)
+mode_range = np.linspace(0,min(14,cells//2),350)
+curve.axhline(0,color=&quot;grey&quot;,lw=.8)
+curve.plot(mode_range,growth((2*np.pi*mode_range/length)**2),color=&quot;#145c71&quot;,label=&quot;continuum dispersion&quot;)
+visible = indices &lt;= mode_range.max()
+curve.scatter(indices[visible],mesh[visible],s=20,color=&quot;#b94626&quot;,label=&quot;mesh rates&quot;)
+curve.set(xlabel=&quot;Spatial mode number&quot;,ylabel=&quot;Growth rate&quot;,title=&quot;Which wavelengths can grow?&quot;)
+curve.legend(fontsize=9)
+x = np.arange(cells)*h
+def state_at(t):
+    profile = np.zeros_like(x)
+    for j in range(1,min(10,cells//2)+1):
+        vals,vecs = np.linalg.eig(J-q_mesh[j]*D)
+        idx = vals.real.argmax()
+        vec = vecs[:,idx] / vecs[0,idx]
+        profile += 1e-4*np.real(vec[0]*np.exp(vals[idx]*t+1j*(k[j]*x+.27*j*j)))
+    return profile
+for t,color in [(0.,&quot;#59686a&quot;),(3.,&quot;#b94626&quot;),(7.,&quot;#145c71&quot;)]:
+    traceplot.plot(x,state_at(t),color=color,label=f&quot;t = {t:g}&quot;)
+traceplot.set(xlabel=&quot;Position on ring&quot;,ylabel=&quot;First-field deviation&quot;,title=&quot;Small signals after mode selection&quot;)
+traceplot.legend(fontsize=9)
+for ax in (curve,traceplot): ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Verify the spatial operator independently</h2><p>Assemble the full periodic matrix for the selected grid. Its most rapidly growing eigenvalue should agree with the Fourier block calculation. In OneSimulation the optional comparison uses its general dense eigensolver. A small positive cut-off avoids classifying roundoff at a neutral boundary as physical growth.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="9" wrap="off" spellcheck="false" autocapitalize="off">lap = (np.roll(np.eye(cells),1,axis=0) - 2*np.eye(cells) + np.roll(np.eye(cells),-1,axis=0))/h**2
+full = np.kron(np.eye(cells),J) + np.kron(lap,D)
+try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import eigenvalues_dense as complete_spectrum
+except ImportError:
+    complete_spectrum = np.linalg.eigvals
+rate = complete_spectrum(full).real.max()
+assert np.isclose(rate,mesh.max(),atol=3e-10)
+print(f&quot;Full grid {rate:.8f}; fastest Fourier block {mesh.max():.8f}.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How one light isotope traps a lattice vibration · OneSimulation</title>
+<meta name="description" content="A perfect chain supports travelling lattice vibrations. Replace one atom by a lighter isotope while keeping every spring unchanged. Determine whether a vibration can now be confined to a few sites, calculate its frequency and decay length, and find out from a finite simulation when the word localised is justified.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/condensed-matter/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How one light isotope traps a lattice vibration · OneSimulation">
+<meta property="og:description" content="A perfect chain supports travelling lattice vibrations. Replace one atom by a lighter isotope while keeping every spring unchanged. Determine whether a vibration can now be confined to a few sites, calculate its frequency and decay length, and find out from a finite simulation when the word localised is justified.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/condensed-matter/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/condensed-matter/">Condensed matter and band theory</a> / <a href="/fundamentals/physics/condensed-matter/notebooks/">Notebooks</a></p><h1>How one light isotope traps a lattice vibration</h1><p class="lead">A perfect chain supports travelling lattice vibrations. Replace one atom by a lighter isotope while keeping every spring unchanged. Determine whether a vibration can now be confined to a few sites, calculate its frequency and decay length, and find out from a finite simulation when the word localised is justified.</p><nav class="study-links"><a href="/fundamentals/physics/condensed-matter/chapters/20-isotope-local-mode/">Read the derivation</a><a href="/fundamentals/physics/condensed-matter/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/condensed-matter-workshop.ipynb" download="condensed-matter-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>The springs are identical and a single mass differs from the rest. Predict which sign of mass change produces a mode above the propagation band. The chain is periodic so an edge cannot trap the vibration.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="6" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+mass_ratio = .60       # impurity mass / host mass; also try 1 or 1.4
+sites = 80             # even, to include the host zone boundary on the mesh
+assert .12&lt;=mass_ratio&lt;=2 and 12&lt;=sites&lt;=180 and sites%2==0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Assemble the symmetric eigenproblem</h2><p>Use host mass and spring constant as units. Converting from mass-weighted coordinates back to actual site displacement matters most at the impurity.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="12" wrap="off" spellcheck="false" autocapitalize="off">def dynamical(n,r):
+    K=2*np.eye(n)-np.roll(np.eye(n),1,axis=1)-np.roll(np.eye(n),-1,axis=1)
+    mass=np.ones(n);mass[n//2]=r
+    return K/np.sqrt(mass[:,None]*mass[None,:]),mass
+D,mass=dynamical(sites,mass_ratio)
+values,vec=np.linalg.eigh(D); w=np.sqrt(max(values[-1],0))
+u=vec[:,-1]/np.sqrt(mass)
+u/=np.max(abs(u))
+if u[sites//2]&lt;0:u=-u
+weight=mass*u*u;weight/=weight.sum()
+pos=np.arange(sites)-sites//2
+print(f&quot;Numerical frequency {w:.6f} in units of sqrt(K/M); impurity kinetic weight {weight[sites//2]:.4f}&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare the spatial profile and the infinite-chain dispersion</h2><p>The analytic profile alternates sign when the frequency lies above the band. No decaying above-band solution exists for a heavy defect; its uppermost finite-chain mode remains a valid numerical eigenvector.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="15" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.9),layout=&quot;constrained&quot;)
+ax[0].plot(pos,u,&quot;o-&quot;,ms=3,color=&quot;#175868&quot;,label=&quot;Periodic-chain eigenvector&quot;)
+if mass_ratio&lt;1:
+    r=mass_ratio/(2-mass_ratio)
+    ax[0].plot(pos,(-r)**abs(pos),&quot;x&quot;,color=&quot;#a23d21&quot;,label=&quot;Infinite chain&quot;)
+ax[0].set(xlabel=&quot;Site relative to impurity&quot;,ylabel=&quot;Relative displacement&quot;,title=&quot;Highest-frequency mode&quot;,
+          xlim=(-min(12,sites//2),min(12,sites//2)));ax[0].legend(fontsize=8)
+ratios=np.linspace(.22,1.8,48)
+finite=[np.sqrt(np.linalg.eigvalsh(dynamical(min(48,sites),q)[0])[-1]) for q in ratios]
+qs=np.linspace(.22,.999,200)
+ax[1].plot(ratios,finite,&quot;.&quot;,color=&quot;#375b9a&quot;,label=&quot;Finite chain&quot;)
+ax[1].plot(qs,2/np.sqrt(qs*(2-qs)),color=&quot;#a23d21&quot;,label=&quot;Localised solution&quot;)
+ax[1].axhline(2,ls=&quot;:&quot;,color=&quot;#175868&quot;,label=&quot;Host band edge&quot;);ax[1].plot(mass_ratio,w,&quot;o&quot;,color=&quot;#175868&quot;)
+ax[1].set(xlabel=&quot;Impurity / host mass&quot;,ylabel=&quot;Frequency / √(K/M)&quot;,title=&quot;How the local mode detaches&quot;);ax[1].legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Test translation symmetry and the original force balance</h2><p>Check the acoustic mode and the equation before mass weighting. Increase the ring size at a mass ratio just below one and track the small difference between the numerical eigenfrequency and the infinite-chain limit.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="6" wrap="off" spellcheck="false" autocapitalize="off">assert abs(values[0])&lt;1e-12
+res=2*u-np.roll(u,1)-np.roll(u,-1)-w*w*mass*u
+assert np.max(abs(res))&lt;1e-10
+if mass_ratio&lt;1:
+    analytic=2/np.sqrt(mass_ratio*(2-mass_ratio)); length=-1/np.log(mass_ratio/(2-mass_ratio))
+    print(f&quot;Infinite-chain frequency {analytic:.6f}, decay length {length:.3f} spacings&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Optional independent OneSimulation eigensolve</h2><p>Run the identical mass-weighted operator through the OneSimulation symmetric eigensystem interface, then check its highest eigenvalue and residual in the original coordinates.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="8" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigensystem
+except ImportError:
+    print(&quot;The optional eigensolver check runs in a local OneSimulation installation.&quot;)
+else:
+    E,Q=symmetric_eigensystem(D)
+    print(&quot;OneSimulation eigenvalue residual:&quot;,np.linalg.norm(D@Q[:,-1]-E[-1]*Q[:,-1]))
+    assert np.isclose(E[-1],w*w)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

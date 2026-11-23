@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a spin echo can recover · OneSimulation</title>
+<meta name="description" content="A collection of coherent spins can give nearly zero transverse signal because the phases of its members disagree. Reverse just one part of the evolution with a pulse and ask how much signal returns. The time dependence of the answer turns an apparent loss of coherence into a measurement of environmental memory.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What a spin echo can recover · OneSimulation">
+<meta property="og:description" content="A collection of coherent spins can give nearly zero transverse signal because the phases of its members disagree. Reverse just one part of the evolution with a pulse and ask how much signal returns. The time dependence of the answer turns an apparent loss of coherence into a measurement of environmental memory.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a> / <a href="/fundamentals/physics/quantum-mechanics/notebooks/">Notebooks</a></p><h1>What a spin echo can recover</h1><p class="lead">A collection of coherent spins can give nearly zero transverse signal because the phases of its members disagree. Reverse just one part of the evolution with a pulse and ask how much signal returns. The time dependence of the answer turns an apparent loss of coherence into a measurement of environmental memory.</p><nav class="study-links"><a href="/fundamentals/physics/quantum-mechanics/chapters/20-hahn-echo/">Read the derivation</a><a href="/fundamentals/physics/quantum-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/quantum-mechanics-workshop.ipynb" download="quantum-mechanics-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Compare indistinguishable static frequency offsets and a fluctuating environment. The detuning is an angular frequency. A perfect midpoint π pulse reverses its sign in the accumulated phase. Predict which noise timescales the pulse will reject before drawing the curves.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="7" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+sigma_per_ms = 1.2     # rms angular detuning in rad/ms
+tau_ms = 1.5           # correlation time in ms
+evolution_ms = 2.0
+assert sigma_per_ms &gt; 0 and tau_ms&gt;0 and evolution_ms&gt;0</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Integrate the noise covariance</h2><p>Use a Gaussian stationary process with covariance σ² exp(−|t−s|/τ). The ensemble coherence is exp(−variance of accumulated phase/2). A series near zero avoids subtracting almost equal floating-point numbers.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="9" wrap="off" spellcheck="false" autocapitalize="off">def exponents(t,tau,sigma):
+    x=np.asarray(t,dtype=float)/tau
+    small=x&lt;1e-3
+    free=np.where(small,x**2/2-x**3/6+x**4/24,x+np.expm1(-x))
+    echo=np.where(small,x**3/12-x**4/32+7*x**5/960,x+4*np.expm1(-x/2)-np.expm1(-x))
+    return sigma**2*tau**2*free,sigma**2*tau**2*echo
+
+free,echo=exponents(evolution_ms,tau_ms,sigma_per_ms)
+print(f&quot;Contrast at T={evolution_ms:g} ms: free {np.exp(-free):.6f}; echo {np.exp(-echo):.6f}&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Locate the frequencies that the echo transmits</h2><p>For harmonic noise the squared Fourier integral of the switching function measures sensitivity. At zero frequency these two filters make opposite predictions. The vertical scale of the right panel is normalised by the square of the observation time.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="14" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.9),layout=&quot;constrained&quot;)
+ts=np.linspace(0,3*evolution_ms,240)
+cf,ce=exponents(ts,tau_ms,sigma_per_ms)
+ax[0].plot(ts,np.exp(-cf),label=&quot;Free evolution&quot;,color=&quot;#a23d21&quot;)
+ax[0].plot(ts,np.exp(-ce),label=&quot;Midpoint echo&quot;,color=&quot;#175868&quot;)
+ax[0].plot(ts,np.exp(-.5*(sigma_per_ms*ts)**2),&quot;--&quot;,label=&quot;Static offsets, free&quot;,color=&quot;#777777&quot;)
+ax[0].set(xlabel=&quot;Total evolution time (ms)&quot;,ylabel=&quot;Normalised coherence&quot;,title=&quot;Same noise, two pulse sequences&quot;,ylim=(-.03,1.05)); ax[0].legend(fontsize=8)
+cycles=np.linspace(0,3,401); wT=2*np.pi*cycles
+ff=np.sinc(cycles)**2
+fe=np.zeros_like(wT); fe[1:]=16*np.sin(wT[1:]/4)**4/wT[1:]**2
+ax[1].plot(cycles,ff,label=&quot;Free evolution&quot;,color=&quot;#a23d21&quot;)
+ax[1].plot(cycles,fe,label=&quot;Midpoint echo&quot;,color=&quot;#175868&quot;)
+ax[1].set(xlabel=&quot;Noise cycles during T&quot;,ylabel=&quot;Squared filter / T²&quot;,title=&quot;Static and time-dependent fields&quot;);ax[1].legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Test the analytic result without using its closed form</h2><p>Represent the sign function at midpoints of an even time grid. Use the matrix of pair covariances to evaluate the phase variance. Halve the time step and check the convergence. The pulse sign convention may be reversed globally without changing the contrast.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="10" wrap="off" spellcheck="false" autocapitalize="off">def numerical_chi(n,flip):
+    dt=evolution_ms/n
+    t=(np.arange(n)+.5)*dt
+    sign=np.where((t&gt;=evolution_ms/2)&amp;flip,-1.,1.)
+    cov=sigma_per_ms**2*np.exp(-abs(t[:,None]-t[None,:])/tau_ms)
+    return .5*dt**2*(sign@cov@sign)
+for n in (80,160,320):
+    print(n,numerical_chi(n,False),numerical_chi(n,True))
+assert abs(numerical_chi(320,True)-echo) &lt; 2e-4*(1+sigma_per_ms**2*evolution_ms**2)*(1+evolution_ms/tau_ms)
+assert 0&lt;=echo&lt;=free+1e-12</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>An optional single-spin check with OneSimulation</h2><p>Use exact matrix exponentiation through a Hermitian eigensystem. This checks the reversal for a constant detuning on one spin; the stochastic variance above describes an ensemble of many spins.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="12" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigensystem
+except ImportError:
+    print(&quot;The independent spin propagator is available in a local OneSimulation environment.&quot;)
+else:
+    E,U=symmetric_eigensystem(np.diag([sigma_per_ms/2,-sigma_per_ms/2]))
+    half=(U*np.exp(-1j*E*evolution_ms/2))@U.T
+    pulse=np.array([[0,-1j],[-1j,0]])
+    initial=np.array([1,1])/np.sqrt(2)
+    final=half@pulse@half@initial
+    print(&quot;Echo return probability for a static detuning:&quot;,abs(np.vdot(initial,final))**2)
+    assert np.isclose(abs(np.vdot(initial,final))**2,1.)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

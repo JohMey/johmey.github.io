@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How large can the last column grow? · OneSimulation</title>
+<meta name="description" content="This integer family isolates growth during elimination from the sensitivity of a linear system. Change the dimension and compare the largest numbers produced with a direct condition estimate. The displayed elimination keeps the first row when pivot sizes tie.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How large can the last column grow? · OneSimulation">
+<meta property="og:description" content="This integer family isolates growth during elimination from the sensitivity of a linear system. Change the dimension and compare the largest numbers produced with a direct condition estimate. The displayed elimination keeps the first row when pivot sizes tie.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/notebooks/">Notebooks</a></p><h1>How large can the last column grow?</h1><p class="lead">This integer family isolates growth during elimination from the sensitivity of a linear system. Change the dimension and compare the largest numbers produced with a direct condition estimate. The displayed elimination keeps the first row when pivot sizes tie.</p><nav class="study-links"><a href="/fundamentals/numerics/linear-algebra/chapters/02-elimination/#notebook-example">Read the derivation</a><a href="/fundamentals/numerics/linear-algebra/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/linear-algebra-chapter.ipynb" download="linear-algebra-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="17" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+dimension = 12
+assert 3 &lt;= dimension &lt;= 40
+
+def example(n):
+    A = np.eye(n)-np.tril(np.ones((n,n)),-1)
+    A[:,-1] = 1.
+    return A
+
+def eliminate(A):
+    U=A.copy()
+    growth=[np.max(abs(U))]
+    multipliers=[]
+    for j in range(len(U)-1):
+        k=j+np.argmax(abs(U[j:,j]))
+        U[[j,k]]=U[[k,j]]
+        m=U[j+1:,j]/U[j,j]
+        multipliers.extend(m)
+        U[j+1:,j:] -= m[:,None]*U[j,j:]
+        growth.append(np.max(abs(U)))
+    return U,np.array(growth),max(abs(np.array(multipliers)))
+
+A=example(dimension)
+U,history,mmax=eliminate(A)
+assert np.allclose(history,2.**np.arange(dimension))
+print(&quot;Growth factor:&quot;,history[-1],&quot; largest multiplier:&quot;,mmax)
+print(&quot;2-norm condition number:&quot;,np.linalg.cond(A))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare the pivot bound with the growth and conditioning</h2><p>The exponential growth is exact in binary for these small integer inputs. It gives a possible roundoff hazard for perturbed problems; it does not prove large forward error in this exact demonstration.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="10" wrap="off" spellcheck="false" autocapitalize="off">fig,(steps,scale)=plt.subplots(1,2,figsize=(10,4),layout=&quot;constrained&quot;)
+steps.semilogy(range(dimension),history,&quot;o-&quot;,color=&quot;#145c71&quot;)
+steps.set(xlabel=&quot;Eliminated columns&quot;,ylabel=&quot;Largest absolute entry&quot;,title=&quot;The last column repeatedly doubles&quot;)
+nn=np.arange(3,dimension+1)
+scale.semilogy(nn,2.**(nn-1),&quot;o-&quot;,color=&quot;#145c71&quot;,label=&quot;growth factor&quot;)
+scale.semilogy(nn,[np.linalg.cond(example(i)) for i in nn],&quot;s--&quot;,color=&quot;#b94626&quot;,label=&quot;condition number&quot;)
+scale.set(xlabel=&quot;Matrix dimension&quot;,ylabel=&quot;Dimensionless factor&quot;,title=&quot;Different questions about a system&quot;)
+scale.legend()
+for ax in (steps,scale):ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Challenge</h2><p>Reorder the rows before calling eliminate. What changes in the growth history when pivot ties are resolved differently? Which singular values remain unchanged under the row permutation?</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="3" wrap="off" spellcheck="false" autocapitalize="off">_,reverse,_=eliminate(A[::-1])
+assert np.isclose(np.linalg.cond(A),np.linalg.cond(A[::-1]))
+print(&quot;After reversing the rows, observed growth becomes&quot;,reverse[-1])</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

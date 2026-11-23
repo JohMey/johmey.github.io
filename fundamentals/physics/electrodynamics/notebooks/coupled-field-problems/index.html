@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weighing a small deposit with a piezoelectric resonator · OneSimulation</title>
+<meta name="description" content="Two nearby frequencies appear in the electrical response of one mechanical mode. Derive the series and parallel resonances, then use their different sensitivities to recognise added mass and stray capacitance.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/notebooks/coupled-field-problems/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Weighing a small deposit with a piezoelectric resonator · OneSimulation">
+<meta property="og:description" content="Two nearby frequencies appear in the electrical response of one mechanical mode. Derive the series and parallel resonances, then use their different sensitivities to recognise added mass and stray capacitance.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/notebooks/coupled-field-problems/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/notebooks/">Notebooks</a></p><h1>Weighing a small deposit with a piezoelectric resonator</h1><p class="lead">Two nearby frequencies appear in the electrical response of one mechanical mode. Derive the series and parallel resonances, then use their different sensitivities to recognise added mass and stray capacitance.</p><nav class="study-links"><a href="/fundamentals/physics/electrodynamics/volumes/coupled-field-problems/13-mass-loading-a-piezoelectric-resonator/">Read the derivation</a><a href="/fundamentals/physics/electrodynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/electrodynamics-coupled-field-problems.ipynb" download="electrodynamics-coupled-field-problems.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Convert mechanical motion into a terminal admittance</h2><p>A piezoelectric plate converts terminal voltage into force and velocity into current. With a linear reciprocal coupling coefficient \(n\), \(F=nV\) and \(I_m=nv\). The mechanical velocity impedance is \(b+i\omega m+k/(i\omega)\). Dividing it by \(n^2\) maps it to a series branch with \(R_m=b/n^2\), \(L_m=m/n^2\) and \(C_m=n^2/k\). The electrodes also have a static capacitance \(C_0\) in parallel. Thus</p><div class="math display">\[Y(\omega)=i\omega C_0+\left[R_m+i\omega L_m+\frac{1}{i\omega C_m}\right]^{-1}.\]</div><p>For negligible loss the series branch impedance vanishes at \(\omega_s=1/\sqrt{L_mC_m}\). Just above this frequency its susceptance is inductive and can cancel the parallel capacitance. Setting \(Y=0\) gives \(\omega_p=\omega_s\sqrt{1+C_m/C_0}\). With finite damping a peak and a dip replace the singular limits. Their extrema need not coincide exactly with the lossless frequencies.</p><h2>Isolate the perturbation</h2><p>A thin rigid deposit that changes only the effective mass multiplies \(L_m\) by \(1+\eta\). Both ideal frequencies scale as \((1+\eta)^{-1/2}\); their ratio is unchanged. Additional cable capacitance increases \(C_0\), changing the ratio while leaving the mechanical series frequency fixed. At a load fraction of 0.01 the expected series shift is about minus 0.496 percent. A viscoelastic deposit can also dissipate energy and alter stiffness, so the two-frequency test includes a physical assumption about the coating. For \(f_s=100.000\) kHz, \(C_m=0.25\) pF and \(C_0=15\) pF, the unloaded parallel frequency is 100.830 kHz. A 1% increase in effective mass puts the series resonance at 99.504 kHz. If the same shift came from extra cable capacitance alone, the series frequency would remain at 100.000 kHz. At quality factor 600 the approximate unloaded resonance linewidth is \(f_s/Q=167\) Hz. The predicted mass shift spans about three linewidths. The height of the peak by itself would confound damping and transduction.</p><p>Conversely, fit the two frequencies and infer the capacitance ratio as \((f_p/f_s)^2-1\). A small random error in \(f_p/f_s\) has a large relative effect on this estimate when the resonances nearly coincide. Zoom the frequency grid and compare the uncertainty from bin spacing with the shift under investigation.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="5" wrap="off" spellcheck="false" autocapitalize="off">series_hz = 100_000.
+motional_pf = .25
+parallel_pf = 15.
+quality = 600.
+mass_fraction = .01</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="10" wrap="off" spellcheck="false" autocapitalize="off">cm,c0=motional_pf*1e-12,parallel_pf*1e-12
+assert min(cm,c0,series_hz,quality)&gt;0 and mass_fraction&gt;=0
+lm=1/((2*np.pi*series_hz)**2*cm)
+rm=2*np.pi*series_hz*lm/quality
+def response(f,eta,c):
+    w=2*np.pi*f
+    return 1j*w*c+1/(rm+1j*w*lm*(1+eta)+1/(1j*w*cm))
+fs=series_hz/np.sqrt(1+mass_fraction)
+fp=fs*np.sqrt(1+cm/c0)
+print(f&quot;Loaded lossless frequencies {fs:.2f} Hz and {fp:.2f} Hz&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="6" wrap="off" spellcheck="false" autocapitalize="off">f=np.linspace(.975*min(fs,series_hz),1.025*max(fp,series_hz*np.sqrt(1+cm/c0)),1200)
+fig,ax=axes(&quot;Frequency (kHz)&quot;,&quot;Terminal admittance magnitude (µS)&quot;)
+for eta,colour in [(0,teal),(mass_fraction,orange)]:
+    ax.semilogy(f/1e3,abs(response(f,eta,c0))*1e6,label=f&quot;Added mass {100*eta:g}%&quot;,color=colour)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>A terminal sweep contains the mechanical resonance and the electrical cancellation. Follow both features before inferring added mass.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="7" wrap="off" spellcheck="false" autocapitalize="off">eta=np.linspace(0,.04,120)
+fseries=series_hz/np.sqrt(1+eta)
+fig,ax=axes(&quot;Series resonance (kHz)&quot;,&quot;Parallel resonance (kHz)&quot;)
+for scale,colour in [(.7,orange),(1,teal),(1.5,blue)]:
+    ax.plot(fseries/1e3,fseries*np.sqrt(1+cm/(scale*c0))/1e3,label=f&quot;C₀ × {scale:g}&quot;,color=colour)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Changing cable capacitance displaces the parallel resonance at fixed series frequency. Mass loading moves both frequencies along a diagonal path.</p><h2>Exercise · recover a capacitance ratio</h2><p>A nearly lossless device gives \(f_p/f_s=1.01\). What ratio of motional to static capacitance is consistent with it?</p><p>Squaring and subtracting one gives \(C_m/C_0=0.0201\). The difference between the squares matters when the shift is used for accurate capacitance inference.</p><h2>Exercise · challenge a mass reading</h2><p>After changing a fixture the dip moves but the series frequency remains within the experimental uncertainty. Does that support a pure mass increase?</p><p>A purely inertial change shifts both resonance frequencies. The observed pattern is consistent with an increased shunt capacitance if the dip moved toward the series peak. A sweep of the linewidth and an independent capacitance check would test the model.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

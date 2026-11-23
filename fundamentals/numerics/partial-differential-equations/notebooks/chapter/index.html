@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Touch two long solids: which temperature does the interface acquire? · OneSimulation</title>
+<meta name="description" content="Two long solids, initially at different uniform temperatures, touch at x = 0. Compare the interface temperature determined by thermal effusivity with whole temperature profiles, then check heat conservation. The experiment uses SI units and assumes perfect contact and short observation times.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Touch two long solids: which temperature does the interface acquire? · OneSimulation">
+<meta property="og:description" content="Two long solids, initially at different uniform temperatures, touch at x = 0. Compare the interface temperature determined by thermal effusivity with whole temperature profiles, then check heat conservation. The experiment uses SI units and assumes perfect contact and short observation times.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a> / <a href="/fundamentals/numerics/partial-differential-equations/notebooks/">Notebooks</a></p><h1>Touch two long solids: which temperature does the interface acquire?</h1><p class="lead">Two long solids, initially at different uniform temperatures, touch at x = 0. Compare the interface temperature determined by thermal effusivity with whole temperature profiles, then check heat conservation. The experiment uses SI units and assumes perfect contact and short observation times.</p><nav class="study-links"><a href="/fundamentals/numerics/partial-differential-equations/chapters/07-interface-fluxes/#notebook-example">Read the derivation</a><a href="/fundamentals/numerics/partial-differential-equations/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/partial-differential-equations-chapter.ipynb" download="partial-differential-equations-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="17" wrap="off" spellcheck="false" autocapitalize="off">import math
+import numpy as np
+import matplotlib.pyplot as plt
+
+k_left, k_right=4.,1.            # W/(m K)
+capacity_left,capacity_right=1e6,1e6  # volumetric heat capacities, J/(m³ K)
+time=2.                           # seconds
+TL,TR=80.,20.                     # degrees Celsius
+assert min(k_left,k_right,capacity_left,capacity_right,time)&gt;0
+al,ar=k_left/capacity_left,k_right/capacity_right
+el,er=np.sqrt(k_left*capacity_left),np.sqrt(k_right*capacity_right)
+contact=(el*TL+er*TR)/(el+er)
+erf=np.vectorize(math.erf,otypes=[float])
+def temperature(x,t):
+    return np.where(x&lt;=0,contact+(TL-contact)*erf(-x/(2*np.sqrt(al*t))),
+                    contact+(TR-contact)*erf(x/(2*np.sqrt(ar*t))))
+def q(t):
+    return el*er/(el+er)*(TL-TR)/np.sqrt(np.pi*t)
+Q=2*q(time)*time
+print(f&quot;Interface {contact:.3f} °C; flux at t = {time:g} s: {q(time):.2f} W/m²; transferred {Q:.2f} J/m²&quot;)
+assert np.isclose(el*(TL-contact),er*(contact-TR))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Inspect both half-spaces and the early flux</h2><p>The semi-infinite approximation requires the penetration distances to be small compared with specimen length. The flux diverges as time approaches zero, yet its time integral is finite. Change the right material&#x27;s heat capacity at fixed conductivity.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="15" wrap="off" spellcheck="false" autocapitalize="off">fig,(profile,flux)=plt.subplots(1,2,figsize=(10,4),layout=&quot;constrained&quot;)
+width=5*np.sqrt(max(al,ar)*time)
+x=np.linspace(-width,width,501)
+for t,c in [(time/4,&quot;#b94626&quot;),(time,&quot;#145c71&quot;)]:
+    profile.plot(1000*x,temperature(x,t),color=c,label=f&quot;{t:g} s&quot;)
+profile.axvline(0,color=&quot;grey&quot;,ls=&quot;:&quot;)
+profile.set(xlabel=&quot;Position (mm)&quot;,ylabel=&quot;Temperature (°C)&quot;,title=&quot;Continuity at the contact&quot;)
+profile.legend()
+tt=np.geomspace(.01*time,3*time,150)
+flux.plot(tt,q(tt),color=&quot;#145c71&quot;)
+flux.set_xscale(&quot;log&quot;)
+if TL != TR: flux.set_yscale(&quot;symlog&quot;,linthresh=np.min(abs(q(tt)))/4)
+flux.set(xlabel=&quot;Time (s)&quot;,ylabel=&quot;Left-to-right flux (W/m²)&quot;,title=&quot;Initially singular but integrable flux&quot;)
+for ax in (profile,flux):ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Independently integrate the energy in each body</h2><p>Temperature deficits and excesses integrated normal to the contact, and multiplied by volumetric heat capacity, are energies per unit area. Both should agree with the integral of the interface flux.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="8" wrap="off" spellcheck="false" autocapitalize="off">l=np.linspace(-12*np.sqrt(al*time),0,3001)
+r=np.linspace(0,12*np.sqrt(ar*time),3001)
+def trapezoid(values,grid):
+    return np.sum((values[:-1]+values[1:])*np.diff(grid)/2)
+lost=capacity_left*trapezoid(TL-temperature(l,time),l)
+gained=capacity_right*trapezoid(temperature(r,time)-TR,r)
+assert np.isclose(lost,Q,rtol=1e-6) and np.isclose(gained,Q,rtol=1e-6)
+print(&quot;Spatial energy integrals:&quot;,lost,gained,&quot;J/m²&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

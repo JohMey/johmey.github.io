@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can a stable finite-element heat step turn a cold node negative? · OneSimulation</title>
+<meta name="description" content="Start a conducting rod with one positive temperature pulse. Assemble the heat capacity from first principles and determine when an explicit step respects both decay and the sign of every temperature.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/notebooks/partial-differential-equations-methods/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Can a stable finite-element heat step turn a cold node negative? · OneSimulation">
+<meta property="og:description" content="Start a conducting rod with one positive temperature pulse. Assemble the heat capacity from first principles and determine when an explicit step respects both decay and the sign of every temperature.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/notebooks/partial-differential-equations-methods/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a> / <a href="/fundamentals/numerics/partial-differential-equations/notebooks/">Notebooks</a></p><h1>Can a stable finite-element heat step turn a cold node negative?</h1><p class="lead">Start a conducting rod with one positive temperature pulse. Assemble the heat capacity from first principles and determine when an explicit step respects both decay and the sign of every temperature.</p><nav class="study-links"><a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/05-can-a-stable-heat-step-turn-negative/">Read the derivation</a><a href="/fundamentals/numerics/partial-differential-equations/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/partial-differential-equations-partial-differential-equations-methods.ipynb" download="partial-differential-equations-partial-differential-equations-methods.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><h2>Integrate the heat equation against a hat function</h2><p>Take a uniform rod of length one with the two endpoint temperatures held at zero. With constant diffusivity \(\kappa&gt;0\) the evolution is \(u_t=\kappa u_{xx}\). Approximate \(u(x,t)\) as a linear combination of continuous piecewise-linear hat functions. Multiply by an interior hat and integrate. Integration by parts transfers one spatial derivative onto each hat. The boundary term vanishes. The nodal temperature vector satisfies \(M\dot u=-Ku\).</p><p>On an element of length \(h\) the two hats are \(1-x/h\) and \(x/h\) in local coordinates. Integrating their products gives diagonal entries \(h/3\) and off-diagonal entries \(h/6\) in the element mass matrix. Their constant derivatives give diagonal stiffness \(\kappa/h\) and off-diagonal stiffness \(-\kappa/h\). After assembly and imposing Dirichlet values, the interior mass has diagonal \(4h/6\) and neighbouring entries \(h/6\). The stiffness has diagonal \(2\kappa/h\) and neighbours \(-\kappa/h\).</p><p>Forward Euler advances with \(G=I-\Delta t M^{-1}K\). On an eigenvector of \(K\phi=\lambda M\phi\) it multiplies the amplitude by \(1-\Delta t\lambda\). A bound \(\Delta t\lambda_{\max}\leq2\) therefore ensures no growth in the mass norm. Preserving nonnegative temperatures for every nonnegative initial vector requires every entry of \(G\) to be nonnegative. Each column is the response to a single positive nodal impulse, so the latter condition can be tested directly.</p><p>One alternative assigns half of each element&#x27;s total heat capacity to each endpoint, before removing boundary degrees of freedom. Each interior mass then equals \(h\) and the explicit stencil has weights \(r,1-2r,r\), with \(r=\kappa\Delta t/h^2\). These coefficients are all nonnegative for \(0\leq r\leq 1/2\). The first and last interior equations also couple to the fixed zero boundary temperatures.</p><h2>Compute the remote temperature after one update</h2><p>With three interior nodes, \(h=1/4\), initially set the left interior node to 1 K above the boundary reference and both others to zero. Inverting the consistent mass in this three-by-three system gives the first column of \((h^2/\kappa)M^{-1}K\) as \((51,-36,9)/14\). At \(r=0.1\) the interior temperatures after one step become \((0.63571,0.25714,-0.06429)\) K. The cold node two edges away immediately drops below the lower reference.</p><p>The largest dimensionless eigenvalue is about 7.9223. The chosen step gives \(r\lambda_{\max}h^2/\kappa\approx0.7922\), comfortably inside the linear stability interval. Lumping instead gives \((0.8,0.1,0)\) K. The negative consistent-mass entry shrinks linearly when the step shrinks. For this impulse its sign persists for every positive first step. With OneSimulation installed locally, the notebook also constructs a physical line mesh and obtains the mass and stiffness by integrating its hat functions at mapped quadrature points. Compare the assembled result against the explicit tridiagonal entries. The experiment shows why reducing the time step can satisfy a stability test without restoring a discrete maximum principle.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="3" wrap="off" spellcheck="false" autocapitalize="off">interior_nodes = 3
+diffusivity = 1.0
+r = 0.10</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="17" wrap="off" spellcheck="false" autocapitalize="off">assert 3 &lt;= interior_nodes &lt;= 60 and diffusivity &gt; 0 and 0 &lt; r &lt;= 1
+n = interior_nodes
+h = 1/(n+1)
+near = np.diag(np.ones(n-1),1)+np.diag(np.ones(n-1),-1)
+mass = h*(4*np.eye(n)+near)/6
+stiffness = diffusivity*(2*np.eye(n)-near)/h
+dimensionless = h*h*np.linalg.solve(mass,stiffness)/diffusivity
+lumped = 2*np.eye(n)-near
+u0 = np.zeros(n); u0[0]=1
+consistent_u = u0-r*dimensionless@u0
+lumped_u = u0-r*lumped@u0
+theta = np.pi*np.arange(1,n+1)/(n+1)
+eigen = 6*(1-np.cos(theta))/(2+np.cos(theta))
+assert np.allclose(np.sort(np.linalg.eigvals(dimensionless)),eigen)
+assert np.isclose(consistent_u[2],-r*dimensionless[2,0]) and consistent_u[2]&lt;0
+if r&lt;=0.5: assert lumped_u.min() &gt;= -1.e-12
+print(f&quot;Time step {r*h*h/diffusivity:.6f}, largest stable r {2/eigen.max():.6f}&quot;)
+print(&quot;First three nodal temperatures:&quot;,consistent_u[:3],lumped_u[:3])
+try:
+    from onesim.cad.d1 import Line
+    from onesim.meshing import StructuredLineMesher
+    from onesim.numerics.fem.backends.spaces.line_lagrange import LineLagrangeSpace
+except ImportError:
+    print(&quot;The independent OneSimulation element check is available in a local installation.&quot;)
+else:
+    rod = Line(start=(0,0,0),end=(1,0,0))
+    grid = StructuredLineMesher(cells=n+1).generate(rod)
+    space = LineLagrangeSpace(grid,order=1)
+    assembled_mass = np.zeros((n+2,n+2))
+    assembled_stiffness = np.zeros_like(assembled_mass)
+    for cell,dofs in enumerate(space.cells):
+        _,w,(phi,dx,_) = space.element_data(cell)
+        local = np.ix_(dofs,dofs)
+        assembled_mass[local] += (phi.T*w) @ phi
+        assembled_stiffness[local] += diffusivity*(dx.T*w) @ dx
+    assert np.allclose(assembled_mass[1:-1,1:-1],mass)
+    assert np.allclose(assembled_stiffness[1:-1,1:-1],stiffness)
+    print(&quot;OneSimulation line-element assembly agrees for both matrices.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="8" wrap="off" spellcheck="false" autocapitalize="off">x = h*np.arange(n+2)
+fig, ax = axes(&quot;Coordinate along rod&quot;, &quot;Temperature above boundary reference (K)&quot;)
+for values,col,style,label in [(u0,&quot;#747474&quot;,&quot;:&quot;,&quot;Initial&quot;),(consistent_u,orange,&quot;-&quot;,&quot;Consistent mass&quot;),
+                                (lumped_u,teal,&quot;--&quot;,&quot;Lumped mass&quot;)]:
+    ax.plot(x,np.r_[0.,values,0.],ls=style,marker=&quot;o&quot;,ms=3,color=col,label=label)
+ax.axhline(0,color=&quot;#555&quot;,lw=.7)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Line segments are the linear finite-element interpolants. Both ends have a fixed zero temperature and participate in the heat balance.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="10" wrap="off" spellcheck="false" autocapitalize="off">fig, ax = axes(&quot;Dimensionless time step r&quot;, &quot;Remote nodal temperature (K)&quot;)
+sweep = np.linspace(0,max(.55,1.12*r),201)
+ax.plot(sweep,-sweep*dimensionless[2,0],color=orange,label=&quot;Third node after one step&quot;)
+ax.axvline(2/eigen.max(),color=&quot;#444&quot;,ls=&quot;:&quot;,label=&quot;Stability limit&quot;)
+ax.scatter(r,consistent_u[2],color=orange)
+right = ax.twinx(); right.set_ylabel(&quot;Largest mode amplification&quot;)
+right.plot(sweep,np.max(np.abs(1-sweep[:,None]*eigen),axis=1),color=teal,label=&quot;Spectral radius&quot;)
+right.axhline(1,color=teal,ls=&quot;--&quot;,lw=.9)
+ax.legend(loc=&quot;center left&quot;,fontsize=8);right.legend(loc=&quot;upper center&quot;,fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The orange trace is the one-step temperature at the third interior node. The vertical line is the exact stability threshold for this mesh. Crossing it eventually produces amplification greater than one.</p><h2>Exercise · keep the lumped temperatures nonnegative</h2><p>Suppose \(h=0.02\) m and \(\kappa=8\times10^{-5}\) m²/s. Find the greatest time step allowed by nonnegative weights. What stencil results at that step?</p><p>The condition gives \(\Delta t=h^2/(2\kappa)=2.5\) s. The central coefficient vanishes and each adjacent value receives weight one half. At the first interior node the fixed boundary value supplies one of these two terms. A step slightly above this threshold gives a negative central coefficient and can drive an isolated positive impulse below zero.</p><h2>Exercise · derive the largest mode on successively finer meshes</h2><p>An interior sine wave has neighbouring sum \(2\cos(\theta)\) times its own nodal value. Use this fact to find the limiting stability condition for forward Euler with consistent mass as the number of uniform elements grows.</p><p>The mass eigenvalue is \(h(2+\cos\theta)/3\) and the stiffness eigenvalue is \(2\kappa(1-\cos\theta)/h\). Their ratio, multiplied by \(h^2/\kappa\), is \(6(1-\cos\theta)/(2+\cos\theta)\). The largest allowed angle tends to \(\pi\), giving 12. The limiting stable step therefore has \(r\leq1/6\). A positivity test still inspects the entries of the update matrix separately.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

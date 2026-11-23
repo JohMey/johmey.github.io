@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why one sample of latency can change the stability margin · OneSimulation</title>
+<meta name="description" content="The controller samples a first-order plant and holds its command until the next sample. Compare immediate application with the same calculation arriving exactly one sample late. Predict which gain produces oscillation before running the notebook.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why one sample of latency can change the stability margin · OneSimulation">
+<meta property="og:description" content="The controller samples a first-order plant and holds its command until the next sample. Compare immediate application with the same calculation arriving exactly one sample late. Predict which gain produces oscillation before running the notebook.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/notebooks/">Notebooks</a></p><h1>Why one sample of latency can change the stability margin</h1><p class="lead">The controller samples a first-order plant and holds its command until the next sample. Compare immediate application with the same calculation arriving exactly one sample late. Predict which gain produces oscillation before running the notebook.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/06-sampled-control/#notebook-example">Read the derivation</a><a href="/fundamentals/mechanical-engineering/control-engineering/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/control-engineering-chapter.ipynb" download="control-engineering-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="8" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+tau,period,gain=.50,.10,4.5    # seconds, seconds, dimensionless proportional gain
+samples=50
+assert tau&gt;0 and period&gt;0 and gain&gt;=0 and 10&lt;=samples&lt;=200
+a=np.exp(-period/tau)
+b=1-a</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Derive the homogeneous sampled recurrences</h2><p>For regulation to zero the direct controller gives x[k+1] = (a - bK)x[k]. With delay the coefficient multiplies x[k-1] instead. Initialise the remembered reading to zero, so the first delayed command is zero.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="12" wrap="off" spellcheck="false" autocapitalize="off">def run(k,delay):
+    old,x=0.,1.;values=[x]
+    for _ in range(samples):
+        old,x=x,a*x-b*k*(old if delay else x)
+        values.append(x)
+    return np.array(values)
+poles=np.roots([1,-a,b*gain])
+direct=run(gain,False);delayed=run(gain,True)
+print(f&quot;a = {a:.4f}, direct pole = {a-b*gain:.4f}, delayed poles = {poles}&quot;)
+print(f&quot;Upper positive gain limits: immediate {(1+a)/b:.3f}, delayed {1/b:.3f}&quot;)
+assert np.isclose(direct[1],a-b*gain) and np.isclose(delayed[1],a)
+assert np.isclose(np.prod(poles),b*gain)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Locate the damping and stability limits</h2><p>The two controllers use identical numerical coefficients and the same plant. Compare the absolute value of the largest pole with the sequence of sampled displacements.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="13" wrap="off" spellcheck="false" autocapitalize="off">gains=np.linspace(0,1.15*(1+a)/b,260)
+spectral=[np.max(np.abs(np.roots([1,-a,b*k]))) for k in gains]
+fig,ax=plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+times=np.arange(samples+1)*period
+ax[0].plot(times,direct,&quot;.-&quot;,ms=3,label=&quot;Immediate&quot;)
+ax[0].plot(times,delayed,&quot;.--&quot;,ms=3,label=&quot;One sample late&quot;)
+ax[0].set(xlabel=&quot;Time (s)&quot;,ylabel=&quot;Sampled deviation&quot;,title=&quot;Response from the same initial state&quot;)
+ax[1].plot(gains,np.abs(a-b*gains),label=&quot;Immediate&quot;)
+ax[1].plot(gains,spectral,&quot;--&quot;,label=&quot;One sample late&quot;)
+ax[1].axhline(1,color=&quot;0.5&quot;,ls=&quot;:&quot;,label=&quot;Unit circle&quot;)
+ax[1].set(xlabel=&quot;Positive gain K&quot;,ylabel=&quot;Maximum pole modulus&quot;,title=&quot;Discrete stability margin&quot;)
+for p in ax:p.grid(alpha=.22);p.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Set the gain between the two limits and compare the traces. Reduce the sample period by half while leaving the physical time constant unchanged; recompute the gain limits instead of simply reusing the original values. What would change if the delay were fixed in seconds rather than in samples?</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

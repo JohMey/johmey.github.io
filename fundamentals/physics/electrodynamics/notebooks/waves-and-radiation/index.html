@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How can a field that decays in air transmit power to another prism? · OneSimulation</title>
+<meta name="description" content="Place a thin air gap between identical prisms. Derive the TE transmission from the two interface conditions and test when an exponential attenuation length predicts the actual throughput.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/notebooks/waves-and-radiation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How can a field that decays in air transmit power to another prism? · OneSimulation">
+<meta property="og:description" content="Place a thin air gap between identical prisms. Derive the TE transmission from the two interface conditions and test when an exponential attenuation length predicts the actual throughput.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/notebooks/waves-and-radiation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/notebooks/">Notebooks</a></p><h1>How can a field that decays in air transmit power to another prism?</h1><p class="lead">Place a thin air gap between identical prisms. Derive the TE transmission from the two interface conditions and test when an exponential attenuation length predicts the actual throughput.</p><nav class="study-links"><a href="/fundamentals/physics/electrodynamics/volumes/waves-and-radiation/13-transmission-across-an-evanescent-gap/">Read the derivation</a><a href="/fundamentals/physics/electrodynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/electrodynamics-waves-and-radiation.ipynb" download="electrodynamics-waves-and-radiation.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Propagate both boundary data through the gap</h2><p>A monochromatic TE wave in a prism of index \(n\) has tangential wavenumber \(k_x=nk_0\sin\theta\), normal wavenumber \(k=nk_0\cos\theta\), and \(k_0=2\pi/\lambda\). Above the critical angle the air equation becomes \(E&#x27;&#x27;=\kappa^2 E\), where \(\kappa=(k_x^2-k_0^2)^{1/2}\). Matching \(E\) and its derivative across each nonmagnetic interface retains both independent exponential solutions. Discarding the growing solution would preclude matching the outgoing wave in the second prism.</p><p>From the exit to the entrance the transfer matrix has diagonal entries \(\cosh\kappa d\) and off-diagonal entries \(-\sinh(\kappa d)/\kappa\) and \(-\kappa\sinh(\kappa d)\). Insert \((t,ikt)\) at the exit and \((1+r,ik(1-r))\) at the entrance. Eliminating \(r\) and taking the squared modulus gives the power transmission:</p><div class="math display">\[T=\left[1+\frac{(k^2+\kappa^2)^2}{4k^2\kappa^2}\sinh^2(\kappa d)\right]^{-1}.\]</div><p>Both exterior media are identical, so transmitted power fraction equals squared transmitted amplitude. The finite flux through the gap comes from interference between its two evanescent components. The single exponential at an isolated interface carries no average normal power.</p><h2>The penetration length sets a slope</h2><p>At a large gap the logarithmic slope \(-d\ln T/dd\) tends to \(2\kappa\). At contact \(T=1\) with zero slope, because the leading correction in gap thickness is quadratic. Measuring a straight-line slope over a very small gap would therefore return a biased estimate of the penetration depth. Use the first graph to choose the window for a fit and the second graph to assess the bias. Take a vacuum wavelength of 600 nm, index 1.50 and incidence angle 50°. The critical angle is 41.81°. The amplitude penetration length \(1/\kappa\) is 168.72 nm and the coefficient of \(\sinh^2(\kappa d)\) is 1.312. For gaps of 50, 100 and 200 nm the transmitted fractions are 0.894, 0.659 and 0.257. Doubling the gap therefore does not simply square the measured transmission. Only the sufficiently thick-gap logarithmic slope approaches a constant.</p><p>One can invert a single transmission reading when the angle and indices are independently known. Write \(A=(k^2+\kappa^2)^2/(4k^2\kappa^2)\). Then \(d=\kappa^{-1}\operatorname{asinh}\sqrt{(T^{-1}-1)/A}\). The reading 0.659 returns a gap of about 100 nm. Near \(T=1\) a small absolute power error makes a large relative error in the inferred gap. This follows directly from the quadratic expansion \(1-T\simeq A(\kappa d)^2\).</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="3" wrap="off" spellcheck="false" autocapitalize="off">index = 1.5
+angle_deg = 50.
+wavelength_nm = 600.</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="13" wrap="off" spellcheck="false" autocapitalize="off">k0 = 2*np.pi/wavelength_nm
+def coefficients(theta):
+    angle=np.deg2rad(theta)
+    return index*k0*np.cos(angle), k0*np.sqrt((index*np.sin(angle))**2-1)
+def transmission(d,theta):
+    k,decay=coefficients(theta)
+    factor=(k*k+decay**2)**2/(4*k*k*decay**2)
+    return 1/(1+factor*np.sinh(decay*d)**2)
+critical=np.rad2deg(np.arcsin(1/index))
+assert index &gt; 1 and critical &lt; angle_deg &lt; 90 and wavelength_nm&gt;0
+k,decay=coefficients(angle_deg)
+assert np.isclose(transmission(0,angle_deg),1)
+print(f&quot;Critical angle {critical:.2f}°, amplitude penetration depth {1/decay:.2f} nm&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="6" wrap="off" spellcheck="false" autocapitalize="off">d=np.linspace(0,2*wavelength_nm,300)
+fig,ax=axes(&quot;Air gap d (nm)&quot;,&quot;Transmitted power fraction&quot;)
+for theta,colour in zip([critical+(90-critical)*.05,angle_deg,critical+(90-critical)*.40],[orange,teal,blue]):
+    ax.semilogy(d,transmission(d,theta),label=f&quot;{theta:.1f}°&quot;,color=colour)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>A higher transverse wavenumber causes a steeper thick-gap decay. At contact every angle has unit transmission.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="6" wrap="off" spellcheck="false" autocapitalize="off">slope=-np.gradient(np.log(transmission(d,angle_deg)),d,edge_order=2)
+fig,ax=axes(&quot;Dimensionless gap κd&quot;,&quot;Local attenuation slope / (2κ)&quot;)
+ax.plot(decay*d,slope/(2*decay),color=teal,label=&quot;Finite gap&quot;)
+ax.axhline(1,color=orange,ls=&quot;--&quot;,label=&quot;Thick-gap limit&quot;)
+ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Normalising by twice the decay constant turns the thick-gap limit into one. The early points reveal why a thin-gap slope fit fails.</p><h2>Exercise · halve a thick-gap signal</h2><p>How much extra separation is required to halve the transmitted power deep in the exponential regime?</p><p>The ratio tends to \(\exp(-2\kappa\Delta d)\). Setting it to one half gives \(\Delta d=\ln 2/(2\kappa)\). This uses a power attenuation length. Confusing amplitude and intensity introduces a factor of two.</p><h2>Exercise · choose a boundary at the far side</h2><p>What changes if the second prism is removed while the incident prism and angle remain the same?</p><p>The gap becomes a half-space and boundedness removes the growing component. The transmitted evanescent amplitude can still be finite at the interface, while the average normal power flux becomes zero. The limit of the two-prism transmission agrees as \(d\) tends to infinity.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

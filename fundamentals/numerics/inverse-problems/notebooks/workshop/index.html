@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calibrating two instruments when both axes fluctuate · OneSimulation</title>
+<meta name="description" content="The horizontal axis of a calibration plot is often described as an input. In this experiment it is itself a reading from a second noisy instrument. Infer a straight calibration relation from paired data, derive the metric in which the fit should be performed, and use a change of units to reveal an easily overlooked modelling error.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Calibrating two instruments when both axes fluctuate · OneSimulation">
+<meta property="og:description" content="The horizontal axis of a calibration plot is often described as an input. In this experiment it is itself a reading from a second noisy instrument. Infer a straight calibration relation from paired data, derive the metric in which the fit should be performed, and use a change of units to reveal an easily overlooked modelling error.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a> / <a href="/fundamentals/numerics/inverse-problems/notebooks/">Notebooks</a></p><h1>Calibrating two instruments when both axes fluctuate</h1><p class="lead">The horizontal axis of a calibration plot is often described as an input. In this experiment it is itself a reading from a second noisy instrument. Infer a straight calibration relation from paired data, derive the metric in which the fit should be performed, and use a change of units to reveal an easily overlooked modelling error.</p><nav class="study-links"><a href="/fundamentals/numerics/inverse-problems/chapters/18-calibrating-two-uncertain-instruments/">Read the derivation</a><a href="/fundamentals/numerics/inverse-problems/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/inverse-problems-workshop.ipynb" download="inverse-problems-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Two instruments observe the same latent calibration settings. Estimate their linear relation when either reading may be in error. Watch the fitted line rotate as you change the stated measurement uncertainties. Noise draws are fixed for repeatable comparisons.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="17" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+sigma_x = .45                       # mV
+sigma_y = .40                       # K
+assert .08 &lt;= sigma_x &lt;= 1.5 and .08 &lt;= sigma_y &lt;= 1.5
+x = np.array([-2.35,-1.02,-1.12,.57,.42,1.36,2.27])
+y = np.array([-3.53,-2.71,-1.15,.21,1.23,2.54,3.89])
+P = np.column_stack((x,y))
+mean = P.mean(axis=0)
+
+def orthogonal_fit(points, uncertainties):
+    center = points.mean(axis=0)
+    Z = (points-center)/uncertainties
+    _,singular,vt = np.linalg.svd(Z,full_matrices=False)
+    normal = vt[-1]
+    projected = Z - np.outer(Z@normal,normal)
+    direction = vt[0]*uncertainties
+    return center,direction,center+projected*uncertainties,singular[-1]**2
+
+scales = np.array([sigma_x,sigma_y])
+center,direction,foot,loss = orthogonal_fit(P,scales)
+slope = direction[1]/direction[0]
+intercept = center[1]-slope*center[0]
+ols = np.polyfit(x,y,1)
+print(f&quot;Weighted orthogonal slope {slope:.6f} K/mV, intercept {intercept:.6f} K, loss {loss:.6f}&quot;)
+print(f&quot;Vertical least-squares slope {ols[0]:.6f} K/mV&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Eliminate a different nuisance coordinate for every reading</h2><p>For a trial slope through the centroid, minimising the squared correction over the unknown true horizontal coordinate leaves a single scalar loss. Plot this independent function and compare its minimum with the singular-vector fit.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="17" wrap="off" spellcheck="false" autocapitalize="off">def profile(b):
+    return np.sum(((y-mean[1])-b*(x-mean[0]))**2)/(sigma_y**2+b*b*sigma_x**2)
+assert np.isclose(loss,profile(slope),rtol=2e-12)
+assert np.isclose(loss,np.sum(((P-foot)/scales)**2),rtol=2e-12)
+fig, (data, cost) = plt.subplots(1,2,figsize=(10,4),layout=&quot;constrained&quot;)
+data.scatter(x,y,color=&quot;#145c71&quot;,label=&quot;readings&quot;,zorder=4)
+for i,(observation,adjusted) in enumerate(zip(P,foot)):
+    data.plot([observation[0],adjusted[0]],[observation[1],adjusted[1]],color=&quot;#9e4429&quot;,lw=2,label=&quot;adjustments&quot; if i==0 else None)
+xx = np.linspace(-2.6,2.55)
+data.plot(xx,intercept+slope*xx,color=&quot;#145c71&quot;,label=&quot;two uncertain axes&quot;)
+data.plot(xx,np.polyval(ols,xx),color=&quot;#88522f&quot;,ls=&quot;--&quot;,label=&quot;vertical fit&quot;)
+data.set(xlabel=&quot;First instrument (mV)&quot;,ylabel=&quot;Second instrument (K)&quot;,title=&quot;Where corrections are assigned&quot;)
+data.legend(fontsize=8)
+bb = np.linspace(.75,2.75,351)
+cost.plot(bb,[profile(b) for b in bb],color=&quot;#145c71&quot;)
+cost.scatter([slope],[loss],color=&quot;#b94626&quot;,label=&quot;whitened SVD solution&quot;)
+cost.set(xlabel=&quot;Trial sensitivity (K/mV)&quot;,ylabel=&quot;Sum of squared scaled distances&quot;,title=&quot;Profile out the unseen settings&quot;)
+cost.legend(fontsize=8)
+for ax in (data,cost): ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Change units and cross-check the eigensystem</h2><p>Convert the first instrument to volts and scale its uncertainty too. Transforming the fitted slope back must recover the original. In an installed OneSimulation environment its symmetric eigensystem supplies an independently constructed normal vector.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="12" wrap="off" spellcheck="false" autocapitalize="off">factor = np.array([.001,1.])
+_,converted,_,converted_loss = orthogonal_fit(P*factor,scales*factor)
+assert np.isclose((converted[1]/converted[0])*factor[0],slope)
+assert np.isclose(converted_loss,loss)
+Z = (P-mean)/scales
+try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigensystem as eigensystem
+except ImportError:
+    eigensystem = np.linalg.eigh
+ev,_ = eigensystem(Z.T@Z)
+assert np.isclose(ev[0],loss)
+print(&quot;Unit conversion and centred-scatter checks passed.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

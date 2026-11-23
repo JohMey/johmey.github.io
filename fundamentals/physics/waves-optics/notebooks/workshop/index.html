@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a grating makes images of itself in empty space · OneSimulation</title>
+<meta name="description" content="Illuminate a periodic mask with a monochromatic plane wave. A screen placed at certain distances records the original pattern even though there is no imaging lens. Derive the recurrence from the longitudinal phase of each diffraction order, predict the half-period displacement, and use exact propagation to test the paraxial argument.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/waves-optics/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why a grating makes images of itself in empty space · OneSimulation">
+<meta property="og:description" content="Illuminate a periodic mask with a monochromatic plane wave. A screen placed at certain distances records the original pattern even though there is no imaging lens. Derive the recurrence from the longitudinal phase of each diffraction order, predict the half-period displacement, and use exact propagation to test the paraxial argument.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/waves-optics/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/waves-optics/">Waves and optics</a> / <a href="/fundamentals/physics/waves-optics/notebooks/">Notebooks</a></p><h1>Why a grating makes images of itself in empty space</h1><p class="lead">Illuminate a periodic mask with a monochromatic plane wave. A screen placed at certain distances records the original pattern even though there is no imaging lens. Derive the recurrence from the longitudinal phase of each diffraction order, predict the half-period displacement, and use exact propagation to test the paraxial argument.</p><nav class="study-links"><a href="/fundamentals/physics/waves-optics/chapters/20-talbot-self-imaging/">Read the derivation</a><a href="/fundamentals/physics/waves-optics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/waves-optics-workshop.ipynb" download="waves-optics-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>A periodic amplitude mask can reproduce its structure in empty space. Change the period while holding wavelength fixed. Decide whether the recurrence distance grows linearly or quadratically with period.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="7" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+period_um = 12.
+wavelength_um = .6
+phase_rad = .55
+assert 0&lt;wavelength_um/period_um&lt;.45</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Propagate each Fourier order</h2><p>Choose a smooth mask with two pairs of nonzero diffraction orders, avoiding ambiguous aperture-edge sampling. The longitudinal wave number uses the decaying square-root branch. Removing the common carrier leaves every intensity unchanged.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="13" wrap="off" spellcheck="false" autocapitalize="off">n=256
+u=np.arange(n)/n
+mask=.58+.22*np.cos(2*np.pi*u)+.12*np.cos(4*np.pi*u+phase_rad)
+m=np.fft.fftfreq(n)*n
+spectrum=np.fft.fft(mask)
+k=2*np.pi/wavelength_um; kx=2*np.pi*m/period_um
+kz=np.sqrt(k*k-kx*kx+0j); ztalbot=2*period_um**2/wavelength_um
+def field(frac,exact=False):
+    phase=(kz-k)*ztalbot if exact else -2*np.pi*m*m
+    return np.fft.ifft(spectrum*np.exp(1j*np.asarray(frac)[...,None]*phase),axis=-1)
+print(f&quot;Paraxial field recurrence distance {ztalbot:.4f} μm.&quot;)
+print(&quot;RMS intensity discrepancy after one paraxial length:&quot;,
+      np.sqrt(np.mean((abs(field(1,True))**2-mask**2)**2)))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Read the carpet before studying the cuts</h2><p>Dark and bright structures need not track geometrical ray paths. The image on the left uses exact angular-spectrum phases; compare the same grating at a quarter, half and full paraxial Talbot distance on the right.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="9" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.9),layout=&quot;constrained&quot;)
+z=np.linspace(0,1,240);image=abs(field(z,True))**2
+im=ax[0].pcolormesh(u,z,image,shading=&quot;auto&quot;,cmap=&quot;viridis&quot;)
+fig.colorbar(im,ax=ax[0],label=&quot;Intensity / incident intensity&quot;)
+ax[0].set(xlabel=&quot;Lateral position x/d&quot;,ylabel=&quot;Propagation distance z/zT&quot;,title=&quot;Exact propagation of the mask&quot;)
+for f,c,style in [(0.,&quot;#222222&quot;,&quot;-&quot;),(.25,&quot;#375b9a&quot;,&quot;:&quot;),(.50,&quot;#175868&quot;,&quot;-.&quot;),(1.,&quot;#a23d21&quot;,&quot;--&quot;)]:
+    ax[1].plot(u,abs(field(f,True))**2,color=c,ls=style,label=f&quot;z/zT = {f:g}&quot;)
+ax[1].set(xlabel=&quot;Lateral position x/d&quot;,ylabel=&quot;Relative intensity&quot;,title=&quot;Planes of the Talbot carpet&quot;);ax[1].legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Verify phase, translation and energy</h2><p>A half-recurrence is a translation by half a period for any periodic input within the paraxial model. At a quarter-recurrence the odd Fourier orders are multiplied by minus i. Exact propagation converges towards these predictions at smaller wavelength-to-period ratio. The chosen mask contains only propagating orders.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="5" wrap="off" spellcheck="false" autocapitalize="off">assert np.allclose(field(1.),mask)
+assert np.allclose(field(.5),np.roll(mask,n//2))
+quarter=(1-1j)/2*mask+(1+1j)/2*np.roll(mask,n//2)
+assert np.allclose(field(.25),quarter)
+assert np.isclose(np.mean(abs(field(1.,True))**2),np.mean(mask**2))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Optional OneSimulation angular-spectrum solve</h2><p>This comparison exercises the library&#x27;s forward or decaying longitudinal branch and its propagation operator with the same physical field. The Fourier-order derivation above remains independent.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="10" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.physics.optics.propagation.numerics.angular_spectrum import AngularSpectrumPropagation, longitudinal_wavenumber
+except ImportError:
+    print(&quot;The optional optical propagation check runs locally with OneSimulation.&quot;)
+else:
+    longitudinal=longitudinal_wavenumber(kx[:,None],k)
+    propagator=AngularSpectrumPropagation(longitudinal=longitudinal,forward=np.fft.fft,inverse=np.fft.ifft,reference_wavenumber=k)
+    result=propagator(mask,ztalbot)
+    print(&quot;Maximum complex-field discrepancy:&quot;,np.max(abs(result-field(1.,True))))
+    assert np.allclose(result,field(1.,True),atol=1e-11)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

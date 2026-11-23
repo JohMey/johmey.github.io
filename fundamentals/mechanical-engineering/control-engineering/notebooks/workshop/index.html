@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn a repeatable positioning move from its previous error · OneSimulation</title>
+<meta name="description" content="An inspection stage follows the same position command on hundreds of nominally identical passes. A small force disturbance returns at the same part of each move. The complete tracking record from the previous pass is available before the next move begins. Derive a learning update that uses the stage dynamics to turn that record into a new feedforward command. Its convergence can be predicted from singular values and tested with a few lines of code.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Learn a repeatable positioning move from its previous error · OneSimulation">
+<meta property="og:description" content="An inspection stage follows the same position command on hundreds of nominally identical passes. A small force disturbance returns at the same part of each move. The complete tracking record from the previous pass is available before the next move begins. Derive a learning update that uses the stage dynamics to turn that record into a new feedforward command. Its convergence can be predicted from singular values and tested with a few lines of code.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/notebooks/">Notebooks</a></p><h1>Learn a repeatable positioning move from its previous error</h1><p class="lead">An inspection stage follows the same position command on hundreds of nominally identical passes. A small force disturbance returns at the same part of each move. The complete tracking record from the previous pass is available before the next move begins. Derive a learning update that uses the stage dynamics to turn that record into a new feedforward command. Its convergence can be predicted from singular values and tested with a few lines of code.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/20-iterative-learning-for-a-repeated-move/">Read the derivation</a><a href="/fundamentals/mechanical-engineering/control-engineering/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/control-engineering-workshop.ipynb" download="control-engineering-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>A stage repeats the same trajectory many times. Predict what happens if the learning update becomes too aggressive. The horizontal coordinate within each motion is distinct from the trial number. Edit the first cell and rerun.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="8" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+memory = .75            # sampled plant pole, 0 &lt; memory &lt; 1
+relative_step = .9      # fraction of 2 / largest squared singular value
+trials = 30
+N = 48                 # commands per move
+assert 0 &lt; memory &lt; 1 and 0 &lt; relative_step &lt;= 1.12 and 1 &lt;= trials &lt;= 60 and 12 &lt;= N &lt;= 96</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Lift the causal recurrence onto one trial</h2><p>Model the stage by \(y_{k+1}=a y_k+(1-a)u_k\) with zero initial state. Record \(y_1\) to \(y_N\) for inputs \(u_0\) to \(u_{N-1}\). A deterministic output disturbance returns in the same phase of every trial.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="14" wrap="off" spellcheck="false" autocapitalize="off">lag = np.arange(N)[:,None]-np.arange(N)[None,:]
+G = np.tril((1-memory)*memory**np.maximum(lag,0))
+t = np.arange(1,N+1)/N
+target = .9*np.sin(np.pi*t)**2 + .13*np.sin(6*np.pi*t)
+disturbance = .09*np.sin(2*np.pi*t) + .025*np.cos(8*np.pi*t)
+sigma = np.linalg.svd(G,compute_uv=False)
+gamma = relative_step*2/sigma[0]**2
+print(f&quot;Singular values range {sigma[-1]:.4f} to {sigma[0]:.4f}.&quot;)
+print(f&quot;Learning step {gamma:.3f}; upper bound for monotone contraction {2/sigma[0]**2:.3f}.&quot;)
+u_test = np.linspace(-1,1,N); state=0.; sequence=[]
+for u in u_test:
+    state=memory*state+(1-memory)*u
+    sequence.append(state)
+assert np.allclose(G@u_test,sequence)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Apply the adjoint of the forward operator</h2><p>Corrections use the entire previous record. Compare against the theoretically slowest contraction factor; the reference starts at the measured first error. For an intentionally excessive step study only this linear model.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="13" wrap="off" spellcheck="false" autocapitalize="off">u = np.zeros(N)
+energies, paths = [], []
+for j in range(trials+1):
+    y = G@u + disturbance
+    error = target-y
+    paths.append(y.copy())
+    energies.append(np.linalg.norm(error)/np.sqrt(N))
+    u += gamma*(G.T@error)
+factor = np.max(np.abs(1-gamma*sigma**2))
+if relative_step &lt; 1:
+    assert np.all(np.diff(energies) &lt;= 1e-11)
+assert np.all(np.asarray(energies) &lt;= energies[0]*factor**np.arange(trials+1)+1e-11)
+print(f&quot;RMS error from {energies[0]:.5f} to {energies[-1]:.5f}; worst-case error-norm factor {factor:.4f}.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare a trajectory to a convergence diagnostic</h2><p>The dashed bound permits mixtures of error directions and can lie above the actual error. Print the singular values to estimate which components of a tracking error are learned slowly.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="12" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9.2,3.5),layout=&quot;constrained&quot;)
+ax[0].plot(t,target,color=&quot;0.2&quot;,lw=2,label=&quot;Target&quot;)
+for j,style in [(0,&quot;:&quot;),(min(2,trials),&quot;--&quot;),(trials,&quot;-.&quot;)]:
+    ax[0].plot(t,paths[j],style,label=f&quot;Trial {j}&quot;)
+idx=np.arange(trials+1)
+ax[1].semilogy(idx,energies,label=&quot;Simulated RMS error&quot;)
+ax[1].semilogy(idx,energies[0]*factor**idx,&quot;--&quot;,label=&quot;Singular-value bound&quot;)
+ax[0].set(xlabel=&quot;Fraction of one move&quot;,ylabel=&quot;Normalised position&quot;,title=&quot;Motion within a trial&quot;)
+ax[1].set(xlabel=&quot;Completed learning updates&quot;,ylabel=&quot;RMS tracking error&quot;,title=&quot;Improvement across trials&quot;)
+for p in ax:
+    p.grid(alpha=.2); p.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Change one assumption</h2><p>Set the relative step to 1.05 and increase the trial count. A particular reference can show several improving trials even though the worst singular direction grows. Replace the repeatable disturbance by a different vector on each trial, remove the deterministic contraction assertion, and calculate errors against a separate clean trajectory. Explain why the original bound no longer follows.</p><h2>Identify the worst-case error from an independent eigenproblem</h2><p>The eigenvalues of the symmetric error-propagation matrix are the gains on independent error directions. OneSimulation can solve that eigenproblem locally. In the browser use the corresponding NumPy solver and cross-check against the earlier singular-value prediction.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="12" wrap="off" spellcheck="false" autocapitalize="off">error_map = np.eye(N) - gamma * (G @ G.T)
+try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigenvalues
+    method = &quot;OneSimulation symmetric eigenvalues&quot;
+except ImportError:
+    symmetric_eigenvalues = np.linalg.eigvalsh
+    method = &quot;NumPy symmetric eigenvalues&quot;
+
+error_gains = symmetric_eigenvalues(error_map)
+measured_factor = np.max(np.abs(error_gains))
+assert np.isclose(measured_factor, factor)
+print(f&quot;{method}: worst one-trial error gain {measured_factor:.6f}&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

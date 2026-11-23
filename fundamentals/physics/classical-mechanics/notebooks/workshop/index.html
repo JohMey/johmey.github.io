@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading Earth&#x27;s rotation from a pendulum trace · OneSimulation</title>
+<meta name="description" content="A free pendulum supplies two clocks. The bob returns in seconds, while the axis traced on the floor takes hours to rotate. Derive both rates from the tension and gravity, then work out what a camera actually measures and how a slightly imperfect suspension can imitate part of the signal.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reading Earth&#x27;s rotation from a pendulum trace · OneSimulation">
+<meta property="og:description" content="A free pendulum supplies two clocks. The bob returns in seconds, while the axis traced on the floor takes hours to rotate. Derive both rates from the tension and gravity, then work out what a camera actually measures and how a slightly imperfect suspension can imitate part of the signal.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a> / <a href="/fundamentals/physics/classical-mechanics/notebooks/">Notebooks</a></p><h1>Reading Earth&#x27;s rotation from a pendulum trace</h1><p class="lead">A free pendulum supplies two clocks. The bob returns in seconds, while the axis traced on the floor takes hours to rotate. Derive both rates from the tension and gravity, then work out what a camera actually measures and how a slightly imperfect suspension can imitate part of the signal.</p><nav class="study-links"><a href="/fundamentals/physics/classical-mechanics/chapters/20-foucault-pendulum/">Read the derivation</a><a href="/fundamentals/physics/classical-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/classical-mechanics-workshop.ipynb" download="classical-mechanics-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>A pendulum swings in seconds but its direction turns over hours. Predict the sign of the change before running the cells. The origin is the suspension point projected onto the floor. Angles are positive counterclockwise as viewed from above.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+latitude_deg = 48.0    # try 0, -48, and 90
+length_m = 10.0
+amplitude_m = 0.15
+hours_between = 3.0
+assert -90 &lt;= latitude_deg &lt;= 90 and length_m &gt; 0 and 0 &lt; amplitude_m &lt; 0.1*length_m
+assert 0 &lt; hours_between &lt;= 12</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Separate fast and slow motion</h2><p>For east and north coordinates combine the horizontal equations into a complex displacement. An eastward release without initial velocity requires a small imaginary correction even when the observer sees an almost straight trace.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="12" wrap="off" spellcheck="false" autocapitalize="off">earth_rate = 2*np.pi/86164.1
+f = earth_rate*np.sin(np.deg2rad(latitude_deg))
+omega = np.sqrt(9.81/length_m)
+nu = np.hypot(omega, f)
+def displacement(time):
+    time = np.asarray(time)
+    return amplitude_m*np.exp(-1j*f*time)*(np.cos(nu*time) + 1j*(f/nu)*np.sin(nu*time))
+
+period_s = 2*np.pi/nu
+days = 2*np.pi/(abs(f)*86400) if abs(f)&gt;0 else np.inf
+print(f&quot;Swing period {period_s:.4f} s; apparent drift {-np.rad2deg(f)*3600:.3f} deg/h&quot;)
+print(&quot;Directed-axis rotation period (solar days):&quot;, days)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Compare floor traces with the latitude law</h2><p>Each coloured curve spans one full swing at the displayed clock time. The adjacent graph uses a directed angle. A straight line on its own does not distinguish angles separated by 180 degrees.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="12" wrap="off" spellcheck="false" autocapitalize="off">fig, axes = plt.subplots(1,2,figsize=(9,3.9),layout=&quot;constrained&quot;)
+for hour, colour in zip([0,hours_between,2*hours_between],[&quot;#175868&quot;,&quot;#a23d21&quot;,&quot;#375b9a&quot;]):
+    u=displacement(hour*3600+np.linspace(0,period_s,220))
+    axes[0].plot(u.real*100,u.imag*100,lw=2.4,color=colour,label=f&quot;{hour:g} h&quot;)
+axes[0].set(xlabel=&quot;East (cm)&quot;,ylabel=&quot;North (cm)&quot;,aspect=&quot;equal&quot;,title=&quot;One swing at three times&quot;,
+            xlim=(-110*amplitude_m,110*amplitude_m),ylim=(-110*amplitude_m,110*amplitude_m))
+axes[0].legend(fontsize=9)
+angles=np.linspace(-90,90,181); rates=-np.rad2deg(earth_rate*np.sin(np.deg2rad(angles)))*3600
+axes[1].plot(angles,rates,color=&quot;#175868&quot;);axes[1].plot(latitude_deg,-np.rad2deg(f)*3600,&quot;o&quot;,color=&quot;#a23d21&quot;)
+axes[1].axhline(0,lw=.6,color=&quot;grey&quot;)
+axes[1].set(xlabel=&quot;Latitude (degrees north)&quot;,ylabel=&quot;Azimuth drift (degrees per hour)&quot;,title=&quot;Clockwise drift is negative&quot;)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Verify the initial condition and the equatorial limit</h2><p>Differentiate the sampled position symmetrically. Repeat with zero vertical rotation rate. Explain why changing the length changes the fast period but leaves the azimuthal drift rate unchanged.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="3" wrap="off" spellcheck="false" autocapitalize="off">assert abs(displacement(0)-amplitude_m)&lt;1e-12
+assert abs((displacement(1e-5)-displacement(-1e-5))/2e-5)&lt;1e-8
+if latitude_deg == 0: assert abs(displacement(.31).imag)&lt;1e-12</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Optional OneSimulation check</h2><p>In a OneSimulation installation, integrate both coupled real equations without using the complex solution. Compare the result after three swings. In the web notebook the analytic study above is fully usable with NumPy alone.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="14" wrap="off" spellcheck="false" autocapitalize="off">try:
+    from onesim.numerics.time import ClassicalRungeKutta4TimeIntegrator
+except ImportError:
+    print(&quot;The optional integrator check runs in a local OneSimulation installation.&quot;)
+else:
+    def acceleration(s,t):
+        x,y,vx,vy=s
+        return (vx,vy,-omega**2*x+2*f*vy,-omega**2*y-2*f*vx)
+    state=(amplitude_m,0.0,0.0,0.0); dt=period_s/180
+    method=ClassicalRungeKutta4TimeIntegrator()
+    for j in range(540): state=method.advance(state,acceleration,dt,time=j*dt)
+    error=abs(complex(*state[:2])-displacement(540*dt))/amplitude_m
+    print(&quot;Relative final displacement disagreement:&quot;,error)
+    assert error &lt; 1e-5</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

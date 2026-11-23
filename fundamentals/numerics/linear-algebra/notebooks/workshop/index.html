@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counting vibration modes without calculating their shapes · OneSimulation</title>
+<meta name="description" content="A long chain of beads is tested on a shaker. The instrument can sweep only a narrow frequency interval, and the operator wants to know which resonance lies inside it. Turn a mass and spring model into a counting problem. Work out why a sign in an elimination step can identify a frequency that has never been computed directly.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Counting vibration modes without calculating their shapes · OneSimulation">
+<meta property="og:description" content="A long chain of beads is tested on a shaker. The instrument can sweep only a narrow frequency interval, and the operator wants to know which resonance lies inside it. Turn a mass and spring model into a counting problem. Work out why a sign in an elimination step can identify a frequency that has never been computed directly.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/notebooks/">Notebooks</a></p><h1>Counting vibration modes without calculating their shapes</h1><p class="lead">A long chain of beads is tested on a shaker. The instrument can sweep only a narrow frequency interval, and the operator wants to know which resonance lies inside it. Turn a mass and spring model into a counting problem. Work out why a sign in an elimination step can identify a frequency that has never been computed directly.</p><nav class="study-links"><a href="/fundamentals/numerics/linear-algebra/chapters/18-counting-vibration-modes/">Read the derivation</a><a href="/fundamentals/numerics/linear-algebra/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/linear-algebra-workshop.ipynb" download="linear-algebra-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Change the mass of one bead in a fixed-end chain. Use a three-term inertia recurrence to enclose the chosen eigenvalue without computing an eigenvector. Frequencies are measured in units of the frequency of a single spring and unit mass. The calculation runs with NumPy and Matplotlib.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="12" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+beads = 15
+middle_mass = 3.0
+mode = 5                   # one-based, starting at the lowest frequency
+assert 3 &lt;= beads &lt;= 100 and 0.2 &lt;= middle_mass &lt;= 10 and 1 &lt;= mode &lt;= beads
+masses = np.ones(beads)
+masses[beads // 2] = middle_mass
+diag = 2 / masses
+off = -1 / np.sqrt(masses[:-1] * masses[1:])
+A = np.diag(diag) + np.diag(off, 1) + np.diag(off, -1)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Count signed pivots</h2><p>In exact arithmetic each negative pivot contributes one eigenvalue below the shift as long as no pivot vanishes. For the unit-scale matrices in this notebook a vanishing pivot is replaced by a tiny negative pivot. This assigns an exact tie to the lower spectrum. The common test below also checks the count at an eigenvalue analytically known to be exact.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="17" wrap="off" spellcheck="false" autocapitalize="off">def inertia_count(a, b, shift):
+    floor = np.finfo(float).tiny * max(1.0, np.max(b*b, initial=0.0))
+    pivot = a[0] - shift
+    negatives = 0
+    for i in range(len(a)):
+        if abs(pivot) &lt; floor:
+            pivot = -floor
+        negatives += int(pivot &lt; 0)
+        if i + 1 &lt; len(a):
+            pivot = a[i+1] - shift - (b[i]*b[i])/pivot
+    return negatives
+
+assert inertia_count(np.array([2., 2., 2.]), np.array([-1., -1.]), 2.0) == 2
+
+def enclosing_interval(a, b, k, rounds=44):
+    radii = np.r_[0., abs(b)] + np.r_[abs(b), 0.]
+    lower = float(min(a-radii) - 1)
+    upper = float(max(a+radii) + 1)
+    history = []
+    for _ in range(rounds):
+        center = (lower+upper)/2
+        history.append([lower, upper])
+        if inertia_count(a, b, center) &lt; k:
+            lower = center
+        else:
+            upper = center
+    return lower, upper, np.array(history)
+
+left, right, history = enclosing_interval(diag, off, mode)
+reference = np.linalg.eigvalsh(A)
+assert left - 5e-13 &lt;= reference[mode-1] &lt;= right + 5e-13
+print(f&quot;Mode {mode}: eigenvalue in [{left:.12f}, {right:.12f}]&quot;)
+print(f&quot;Angular frequency = {np.sqrt((left+right)/2):.8f} in spring–mass units.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Locate the step; watch its bracket contract</h2><p>The staircase changes height when the trial shift crosses an eigenvalue. The second panel shows the bracket width after each iteration. Try a lighter bead. Does every mode move by the same amount?</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="10" wrap="off" spellcheck="false" autocapitalize="off">fig, (spectrum, convergence) = plt.subplots(1, 2, figsize=(10, 4.0), layout=&quot;constrained&quot;)
+shifts = np.linspace(-0.15, reference[-1]+0.2, 500)
+spectrum.step(shifts, [inertia_count(diag, off, x) for x in shifts], where=&quot;post&quot;, color=&quot;#145c71&quot;)
+spectrum.axvline(reference[mode-1], color=&quot;#b94626&quot;, ls=&quot;--&quot;, label=f&quot;mode {mode}&quot;)
+spectrum.set(xlabel=&quot;Shift in squared-frequency units&quot;, ylabel=&quot;Eigenvalue count&quot;, title=&quot;Count the negative pivots&quot;)
+spectrum.legend()
+convergence.semilogy(range(1, len(history)+1), history[:,1]-history[:,0], color=&quot;#145c71&quot;)
+convergence.set(xlabel=&quot;Bisection iteration&quot;, ylabel=&quot;Bracket width&quot;, title=&quot;One reliable binary digit per split&quot;)
+for ax in (spectrum, convergence): ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Independent checks</h2><p>With unit masses the eigenvalues follow from sine modes. An installed OneSimulation environment can cross-check the modified chain through its dense symmetric eigensolver.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="11" wrap="off" spellcheck="false" autocapitalize="off">k = np.arange(1, beads+1)
+uniform = np.diag(np.full(beads,2.0)) + np.diag(-np.ones(beads-1),1) + np.diag(-np.ones(beads-1),-1)
+assert np.max(np.abs(np.linalg.eigvalsh(uniform) - 4*np.sin(k*np.pi/(2*(beads+1)))**2)) &lt; 1e-12
+try:
+    from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigenvalues
+except ImportError:
+    print(&quot;Sine-spectrum and NumPy reference checks passed. OneSimulation comparison is available locally.&quot;)
+else:
+    independent = symmetric_eigenvalues(A)
+    print(&quot;OneSimulation squared frequency:&quot;, independent[mode-1])
+    assert np.allclose(independent, reference)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

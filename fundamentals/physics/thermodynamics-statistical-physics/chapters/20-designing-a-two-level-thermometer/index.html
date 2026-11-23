@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design a thermometer with a countable energy spectrum · OneSimulation</title>
+<meta name="description" content="How precisely can a single equilibrated degree of freedom measure temperature? Derive the reading distribution from the canonical ensemble, find the gap that makes it most informative, and analyse a detector that records no excitations at all.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/20-designing-a-two-level-thermometer/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Design a thermometer with a countable energy spectrum · OneSimulation">
+<meta property="og:description" content="How precisely can a single equilibrated degree of freedom measure temperature? Derive the reading distribution from the canonical ensemble, find the gap that makes it most informative, and analyse a detector that records no excitations at all.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/20-designing-a-two-level-thermometer/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Design a thermometer with a countable energy spectrum</h1><p class="lead">How precisely can a single equilibrated degree of freedom measure temperature? Derive the reading distribution from the canonical ensemble, find the gap that makes it most informative, and analyse a detector that records no excitations at all.</p><p class="byline">Chapter 20 of 20</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a><a href="/fundamentals/physics/thermodynamics-statistical-physics/notebooks/workshop/">Open editable notebook</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#start-with-how-the-instrument-is-read">Start with how the instrument is read</a><a href="#invert-the-count-and-treat-the-boundaries-as-part-of-the-problem">Invert the count and treat the boundaries as part of the problem</a><a href="#derive-the-temperature-resolution-twice">Derive the temperature resolution twice</a><a href="#where-should-a-designer-place-the-gap">Where should a designer place the gap?</a><a href="#recover-an-interval-when-zero-events-were-observed">Recover an interval when zero events were observed</a><a href="#tutorial-on-uncertainty-design-and-a-defective-detector">Tutorial on uncertainty, design and a defective detector</a></nav></aside><article class="prose reference"><section>
+<h2 id="start-with-how-the-instrument-is-read">Start with how the instrument is read</h2>
+<p>Bring a two-level probe into weak thermal contact with a large bath at an unknown positive temperature \(T\). Its lower energy is set to zero and its upper energy is \(\Delta&gt;0\); both levels are nondegenerate. Wait for equilibration, then measure which energy level the probe occupies. Repeat with independent equilibrium preparations, either by waiting for full rethermalisation between measurements or by using many identical probes. The data consist of \(N\) binary outcomes. They are not a direct measurement of the average energy of an infinitely large sample.</p>
+<p>Weak coupling lets us use a fixed calibrated Hamiltonian for the probe while treating the bath as a reservoir. In a canonical ensemble the ratio of excited to ground weights is \(e^{-\Delta/(k_BT)}\). Write \(x=\Delta/(k_BT)\). Normalising the two weights gives excited probability \(p=1/(1+e^x)\), partition function \(Z=1+e^{-x}\), and mean energy \(U=\Delta p\). The arbitrary zero of energy drops out of all three measurable statements about populations, energy differences and temperature sensitivity.</p>
+<p>One low-energy observation can occur both in a very cold bath and in a relatively warm one. One upper-state observation likewise gives only partial information. Counting \(k\) excitations across \(N\) preparations produces a binomial distribution. Its dependence on \(T\) enters entirely through \(p(T)\). A histogram of measured energies has only two bars, yet the relative heights carry a continuous parameter. Keeping track of the total number of shots is essential: the same 10 per cent excited fraction is a different measurement when it came from ten shots and when it came from ten thousand.</p>
+</section>
+<section>
+<h2 id="invert-the-count-and-treat-the-boundaries-as-part-of-the-problem">Invert the count and treat the boundaries as part of the problem</h2>
+<p>The likelihood of a hypothesised temperature is proportional to \(p^k(1-p)^{N-k}\). At an interior maximum the derivative of its logarithm with respect to \(p\) vanishes, giving \(\hat p=k/N\). For \(0&lt;k&lt;N/2\), inversion yields</p>
+<div class="math display">\[\hat T=\frac{\Delta}{k_B\ln[(N-k)/k]}.\]</div>
+<p>This inverse is nonlinear. Doubling the excited fraction does not simply double the temperature, and errors on the two sides of a temperature estimate need not be equal. At \(k=0\) the maximum lies at the limiting temperature \(T\to0^+\); it does not prove that the bath has reached absolute zero. At \(k/N\ge1/2\), the likelihood on the positive-temperature model is maximised as \(T\to\infty\). A finite sample can cross one half by chance even when the equilibrium bath temperature is positive. Before inferring population inversion check statistical uncertainty, uncorrected readout bias and the assumptions about degeneracy.</p>
+<p>For numerical work use \(\ln L=-kx-N\ln(1+e^{-x})+\mathrm{const}\). Working with log probabilities keeps a sequence of unlikely but possible observations from being rounded to zero. Plotting the likelihood normalised to its largest value on a temperature grid makes its shape visible. This curve is not automatically a probability density over \(T\); a Bayesian posterior would additionally require a prior and normalisation in the chosen temperature coordinate.</p>
+</section>
+<section>
+<h2 id="derive-the-temperature-resolution-twice">Derive the temperature resolution twice</h2>
+<p>Differentiate the occupation with respect to temperature. Since \(dp/dx=-p(1-p)\) and \(dx/dT=-x/T\), the thermal response is \(dp/dT=x p(1-p)/T\). The observed fraction has variance \(p(1-p)/N\). When its statistical width is small enough that the inverse calibration is locally linear, propagate a small fluctuation through the inverse function:</p>
+<div class="math display">\[\frac{\sigma_T}{T}\simeq\frac{1}{x\sqrt{Np(1-p)}}.\]</div>
+<p>A second derivation identifies an information limit. For one observation \(X\in\{0,1\}\), the logarithmic likelihood derivative is \((X-p)p&#x27;/[p(1-p)]\). Squaring and averaging uses \(\operatorname{var}X=p(1-p)\) and gives Fisher information \(F_T=(p&#x27;)^2/[p(1-p)]\). Information adds across independent trials. For a locally unbiased regular estimator the Cramér–Rao bound is \(\operatorname{var}\hat T\ge1/(NF_T)\). The preceding propagated width equals that bound asymptotically for an interior occupation probability. It does not guarantee the performance of the finite-sample inverse at a boundary.</p>
+<p>The same expression has a thermodynamic interpretation. The energy variance is \(\Delta^2p(1-p)\), while \(C=\partial U/\partial T=k_B x^2p(1-p)\). Therefore \(F_T=C/(k_BT^2)\). A large equilibrium heat capacity means that the energy histogram moves appreciably for a small temperature change compared with its own thermal width. This identity extends to an equilibrium system with a temperature-independent Hamiltonian when its full energy is measured. Coarsening energy into fewer detector bins, changing the Hamiltonian with \(T\), or using correlations across repeated trials changes what can be inferred from the data.</p>
+</section>
+<section>
+<h2 id="where-should-a-designer-place-the-gap">Where should a designer place the gap?</h2>
+<p>For fixed bath temperature and number of independent preparations, maximise \(x^2p(1-p)=x^2/[4\cosh^2(x/2)]\). Its logarithmic derivative is \(2/x-\tanh(x/2)\). The optimum positive root solves</p>
+<div class="math display equation-chain"><div class="equation-step">\[x\tanh(x/2)=2,\]</div><div class="equation-step">\[x_{\rm opt}\simeq2.39936 .\]</div></div>
+<p>The product grows monotonically on the positive axis, so this root is unique. At small \(x\) the two measured outcomes occur almost equally often but very weakly depend on temperature. At very large \(x\) a rare excitation carries substantial energy yet nearly every trial gives the same result. The maximum balances the thermal slope against the fluctuations and availability of both outcomes. Its location assumes two nondegenerate levels; increasing a level&#x27;s degeneracy changes both its equilibrium weight and the optimum.</p>
+<p>For a probe designed to work near 4.0 K the optimal gap divided by \(k_B\) is about 9.60 K. The expected excited fraction is only 0.0832. With 400 independent shots the local bound on relative standard error is about 7.54 per cent, or 0.30 K. The default notebook seed happens to yield 24 excitations and a maximum-likelihood estimate near 3.49 K. A known simulation input and a fitted parameter need not coincide in one finite record. Change the seed before changing the temperature to observe which scatter is expected from the instrument itself.</p>
+<figure class="concept-diagram"><a class="diagram-enlarge" href="/assets/workshop-figures/thermodynamics-statistical-physics.png" target="_blank" rel="noopener"><img src="/assets/workshop-figures/thermodynamics-statistical-physics.png" alt="Two-level excited probability and scaled heat capacity versus gap, alongside the likelihood from a finite sample of binary energy readings." width="1395" height="605"><span>Open full-size diagram</span></a>
+<figcaption>An energy gap near 2.4 times thermal energy maximises local information for a nondegenerate two-level probe. The likelihood on the right comes from one reproducible sample. Its maximum can move even when the bath temperature stays fixed.</figcaption></figure>
+<p>Use a gap of 0.4 K at the same 4 K bath temperature, then a gap of 40 K. In the first experiment the hot side of a likelihood plot can be extremely broad. In the second, most records are entirely in the ground state. Optimising around one known operating point also has a cost: if temperature may lie anywhere across several orders of magnitude, the best single design locally can be an insensitive probe elsewhere. One strategy is to make a coarse first measurement with one gap, then tune the second gap using that estimate and analyse the two independent batches with their own known calibration settings.</p>
+</section>
+<section>
+<h2 id="recover-an-interval-when-zero-events-were-observed">Recover an interval when zero events were observed</h2>
+<p>For \(k=0\), the exact probability of such a record at a proposed \(p\) is \((1-p)^N\). A one-sided 95 per cent frequentist upper limit \(p_u\) solves \((1-p_u)^N=0.05\). The transformation to \(T\) is monotone on the positive-temperature interval, so invert \(p_u\) using the same level gap whenever \(p_u&lt;1/2\). This confidence construction concerns repeated experiments with the stated coverage, rather than the probability that a particular fixed temperature belongs to an already observed interval.</p>
+<p>With 400 shots and zero excitations one finds \(p_u\simeq0.00746\). With \(\Delta/k_B=9.60\) K this implies an upper temperature near 1.96 K. The comparison with the typical record at 4 K shows how a seemingly uninformative blank histogram can rule out part of parameter space. If the detector sometimes misses excitations, however, the same blank record need not imply as cold a bath. Detection efficiency changes the observation law and must be calibrated separately or estimated using more than one preparation.</p>
+</section>
+<div class="notebook-launch" id="try-it"><a class="button button-primary" href="/fundamentals/physics/thermodynamics-statistical-physics/notebooks/workshop/">Open editable notebook</a> <a href="/downloads/fundamentals/notebooks/thermodynamics-statistical-physics-workshop.ipynb" download>Download .ipynb</a></div><span id="practice"></span><section>
+<h2 id="tutorial-on-uncertainty-design-and-a-defective-detector">Tutorial on uncertainty, design and a defective detector</h2>
+<p><strong>A probe with \(\Delta/k_B=6.0\) K gives 30 excitations in 300 independent preparations. Estimate the temperature and the local relative standard error.</strong></p>
+<details><summary>Work through the solution</summary><p>Here \(\hat p=0.10\), so \(x=\ln9=2.197\) and \(\hat T\simeq2.73\) K. Substituting this interior estimate gives \(1/[\ln9\sqrt{300(0.1)(0.9)}]\simeq0.0876\). The approximate standard error is 0.24 K. The finite-count likelihood is available if asymmetric uncertainty matters for a particular decision.</p></details>
+<p><strong>At the optimal gap how many independent observations are needed for a local relative standard deviation of one per cent? What happens if every recorded observation is simply copied twice?</strong></p>
+<details><summary>Work through the solution</summary><p>At the optimum \(x^2p(1-p)\simeq0.4392\). The design condition is \(N\gtrsim1/[0.01^2(0.4392)]\), approximately 22,800 independent observations. Duplicating each row leaves the experiment and its true uncertainty unchanged. Treating the copied rows as fresh preparations underestimates the standard error by a factor of \(\sqrt2\).</p></details>
+<p><strong>A readout labels an excited site correctly with probability 0.9 and incorrectly labels a ground-state site as excited with probability 0.02. What quantity must be inverted if 10 per cent of readings say excited?</strong></p>
+<details><summary>Work through the solution</summary><p>The recorded probability is \(q=0.9p+0.02(1-p)=0.02+0.88p\). From \(q=0.10\) infer \(p=0.0909\) and \(x=\ln10\simeq2.303\). Inverting the raw 0.10 instead would give \(x=\ln9\) and a higher inferred temperature for the same positive gap. The derivative of the calibrated observation probability also carries the factor 0.88 when propagating uncertainty.</p></details>
+<p>Further reading · <a href="https://arxiv.org/abs/1411.2437">L. A. Correa and collaborators · Individual quantum probes for optimal thermometry</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/19-mean-field-criticality/">Chapter 19 · Mean-field ordering, response and the critical point</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/7/">Problem sheet 7 · Can a fluctuation reveal attraction on a surface?</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

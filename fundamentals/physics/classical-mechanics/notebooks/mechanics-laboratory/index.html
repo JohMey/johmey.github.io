@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When does a smooth circular guide lose contact? · OneSimulation</title>
+<meta name="description" content="A bead moves inside a vertical circular guide after receiving a known speed at the bottom. Predict whether it turns around, separates from the guide or completes the circle. A normal-force measurement can distinguish these outcomes before a simple top-height energy test can.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/notebooks/mechanics-laboratory/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When does a smooth circular guide lose contact? · OneSimulation">
+<meta property="og:description" content="A bead moves inside a vertical circular guide after receiving a known speed at the bottom. Predict whether it turns around, separates from the guide or completes the circle. A normal-force measurement can distinguish these outcomes before a simple top-height energy test can.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/notebooks/mechanics-laboratory/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a> / <a href="/fundamentals/physics/classical-mechanics/notebooks/">Notebooks</a></p><h1>When does a smooth circular guide lose contact?</h1><p class="lead">A bead moves inside a vertical circular guide after receiving a known speed at the bottom. Predict whether it turns around, separates from the guide or completes the circle. A normal-force measurement can distinguish these outcomes before a simple top-height energy test can.</p><nav class="study-links"><a href="/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/06-normal-force-in-a-circular-guide/">Read the derivation</a><a href="/fundamentals/physics/classical-mechanics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/classical-mechanics-mechanics-laboratory.ipynb" download="classical-mechanics-mechanics-laboratory.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><h2>Check the constraint force after solving for speed</h2><p>Use \(\theta=0\) at the bottom, increasing along the rising side. Let \(R\) be the radius of the bead centre&#x27;s path, \(v_0\) its bottom speed and \(u=v_0^2/(gR)\). The smooth guide does no work. The rise in gravitational energy \(mgR(1-\cos\theta)\) therefore gives \(v^2/(gR)=u-2+2\cos\theta\). This relation applies only while the bead follows the circle and the computed speed is real.</p><p>With inward radial direction positive, force balance is \(N-mg\cos\theta=mv^2/R\). Substitution gives</p><div class="math display">\[\frac{N}{mg}=u-2+3\cos\theta.\]</div><p>A guide underneath the bead can push but cannot pull. For \(u&lt;2\) the speed first reaches zero while the contact force is still positive. For \(2&lt;u&lt;5\) the force reaches zero with positive speed at \(\cos\theta=(2-u)/3\). Above that point circular motion would require a negative normal force. For \(u&gt;5\) the bead can remain in contact throughout the circle. At the boundaries \(u=2\) gives a zero-speed, zero-normal grazing turn at the side and \(u=5\) gives marginal contact at the top. A captive slotted carriage or a bead threaded onto a wire has a different constraint and can transmit force of either sign.</p><h2>Distinguish an energetically accessible top from a feasible trajectory</h2><p>Let \(R=0.25\) m and choose \(v_0=\sqrt{3gR}=2.71\) m/s. The guide loses contact when \(\cos\theta=-1/3\), or at 109.5 degrees from the bottom. The remaining speed there is \(\sqrt{gR/3}=0.904\) m/s. Raising the initial energy so that \(u=4\) pays the gravitational energy cost to reach the top, but a continuously guided motion still fails the nonnegative force condition earlier. The mechanical-energy and force-balance tests answer different questions.</p><h2>Set the experimental inputs</h2><p>Edit these values, then run the calculation and both figures again.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="9" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+teal, orange, blue = &quot;#19596a&quot;, &quot;#aa462a&quot;, &quot;#3868a0&quot;
+def axes(xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(7, 4), constrained_layout=True)
+    ax.set(xlabel=xlabel, ylabel=ylabel)
+    ax.grid(alpha=0.2)
+    return fig, ax</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="3" wrap="off" spellcheck="false" autocapitalize="off">radius_m=.25
+speed_parameter=3.0    # v0² / gR
+gravity=9.81</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="9" wrap="off" spellcheck="false" autocapitalize="off">assert radius_m&gt;0 and gravity&gt;0 and 0&lt;speed_parameter&lt;=8
+def endpoint(u):
+    if u&lt;=2: return np.arccos(1-u/2),&quot;turn&quot;
+    if u&lt;5: return np.arccos((2-u)/3),&quot;detachment&quot;
+    return np.pi,&quot;top reached&quot;
+end,outcome=endpoint(speed_parameter)
+bottom=np.sqrt(speed_parameter*gravity*radius_m)
+v_end=np.sqrt(gravity*radius_m*max(0,speed_parameter-2+2*np.cos(end)))
+print(f&quot;Bottom speed {bottom:.3f} m/s; {outcome} at {np.rad2deg(end):.3f}°, speed {v_end:.3f} m/s&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="6" wrap="off" spellcheck="false" autocapitalize="off">angle=np.linspace(0,end,170); cs=np.cos(angle)
+fig,ax=axes(&quot;Angle from the bottom (degrees)&quot;,&quot;Dimensionless quantity&quot;)
+ax.plot(np.rad2deg(angle),speed_parameter-2+3*cs,color=teal,label=&quot;Normal force / mg&quot;)
+ax.plot(np.rad2deg(angle),speed_parameter-2+2*cs,color=orange,label=&quot;Squared speed / gR&quot;)
+ax.axhline(0,lw=.7,color=&quot;grey&quot;);ax.set_xlim(0,180);ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The first quantity to reach zero determines which constraint fails. The part after contact loss requires a different trajectory.</p><section class="notebook-cell" data-code-cell><label for="cell-5">Python cell 5 <span class="cell-execution"></span></label><textarea id="cell-5" rows="5" wrap="off" spellcheck="false" autocapitalize="off">us=np.linspace(.01,7,240); ends=[np.rad2deg(endpoint(val)[0]) for val in us]
+fig,ax=axes(&quot;Bottom speed parameter v₀² / gR&quot;,&quot;Last guided angle on ascent (degrees)&quot;)
+ax.plot(us,ends,color=teal);ax.axvline(2,color=blue,ls=&quot;--&quot;,label=&quot;Grazing turn&quot;)
+ax.axvline(5,color=orange,ls=&quot;:&quot;,label=&quot;Marginal top contact&quot;);ax.plot(speed_parameter,np.rad2deg(end),&quot;o&quot;,color=orange);ax.legend()
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>The horizontal branch records completion of the ascent, including marginal contact at its threshold. It does not mean that the bead stops at the top.</p><h2>Exercise · find the lower turning point</h2><p>For \(u=1\), determine the turning angle and force there.</p><p>Zero speed requires \(\cos\theta=1-u/2=1/2\), hence \(\theta=60^\circ\). The contact force then balances the outward radial component of gravity, \(N=mg\cos\theta=mg/2\). It remains compressive through the turn.</p><h2>Exercise · size a classroom loop</h2><p>A bottom speed of 2.0 m/s is available. What is the largest ideal path radius for continuous contact through the top?</p><p>The limiting condition is \(v_0^2=5gR\), so \(R=4/(5\cdot9.81)=0.0815\) m. This is the radius of the bead centre. Rolling friction, rotational kinetic energy or a different channel radius would alter this calculation.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

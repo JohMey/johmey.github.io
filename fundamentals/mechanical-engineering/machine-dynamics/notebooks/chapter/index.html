@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Does equal impulse leave equal vibration? · OneSimulation</title>
+<meta name="description" content="Keep the total impulse fixed and increase contact duration. Predict whether the free vibration after release stays constant. Compare the Fourier integral with a direct quadrature of the forcing history.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/notebooks/chapter/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Does equal impulse leave equal vibration? · OneSimulation">
+<meta property="og:description" content="Keep the total impulse fixed and increase contact duration. Predict whether the free vibration after release stays constant. Compare the Fourier integral with a direct quadrature of the forcing history.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/notebooks/chapter/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/notebooks/">Notebooks</a></p><h1>Does equal impulse leave equal vibration?</h1><p class="lead">Keep the total impulse fixed and increase contact duration. Predict whether the free vibration after release stays constant. Compare the Fourier integral with a direct quadrature of the forcing history.</p><nav class="study-links"><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/08-impulse-impact/#notebook-example">Read the derivation</a><a href="/fundamentals/mechanical-engineering/machine-dynamics/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/machine-dynamics-chapter.ipynb" download="machine-dynamics-chapter.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="8" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+mass,frequency=2.,8.    # kg, Hz
+impulse= .6            # N s
+duration=.050          # s
+assert min(mass,frequency,impulse,duration)&gt;0
+omega=2*np.pi*frequency</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Project the pulse on the free oscillator</h2><p>Use two shifted sinc functions to evaluate the normalised half-sine pulse transform without a removable singularity. NumPy sinc uses sin(pi x)/(pi x).</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="12" wrap="off" spellcheck="false" autocapitalize="off">def ratio(r):
+    return np.pi/4*np.abs(np.sinc((r-np.pi)/(2*np.pi))+np.sinc((r+np.pi)/(2*np.pi)))
+
+u=np.linspace(0,1,801)
+weights=np.pi/2*np.sin(np.pi*u)
+r=omega*duration
+q=weights*np.exp(-1j*r*u)
+integrated=np.sum(np.diff(u)*(q[:-1]+q[1:])/2)
+assert abs(abs(integrated)-ratio(r))&lt;4e-6
+assert np.isclose(ratio(0),1) and np.isclose(ratio(np.pi),np.pi/4)
+amplitude=impulse/(mass*omega)*ratio(r)
+print(f&quot;Pulse / natural period {frequency*duration:.3f}; remaining amplitude {1000*amplitude:.3f} mm&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Read the shape through its residual motion</h2><p>At the same impulse, a long pulse is weaker and excites less residual motion over many duration ranges. The first exact cancellation occurs at one and a half periods.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="11" wrap="off" spellcheck="false" autocapitalize="off">fig,ax=plt.subplots(1,2,figsize=(9,3.5),layout=&quot;constrained&quot;)
+for factor,style in [(1,&quot;-&quot;),(2,&quot;--&quot;)]:
+    T=duration*factor
+    ax[0].plot(u*T*1000,impulse/T*weights,style,label=f&quot;{T*1000:.0f} ms&quot;)
+ax[0].set(xlabel=&quot;Time after contact (ms)&quot;,ylabel=&quot;Force (N)&quot;,title=&quot;Equal force impulse&quot;)
+cycles=np.linspace(0,3,550)
+ax[1].plot(cycles,ratio(2*np.pi*cycles),label=&quot;Remaining / impulsive amplitude&quot;)
+ax[1].plot(frequency*duration,ratio(r),&quot;o&quot;,label=&quot;Chosen duration&quot;)
+ax[1].set(xlabel=&quot;Pulse duration / natural period&quot;,ylabel=&quot;Residual amplitude ratio&quot;,title=&quot;Free vibration after release&quot;)
+for p in ax: p.grid(alpha=.22);p.legend(fontsize=8)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><p>Change the duration to half a period and then one and a half periods. Why does one case leave a sizeable oscillation while the other cancels it? Explain why cancellation after release does not imply zero displacement during contact.</p></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

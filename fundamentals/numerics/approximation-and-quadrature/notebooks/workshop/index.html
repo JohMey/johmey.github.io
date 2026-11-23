@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integrating an infinite endpoint with a finite table of samples · OneSimulation</title>
+<meta name="description" content="A density rises without bound near the edge of a specimen, yet the total inferred amount can be finite. Choose nodes that measure the edge contribution accurately. Derive the tanh–sinh transformation, split two different quadrature errors and detect when refining a grid can no longer answer the physical question.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/notebooks/workshop/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Integrating an infinite endpoint with a finite table of samples · OneSimulation">
+<meta property="og:description" content="A density rises without bound near the edge of a specimen, yet the total inferred amount can be finite. Choose nodes that measure the edge contribution accurately. Derive the tanh–sinh transformation, split two different quadrature errors and detect when refining a grid can no longer answer the physical question.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/notebooks/workshop/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/notebooks/">Notebooks</a></p><h1>Integrating an infinite endpoint with a finite table of samples</h1><p class="lead">A density rises without bound near the edge of a specimen, yet the total inferred amount can be finite. Choose nodes that measure the edge contribution accurately. Derive the tanh–sinh transformation, split two different quadrature errors and detect when refining a grid can no longer answer the physical question.</p><nav class="study-links"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/18-double-exponential-endpoint-integration/">Read the derivation</a><a href="/fundamentals/numerics/approximation-and-quadrature/notebooks/">All notebooks in this course</a></nav></header><div class="shell article-layout"><aside class="article-nav"></aside><article class="prose reference"><div data-notebook-editor data-packages="[&quot;numpy&quot;, &quot;matplotlib&quot;]"><div class="notebook-toolbar"><div class="notebook-controls" hidden><button class="button button-primary" type="button" data-run-all>Run all cells</button> <button class="button" type="button" data-stop disabled>Stop</button></div><a data-save-notebook href="/downloads/fundamentals/notebooks/approximation-and-quadrature-workshop.ipynb" download="approximation-and-quadrature-workshop.ipynb">Save notebook (.ipynb)</a></div><p data-kernel-status role="status" class="notebook-status">Python runs on this device. The first run loads the scientific libraries.</p><noscript><p>Download the notebook and open it in Jupyter to run the cells.</p></noscript><p>The optional OneSimulation calculation uses the <a href="/tutorials/install/">local OneSimulation installation</a>. Save this notebook to run that comparison in Jupyter.</p><p>Estimate the integral of x raised to minus alpha on [0,1]. The integrand is unbounded, yet its integral exists for alpha below one. Compare the physical midpoint grid with a double-exponential change of variable. All controls and calculations run with NumPy and Matplotlib.</p><section class="notebook-cell" data-code-cell><label for="cell-1">Python cell 1 <span class="cell-execution"></span></label><textarea id="cell-1" rows="17" wrap="off" spellcheck="false" autocapitalize="off">import numpy as np
+import matplotlib.pyplot as plt
+
+alpha = 0.65
+cutoff = 3.0                  # half-width in transformed coordinates
+step = 0.25
+assert 0.05 &lt;= alpha &lt;= 0.95 and 1 &lt;= cutoff &lt;= 6 and .04 &lt;= step &lt;= .5
+
+def transformed(t, exponent):
+    s = np.pi*np.sinh(t)
+    log_x = -np.logaddexp(0., -s)
+    log_1mx = -np.logaddexp(0., s)
+    log_values = np.log(np.pi) + np.log(np.cosh(t)) + (1-exponent)*log_x + log_1mx
+    return np.exp(log_values)
+
+def tanh_sinh(T, h, exponent):
+    n = int(np.ceil(T/h))
+    t = np.linspace(-T, T, 2*n+1)
+    g = transformed(t, exponent)
+    # Composite trapezoid on the truncated interval.
+    value = (T/n)*(g.sum()-(g[0]+g[-1])/2)
+    return value, len(t)
+
+def midpoint(n, exponent):
+    return np.mean(((np.arange(n)+.5)/n)**(-exponent))
+
+def exact_truncation(T, exponent):
+    # Left and right tails calculated without subtracting nearly equal numbers.
+    s = np.pi*np.sinh(T)
+    log_left = -np.logaddexp(0., s)
+    log_right = -np.logaddexp(0., -s)
+    return (np.exp((1-exponent)*log_left)-np.expm1((1-exponent)*log_right))/(1-exponent)
+
+exact = 1/(1-alpha)
+value, nodes = tanh_sinh(cutoff,step,alpha)
+print(f&quot;Exact {exact:.10f}; tanh–sinh {value:.10f} with {nodes} nodes&quot;)
+print(&quot;Omitted tail alone:&quot;, exact_truncation(cutoff,alpha))</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Plot the transformed integrand and separate both errors</h2><p>The midpoint rule in the original coordinate never evaluates zero. The transformed quadrature additionally concentrates nodes where the original slope diverges. Reducing the transformed step at fixed cutoff eventually leaves the omitted tail exposed.</p><section class="notebook-cell" data-code-cell><label for="cell-2">Python cell 2 <span class="cell-execution"></span></label><textarea id="cell-2" rows="16" wrap="off" spellcheck="false" autocapitalize="off">fig, (shape, errors) = plt.subplots(1, 2, figsize=(10, 4), layout=&quot;constrained&quot;)
+tt = np.linspace(-5, 4, 450)
+for exponent, color in [(alpha, &quot;#145c71&quot;),(.85,&quot;#b94626&quot;)]:
+    shape.plot(tt, transformed(tt,exponent), color=color, label=f&quot;α = {exponent:g}&quot;)
+shape.axvspan(-cutoff,cutoff,color=&quot;grey&quot;,alpha=.08)
+shape.set(xlabel=&quot;Transformed coordinate t&quot;,ylabel=&quot;Weight times integrand&quot;,title=&quot;Where does the integral live?&quot;)
+shape.legend()
+counts = 2*np.array([4,6,8,12,16,24,32,48,64])+1
+de = [abs(tanh_sinh(cutoff,cutoff/(n//2),alpha)[0]-exact) for n in counts]
+errors.loglog(counts,np.maximum(de,1e-16),&quot;o-&quot;,color=&quot;#145c71&quot;,label=&quot;tanh–sinh&quot;)
+errors.loglog(counts,[abs(midpoint(n,alpha)-exact) for n in counts],&quot;s--&quot;,color=&quot;#b94626&quot;,label=&quot;midpoint in x&quot;)
+errors.axhline(max(1e-16,exact_truncation(cutoff,alpha)),ls=&quot;:&quot;,color=&quot;black&quot;,label=&quot;truncation alone&quot;)
+errors.set(xlabel=&quot;Function evaluations&quot;,ylabel=&quot;Absolute error&quot;,title=&quot;Refinement at a fixed cutoff&quot;)
+errors.legend(fontsize=9)
+for ax in (shape,errors): ax.grid(alpha=.2)
+plt.show()</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Check a finite integral independently</h2><p>A second substitution x = u raised to the power 1/(1−alpha) makes the integrand exactly constant. Try alpha 0.95 before increasing the cutoff. More nodes at fixed cutoff cannot replace the missing area beyond the window.</p><section class="notebook-cell" data-code-cell><label for="cell-3">Python cell 3 <span class="cell-execution"></span></label><textarea id="cell-3" rows="7" wrap="off" spellcheck="false" autocapitalize="off">exponent = 1/(1-alpha)
+u = np.linspace(.1,.99,10)
+flat = exponent*u**(exponent-1-alpha*exponent)
+assert np.allclose(flat,exact)
+test, _ = tanh_sinh(5.5,.075,.65)
+assert abs(test-1/.35) &lt; 5e-13
+print(&quot;Analytical substitution and converged reference checks passed.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section><h2>Check the retained window with an element quadrature</h2><p>The exact finite-window target equals the full integral minus the two omitted tails. A local OneSimulation installation can measure this finite part by building a physical line mesh in the transformed variable and integrating at mapped Gaussian quadrature points of each element. This is a different sampling grid from the trapezoid. The analytical finite-window check runs in every environment.</p><section class="notebook-cell" data-code-cell><label for="cell-4">Python cell 4 <span class="cell-execution"></span></label><textarea id="cell-4" rows="17" wrap="off" spellcheck="false" autocapitalize="off">finite_target = exact - exact_truncation(cutoff,alpha)
+print(f&quot;Window loss {exact-finite_target:.8g}; signed panel error {finite_target-value:.8g}&quot;)
+try:
+    from onesim.cad.d1 import Line
+    from onesim.meshing import StructuredLineMesher
+    from onesim.numerics.fem.backends.spaces.line_lagrange import LineLagrangeSpace
+except ImportError:
+    print(&quot;The mapped Gaussian element comparison is available with OneSimulation installed locally.&quot;)
+else:
+    line = Line(start=(-cutoff,0,0),end=(cutoff,0,0))
+    mesh = StructuredLineMesher(cells=24).generate(line)
+    space = LineLagrangeSpace(mesh,order=1,quadrature_order=8)
+    finite_gauss = 0.
+    for i in range(len(space.cells)):
+        points,weights = space.quadrature(i)
+        finite_gauss += weights @ transformed(points[:,0],alpha)
+    assert np.isclose(finite_gauss,finite_target,atol=2e-10,rtol=1e-11)
+    print(f&quot;OneSimulation finite-window integral {finite_gauss:.10f}.&quot;)</textarea><button type="button" class="button" disabled>Run cell</button><div class="notebook-output"></div></section></div><script src="/assets/course-notebook.js" defer></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
