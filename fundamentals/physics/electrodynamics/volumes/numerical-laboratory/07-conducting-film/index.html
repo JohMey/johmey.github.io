@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When a film is thinner than a skin depth · OneSimulation</title>
+<meta name="description" content="Solve a finite conducting layer in complex notation and independently account for its losses using a surface impedance and a volume integral.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/07-conducting-film/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When a film is thinner than a skin depth · OneSimulation">
+<meta property="og:description" content="Solve a finite conducting layer in complex notation and independently account for its losses using a surface impedance and a volume integral.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/07-conducting-film/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>When a film is thinner than a skin depth</h1><p class="lead">Solve a finite conducting layer in complex notation and independently account for its losses using a surface impedance and a volume integral.</p><p class="byline">Unit 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#which-field-does-the-back-face-support">Which field does the back face support?</a><a href="#impose-both-surfaces-before-computing-power">Impose both surfaces before computing power</a><a href="#derive-two-independent-loss-measurements">Derive two independent loss measurements</a><a href="#inspect-how-the-back-boundary-enters-a-measured-field">Inspect how the back boundary enters a measured field</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="which-field-does-the-back-face-support">Which field does the back face support?</h2>
+<p>A wide conducting film carries an alternating sheet current in the \(x\) direction. The field varies only with depth \(z\) across thickness \(t\). The surrounding configuration is arranged so the tangential magnetic field at the back face is negligible; at the front its peak phasor is \(H_s\). This back condition describes one particular excitation. A film illuminated from both sides, a nearby magnetic backing or a transmitted wave in a substrate need different conditions. A skin-depth formula by itself does not determine a film impedance.</p>
+<p>Use the time convention \(e^{i\omega t}\), a real scalar conductivity \(\sigma\), real permeability \(\mu\), and the good-conductor approximation \(\sigma\gg\omega\epsilon\). Write \(H_y=H(z)\) and \(J_x=-H'(z)\). Faraday's law then gives \(H''=i\omega\mu\sigma H\). Define \(\delta=\sqrt{2/(\omega\mu\sigma)}\) and \(\gamma=(1+i)/\delta\), so \(\gamma^2=i\omega\mu\sigma\). \(H\) and its derivative can be complex even though the observable field is real.</p>
+</section>
+<section>
+<h2 id="impose-both-surfaces-before-computing-power">Impose both surfaces before computing power</h2>
+<p>A solution satisfying the rear condition is \(H(z)=H_s\sinh[\gamma(t-z)]/\sinh(\gamma t)\). The electric field at the front is \(-H'(0)/\sigma\). Dividing it by the applied field gives the sheet impedance,</p>
+<div class="math display">\[Z_s=\frac{\gamma}{\sigma}\coth(\gamma t).\]</div>
+<p>The thick limit gives \(Z_s=(1+i)/(\sigma\delta)\), a resistive and reactive surface contribution of equal size. To find the thin limit expand \(\coth w=1/w+w/3+O(w^3)\). Substitution gives \(Z_s\simeq1/(\sigma t)+i\omega\mu t/3\). The first term is the ordinary DC resistance per square. The second is the internal inductive reactance for the chosen one-sided magnetic boundary condition. Its factor one third can be checked by integrating the magnetic energy of a linear field profile through the thickness.</p>
+<p>Take \(\sigma=4.0\times10^7\) S/m and a frequency giving \(\delta=0.2\) mm. The thick-film resistance scale is \(1/(\sigma\delta)=0.125\) mΩ per square. A \(20\ \mu\mathrm m\) film has \(t/\delta=0.1\); its DC value is 1.25 mΩ per square, already ten times the thick-conductor scale. Treating a very thin film as a half-space can severely underestimate heat production for a specified sheet current.</p>
+</section>
+<section>
+<h2 id="derive-two-independent-loss-measurements">Derive two independent loss measurements</h2>
+<p>The inward time-averaged Poynting flux per area equals \(\tfrac12\operatorname{Re}(E_s H_s^*)=|H_s|^2\operatorname{Re}Z_s/2\) for peak phasors in this geometry. Independently the local cycle-averaged Joule power density is \(|H'|^2/(2\sigma)\). Integrate it from front to back. A quick proof of equality avoids pages of hyperbolic algebra: integrate \((H'H^*)'=H''H^*+|H'|^2\) across the film. The term \(H''H^*=i\omega\mu\sigma|H|^2\) is purely imaginary. Take real parts, insert \(H(t)=0\), and the boundary term at zero reproduces the surface expression. An unexpected minus sign here often means the outward normal has been used as though it pointed into the sheet.</p>
+<p>The imaginary part of the same identity measures reactive magnetic storage. This separation helps diagnose a phase-sign mistake: conjugating every phasor reverses the sign assigned to reactive quantities for the opposite time convention, while average Joule heating stays positive. An output that predicts negative dissipation for a passive film warrants checking definitions before interpreting a material resonance.</p>
+</section>
+<section>
+<h2 id="inspect-how-the-back-boundary-enters-a-measured-field">Inspect how the back boundary enters a measured field</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/07-conducting-film/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-conducting-film"></div>
+<p>The finite-layer plot uses \(|\sinh[(1+i)x]|^2=\sinh^2 x+\sin^2 x\), with depth in units of \(\delta\). The half-space magnitude is simply \(e^{-z/\delta}\). At the front both curves are one because the same field is imposed. At the back the finite film must reach zero. Increase \(t/\delta\) until the front half of the two curves becomes experimentally indistinguishable. Determine whether thickness or the absolute amplitude changes the normalised profile. Then inspect the reported power, which depends quadratically on the actual surface current.</p>
+<p>For \(u=t/\delta\), the reported real part in thick-conductor resistance units is \([\sinh(2u)+\sin(2u)]/[\cosh(2u)-\cos(2u)]\). The imaginary part changes the plus to minus in the numerator. Substituting \(u=1\) gives a real part about 1.086. A nominal thickness of one skin depth is quite close to the thick-limit resistance for this boundary problem, even though the magnetic field is forced to zero at the back. Agreement on one integral measurement does not establish that the interior distribution has been measured correctly.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>An instrument reports RMS surface fields instead of peak fields. What should change in the Poynting and Joule expressions?</p>
+<details><summary>Work through the solution</summary><p>The explicit factor one half is omitted when both phasors are RMS amplitudes. The impedance and the normalised field profile stay unchanged. If an experiment is wrong by a uniform factor two in power, check the amplitude convention before changing material parameters.</p></details>
+<p>At fixed \(H_s,\sigma\) and very small positive frequency, what happens to film loss and to its stored magnetic energy?</p>
+<details><summary>Work through the solution</summary><p>In the thin limit the sheet current is nearly uniform, giving mean loss per area \(|H_s|^2/(2\sigma t)\) for peak sinusoidal phasors. The peak field decreases approximately linearly from \(H_s\) to zero. Its cycle-mean magnetic energy per area is \(\mu |H_s|^2 t/12\). The reactive voltage vanishes with frequency although a finite field can store energy.</p></details>
+<p>Could the same \(Z_s\) formula be used for an insulating rear surface that imposes zero tangential electric field?</p>
+<details><summary>Work through the solution</summary><p>Zero tangential electric field would give \(H'(t)=0\), not \(H(t)=0\). The hyperbolic solution switches to a cosh profile and the sheet impedance uses \(\tanh(\gamma t)\). Identify the electromagnetic boundary condition, rather than inferring it just from the word “backing”.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/06-deembedding-a-line/">Move the reference plane of a wave measurement</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/">Separate diffraction from a finite observation window</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

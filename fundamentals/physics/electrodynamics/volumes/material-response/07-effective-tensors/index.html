@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why rotating a layered dielectric changes a capacitance measurement · OneSimulation</title>
+<meta name="description" content="Derive the two principal permittivities of a fine laminate, rotate the constitutive tensor and distinguish the applied electrode condition from an assumed field direction.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/07-effective-tensors/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why rotating a layered dielectric changes a capacitance measurement · OneSimulation">
+<meta property="og:description" content="Derive the two principal permittivities of a fine laminate, rotate the constitutive tensor and distinguish the applied electrode condition from an assumed field direction.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/07-effective-tensors/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/material-response/">Fields and the response of matter</a></p><h1>Why rotating a layered dielectric changes a capacitance measurement</h1><p class="lead">Derive the two principal permittivities of a fine laminate, rotate the constitutive tensor and distinguish the applied electrode condition from an assumed field direction.</p><p class="byline">Unit 7 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#compare-the-same-material-in-two-orientations">Compare the same material in two orientations</a><a href="#check-the-amount-of-anisotropy-from-field-energy">Check the amount of anisotropy from field energy</a><a href="#rotate-the-law-then-specify-what-the-electrodes-control">Rotate the law, then specify what the electrodes control</a><a href="#test-the-measurement-against-the-unit-cell-model">Test the measurement against the unit-cell model</a><a href="#how-far-can-the-effective-law-travel">How far can the effective law travel?</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="compare-the-same-material-in-two-orientations">Compare the same material in two orientations</h2>
+<p>Build a specimen by repeating layers with scalar permittivities \(\epsilon_1,\epsilon_2>0\), occupying fractions \(f\) and \(1-f\). The period is much smaller than both the specimen scale and the spatial variation of the applied field. Suppose both materials are linear, free of mobile charge and effectively lossless in the measurement band. An observer using a large capacitor wants one law relating averaged displacement and electric field. A scalar average cannot describe both arrangements of the same layers relative to the plates.</p>
+<p>Place the field tangential to all internal interfaces first. A narrow rectangular electrostatic loop straddling an interface gives continuity of tangential \(E\). Both layers see the same tangential field, but their displacements differ in proportion to permittivity. Averaging gives \(\overline D_t=[f\epsilon_1+(1-f)\epsilon_2]\overline E_t\). The tangent-direction effective permittivity is an arithmetic mean. This is a parallel connection of capacitances at shared voltage in the special capacitor geometry.</p>
+<p>Apply a purely normal displacement instead. No free charge lies at the internal interfaces, so their normal displacement is continuous. Normal fields differ as \(E_i=D_n/\epsilon_i\). Averaging the voltage drops gives \(\overline E_n=[f/\epsilon_1+(1-f)/\epsilon_2]\overline D_n\), with a harmonic-mean effective permittivity. The local continuity condition changes which field is shared between constituents and thereby changes the relevant averaging operation.</p>
+</section>
+<section>
+<h2 id="check-the-amount-of-anisotropy-from-field-energy">Check the amount of anisotropy from field energy</h2>
+<p>For \(\epsilon_1=2\epsilon_0,\epsilon_2=10\epsilon_0\) at equal fractions, \(\epsilon_t=6\epsilon_0\) and \(\epsilon_n=(10/3)\epsilon_0\). The arithmetic-to-harmonic ratio is 1.8. A constituent does not need to be crystalline or anisotropic for the composite to show distinct principal responses. The geometry of the internal boundaries is enough.</p>
+<p>Average the energy density for the tangential experiment, \(u=f\epsilon_1E_t^2/2+(1-f)\epsilon_2E_t^2/2=\epsilon_t E_t^2/2\). For the normal experiment, \(u=D_n^2[f/\epsilon_1+(1-f)/\epsilon_2]/2=D_n^2/(2\epsilon_n)\). These expressions supply a check independent of the capacitor-circuit analogy and identify which energy should be used when field or free charge is controlled. Energy positivity follows directly from the positive constituent permittivities. It does not require guessing an effective law from the largest measured component.</p>
+</section>
+<section>
+<h2 id="rotate-the-law-then-specify-what-the-electrodes-control">Rotate the law, then specify what the electrodes control</h2>
+<p>Use principal axes \(\hat n,\hat t\) and suppose a macro-field makes angle \(\theta\) to the layer normal. If \(\overline{\mathbf E}=E(\cos\theta\,\hat n+\sin\theta\,\hat t)\), then \(\overline{\mathbf D}=E(\epsilon_n\cos\theta\,\hat n+\epsilon_t\sin\theta\,\hat t)\). Project along the imposed field and divide by \(E\):</p>
+<div class="math display">\[\epsilon_E(\theta)=\epsilon_n\cos^2\theta+\epsilon_t\sin^2\theta .\]</div>
+<p>The perpendicular displacement is \(E(\epsilon_t-\epsilon_n)\sin\theta\cos\theta\). It is generally nonzero. A device that instead fixes the direction of averaged displacement while allowing a transverse field measures \(\epsilon_D(\theta)=[\cos^2\theta/\epsilon_n+\sin^2\theta/\epsilon_t]^{-1}\). These two directional responses correspond to different constraints. They agree at principal axes and for isotropic material. A pair of unspecified “angled capacitor” measurements cannot be interpreted uniquely without describing the contacts and edge conditions.</p>
+<p>At 45° in the example, the field-controlled projection gives about \(4.667\epsilon_0\), while the displacement-controlled projection gives \(4.286\epsilon_0\). These are both legitimate scalar ratios from one symmetric positive-definite tensor. Neither supplies a universal scalar permittivity for the rotated material. The complete vector response also predicts displacement tilt and field energy for any orientation.</p>
+</section>
+<section>
+<h2 id="test-the-measurement-against-the-unit-cell-model">Test the measurement against the unit-cell model</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/07-effective-tensors/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-effective-tensors"></div>
+<p>Change the volume fraction while keeping the constituent values fixed. At a pure phase all orientations and both control conditions must collapse to a single value. At intermediate fractions, find the angle where the transverse component would be largest. It occurs where \(|\sin\theta\cos\theta|\) is largest, but its magnitude also reflects the material contrast. Now reduce the contrast mentally to one and predict all curves without recomputing a single cell.</p>
+<p>A numerical field model offers an independent homogenisation experiment. Use periodic tiling in the material directions and impose a macroscopic voltage difference plus periodic fluctuations on opposite faces. For a unit imposed field along each coordinate direction, average the resulting displacement over the cell. The resulting vectors supply the tensor columns. A grounded box on every side is a different boundary problem and can suppress the tangential response. Increase the number of material periods at fixed specimen scale and refine the individual period separately. These two limits test homogenisation and numerical representation, respectively.</p>
+</section>
+<section>
+<h2 id="how-far-can-the-effective-law-travel">How far can the effective law travel?</h2>
+<p>Electrostatic homogenisation assumes the cell fields respond quasistatically. In a wave experiment near the Bragg gap, phase changes substantially across one period and a local constant tensor is inadequate. A finely layered capacitor and a dielectric mirror can be made from the same constituents while requiring different models at different frequencies. Test the <a href="/fundamentals/physics/electrodynamics/volumes/material-response/06-bloch-optics/#try-it">Bloch spectrum</a> to identify the regime where layering begins selecting propagation bands. A low-frequency effective index alone cannot predict that gap.</p>
+<p>Large spatial contrast also places a practical demand on mesh and interface handling. A normal gradient can jump strongly even when potential and displacement are continuous. A smooth-looking interpolated voltage surface is weak evidence for an accurate energy density. Compare constituent fields, total flux and energy consistency before accepting the extracted effective tensor.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>Show that \(\epsilon_t-\epsilon_n\) is nonnegative for every positive pair of constituents without appealing to a named mean inequality.</p>
+<details><summary>Work through the solution</summary><p>Put both terms over the positive denominator \(f\epsilon_2+(1-f)\epsilon_1\). The numerator after cancellation is \(f(1-f)(\epsilon_1-\epsilon_2)^2\), so the difference is nonnegative and vanishes for identical materials or a pure phase.</p></details>
+<p>Equal fractions give measured relative values 6 tangentially and \(10/3\) normally. Can you infer both constituents if the laminate assumptions hold?</p>
+<details><summary>Work through the solution</summary><p>Their sum is 12. The harmonic mean is \(2ab/(a+b)=10/3\), giving product 20. The positive roots of \(x^2-12x+20=0\) are 2 and 10. The data do not identify which label belongs to which phase without another observation.</p></details>
+<p>Why can a constituent occupy very little volume yet strongly affect the normal response?</p>
+<details><summary>Work through the solution</summary><p>Every normal field line in this lamination crosses each layer. The inverse response weights \(f/\epsilon\); even a thin, low-permittivity layer can contribute a large voltage drop. A field along the layers distributes displacement differently and may be much less sensitive to that same phase.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/06-bloch-optics/">When a periodic dielectric has no propagating Bloch wave</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/08-faraday-rotation/">How a magnetic field rotates the polarisation of transmitted light</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Identify mobile charge with a transverse field · OneSimulation</title>
+<meta name="description" content="Derive a Hall-voltage measurement from transverse force balance, reverse current and field to reject offsets and explore what fails when two carrier types conduct.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/02-hall-measurement/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Identify mobile charge with a transverse field · OneSimulation">
+<meta property="og:description" content="Derive a Hall-voltage measurement from transverse force balance, reverse current and field to reject offsets and explore what fails when two carrier types conduct.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/02-hall-measurement/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/material-response/">Fields and the response of matter</a></p><h1>Identify mobile charge with a transverse field</h1><p class="lead">Derive a Hall-voltage measurement from transverse force balance, reverse current and field to reject offsets and explore what fails when two carrier types conduct.</p><p class="byline">Unit 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#choose-signs-from-a-drawing">Choose signs from a drawing</a><a href="#reconstruct-density-and-mobility-from-separate-observations">Reconstruct density and mobility from separate observations</a><a href="#isolate-the-transverse-voltage-from-a-misaligned-contact">Isolate the transverse voltage from a misaligned contact</a><a href="#when-a-hall-density-stops-being-a-particle-count">When a Hall density stops being a particle count</a><a href="#tutorial">Tutorial</a><a href="#follow-the-transport-model">Follow the transport model</a></nav></aside><article class="prose reference"><section>
+<h2 id="choose-signs-from-a-drawing">Choose signs from a drawing</h2>
+<p>A rectangular conducting sample has its long axis along \(x\), width \(w\) along \(y\), and thickness \(t\) along \(z\). A uniform magnetic field \(B\hat{\mathbf z}\) is applied. An external circuit maintains conventional current \(I>0\) in \(+x\). High-impedance transverse probes draw negligible current. Define the measured signal as \(V_H=V(y=0)-V(y=w)\). For uniform transverse field this convention gives \(V_H=E_yw\). Reversing the voltmeter leads reverses the reported sign; writing a carrier sign without a lead convention is incomplete.</p>
+<p>With one charge carrier species of number density \(n\) and signed charge \(q\), the drift velocity satisfies \(j_x=nqv_x=I/(wt)\). If the transverse velocity vanishes, its magnetic force component is \(-qv_xB\), opposed by \(qE_y\). Thus \(E_y=v_x B=j_xB/(nq)\). The resulting port measurement is</p>
+<div class="math display">\[V_H=\frac{IB}{nq t}.\]</div>
+<p>The width cancels for a uniform bar; changing the contact geometry or using a current source with a nonuniform injection profile can spoil that simplification near the terminals. The cancellation also exposes the sign. For electrons \(q&lt;0\), positive conventional current means that the mobile charge drifts in \(-x\). The inferred transverse field is negative for positive \(B\) in the chosen convention.</p>
+</section>
+<section>
+<h2 id="reconstruct-density-and-mobility-from-separate-observations">Reconstruct density and mobility from separate observations</h2>
+<p>Take \(t=0.50\) mm, \(I=5.0\) mA, \(B=0.20\) T and a transverse signal of \(-1.25\) mV. The inferred signed Hall coefficient is \(R_H=tV_H/(IB)=-6.25\times10^{-4}\ {\rm m^3/C}\). Using singly charged electrons gives \(n=1/(e|R_H|)\simeq1.00\times10^{22}\ {\rm m^{-3}}\). A longitudinal voltage measurement, after correcting for probe separation, can yield the material conductivity. If \(\sigma=80\) S/m, the single-carrier mobility is \(\mu=\sigma |R_H|=0.050\ {\rm m^2/(V\,s)}\).</p>
+<p>These operations use different pieces of information. The longitudinal measurement alone gives only the product \(n|q|\mu\). The transverse measurement supplies a sign and, in the one-carrier model, the density independently of mobility. This is an inverse experiment whose two observables have different sensitivities, not a more precise measurement of the same scalar.</p>
+<p>One can derive the same result from a stationary Drude equation \(0=q(\mathbf E+\mathbf v\times\mathbf B)-m\mathbf v/\tau\). The longitudinal drag gives \(E_x=mv_x/(q\tau)\); force balance in \(y\) gives the transverse field just obtained. In a homogeneous single-carrier sample, \(E_y/E_x=q\tau B/m\), the signed Hall angle tangent. At fixed sample and field, doubling \(I\) doubles both voltages in this linear regime and leaves their ratio unchanged. Significant current-dependent apparent density can indicate heating or nonlinear contacts.</p>
+</section>
+<section>
+<h2 id="isolate-the-transverse-voltage-from-a-misaligned-contact">Isolate the transverse voltage from a misaligned contact</h2>
+<p>Practical side contacts seldom sit at exactly the same \(x\). A fraction of the longitudinal voltage can leak into the transverse pair. Write the readout at a fixed current as \(V_\mathrm{m}(B)=V_0+\alpha V_{xx}+V_H(B)\). A background that is even in field cancels in \([V_\mathrm m(B)-V_\mathrm m(-B)]/2\). For example, readings of 3.05 mV and 5.55 mV at \(+B,-B\) return \(-1.25\) mV Hall signal and 4.30 mV of even background. Taking a single measured sign would have diagnosed the wrong carriers.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/02-hall-measurement/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-hall-measurement"></div>
+<p>The plot deliberately superposes a constant 4.3 mV pickup on a signed Hall signal. Vary density and current independently before reading the pair at \(B=\pm0.2\) T. Large density weakens the signal; current increases it. Verify that field reversal recovers the correct transverse voltage even when both instrument readings have the same sign. If the unwanted background changes between readings, reverse the field several times and check for repeatable drift.</p>
+<p>With both current and field reversal, the double-odd combination \([V(+I,+B)-V(+I,-B)-V(-I,+B)+V(-I,-B)]/4\) isolates terms odd in both. A thermal emf that is independent of current cancels along with a stable contact offset. This symmetry decomposition is a physical assumption about the parasitics, so preserve all four readings and inspect the rejected channels too.</p>
+</section>
+<section>
+<h2 id="when-a-hall-density-stops-being-a-particle-count">When a Hall density stops being a particle count</h2>
+<p>With electrons and holes, longitudinal conductivities add. In a weak magnetic field their transverse contributions also depend on squared mobilities. For positive mobilities \(\mu_e,\mu_h\) and electron and hole densities \(n,p\), the two-carrier weak-field coefficient in the sign convention above is \(R_H=(p\mu_h^2-n\mu_e^2)/[e(p\mu_h+n\mu_e)^2]\). To see where the square appears, note that one factor of mobility converts the longitudinal field into drift; a second converts the resulting transverse magnetic force into a drift contribution. Summing species currents and imposing zero total transverse current gives the denominator management through the summed longitudinal conductivity.</p>
+<p>Equal electron and hole densities with equal mobilities give zero Hall signal while current still flows readily. A single-species inversion would suggest unbounded density. At equal densities but unequal mobilities, the faster species can set the sign even though neither species is more numerous. Additional field dependence, temperature variation and independent structural information are needed before treating a Hall number as a carrier census.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>A measurement doubles the width \(w\) at fixed thickness, total current and field in a uniform sample. Predict both \(E_y\) and \(V_H\).</p>
+<details><summary>Work through the solution</summary><p>The current density halves, so \(v_x\) and \(E_y\) halve. The voltage integrates that halved field over twice the width and stays the same. If fixed current density were held instead, the transverse voltage would double.</p></details>
+<p>A nominal thickness is overestimated by 5%. What bias does this cause in the single-carrier density inferred from a fixed transverse signal?</p>
+<details><summary>Work through the solution</summary><p>\(n=|IB|/(e t|V_H|)\), so using \(1.05t\) gives \(n_\mathrm{fit}=n/1.05\), approximately 4.8% low. This systematic error is common to all repeated field sweeps.</p></details>
+<p>Why might a metal yield a smaller Hall voltage than a semiconductor with the same dimensions at the same current?</p>
+<details><summary>Work through the solution</summary><p>In the one-carrier regime the signal is inversely proportional to carrier density. A large density allows the imposed current at a very small drift speed, requiring a correspondingly small transverse balancing field. Conductivity alone cannot determine this comparison without mobility information.</p></details>
+</section>
+<section>
+<h2 id="follow-the-transport-model">Follow the transport model</h2>
+<p>Compare the one-carrier assumptions with the treatment of mobile carriers in <a href="https://davidtong.org/teaching/solid-state-physics/">David Tong's solid-state physics course</a>. Connect an independently measured conductivity with the signed transverse response before interpreting an effective mass or scattering time.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/01-relaxation-spectroscopy/">Measure how quickly a dielectric follows an electric field</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/03-thermal-noise-and-bandwidth/">Measure equilibrium field fluctuations with a capacitor</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

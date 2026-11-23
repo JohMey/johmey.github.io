@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infer charge discreteness from fluctuations in a steady photocurrent · OneSimulation</title>
+<meta name="description" content="A detector can deliver a perfectly steady mean current over a long interval while its charge per short exposure fluctuates. Derive both a counting prediction and its spectral version, then use a bandwidth-limited measurement to separate partition fluctuations from thermal and readout noise.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/10-charge-counting-noise/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Infer charge discreteness from fluctuations in a steady photocurrent · OneSimulation">
+<meta property="og:description" content="A detector can deliver a perfectly steady mean current over a long interval while its charge per short exposure fluctuates. Derive both a counting prediction and its spectral version, then use a bandwidth-limited measurement to separate partition fluctuations from thermal and readout noise.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/10-charge-counting-noise/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/material-response/">Fields and the response of matter</a></p><h1>Infer charge discreteness from fluctuations in a steady photocurrent</h1><p class="lead">A detector can deliver a perfectly steady mean current over a long interval while its charge per short exposure fluctuates. Derive both a counting prediction and its spectral version, then use a bandwidth-limited measurement to separate partition fluctuations from thermal and readout noise.</p><p class="byline">Unit 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#start-with-what-the-counter-actually-reports">Start with what the counter actually reports</a><a href="#derive-the-spectral-density-from-a-known-measurement-window">Derive the spectral density from a known measurement window</a><a href="#separate-uncorrelated-sources-by-changing-the-mean">Separate uncorrelated sources by changing the mean</a><a href="#run-the-measurement-with-controlled-non-poisson-counting">Run the measurement with controlled non-Poisson counting</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="start-with-what-the-counter-actually-reports">Start with what the counter actually reports</h2>
+<p>Let statistically independent detection events bring charge \(q\) at mean rate \(\nu\). Count events during a rectangular exposure of duration \(T\). Subdivide it into small bins of length \(\delta t\) in which a single event has probability \(\nu\delta t\) and two events have negligible probability compared with \(\delta t\). Independent Bernoulli bins have additive means and variances. Taking \(\delta t\) towards zero while \(T\) is fixed gives equal count mean and variance, both \(\nu T\). The integrated charge is \(Q=qN\), and the indicated average current is \(Q/T\).</p>
+<div class="math display equation-chain"><div class="equation-step">\[I=q\nu,\]</div><div class="equation-step">\[\operatorname{var}(Q)=qIT,\]</div><div class="equation-step">\[\operatorname{var}(\bar I_T)=qI/T.\]</div></div>
+<p>The relative counting uncertainty is \(1/\sqrt{\nu T}\), which falls with exposure. The variance of the integrated charge itself grows with exposure. Confusing the sum and its average reverses the predicted trend with integration time.</p>
+</section>
+<section>
+<h2 id="derive-the-spectral-density-from-a-known-measurement-window">Derive the spectral density from a known measurement window</h2>
+<p>Define the one-sided current spectrum \(S_I(f)\) for \(f>0\), so that current variance at an instrument output equals its integral weighted by the squared gain. Averaging over the rectangular exposure uses impulse response \(h(t)=1/T\) between 0 and \(T\), zero elsewhere. Its Fourier amplitude is a sinc times a phase factor. Parseval's identity, applied to the real impulse response, gives the one-sided equivalent noise bandwidth \(\int_0^\infty |H(f)|^2df=1/(2T)\). Equate the counting result to \(S_I/(2T)\).</p>
+<div class="math display equation-chain"><div class="equation-step">\[S_I=2qI,\]</div><div class="equation-step">\[[S_I]=\mathrm{A^2/Hz}.\]</div></div>
+<p>The factor of two belongs to the one-sided convention. The square root is an amplitude spectral density, measured in \(\mathrm{A}/\sqrt{\mathrm{Hz}}\). A one-pole filter with −3 dB frequency \(f_c\) instead has gain squared \(1/[1+(f/f_c)^2]\). Its equivalent noise bandwidth is \(\pi f_c/2\). Replacing that integral by \(f_c\) silently changes a noise prediction by a measurable factor.</p>
+</section>
+<section>
+<h2 id="separate-uncorrelated-sources-by-changing-the-mean">Separate uncorrelated sources by changing the mean</h2>
+<p>A photodiode feeds an ideal current-measuring amplifier with a \(1.0\ \mathrm{M\Omega}\) feedback resistor at 300 K. Assume photon arrivals have Poisson statistics, unity internal charge gain, negligible dark-current fluctuations and an otherwise ideal amplifier. Refer the resistor noise to the input as a parallel current source, with density \(4k_BT_{\rm R}/R\). Independent variances add. At \(I=0.80\) microampere and equivalent bandwidth \(B=10.0\) kHz the photocurrent gives 50.63 pA rms and the resistor contributes 12.87 pA. The total current noise is their quadrature sum, about 52.24 pA. Adding their rms amplitudes would predict 63.50 pA despite the assumed independence.</p>
+<p>Keep the resistor temperature and filter fixed while sweeping the photocurrent. Plot measured variance divided by equivalent bandwidth against the actual mean current. The slope is \(2q\) and the intercept measures the current-independent floor. In the more general model \(\mathrm{var}(N)=F\langle N\rangle\) for long exposures, the low-frequency slope is \(2qF\). A measured slope alone cannot separate charge from a Fano factor. Establishing independent electrons and unity gain is part of inferring the elementary charge.</p>
+</section>
+<section>
+<h2 id="run-the-measurement-with-controlled-non-poisson-counting">Run the measurement with controlled non-Poisson counting</h2>
+<p>The graph plots variance across a current sweep, quoted as spectral density in \(\mathrm{pA^2/Hz}\). Vary the Fano factor and the readout resistance independently. Predict which operation affects the intercept. Read the current at which the signal fluctuations equal the readout fluctuations and check whether increasing the detection bandwidth changes this crossover for two white sources.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/10-charge-counting-noise/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-charge-counting-noise"></div>
+<p>A detector impulse \(i_p(t)\) with finite transit time has integrated area \(q\). Poisson arrivals give a low-frequency plateau because the current pulses look like point charges when averaged slowly. At frequencies comparable with the inverse transit time the spectrum gains a factor \(|\widetilde i_p(f)/q|^2\). A curved spectrum can arise from that single-event shape even with independent arrival times. Compare the curve with a calibrated impulse response before attributing it to correlations of separate events.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>An exposure of 20 microseconds collects a mean of 200 electrons. Predict the standard deviation in electrons and the indicated mean current. What happens after averaging four independent exposures?</p>
+<details><summary>Work through the solution</summary><p>The standard deviation is \(\sqrt{200}=14.14\) electrons and the mean current is \(200e/(20\,\mu\mathrm s)=1.60\,\mathrm{pA}\). Averaging four independent readings halves the rms fluctuation in indicated current. Adding their raw counts gives a different observable with mean 800 and standard deviation 28.28.</p></details>
+<p>For \(R=1\ \mathrm{M\Omega}\), \(T=300\) K and \(F=1\), at what current do resistor and shot noise have equal variance?</p>
+<details><summary>Work through the solution</summary><p>Equate \(2eI\) and \(4k_BT/R\) to obtain \(I=2k_BT/(eR)=51.7\,\mathrm{nA}\). Both variances scale with a common equivalent noise bandwidth, so it cancels in this white-noise model.</p></details>
+<p>A colleague multiplies a measured noise density by the optical carrier frequency to obtain the receiver noise. Which frequency interval belongs in this calculation?</p>
+<details><summary>Work through the solution</summary><p>Integrate the electrical noise spectrum over the measurement filter's squared gain. The optical field creates charge carriers, but the transimpedance circuit and estimator determine which fluctuations in their arrival rate reach the output. A carrier frequency and an electrical equivalent noise bandwidth have the same dimension and different operational meanings.</p></details>
+<p>Use the <a href="/fundamentals/physics/electrodynamics/volumes/material-response/03-thermal-noise-and-bandwidth/#try-it">RC noise experiment</a> to derive the equilibrium resistor contribution independently.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/09-surface-polaritons/">Can a flat interface guide light without mirrors?</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/11-gated-sheet-waves/">Why a nearby gate changes the speed law of a two-dimensional plasma</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

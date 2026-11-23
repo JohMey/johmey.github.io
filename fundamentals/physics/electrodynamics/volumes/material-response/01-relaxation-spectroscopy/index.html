@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measure how quickly a dielectric follows an electric field · OneSimulation</title>
+<meta name="description" content="Derive the time and frequency responses of a relaxing polarisation, locate the loss maximum and decide whether a measured sample contains more than one relaxation process.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/01-relaxation-spectroscopy/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measure how quickly a dielectric follows an electric field · OneSimulation">
+<meta property="og:description" content="Derive the time and frequency responses of a relaxing polarisation, locate the loss maximum and decide whether a measured sample contains more than one relaxation process.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/01-relaxation-spectroscopy/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/material-response/">Fields and the response of matter</a></p><h1>Measure how quickly a dielectric follows an electric field</h1><p class="lead">Derive the time and frequency responses of a relaxing polarisation, locate the loss maximum and decide whether a measured sample contains more than one relaxation process.</p><p class="byline">Unit 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#from-a-delayed-polarisation-to-a-constitutive-equation">From a delayed polarisation to a constitutive equation</a><a href="#derive-the-complex-dielectric-response">Derive the complex dielectric response</a><a href="#tie-a-frequency-sweep-to-a-step-test">Tie a frequency sweep to a step test</a><a href="#resolve-a-second-process-only-when-the-data-require-it">Resolve a second process only when the data require it</a><a href="#tutorial">Tutorial</a><a href="#compare-with-material-measurements">Compare with material measurements</a></nav></aside><article class="prose reference"><section>
+<h2 id="from-a-delayed-polarisation-to-a-constitutive-equation">From a delayed polarisation to a constitutive equation</h2>
+<p>A slab of insulating material is placed between parallel electrodes. At first the measured charge increases very quickly when a small voltage is switched on. It then continues to rise slowly even though the applied voltage is fixed. A constant real relative permittivity can describe the final charge but cannot predict this record. The experiment reveals at least two relevant time scales. For a measurement window that resolves only the slower process, treat the fast electronic response as instantaneous and describe the slower polarisation \(P\) by its approach to an equilibrium value.</p>
+<p>At fixed weak field the equilibrium slow polarisation is \(\epsilon_0\Delta\epsilon E\), with \(\Delta\epsilon>0\). Assume the rate of change is proportional to the distance from that equilibrium, with one positive relaxation time \(\tau\). Then \(\tau\dot P+P=\epsilon_0\Delta\epsilon E(t)\). This is a phenomenological material law. Its assumptions include linear response about the prepared state, a time-independent \(\tau\), and a sample whose constituents can be described by one dominant relaxation. Testing those assumptions is part of the experiment.</p>
+<p>For \(E(t)=E_s\) switched on at zero from an unpolarised state, solve using the integrating factor \(e^{t/\tau}\). The result is \(P=\epsilon_0\Delta\epsilon E_s(1-e^{-t/\tau})\). After one \(\tau\), 63.21% of the slow response has developed; after \(3\tau\), 95.02%. Measuring an absolute fraction requires subtracting the fast initial jump and knowing the eventual plateau. A long baseline drift can look like a second relaxation if those references are not controlled.</p>
+</section>
+<section>
+<h2 id="derive-the-complex-dielectric-response">Derive the complex dielectric response</h2>
+<p>Now use peak phasors with time dependence \(e^{-i\omega t}\). Differentiation contributes \(-i\omega\), so \(P/E=\epsilon_0\Delta\epsilon/(1-i\omega\tau)\). Include the high-frequency relative permittivity \(\epsilon_\infty\), where “high” means above the slow process but below additional electronic resonances. The real and imaginary parts of relative permittivity are</p>
+<div class="math display equation-chain"><div class="equation-step">\[\epsilon'=\epsilon_\infty+\frac{\Delta\epsilon}{1+(\omega\tau)^2},\]</div><div class="equation-step">\[\epsilon''=\frac{\Delta\epsilon\,\omega\tau}{1+(\omega\tau)^2}.\]</div></div>
+<p>At fixed field amplitude the polarisation current is \(\dot P=-i\omega P\). The mean electrical work per unit time and volume is \(\tfrac12\operatorname{Re}(E^*\dot P)=\tfrac12\omega\epsilon_0\epsilon''|E|^2\). Loss therefore has positive \(\epsilon''\) in the chosen time convention. Using \(e^{+i\omega t}\) reverses the sign of the imaginary part of permittivity but leaves mean absorbed energy positive when the current convention is changed consistently.</p>
+<p>Set \(u=\omega\tau\). Differentiating \(u/(1+u^2)\) gives \((1-u^2)/(1+u^2)^2\). Hence \(\epsilon''\) peaks at \(u=1\), with height \(\Delta\epsilon/2\), and the real part lies halfway between its low- and high-frequency plateaux. The peak identified here is in the imaginary *permittivity*. A plot of dissipated power at fixed field includes an additional factor of frequency and need not have a peak at the same location.</p>
+</section>
+<section>
+<h2 id="tie-a-frequency-sweep-to-a-step-test">Tie a frequency sweep to a step test</h2>
+<p>Suppose a material has \(\epsilon_\infty=2\), \(\Delta\epsilon=6\), and a measured loss peak at 1 kHz. Then \(\tau=1/(2\pi\,1000)\simeq159\ \mu\mathrm s\). At the peak the relative permittivity is \(5+3i\) in our convention. A time-domain voltage step should show a slow charge transient reaching 63.2% of its added charge in roughly 159 μs. This comparison connects two experiments that weight electrode offsets and parasitic impedances differently.</p>
+<p>An independent shape check follows by eliminating \(u\). Let \(X=\epsilon'-\epsilon_\infty\) and \(Y=\epsilon''\). From the formulas \(X^2+Y^2=\Delta\epsilon X\). Thus \((X-\Delta\epsilon/2)^2+Y^2=(\Delta\epsilon/2)^2\): a single Debye relaxation traces a semicircle in the complex plane. Departures from a semicircle can reflect several relaxation times, spatially inhomogeneous samples, leakage or imperfect fixture correction. They do not uniquely identify the microscopic mechanism.</p>
+</section>
+<section>
+<h2 id="resolve-a-second-process-only-when-the-data-require-it">Resolve a second process only when the data require it</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/01-relaxation-spectroscopy/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-relaxation-spectroscopy"></div>
+<p>The synthetic sample has two groups contributing a fixed total \(\Delta\epsilon=6\). Change the fraction in the slower group and its relaxation time relative to the faster group. At equal relaxation times the groups give exactly the single-process response whatever their fractions. When the times differ, the imaginary curves broaden and may separate. Observe the real dispersion steps as well. A broad lossy peak alone can be fitted by more than one pair of times and strengths.</p>
+<p>In a practical measurement the low-frequency tail can contain DC conductivity. In the \(e^{-i\omega t}\) convention, \(\sigma E-i\omega\epsilon_0\epsilon E=-i\omega\epsilon_0[\epsilon+i\sigma/(\epsilon_0\omega)]E\). This added imaginary part is proportional to \(1/\omega\), whereas the low-frequency side of an isolated Debye relaxation rises as \(\omega\). Change electrode separation and use a DC conduction measurement to challenge the interpretation. An electrode interface can add a further time scale, so an observed fit parameter deserves an uncertainty and a physical validation step.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>The loss maximum is at 2 kHz and its height is 4 in relative-permittivity units. The high-frequency plateau is 3. Predict the low-frequency plateau and the slow response at \(t=100\,\mu\mathrm s\) after a step.</p>
+<details><summary>Work through the solution</summary><p>The single-time model gives \(\Delta\epsilon=8\) and the low-frequency plateau 11. The relaxation time is \(1/[2\pi(2000)]\simeq79.6\,\mu\mathrm s\). The slow fraction after 100 μs is \(1-e^{-100/79.6}\simeq0.715\). Repeat at another step amplitude to check linearity.</p></details>
+<p>At the loss peak, is the phase difference between the *total* displacement and the electric field always 45°?</p>
+<details><summary>Work through the solution</summary><p>The slow polarisation alone has a 45° phasor angle at \(\omega\tau=1\). The total displacement includes \(\epsilon_\infty E\). Its angle is \(\arctan[(\Delta\epsilon/2)/(\epsilon_\infty+\Delta\epsilon/2)]\), generally less than 45°.</p></details>
+<p>Why does observing only a high-frequency tail constrain a ratio of parameters more tightly than the individual parameters?</p>
+<details><summary>Work through the solution</summary><p>For large \(\omega\tau\), \(\epsilon''\simeq\Delta\epsilon/(\omega\tau)\). Many values with the same ratio \(\Delta\epsilon/\tau\) have very similar tails. Measure the peak or both plateaux to distinguish the two parameters.</p></details>
+</section>
+<section>
+<h2 id="compare-with-material-measurements">Compare with material measurements</h2>
+<p>Inspect the orientational response and dielectric-loss treatment in <a href="https://ocw.mit.edu/courses/3-225-electronic-and-mechanical-properties-of-materials-fall-2007/resources/lecture_11/">MIT's material-properties course</a>. Use the phasor convention of each source to predict the sign assigned to loss.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/">Volume contents</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/02-hall-measurement/">Identify mobile charge with a transverse field</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calibrate a rotational viscometer without a thin-gap assumption · OneSimulation</title>
+<meta name="description" content="An inner cylinder rotates inside a stationary cylindrical cup filled with a Newtonian liquid. Instruments often convert torque to viscosity with a gap approximation. Solve the actual cylindrical velocity field, use the measured torque to infer viscosity and determine how end drag or secondary flow would appear in a calibration series.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/8/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Calibrate a rotational viscometer without a thin-gap assumption · OneSimulation">
+<meta property="og:description" content="An inner cylinder rotates inside a stationary cylindrical cup filled with a Newtonian liquid. Instruments often convert torque to viscosity with a gap approximation. Solve the actual cylindrical velocity field, use the measured torque to infer viscosity and determine how end drag or secondary flow would appear in a calibration series.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/8/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>Calibrate a rotational viscometer without a thin-gap assumption</h1><p class="lead">An inner cylinder rotates inside a stationary cylindrical cup filled with a Newtonian liquid. Instruments often convert torque to viscosity with a gap approximation. Solve the actual cylindrical velocity field, use the measured torque to infer viscosity and determine how end drag or secondary flow would appear in a calibration series.</p><p class="byline">Problem sheet 8 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#local">Find the velocity field from stress balance</a><a href="#torque">Infer viscosity from the measured torque</a><a href="#dissipation">Check the power balance and use an active-length sweep</a><a href="#transfer">Distinguish non-Newtonian behaviour from a failing flow geometry</a></nav></aside><article class="prose reference"><section><h2 id="local">Find the velocity field from stress balance</h2>
+<p>Take inner radius \(a=15\) mm, outer radius \(b=20\) mm and active length \(L=80\) mm. The inner cylinder rotates at \(\Omega=5.0\) rad/s; the outer one is fixed. Assume steady axisymmetric flow with no radial or axial velocity, no slip and negligible end effects. Why is the shear rate not simply the derivative of tangential velocity? Derive the velocity between the two walls.</p>
+<details><summary>Compare neighbouring angular velocities</summary>
+<p>A fluid rotating as a rigid body with \(u_\theta=\Omega r\) has nonzero radial velocity gradient but zero shear deformation. The cylindrical shear rate that respects this fact is \(r\,d(u_\theta/r)/dr\). The torque transmitted through a coaxial cylinder is \(2\pi Lr^2\tau_{r\theta}\). In a steady purely azimuthal flow with no body torque this is independent of radius. For Newtonian viscosity \(\mu\), integrate \(r^3\,d(u_\theta/r)/dr=\text{constant}\) to find \(u_\theta=Ar+B/r\). Applying both wall speeds gives</p>
+<div class="math display">\[u_\theta(r)=\frac{\Omega a^2}{b^2-a^2}\left(\frac{b^2}{r}-r\right).\]</div>
+<p>It returns \(a\Omega=0.075\) m/s at the inner wall and zero at the outer wall. Mid-gap speed is approximately 0.0344 m/s rather than the 0.0375 m/s of a straight line. A small-looking velocity discrepancy can have a larger effect on stress because stress contains a derivative and a curvature correction.</p>
+</details>
+</section>
+<section><h2 id="torque">Infer viscosity from the measured torque</h2>
+<p>The measured sidewall torque after bearing drag subtraction is 0.646 mN m. Determine the viscosity, the magnitude of inner wall shear stress and the result a laboratory would get using a planar gap model. Identify which direction the resulting viscosity bias takes.</p>
+<details><summary>Integrate shear traction with the lever arm</summary>
+<p>Differentiating the velocity solution yields \(\tau_{r\theta}=-2\mu\Omega a^2b^2/[(b^2-a^2)r^2]\). The liquid resists the inner cylinder, so the applied steady drive torque is positive and has magnitude</p>
+<div class="math display">\[T=\frac{4\pi\mu L\Omega a^2b^2}{b^2-a^2}.\]</div>
+<p>The measurement implies \(\mu=0.250\) Pa s. Inner stress is \(T/(2\pi La^2)=5.71\) Pa. A planar gap estimate uses wall speed \(a\Omega\) divided by \(b-a\) as the shear rate. It predicts 0.424 mN m at the true viscosity and would infer 0.381 Pa s from the actual reading. The sign of bias follows from the cylindrical shear being larger than the assumed planar rate at the inner surface.</p>
+<p>Reducing gap while keeping inner radius fixed makes both approximations approach one another. The trade-off is that fractional uncertainty in the actual clearance can become large relative to machining tolerances or eccentricity. Measuring the two radii independently to good absolute precision need not yield an accurately known very small difference.</p>
+</details>
+</section>
+<section><h2 id="dissipation">Check the power balance and use an active-length sweep</h2>
+<p>Predict the mechanical power entering the liquid. Show that it equals the viscous dissipation integrated over the annulus. How could torque at two lengths separate the intended sidewall response from an approximately length-independent end contribution?</p>
+<details><summary>Integrate power and isolate the intercept</summary>
+<p>Driving power is \(T\Omega=3.23\) mW. Local dissipation density is \(\mu[r\,d(u_\theta/r)/dr]^2\). Multiplying by \(2\pi rL\,dr\) leaves an integral proportional to \(\int_a^b dr/r^3\), giving exactly the drive power after substitution of both radii. This check tests both the factor of two and the sign convention in the torque derivation. It also predicts a small but continuous heat load whose importance depends on the sample's thermal control.</p>
+<p>If lengths 40 and 80 mm yield measured torques 0.373 and 0.696 mN m, the slope is 8.08 mN m per metre and extrapolated end intercept 0.050 mN m. The inferred 80 mm sidewall contribution is 0.646 mN m as assumed. This correction relies on similar end geometry and sidewall flow at both lengths. A varying free surface, slip, secondary recirculation or contact-line torque can change that intercept with immersion.</p>
+</details>
+<div id="try-it" class="interactive-study" data-study="semester-engineering-couette"></div>
+</section>
+<section><h2 id="transfer">Distinguish non-Newtonian behaviour from a failing flow geometry</h2>
+<p>The graph lets you change viscosity while monitoring the profile shape and computed torque. Explain what an observed nonlinear relationship between torque and angular speed would mean and what it would fail to identify by itself.</p>
+<details><summary>Test independent model assumptions</summary>
+<p>In the assumed Newtonian steady regime, wall speeds set the entire velocity shape independently of viscosity, while torque scales linearly with viscosity and rotation rate. At fixed geometry, a nonlinear torque curve can suggest a shear-dependent viscosity. It can also result from heating, a moving contact line, wall slip, inertia-driven secondary circulation or a changing parasitic bearing contribution. Repeat at controlled temperature and multiple active lengths, acquire upward and downward speed sweeps and measure reversibility after full equilibration.</p>
+<p>The inner rotating configuration can develop Taylor vortices above an onset that depends on geometry and fluid properties. A torque departure accompanied by axial cellular motion violates the assumed single azimuthal component. A velocity profile measured near the cylinder centre and away from its ends supplies information unavailable in one total torque. In the benign low-speed calibration one can also use a reference liquid of known viscosity and repeat for different gaps; collapse onto the finite-gap prediction is a stronger test than fitting a single instrument factor.</p>
+</details>
+<p><a href="https://ocw.mit.edu/courses/res-6-001-continuum-electromechanics-spring-2009/932df90c37a465c4d2d2db4c31a38dc0_chap07_811.pdf">MIT Continuum Electromechanics · shear flow and a Couette viscometer</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/7/">Problem sheet 7 · A capillary that fills horizontally and climbs vertically</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/#case-study">Continue to the applied study</a></span></nav><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

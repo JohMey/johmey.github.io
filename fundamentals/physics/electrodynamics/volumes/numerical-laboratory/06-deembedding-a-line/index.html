@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Move the reference plane of a wave measurement · OneSimulation</title>
+<meta name="description" content="Recover a load reflection coefficient from a noncontact voltage measurement and explain why identical amplitude data can represent physically different terminations.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/06-deembedding-a-line/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Move the reference plane of a wave measurement · OneSimulation">
+<meta property="og:description" content="Recover a load reflection coefficient from a noncontact voltage measurement and explain why identical amplitude data can represent physically different terminations.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/06-deembedding-a-line/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>Move the reference plane of a wave measurement</h1><p class="lead">Recover a load reflection coefficient from a noncontact voltage measurement and explain why identical amplitude data can represent physically different terminations.</p><p class="byline">Unit 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#specify-which-plane-defines-the-load">Specify which plane defines the load</a><a href="#derive-the-envelope-and-the-ambiguity">Derive the envelope and the ambiguity</a><a href="#put-a-probe-between-voltage-extrema">Put a probe between voltage extrema</a><a href="#recover-a-complex-reflection-from-several-amplitude-measurements">Recover a complex reflection from several amplitude measurements</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="specify-which-plane-defines-the-load">Specify which plane defines the load</h2>
+<p>A uniform lossless transmission line has real characteristic impedance \(Z_0=50\ \Omega\). Drive it sinusoidally at one frequency. Choose peak phasors with time factor \(e^{i\omega t}\) and measure distance \(d\) from the load towards the source. Incident and reflected waves move in opposite directions. Taking the load as phase origin, the ratio of the reflected to incident voltage at the load is \(\Gamma_L=(Z_L-Z_0)/(Z_L+Z_0)\). The ratio at a sensor plane a distance \(d\) away is \(\Gamma_\mathrm{in}=\Gamma_Le^{-2i\beta d}\). The factor two is the phase difference of two opposite travellers. Moving the sensor does not change a physical resistor.</p>
+<p>For a real resistive load, \(\Gamma_L\) is real and ranges from −1 for a short to +1 for an open. A 75 Ω load gives +0.2 and a \(100/3\) Ω load gives −0.2. These loads have the same reflected power fraction of four per cent. Distinguishing them requires phase information or positioning the sensor at more than one known location.</p>
+</section>
+<section>
+<h2 id="derive-the-envelope-and-the-ambiguity">Derive the envelope and the ambiguity</h2>
+<p>The local voltage is the sum of incident and reflected phasors. Factor out the incident phase and take the magnitude:</p>
+<div class="math display">\[\frac{|V(d)|^2}{|V^+|^2}=1+|\Gamma_L|^2+2\operatorname{Re}\{\Gamma_Le^{-2i\beta d}\}.\]</div>
+<p>Its maxima and minima have amplitude ratios \(1+|\Gamma|\) and \(1-|\Gamma|\) for a passive load, giving \(\mathrm{VSWR}=(1+|\Gamma|)/(1-|\Gamma|)\). The distance between successive maxima is \(\lambda/2\), because the measured intensity involves a relative wave number \(2\beta\). A measured ratio 1.5 yields \(|\Gamma|=0.2\) but leaves its sign and, for general impedances, its phase undetermined. Extremum positions contain information that a ratio discards.</p>
+<p>At one eighth of a wavelength from a 75 Ω load the phase rotation is \(-\pi/2\), giving \(\Gamma_\mathrm{in}=-0.2i\). If a researcher plugs that complex coefficient directly into \(Z=Z_0(1+\Gamma)/(1-\Gamma)\), the inferred impedance is about \(46.15-19.23i\ \Omega\). That is the correct input impedance at the sensor plane. To infer the actual element multiply back by \(e^{2i\beta d}\) before the inversion. The recovered load is then 75 Ω with zero imaginary part.</p>
+</section>
+<section>
+<h2 id="put-a-probe-between-voltage-extrema">Put a probe between voltage extrema</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/06-deembedding-a-line/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-deembedding-a-line"></div>
+<p>Set the load to 75 Ω and move the sensor from the load through a quarter wavelength. The envelope changes from 1.2 to 0.8 times the incident amplitude. At \(\lambda/8\) it is \(\sqrt{1+0.2^2}\). Centre your first trial on a voltage extremum and estimate how much the reading changes for a small positioning error. Repeat around the steepest part of the envelope. A high-slope position is sensitive to phase; a stationary amplitude extremum is useful when estimating the reflectance magnitude.</p>
+<p>Use the matched case next. The field envelope becomes flat. The program reports that reflection phase is undefined. A zero complex amplitude has no observable phase angle. An instrument that prints a quickly varying phase for a nearly matched load can simply be reporting the angle of noise around the origin. Propagate uncertainty in real and imaginary parts before interpreting such a number.</p>
+</section>
+<section>
+<h2 id="recover-a-complex-reflection-from-several-amplitude-measurements">Recover a complex reflection from several amplitude measurements</h2>
+<p>If \(|V^+|\) is independently calibrated, sample squared voltage at \(d=0,\lambda/8,\lambda/4,3\lambda/8\). Denote normalised intensity by \(I_d\). Writing \(\Gamma=x+iy\) gives \(I_0-I_{\lambda/4}=4x\) and \(I_{\lambda/8}-I_{3\lambda/8}=4y\) with the convention above. Constant detector offsets cancel in these differences. A multiplicative gain error remains and must be calibrated. A mismatch in the assumed wavelength rotates or distorts the reconstructed coefficient rather than merely adding random noise.</p>
+<p>For \(\Gamma=0.2\), the four intensities are 1.44, 1.04, 0.64 and 1.04. The reconstruction returns \(x=(1.44-0.64)/4=0.2\), \(y=0\). The observation probes have provided both quadratures without a phase-sensitive receiver. For a lossy line the round-trip propagation factor also attenuates magnitude; the lossless envelope formula and phase-only de-embedding then require modification.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>A reference plane is misplaced by \(\lambda/100\). Estimate the resulting phase error of the reconstructed load.</p>
+<details><summary>Work through the solution</summary><p>The round-trip phase is \(4\pi d/\lambda\). A placement error of \(\lambda/100\) therefore rotates the result by 0.04π rad, or 7.2°. Its sign depends on whether distance was over- or underestimated.</p></details>
+<p>Why is recovering a very large resistance from reflection poorly conditioned?</p>
+<details><summary>Work through the solution</summary><p>\(dZ/d\Gamma=2Z_0/(1-\Gamma)^2\). Near the open-circuit value +1 this derivative becomes large. A small error in the complex coefficient can imply a large change in estimated resistance while reflected power barely changes.</p></details>
+<p>A standing-wave ratio is measured with a detector displaying power rather than amplitude. Its largest-to-smallest reading is 2.25. What is the correct reflection magnitude?</p>
+<details><summary>Work through the solution</summary><p>Take the square root to get a voltage ratio of 1.5, then \(|\Gamma|=(1.5-1)/(1.5+1)=0.2\). Substituting 2.25 directly into the voltage formula would yield a biased result.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/05-discrete-wave/">Measure the phase speed of a numerical electromagnetic wave</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/07-conducting-film/">When a film is thinner than a skin depth</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

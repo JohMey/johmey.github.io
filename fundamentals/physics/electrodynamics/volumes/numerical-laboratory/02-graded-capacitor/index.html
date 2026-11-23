@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measure the capacitance of a continuously graded dielectric · OneSimulation</title>
+<meta name="description" content="Find the exact solution of a variable-coefficient field equation, then estimate the same capacitance from charge, voltage drop and electrostatic energy.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/02-graded-capacitor/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measure the capacitance of a continuously graded dielectric · OneSimulation">
+<meta property="og:description" content="Find the exact solution of a variable-coefficient field equation, then estimate the same capacitance from charge, voltage drop and electrostatic energy.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/02-graded-capacitor/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>Measure the capacitance of a continuously graded dielectric</h1><p class="lead">Find the exact solution of a variable-coefficient field equation, then estimate the same capacitance from charge, voltage drop and electrostatic energy.</p><p class="byline">Unit 2 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#build-the-problem-from-what-is-continuous">Build the problem from what is continuous</a><a href="#obtain-the-voltage-and-both-expressions-for-capacitance">Obtain the voltage and both expressions for capacitance</a><a href="#work-one-case-numerically-before-assembling-the-grid">Work one case numerically before assembling the grid</a><a href="#assemble-by-balancing-fluxes-before-dividing-by-a-coefficient">Assemble by balancing fluxes before dividing by a coefficient</a><a href="#compare-a-local-field-measurement-with-an-integral-quantity">Compare a local field measurement with an integral quantity</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="build-the-problem-from-what-is-continuous">Build the problem from what is continuous</h2>
+<p>Two very large parallel plates are separated by \(L=1\) m. Set their potentials to 0 and 1 V. Edge effects are negligible in the observation region. The relative permittivity of the material varies as \(\epsilon_r(x)=1+g x/L\), where \(g\ge0\). There is no free volume charge. A common first guess is a linear potential between the plates, because the boundary voltages impose an average field. Test that guess using the local field law.</p>
+<p>For a thin pillbox whose faces are perpendicular to \(x\), zero enclosed free charge means equal normal displacement at both faces. Let \(D_*>0\) denote the magnitude of the constant displacement. Since potential increases with \(x\), the electric field points towards negative \(x\) and \(D_x=-D_*\). Hence \(V'=D_*/[\epsilon_0(1+g x/L)]\). Regions of low permittivity must sustain a larger electric field and account for a larger voltage drop per metre. We have a local constraint before solving a single matrix equation.</p>
+</section>
+<section>
+<h2 id="obtain-the-voltage-and-both-expressions-for-capacitance">Obtain the voltage and both expressions for capacitance</h2>
+<p>Integrate \(V'\) from left to right and impose \(V(L)-V(0)=\Delta V\). For \(g>0\) this gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{C}{A}=\frac{D_*}{\Delta V}=\frac{\epsilon_0}{L}\frac{g}{\log(1+g)},\]</div><div class="equation-step">\[\frac{V(x)}{\Delta V}=\frac{\log(1+gx/L)}{\log(1+g)}.\]</div></div>
+<p>As \(g\) approaches zero, both expressions have removable singularities. Since \(\log(1+g)=g-g^2/2+O(g^3)\), the effective relative permittivity approaches \(1+g/2+O(g^2)\). An arithmetic average can therefore look convincing at very small gradients despite having the wrong general derivation. For computation near zero, use a logarithm specifically evaluated as \(\log(1+g)\) with a small-argument routine such as <code>log1p</code>.</p>
+<p>Check the result through stored energy. Each volume element contributes \(\epsilon E^2/2\), so \(U/A=(D_*^2/2)\int_0^L dx/\epsilon(x)\). Substituting the voltage relation gives \(U/A=D_*\Delta V/2\). The same capacitance follows from \(C/A=2U/(A\Delta V^2)\). This equality requires a linear, lossless dielectric and a reversible charging path. A material whose permittivity changes with field needs the corresponding integral over the constitutive curve.</p>
+</section>
+<section>
+<h2 id="work-one-case-numerically-before-assembling-the-grid">Work one case numerically before assembling the grid</h2>
+<p>At \(g=3\), the material goes from relative permittivity 1 to 4. The effective value is \(3/\log4\simeq2.1640\), smaller than the arithmetic mean 2.5. The midplane voltage is \(\log2.5/\log4\simeq0.6610\) V, not 0.5 V. The electric field at the left is four times as large as at the right. A measurement of the midpoint voltage alone is enough to reject a uniform-field model if the plates and material are well characterised.</p>
+<p>As a dimensional check, \(C/A\simeq19.16\) pF/m² for \(L=1\) m. For a geometrically similar layer one millimetre thick the same effective permittivity gives \(19.16\) nF/m². The voltage profile versus \(x/L\) stays fixed when \(g\) and the plate voltages stay fixed, while the field and free surface charge increase in inverse proportion to separation.</p>
+</section>
+<section>
+<h2 id="assemble-by-balancing-fluxes-before-dividing-by-a-coefficient">Assemble by balancing fluxes before dividing by a coefficient</h2>
+<p>Divide the gap into \(n\) cells. Across cell \(i\) approximate the displacement magnitude by \(D_i=\epsilon_{i+1/2}(V_{i+1}-V_i)/h\). Enforcing \(D_i=D_{i-1}\) at each internal node gives a tridiagonal linear system. An independent route views each cell as a capacitor with inverse capacitance per area \(h/\epsilon_{i+1/2}\). These series contributions add, giving \(D_*^{(h)}=\Delta V/\sum h/\epsilon_{i+1/2}\). Cumulative sums of the same drops then recover the entire grid potential. Both routes implement identical physics and the same discrete constitutive assumption.</p>
+<p>The browser uses this cumulative series construction. The OneSimulation input instead supplies the spatial coefficient \(1+gx/L\), zero source and the two exterior potential values to the coefficient-form PDE solver. Their agreement checks assembly against a distinct algorithm. In this example the integral of inverse permittivity also tells us what the midpoint discretisation approximates. Since \(1/(1+gx/L)\) is convex, midpoint quadrature underestimates its integral and therefore overestimates capacitance. This predicts the bias before looking at a convergence table.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/02-graded-capacitor/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-graded-capacitor"></div>
+</section>
+<section>
+<h2 id="compare-a-local-field-measurement-with-an-integral-quantity">Compare a local field measurement with an integral quantity</h2>
+<p>In the experiment, plot \(V\) across the dielectric and record the effective relative permittivity. At \(g=2\), \(n=16\), the computed potential at \(x=0.1875\) m is about 0.28974 V; the analytical reference is about 0.28987 V. The potential there is low while the computed capacitance is high. A voltage error at an arbitrary coordinate need not share the sign of the error in an integral quantity.</p>
+<p>Now estimate the left electric field from the first-cell drop and from the analytical derivative at \(x=0\). The first-cell drop divided by \(h\) is an average across that cell, representing its midpoint to second order for a smooth field. Interpreting it as a value exactly at the wall introduces an \(O(h)\) offset. Label sample positions when comparing a derivative against an analytic curve. The grid solution can converge quadratically in voltage while a carelessly placed flux diagnostic appears first order.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>The gradient is reversed so \(\epsilon_r=1+g(1-x/L)\), but the plates remain at the same voltages. Which earlier observations change?</p>
+<details><summary>Work through the solution</summary><p>The integral of inverse permittivity is invariant under \(x\mapsto L-x\), so the capacitance and stored energy stay the same. The new potential obeys \(V_{\rm rev}(x)=\Delta V-V(L-x)\). The largest field is now at the right wall, and the midpoint voltage at \(g=3\) falls from about 0.661 to 0.339 V.</p></details>
+<p>A sensor measures an apparently linear voltage profile and \(C/A\) greater than the vacuum value. Is the inferred dielectric necessarily uniform?</p>
+<details><summary>Work through the solution</summary><p>Under the one-dimensional, source-free and linear assumptions, exactly constant nonzero field and constant normal displacement require constant permittivity. A sparse set of voltage probes may simply undersample a graded profile. Lateral variation, free volume charge or uncertain boundary voltages would break the inference.</p></details>
+<p>Derive bounds on the effective permittivity if only its material range \(\epsilon_{\min}\) to \(\epsilon_{\max}\) is trusted.</p>
+<details><summary>Work through the solution</summary><p>Integrate \(1/\epsilon_{\max}\le1/\epsilon(x)\le1/\epsilon_{\min}\), multiply by \(1/L\), and invert the positive quantities. The effective value lies between these two limits. A simulation reporting an effective permittivity outside that interval in this passive one-dimensional model fails this check regardless of mesh resolution.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/01-two-mode-verification/">A converged field solver can still give the wrong voltage</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/03-screening-boundary-layer/">Is a computed screening layer resolved?</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

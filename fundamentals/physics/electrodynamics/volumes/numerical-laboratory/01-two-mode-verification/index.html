@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A converged field solver can still give the wrong voltage · OneSimulation</title>
+<meta name="description" content="Verify a two-dimensional electrostatic calculation with two independent charge patterns. Use symmetry to distinguish a transposed output, a coarse mesh and a poorly converged linear solve.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/01-two-mode-verification/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A converged field solver can still give the wrong voltage · OneSimulation">
+<meta property="og:description" content="Verify a two-dimensional electrostatic calculation with two independent charge patterns. Use symmetry to distinguish a transposed output, a coarse mesh and a poorly converged linear solve.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/01-two-mode-verification/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>A converged field solver can still give the wrong voltage</h1><p class="lead">Verify a two-dimensional electrostatic calculation with two independent charge patterns. Use symmetry to distinguish a transposed output, a coarse mesh and a poorly converged linear solve.</p><p class="byline">Unit 1 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#choose-a-voltage-before-choosing-a-solver">Choose a voltage before choosing a solver</a><a href="#manufacture-the-source-by-differentiating-the-field">Manufacture the source by differentiating the field</a><a href="#solve-the-discrete-problem-on-paper-as-a-second-reference">Solve the discrete problem on paper as a second reference</a><a href="#run-the-full-field-and-compare-genuinely-different-observations">Run the full field and compare genuinely different observations</a><a href="#a-convergence-report-a-second-person-can-reproduce">A convergence report a second person can reproduce</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="choose-a-voltage-before-choosing-a-solver">Choose a voltage before choosing a solver</h2>
+<p>A very long grounded tube has a square cross section \(0\le x,y\le L\), with \(L=1\) m. The contents are uniform along the axis. A model of its transverse charge density should predict what a voltage probe placed inside would measure. Three numerical statements that can sound similar are actually quite different: the discrete equations have a small residual, the grid solution approximates the continuous solution, and the physical source describes the tube. We can test the first two in a laboratory problem where the last is specified exactly.</p>
+<p>Start by prescribing a voltage that satisfies all four walls. Introduce \(s_m(x)=\sin(m\pi x/L)\) and choose \(V_*(x,y)=[s_1(x)+g s_2(x)]s_1(y)\) volts. The parameter \(g\) is the signed amplitude of the second spatial pattern relative to the first. A probe at the centre sees exactly 1 V for every \(g\), since \(s_2(L/2)=0\). A calculation checked at that point alone could entirely lose the second pattern and still pass. At \(x=L/4\) on the centreline, \(V_*=1/\sqrt2+g\); at \(3L/4\) it is \(1/\sqrt2-g\). Their difference is \(2g\) volts. First write down all three expected readings for \(g=0.5\).</p>
+</section>
+<section>
+<h2 id="manufacture-the-source-by-differentiating-the-field">Manufacture the source by differentiating the field</h2>
+<p>The physical problem uses Gauss's law and the electrostatic relation \(\mathbf E=-\nabla V\). For uniform vacuum permittivity they yield \(-\nabla^2V=\rho/\epsilon_0\). A product \(s_m(x)s_1(y)\) returns the factor \((m^2+1)\pi^2/L^2\) when acted on by the negative Laplacian. Applying this separately to the two patterns gives</p>
+<div class="math display">\[\rho/\epsilon_0=(\pi/L)^2[2s_1(x)+5g s_2(x)]s_1(y)\ {\rm V}.\]</div>
+<p>The right side has dimensions V/m² after including the factor \(L^{-2}\); multiplication by permittivity gives C/m³. When \(g\) becomes large enough, part of the imposed density changes sign. That is permissible for a manufactured source. The calculation represents a solution of the stated Poisson problem. Judging whether a particular apparatus could maintain that charge requires its own charge-transport model.</p>
+<p>Uniqueness gives the reference solution special status. If there were a different voltage for the same walls and charge, their difference \(w\) would satisfy Laplace's equation with zero boundary value. Integrate \(w(-\nabla^2 w)\) over the square. Integration by parts leaves \(\int|\nabla w|^2\), because \(w\) is zero on the boundary. The integral must vanish; \(w\) is constant and its boundary makes that constant zero. This is why agreement with the manufactured voltage is a test of the solver and its input, rather than a choice between two physical solutions.</p>
+</section>
+<section>
+<h2 id="solve-the-discrete-problem-on-paper-as-a-second-reference">Solve the discrete problem on paper as a second reference</h2>
+<p>Let \(h=L/n\). The standard negative Laplacian has centre coefficient \(4/h^2\) and four neighbouring coefficients \(-1/h^2\). Substitute the samples of \(s_m(x)s_1(y)\). In the \(x\) direction the sum of forward and backward neighbours is twice the centre value times \(\cos(m\pi/n)\). Collect the corresponding \(y\) term. The resulting positive grid eigenvalue is</p>
+<div class="math display">\[\lambda_{h,m}=\frac{4}{h^2}\left[\sin^2\!\frac{m\pi}{2n}+\sin^2\!\frac{\pi}{2n}\right].\]</div>
+<p>The continuum eigenvalue is \(\lambda_m=(m^2+1)(\pi/L)^2\). If the source is the continuous source sampled at the nodes, the discrete voltage coefficient is multiplied by \(\lambda_m/\lambda_{h,m}\). Since \(\sin z&lt;z\) for positive \(z\), each factor exceeds one on a resolving grid. The faster spatial oscillation has the larger relative bias. The resulting total pointwise error can still change sign because the spatial modes themselves have signs.</p>
+<p>This provides three independent calculations: a continuous closed-form field, an exact solution of the chosen difference equations and a numerical linear solve. Agreement of the latter two isolates assembly, indexing and algebraic errors. Comparing either with the continuous solution measures spatial discretisation error. Tightening an iterative tolerance indefinitely cannot remove a difference between \(\lambda_{h,m}\) and \(\lambda_m\).</p>
+</section>
+<section>
+<h2 id="run-the-full-field-and-compare-genuinely-different-observations">Run the full field and compare genuinely different observations</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/01-two-mode-verification/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-two-mode-verification"></div>
+<p>The browser constructs the right-hand side over the two-dimensional interior and applies conjugate gradients to the five-point operator from an all-zero initial field. The two-mode right-hand side belongs to a two-dimensional invariant subspace, so exact-arithmetic convergence takes at most two iterations. In the special case \(g=0\), only one mode is excited. This unusually small iteration count is a property of the test and says very little about a rough source on the same grid.</p>
+<p>Download the model and run the displayed case. Its CSV contains the midline \(y=L/2\), ordered by increasing \(x\). For \(n=16,\ g=2\) the value at \(x=0.1875\) m is about 2.42542 V on the grid and 2.40333 V analytically. If the centre is correct but the 0.1875 m reading is about 0.55736 V, check the orientation of the sampled data array. Keeping \(x\) fixed at its midpoint instead of \(y\) happens to annihilate the entire second mode.</p>
+</section>
+<section>
+<h2 id="a-convergence-report-a-second-person-can-reproduce">A convergence report a second person can reproduce</h2>
+<p>Set \(g=0.5\). Record the centre voltage, the quarter-point voltage difference, the largest nodal error and the relative algebraic residual for \(n=8,16,32\). Use even grids divisible by four if reading exact quarter points. Estimate an order from two successive maximum errors using \(p=\log(E_n/E_{2n})/\log2\). For this smooth problem the leading difference between \(\sin^2 z\) and \(z^2\) is proportional to \(z^4\), giving a second-order spatial error at fixed physical modes. If \(g\) or the physical source profile changes during refinement, the ratio no longer tests that claim.</p>
+<p>An experiment that quotes only the centre voltage has poor sensitivity to \(g\). An experiment quoting only the algebraic residual may perfectly solve the wrong mesh problem. An experiment that compares each plot to itself after smoothing lacks an independent reference. The three diagnostics above address these difficulties with quantities small enough to check by hand.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>A colleague sets \(g=-0.4\) and reports quarter-point voltages 1.107 V and 0.307 V on a very fine grid. Which change in the recorded setup would explain the observation?</p>
+<details><summary>Work through the solution</summary><p>For the stated sign, the expected pair in increasing \(x\) is 0.3071 V then 1.1071 V. Reversing the \(x\) axis interchanges the pair while preserving the centre and the symmetric mode. Reversing the sign of the second source mode produces the same pair. A field measurement with a labelled coordinate direction distinguishes these possibilities.</p></details>
+<p>You prescribe the discrete eigenvalue as the source amplitude during every refinement. The returned solution agrees with your analytic curve at all nodes to machine precision. Which part of the verification has disappeared?</p>
+<details><summary>Work through the solution</summary><p>This tests the algebra of the discrete eigenmode and the linear solve. It changes the continuum source on every grid and cancels exactly the spatial discretisation error you intended to measure. Rerun with a wavelength and source amplitude specified in physical units independently of the grid.</p></details>
+<p>A second probe has independent voltage noise of standard deviation 5 mV. Estimate the standard deviation of \(g\) inferred from the difference of the two quarter-point readings, if both probes have the same independent noise.</p>
+<details><summary>Work through the solution</summary><p>The difference has variance \(2(0.005)^2\) V² and equals \(2g\) volts. Dividing by two gives standard deviation \(0.005/\sqrt2\simeq0.00354\) in the dimensionless amplitude. A shared additive offset cancels; a gain error common to both readings does not.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Volume contents</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/02-graded-capacitor/">Measure the capacitance of a continuously graded dielectric</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

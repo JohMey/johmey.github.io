@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose a frequency that identifies a coil&#x27;s stored and dissipated energy · OneSimulation</title>
+<meta name="description" content="Design a small-signal experiment to estimate resistance and inductance, propagate amplitude and phase uncertainty and decide when a distributed field model is needed.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/12-identify-a-coil/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Choose a frequency that identifies a coil&#x27;s stored and dissipated energy · OneSimulation">
+<meta property="og:description" content="Design a small-signal experiment to estimate resistance and inductance, propagate amplitude and phase uncertainty and decide when a distributed field model is needed.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/12-identify-a-coil/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>Choose a frequency that identifies a coil&#x27;s stored and dissipated energy</h1><p class="lead">Design a small-signal experiment to estimate resistance and inductance, propagate amplitude and phase uncertainty and decide when a distributed field model is needed.</p><p class="byline">Unit 12 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-measured-impedance-is-one-complex-number">A measured impedance is one complex number</a><a href="#derive-what-an-amplitude-error-and-a-timing-error-do">Derive what an amplitude error and a timing error do</a><a href="#choose-the-operating-point-then-challenge-the-model">Choose the operating point, then challenge the model</a><a href="#close-the-loop-from-a-fitted-parameter-to-a-field-calculation">Close the loop from a fitted parameter to a field calculation</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-measured-impedance-is-one-complex-number">A measured impedance is one complex number</h2>
+<p>A laboratory sensing coil is driven by a small sinusoidal current at angular frequency \(\omega\). In its simplest usable range, a series model predicts \(Z=R+i\omega L\). The voltage across a port defines the sign of current entering the positive terminal. With peak phasors, complex power is \(S=VI^*/2=|I|^2(R+i\omega L)/2\). Thus the real part measures average irreversible loss. Magnetic energy at peak current is \(L|I|^2/2\); reactive power equals \(\omega\) times this peak energy. These equalities supply two routes to the same parameters provided parasitic capacitance and frequency-dependent losses remain negligible.</p>
+<p>At 100 Hz, a coil with \(R=20\ \Omega\) and \(L=40\) mH has reactance \(2\pi(100)(0.040)=25.13\ \Omega\), magnitude 32.12 Ω and phase about 51.49 degrees. A 10 mA peak current produces about 0.321 V peak and 1 mW average resistive loss. The peak magnetic energy is only \(2\,\mu\mathrm J\). Check that the reactive power obtained from the phase and current is about 1.26 mvar. Confusion between RMS and peak phasors easily introduces a factor two while still leaving the impedance ratio correct.</p>
+</section>
+<section>
+<h2 id="derive-what-an-amplitude-error-and-a-timing-error-do">Derive what an amplitude error and a timing error do</h2>
+<p>Suppose the readout gives magnitude \(M\) and phase \(\phi\). Then \(R=M\cos\phi\), \(L=M\sin\phi/\omega\). For small independent uncertainties and known \(\omega\), differentiate both expressions. The relative first-order perturbations are</p>
+<div class="math display">\[\frac{\delta R}{R}=\frac{\delta M}{M}-\tan\phi\,\delta\phi,\qquad\]</div>
+<p>\frac{\delta L}{L}=\frac{\delta M}{M}+\cot\phi\,\delta\phi .</p>
+<p>The phase uncertainty must be expressed in radians. For independent random errors their variances add with the squared coefficients; the signed equations above describe individual perturbations. Near zero phase even a very accurate amplitude tells little about inductance, while near 90 degrees inferring resistance requires exceptional phase accuracy. A near-45-degree measurement balances these two sensitivities when the uncertainty budget treats them similarly.</p>
+<p>If the phase uncertainty is 0.5° and relative magnitude uncertainty is 1%, the 45-degree standard deviation in either recovered parameter is approximately \(\sqrt{0.01^2+0.00873^2}=0.0133\), or 1.33%. At five degrees the relative inductance contribution from phase alone is \(\cot5^\circ \times0.00873\simeq10\%\). Taking data at more digits does not improve phase calibration.</p>
+</section>
+<section>
+<h2 id="choose-the-operating-point-then-challenge-the-model">Choose the operating point, then challenge the model</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/12-identify-a-coil/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-identify-a-coil"></div>
+<p>Vary frequency at fixed inductance and read where resistive and reactive contributions are equal. The crossover is \(f_c=R/(2\pi L)\), about 79.58 Hz for the default coil. Now double the inductance without changing \(R\); the crossover halves. The graph is a prediction with known parameters. In an actual inverse experiment you know only rough bounds initially. Begin with a small frequency sweep that brackets the crossover, then allocate repeated measurements where the target parameter is most sensitive.</p>
+<p>Measure at two or more separated frequencies and reconstruct \(R\) and \(L\) independently at each. A frequency-dependent apparent \(R\) could be caused by skin effect or core loss. A falling apparent inductance near a self-resonance can signal stray capacitance. Simply allowing \(R,L\) to take arbitrary values at each frequency fits all data without explaining the mechanism. Add a candidate physical effect and check an independent observable such as loss under a different current amplitude, ring-down frequency or a change in lead geometry.</p>
+</section>
+<section>
+<h2 id="close-the-loop-from-a-fitted-parameter-to-a-field-calculation">Close the loop from a fitted parameter to a field calculation</h2>
+<p>The lumped magnetic energy \(LI^2/2\) should match the field integral \(\int \mathbf B\cdot\mathbf H\,dV/2\) for a linear reversible system that includes the relevant surrounding field. This is why the exterior air region and its imposed boundary can affect a numerical estimate even when the measured coil is compact. Increase the domain and refine the mesh separately. A converged mesh in a small box can deliver a very repeatable value for the wrong boundary problem. The earlier chapter on mutual-inductance matrices generalises this check to cross terms between currents.</p>
+<p>Another independent measurement uses a slowly executed current ramp with a known winding resistance. Subtract the measured resistive voltage from terminal voltage and integrate over time. Under the linear model, \(\int(V-RI)\,dt=L\Delta I\). This test weights offsets very differently from sinusoidal phase detection: a constant voltmeter offset integrates into a bias proportional to record duration, while a high-frequency phase error drops out. Agreement of the two methods is stronger evidence than repeating a single instrument setup at the same frequency.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>Only voltage and current magnitudes are available, but two frequencies are accurately known. Can a constant \(R\) and \(L\) be recovered, and what makes the inference fragile?</p>
+<details><summary>Work through the solution</summary><p>\(M_i^2=R^2+\omega_i^2 L^2\). Subtract the equations to get \(L^2=(M_2^2-M_1^2)/(\omega_2^2-\omega_1^2)\). Insert this in either equation for \(R^2\) and take positive roots. Nearly equal frequencies produce a small denominator; nearly equal magnitudes amplify measurement noise. Under a misspecified model the inferred square can even become negative.</p></details>
+<p>At a fixed frequency the current reverses direction in a repeat measurement but its reference voltage polarity is held fixed. What measurement error could this create?</p>
+<details><summary>Work through the solution</summary><p>Reversing the defined port-current orientation multiplies the inferred impedance by −1 unless the voltage reference is reversed consistently. An apparent negative resistance in passive hardware may be a port convention issue. Check the direction of measured power flow with a known reference resistor.</p></details>
+<p>What extra evidence would justify carrying a fitted inductance into a time-domain prediction?</p>
+<details><summary>Work through the solution</summary><p>Make the prediction for a current waveform whose spectrum lies within the validated range of the measurements. Test at another amplitude for nonlinearity or hysteresis and record the residual voltage after subtracting \(RI+L\,dI/dt\). A successful fit at one frequency alone does not establish a broadband constitutive law.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/11-differentiating-radiation/">When differentiating a measured dipole invents radiated power</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Volume contents</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

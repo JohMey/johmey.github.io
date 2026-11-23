@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measure the phase speed of a numerical electromagnetic wave · OneSimulation</title>
+<meta name="description" content="Start with a lossless Maxwell wave, build a second-order time update and compare its actual travel time with what the continuum wave equation predicts.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/05-discrete-wave/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measure the phase speed of a numerical electromagnetic wave · OneSimulation">
+<meta property="og:description" content="Start with a lossless Maxwell wave, build a second-order time update and compare its actual travel time with what the continuum wave equation predicts.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/05-discrete-wave/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>Measure the phase speed of a numerical electromagnetic wave</h1><p class="lead">Start with a lossless Maxwell wave, build a second-order time update and compare its actual travel time with what the continuum wave equation predicts.</p><p class="byline">Unit 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-pulse-can-arrive-late-without-losing-energy">A pulse can arrive late without losing energy</a><a href="#derive-the-discrete-dispersion-relation">Derive the discrete dispersion relation</a><a href="#initialise-a-clean-numerical-experiment">Initialise a clean numerical experiment</a><a href="#from-a-phase-test-to-a-pulse-test">From a phase test to a pulse test</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-pulse-can-arrive-late-without-losing-energy">A pulse can arrive late without losing energy</h2>
+<p>In a uniform lossless one-dimensional material take electric field along \(y\), magnetic field along \(z\) and propagation along \(x\). Maxwell's curl laws reduce to \(\epsilon E_t=-H_x\) and \(\mu H_t=-E_x\). Differentiate the first in time and substitute the second to obtain \(E_{tt}=c^2 E_{xx}\), \(c=1/\sqrt{\mu\epsilon}\). A real laboratory signal is a combination of spatial frequencies. Different errors in travel time for different components can distort its shape even when the scheme does not attenuate any resolved Fourier mode.</p>
+<p>Use periodic boundaries so that reflection from an end cannot be confused with this effect. Scale distance by one wavelength and time by one exact period. The periodic field \(E(x,t)=\sin[2\pi(x-t)]\) has unit amplitude and returns to its initial shape after every integer period. A probe comparing just its envelope would miss a discrepancy in phase.</p>
+</section>
+<section>
+<h2 id="derive-the-discrete-dispersion-relation">Derive the discrete dispersion relation</h2>
+<p>Take points separated by \(h\) and times separated by \(\Delta t\). Centred second differences give \(u_j^{n+1}=2u_j^n-u_j^{n-1}+C^2(u_{j+1}^n-2u_j^n+u_{j-1}^n)\), with \(C=c\Delta t/h\). Insert the complex trial field \(e^{i(j\theta-n\Omega)}\). The time pair contributes \(2\cos\Omega-2\), the spatial pair \(2\cos\theta-2\). The physical positive-frequency branch obeys</p>
+<div class="math display equation-chain"><div class="equation-step">\[\sin(\Omega/2)=C\sin(\theta/2),\]</div><div class="equation-step">\[\frac{c_\mathrm{phase,grid}}{c}=\frac{\Omega}{C\theta}.\]</div></div>
+<p>If \(0&lt;C\le1\) a real \(\Omega\) exists for every grid phase, and each Fourier mode has constant discrete amplitude in exact arithmetic when started on one travelling branch. For \(C>1\) sufficiently rapid spatial oscillations have no real frequency. One time factor then grows. Testing stability on a single very smooth wave can miss this unstable part of the supported spectrum.</p>
+<p>For long waves expand \(\sin\) and \(\arcsin\): \(\Omega=C\theta+C(C^2-1)\theta^3/24+O(\theta^5)\). The relative phase-speed error is \((C^2-1)\theta^2/24\) at leading order. Here increasing \(C\) towards one improves wave propagation. This special cancellation depends on a uniform one-dimensional grid, constant wave speed and the selected difference operators.</p>
+</section>
+<section>
+<h2 id="initialise-a-clean-numerical-experiment">Initialise a clean numerical experiment</h2>
+<p>A second-order recurrence needs two time levels. Taking \(u_j^0=\sin(j\theta)\) and \(u_j^{-1}=\sin(j\theta+\Omega)\) excites a single right-going numerical mode. Using the exact continuum phase \(C\theta\) at the second level instead introduces a small mixture of right- and left-travelling grid modes. That is a valid test of initialisation, but it mixes errors if the quantity of interest is solely the numerical dispersion relation. State in your notes how the second level was produced.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/05-discrete-wave/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-discrete-wave"></div>
+<p>The browser actually advances the nodal difference equations. It then reports the dispersion prediction as an independent check. The time is chosen as an integer number of numerical steps close to five exact periods and is stated with the result. At twelve points per wavelength and \(C=0.8\) there are fifteen steps per period. Both exact and discrete solutions have the same amplitude to roundoff. At the end of five periods examine how far their zero crossings have separated.</p>
+</section>
+<section>
+<h2 id="from-a-phase-test-to-a-pulse-test">From a phase test to a pulse test</h2>
+<p>For a narrow packet, envelope motion is set by group velocity \(d\omega/dk\). Differentiate the discrete relation at fixed \(h,\Delta t\). The result is \(v_g/c=\cos(\theta/2)/\sqrt{1-C^2\sin^2(\theta/2)}\) on the positive branch for resolved nonendpoint modes. At \(C=0.8\) a mode close to the grid Nyquist limit has small group speed. A wave carrier and its envelope can show different speed errors. In a real dielectric wavelength dependence may also come from the material itself; a grid-refinement test with unchanged material law separates these contributions.</p>
+<p>As an independent benchmark, set \(C=1\). Then \(\Omega=\theta\) for \(0\le\theta\le\pi\), and the right-going recurrence translates the samples exactly by one grid cell at each time step. The lab should align both curves even on a surprisingly coarse grid for this particular smooth periodic mode. This checks the sign and indexing of propagation without implying exact accuracy for arbitrary geometry and material interfaces.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>A signal must accumulate less than 1 degree of phase error over ten periods. Estimate a required points-per-wavelength count for \(C=0.5\) using the leading error.</p>
+<details><summary>Work through the solution</summary><p>The total continuum phase advance is \(20\pi\) rad. Requiring \(20\pi(1-C^2)(2\pi/N)^2/24&lt;\pi/180\) gives \(N^2>450\pi^2\), or \(N\gtrsim67\). Evaluate the exact dispersion relation to check the chosen integer.</p></details>
+<p>Why is measuring only the field at its crest a poor detector of small phase lag?</p>
+<details><summary>Work through the solution</summary><p>The derivative of a sinusoid vanishes at its crest. A small phase shift changes that value only quadratically; at a zero crossing the change is linear. A phase fit using the entire ring is more robust than either single sample.</p></details>
+<p>The numerical envelope changes after a wall is introduced. What additional tests would separate dispersion from reflection errors?</p>
+<details><summary>Work through the solution</summary><p>First validate travel time on a uniform periodic domain. Next use a single known interface with an analytical reflection coefficient. Move the observation plane and refine the mesh separately. Compare reflected phase and amplitude with an energy-flux balance so a boundary error cannot masquerade as bulk dispersion.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/04-regularised-charge/">What can a mesh measure about a point charge?</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/06-deembedding-a-line/">Move the reference plane of a wave measurement</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

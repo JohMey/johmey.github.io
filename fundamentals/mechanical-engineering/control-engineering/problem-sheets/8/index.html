@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A saturated PI loop remembers an impossible set point · OneSimulation</title>
+<meta name="description" content="A first-order laboratory speed loop has a bounded actuator. A high command exceeds its available steady speed and is later replaced by a reachable command. Predict how long the output remains stuck near its limit, derive a controller that tracks the actual actuation and use a reproducible time sweep to distinguish actuator saturation from slow mechanical response.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/8/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A saturated PI loop remembers an impossible set point · OneSimulation">
+<meta property="og:description" content="A first-order laboratory speed loop has a bounded actuator. A high command exceeds its available steady speed and is later replaced by a reachable command. Predict how long the output remains stuck near its limit, derive a controller that tracks the actual actuation and use a reproducible time sweep to distinguish actuator saturation from slow mechanical response.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/8/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>A saturated PI loop remembers an impossible set point</h1><p class="lead">A first-order laboratory speed loop has a bounded actuator. A high command exceeds its available steady speed and is later replaced by a reachable command. Predict how long the output remains stuck near its limit, derive a controller that tracks the actual actuation and use a reproducible time sweep to distinguish actuator saturation from slow mechanical response.</p><p class="byline">Problem sheet 8 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#unconstrained">Start with the linear closed-loop model</a><a href="#hold">Compute the integral state before the reference drops</a><a href="#tracking">Derive a back-calculation update and test its consequences</a><a href="#implementation">Separate time-step error, sensor clipping and true actuator saturation</a></nav></aside><article class="prose reference"><section><h2 id="unconstrained">Start with the linear closed-loop model</h2>
+<p>Normalise steady actuator gain and plant time constant to one, so \(\dot y=-y+u\). Take \(e=r-y\), proposed command \(v=2e+I\), ordinary integral update \(\dot I=e\) and actual actuation \(u=\min(1,\max(0,v))\). Begin at \(y=I=0\). Derive the characteristic polynomial without saturation and explain why its stable poles cannot answer the high-command experiment.</p>
+<details><summary>Close the loop within the valid linear region</summary>
+<p>With \(u=v\), Laplace transformation under zero initial conditions gives a PI controller \(2+1/s\) in series with plant \(1/(s+1)\). The reference-to-output transfer function is \((2s+1)/(s^2+3s+1)\). Its poles are approximately minus 0.382 and minus 2.618 per second, both stable. The integral action makes the steady error zero for a constant attainable reference. At \(r=2\), however, a steady plant output of two requires \(u=2\), which the actuator cannot deliver. The clipping creates a different dynamical regime immediately because the proportional term alone requests four units.</p>
+<p>No linear pole of this original model describes the growth of the integral memory during the unreachable hold. Saturation also differs from a time delay: a delayed but sufficiently powerful actuator could eventually attain two, whereas the bounded plant cannot. A reference step within the range is a useful control experiment, although a rapid step may still transiently saturate due to the proportional kick.</p>
+</details>
+</section>
+<section><h2 id="hold">Compute the integral state before the reference drops</h2>
+<p>Hold \(r=2\) for six seconds. Solve for plant output and integral state while the actuator is saturated. At \(t=6\) replace the reference by 0.4. Estimate how long the plain PI controller keeps the actuator at its upper limit after this switch.</p>
+<details><summary>Integrate the actual plant input rather than the requested command</summary>
+<p>During the high reference \(u=1\), hence \(y=1-e^{-t}\). Error is \(1+e^{-t}\), so \(I=t+1-e^{-t}\). At six seconds \(y=0.9975\) and \(I=6.9975\). Immediately after the drop, \(v=2(0.4-0.9975)+6.9975\simeq5.80\), so the actuator still clips at one even though the error is now negative. The plant remains near one while the integrator slowly unwinds.</p>
+<p>Let \(s\) denote time after switching during this second saturated interval. Then \(y=1-e^{-6-s}\), and \(I=I(6)-0.6s+e^{-6}(1-e^{-s})\). Substituting into the command gives \(v=5.8-0.6s+e^{-6-s}\). Setting \(v=1\) gives approximately 8.00 further seconds at the upper limit. A first-order plant with a one-second time constant can therefore appear unresponsive much longer than its own transient. Inspecting the actual and requested commands makes the cause identifiable.</p>
+</details>
+</section>
+<section><h2 id="tracking">Derive a back-calculation update and test its consequences</h2>
+<p>Replace the integrator by \(\dot I=e+(u-v)/T_t\). Explain the sign of the correction and derive its approximate long-hold value for \(r=2\), \(u=y=1\) and tracking time \(T_t=0.5\) s. Does the modified controller change the small-signal dynamics when no limit is active?</p>
+<details><summary>Track the attainable input and preserve the unforced integral law</summary>
+<p>At upper saturation the requested command exceeds the actual one and \(u-v\) is negative. The correction cancels continued integral growth rather than adding to it. At the long-hold steady state \(0=1+(1-v)/T_t\), giving \(v=1+T_t=1.5\) and \(I=v-2e=-0.5\). When reference falls to 0.4 the raw command immediately becomes approximately minus 1.7. The lower actuator limit then becomes active; the plant can finally decay. On leaving both limits \(u=v\) and the modification disappears exactly from the linear controller.</p>
+</details>
+<div id="try-it" class="interactive-study" data-study="semester-engineering-antiwindup"></div>
+<p>Compare the two time traces at equal plant, gains and limits. At the default hold the unmodified controller spends about eight additional seconds pinned at the upper limit while its output exceeds 0.6. The tracking controller spends essentially none there. Reducing the tracking time does not give an unlimited physical speedup: plant dynamics and the lower input bound remain. An extremely small tracking time can also make a sampled implementation numerically stiff if its discretisation does not resolve the tracking correction.</p>
+</section>
+<section><h2 id="implementation">Separate time-step error, sensor clipping and true actuator saturation</h2>
+<p>The graph uses a held actuator on short time intervals, an exact first-order plant update over each interval and an explicit integral-state update. Describe how to verify a digital implementation with a longer sample interval and how an experiment could distinguish an output sensor limit from genuine actuator saturation.</p>
+<details><summary>Compare independent diagnostics before changing gains</summary>
+<p>Halve the integration step at fixed switch time and compare the times at which the requested command first returns within its limits. A good trace should reproduce the analytic eight-second release time for ordinary PI. In the tracking controller a bounded integrating step must resolve both the one-second plant time and \(T_t\). If actuator dynamics, rate limiting or a downstream safety cap changes actual actuation, feed back the measured or appropriately modelled applied value. Tracking only the software clamp in front of an additional physical limit can leave substantial windup.</p>
+<p>Log reference, raw command, applied actuator signal, integral state and an independent output measurement. An output sensor clipped at one can conceal a real plant response above one, while an actually bounded actuator will show the applied input pinned even as its request grows. Reverse the operating sequence and use several hold durations. An additional release delay growing with unreachable hold time is characteristic of integral memory; an unchanged time constant after every switch suggests a different plant or measurement limitation.</p>
+</details>
+<p><a href="https://www.cds.caltech.edu/~murray/books/AM05/pdf/fbs-pid_01Jan19.pdf">Åström and Murray · Feedback Systems, integral windup and tracking in PID control</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/problem-sheets/7/">Problem sheet 7 · A speed regulator with an unknown load and a measured delay</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/#case-study">Continue to the applied study</a></span></nav><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

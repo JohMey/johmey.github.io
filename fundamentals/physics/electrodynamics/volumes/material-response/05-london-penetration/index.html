@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distinguish magnetic screening from electrical diffusion · OneSimulation</title>
+<meta name="description" content="Compare the frequency dependence, phase and thickness dependence of field penetration in a normal metal and a superconducting slab.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/05-london-penetration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Distinguish magnetic screening from electrical diffusion · OneSimulation">
+<meta property="og:description" content="Compare the frequency dependence, phase and thickness dependence of field penetration in a normal metal and a superconducting slab.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/05-london-penetration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/material-response/">Fields and the response of matter</a></p><h1>Distinguish magnetic screening from electrical diffusion</h1><p class="lead">Compare the frequency dependence, phase and thickness dependence of field penetration in a normal metal and a superconducting slab.</p><p class="byline">Unit 5 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#perfect-conductivity-and-magnetic-expulsion-are-different-statements">Perfect conductivity and magnetic expulsion are different statements</a><a href="#solve-a-slab-with-equal-applied-fields-on-both-faces">Solve a slab with equal applied fields on both faces</a><a href="#obtain-the-equilibrium-length-as-an-energy-minimum">Obtain the equilibrium length as an energy minimum</a><a href="#compare-two-experimental-controls">Compare two experimental controls</a><a href="#tutorial">Tutorial</a><a href="#read-the-equilibrium-model">Read the equilibrium model</a></nav></aside><article class="prose reference"><section>
+<h2 id="perfect-conductivity-and-magnetic-expulsion-are-different-statements">Perfect conductivity and magnetic expulsion are different statements</h2>
+<p>A normal conductor has current density \(\mathbf J=\sigma\mathbf E\). Combining Faraday's and low-frequency Ampère laws in a homogeneous medium gives \(\partial_t\mathbf B=(\mu\sigma)^{-1}\nabla^2\mathbf B\). A step in field diffuses inwards over a length of order \(\sqrt{t/(\mu\sigma)}\). Under sustained sinusoidal drive the skin depth is \(\delta=\sqrt{2/(\mu\sigma\omega)}\). As \(\omega\) tends to zero, this skin depth tends to infinity. An ordinary nonmagnetic conductor in its final static equilibrium generally admits a uniform applied magnetic field.</p>
+<p>The London description of an isotropic superconductor in a Meissner state makes a distinct, equilibrium constitutive assumption: \(\nabla\times\mathbf J_s=-\mathbf B/(\mu_0\lambda_L^2)\), with penetration length \(\lambda_L\). In a homogeneous specimen carrying supercurrent and at frequencies where displacement current and normal losses may be neglected, \(\nabla\times\mathbf B=\mu_0\mathbf J_s\). Curl once more and use \(\nabla\cdot\mathbf B=0\). The resulting field satisfies \(\nabla^2\mathbf B=\mathbf B/\lambda_L^2\). Unlike the diffusive skin depth, the equilibrium length remains finite for a static applied field.</p>
+<p>Taking the formal limit \(\sigma\to\infty\) in a normal conductor suppresses the electric field for a finite current and can freeze a pre-existing flux during changes. That argument does not determine which static field a specimen adopts when cooled through its transition. Magnetic expulsion is extra thermodynamic physics. The comparison below assumes a weak enough field and a suitable state, omitting flux vortices, trapped flux and nonlinear or nonlocal effects.</p>
+</section>
+<section>
+<h2 id="solve-a-slab-with-equal-applied-fields-on-both-faces">Solve a slab with equal applied fields on both faces</h2>
+<p>Let a broad slab fill \(-d/2&lt;x&lt;d/2\), and impose identical tangential magnetic fields \(B_a\hat{\mathbf z}\) on its two faces. Symmetry requires \(B'(0)=0\). Applying both boundaries to the London equation gives</p>
+<div class="math display">\[B(x)=B_a\frac{\cosh(x/\lambda_L)}{\cosh[d/(2\lambda_L)]},\qquad\]</div>
+<p>\frac{\overline B}{B_a}=\frac{2\lambda_L}{d}\tanh\frac{d}{2\lambda_L}.</p>
+<p>Differentiating gives the screening current \(J_y=-B'_z/\mu_0\). Currents flow in opposite directions at opposite faces; their net transport current across the thickness is zero. For a thick slab each face approaches a half-space with exponential decay. For \(d\ll\lambda_L\), the two surface layers overlap. Expanding the average gives \(1-d^2/(12\lambda_L^2)+\cdots\), so even a superconductor can have a substantial mean internal field in a sufficiently thin specimen under this parallel-field geometry.</p>
+<p>Take \(d=100\) nm and \(\lambda_L=50\) nm. The centre field is \(B_a/\cosh 1\simeq0.6481 B_a\); the mean is \(\tanh1\simeq0.7616 B_a\). The distinction between centre value and volume average is already larger than many instrumental error bars. A measurement of magnetic moment in a finite non-slab geometry additionally requires its demagnetising field. Do not directly substitute the infinite-slab mean into an arbitrary sample-shape calibration.</p>
+</section>
+<section>
+<h2 id="obtain-the-equilibrium-length-as-an-energy-minimum">Obtain the equilibrium length as an energy minimum</h2>
+<p>The same static profile follows from minimising \(\int_{-d/2}^{d/2}[B^2+\lambda_L^2(B')^2]\,dx/(2\mu_0)\) with boundary values imposed. The first term is magnetic field energy; the second is the energy associated with the screening current in this effective description. Vary \(B\) by a function \(\eta\) vanishing at the faces. Integrating \(B'\eta'\) by parts leaves an interior factor \(B-\lambda_L^2B''\). Its vanishing returns the London equation. This route makes the physical tradeoff clear: complete expulsion would require extremely sharp gradients and costly currents, while uniform penetration pays magnetic energy throughout the bulk.</p>
+<p>The reduction assumes a fixed superconducting condensate amplitude. Near a critical temperature or critical field, allowing that amplitude to change introduces an additional coherence length and may alter both the field state and the validity of London theory. A numerical fit giving a stable value of \(\lambda_L\) at one temperature does not prove this approximation over an entire phase diagram.</p>
+</section>
+<section>
+<h2 id="compare-two-experimental-controls">Compare two experimental controls</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/05-london-penetration/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-london-penetration"></div>
+<p>Change the thickness and the penetration length independently. Find two different specimens with the same \(d/\lambda_L\); their normalised profiles against fractional thickness match, even though their local physical gradients and current densities can differ. If all you can measure is a single normalised profile, geometry calibration is part of the inference of \(\lambda_L\).</p>
+<p>A frequency sweep supplies another distinction. In a normal sheet the complex field has both attenuation and phase lag with depth, and \(\delta\) changes as \(f^{-1/2}\). The static London profile above is real and determined by a material length. At higher frequencies superconductors can also exhibit complex response and dissipation, so measuring a single attenuation length in one frequency band cannot by itself establish static flux expulsion. Use the <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/07-conducting-film/#try-it">normal-film impedance experiment</a> for a controlled comparison with its different rear boundary condition.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>In a thick specimen, how far from one isolated face must a probe be to see 1% of the applied static field? How does the answer depend on field amplitude in this model?</p>
+<details><summary>Work through the solution</summary><p>The half-space profile is \(e^{-x/\lambda_L}\). Set it to 0.01 to obtain \(x=\lambda_L\ln100\simeq4.605\lambda_L\). Linearity makes this scaled distance independent of \(B_a\), until the assumed Meissner and weak-field conditions fail.</p></details>
+<p>For a symmetric slab with \(d=4\lambda_L\), compute the centre and mean fractions.</p>
+<details><summary>Work through the solution</summary><p>The centre gives \(1/\cosh2\simeq0.266\). The mean is \(\tanh2/2\simeq0.482\). Both surface layers contribute substantially to the average even when the centre field is much smaller.</p></details>
+<p>A phase-sensitive measurement detects a substantial depth-dependent phase lag in a slowly driven slab. Does the static London solution predict this?</p>
+<details><summary>Work through the solution</summary><p>The static real solution has no phase lag. Assess normal-fluid losses, vortex motion, measurement phase reference and the finite drive frequency. Comparing only magnitudes can conceal these distinct mechanisms.</p></details>
+</section>
+<section>
+<h2 id="read-the-equilibrium-model">Read the equilibrium model</h2>
+<p>The <a href="https://ocw.mit.edu/courses/6-763-applied-superconductivity-fall-2005/pages/readings/">MIT applied-superconductivity course</a> places London's laws alongside microscopic and order-parameter treatments. Use that ordering to identify the assumptions needed when taking a static limit.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/04-polarisation-and-stability/">When does a polar crystal change its preferred state?</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/06-bloch-optics/">When a periodic dielectric has no propagating Bloch wave</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

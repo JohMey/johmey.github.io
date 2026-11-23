@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three shafts and one constraint in a planetary gearbox · OneSimulation</title>
+<meta name="description" content="A teaching gearbox exposes the sun, ring and carrier on three accessible shafts. The carrier supports freely rotating planets. Recover their motion without treating the carrier as a fixed casing, infer the torque carried by a stationary ring and use two speed sensors and a power balance to diagnose a slipping fixture.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/problem-sheets/8/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Three shafts and one constraint in a planetary gearbox · OneSimulation">
+<meta property="og:description" content="A teaching gearbox exposes the sun, ring and carrier on three accessible shafts. The carrier supports freely rotating planets. Recover their motion without treating the carrier as a fixed casing, infer the torque carried by a stationary ring and use two speed sensors and a power balance to diagnose a slipping fixture.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/problem-sheets/8/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Three shafts and one constraint in a planetary gearbox</h1><p class="lead">A teaching gearbox exposes the sun, ring and carrier on three accessible shafts. The carrier supports freely rotating planets. Recover their motion without treating the carrier as a fixed casing, infer the torque carried by a stationary ring and use two speed sensors and a power balance to diagnose a slipping fixture.</p><p class="byline">Problem sheet 8 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#geometry">Find an admissible gear set and the speed constraint</a><a href="#motion">Predict what a mark on a planet actually does</a><a href="#torque">Find the reaction at a support delivering no shaft power</a><a href="#diagnostics">Separate a slipping ring clamp from an incorrect gear ratio</a></nav></aside><article class="prose reference"><section><h2 id="geometry">Find an admissible gear set and the speed constraint</h2>
+<p>Take a sun of 30 teeth and planets of 20 teeth. All spur gears share the same module. Determine the tooth count of an internal ring concentric with the sun, then derive the constraint among sun, ring and carrier speeds. Speeds are positive counterclockwise viewed from the same side.</p>
+<details><summary>Work in the rotating carrier frame</summary>
+<p>The distance from sun centre to each planet centre is the sum of the sun and planet pitch radii. The same distance is the ring pitch radius minus the planet pitch radius. Since pitch radius is proportional to tooth count, \(N_r=N_s+2N_p=70\). In the frame moving with the carrier every gear centre is stationary, so ordinary pitch-line kinematics applies. External sun–planet contact reverses the relative rotation and internal planet–ring contact preserves its sign. Eliminating planet spin gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[N_s(\omega_s-\omega_c)+N_r(\omega_r-\omega_c)=0,\]</div><div class="equation-step">\[\omega_c=\frac{N_s\omega_s+N_r\omega_r}{N_s+N_r}.\]</div></div>
+<p>This is one constraint on three shaft speeds. A single prescribed speed leaves another degree of freedom until another shaft is restrained, driven or coupled dynamically. It is valid for angular speeds expressed in rpm as well as radians per second, provided the same units are used for every term. Equal rotation of all three members satisfies it exactly and yields zero motion relative to the carrier.</p>
+</details>
+</section>
+<section><h2 id="motion">Predict what a mark on a planet actually does</h2>
+<p>With fixed ring and sun at 1200 rpm, calculate carrier speed, planet spin relative to the carrier and planet spin measured by a stationary observer. Then determine what ring speed would hold the carrier still while the sun continues to rotate.</p>
+<details><summary>Restore the carrier speed after solving the mesh</summary>
+<p>Weighted averaging gives carrier speed 360 rpm. The sun rotates relative to the carrier at 840 rpm, so the planet spins at \(-(30/20)840=-1260\) rpm relative to its support. Add the carrier rotation to get minus 900 rpm absolute spin. A marker on the planet also translates around the sun as its centre orbits; a camera measuring successive positions of a painted spot must distinguish its orientation from its path about the central shaft.</p>
+<p>Setting the carrier speed to zero requires ring speed \(-N_s\omega_s/N_r=-514.3\) rpm. At ring speed plus 1200 rpm the assembly simply co-rotates. These two checks test both contact signs. A proposed ratio that has the wrong sign for an internal mesh or neglects the carrier subtraction often fails the co-rotation test even when it happens to reproduce one fixed-member ratio.</p>
+</details>
+<div id="try-it" class="interactive-study" data-study="semester-engineering-planetary"></div>
+</section>
+<section><h2 id="torque">Find the reaction at a support delivering no shaft power</h2>
+<p>In a lossless quasistatic fixed-ring test the sun receives 6.0 N m. Find the external torques applied to carrier and ring and verify both moment and power balances. What torque ratio would change first if the carrier shaft delivers only 92 percent of the incoming mechanical power?</p>
+<details><summary>Use two balances and keep the external-torque signs</summary>
+<p>In steady conditions the external torques sum to zero, and their power sum \(T_s\omega_s+T_r\omega_r+T_c\omega_c\) vanishes for the ideal gear set. With stationary ring, ideal carrier torque applied to the gear set is \(-6(1200/360)=-20\) N m. The ring fixture applies \(+14\) N m. It carries substantial reaction torque although its shaft power is zero. Incoming sun power is approximately 754 W and outgoing carrier power has the same magnitude.</p>
+<p>At 92 percent efficiency the delivered output is about 694 W and its torque magnitude about 18.4 N m at the unchanged geometric speed. Heat generation and other parasitic torques must now enter a complete boundary balance. A measured case reaction includes any frictional torque passed through bearings and seals. It need not equal the ideal contact-only ring torque scaled by one efficiency factor. An efficiency measurement from power alone cannot locate where the heat is deposited.</p>
+</details>
+</section>
+<section><h2 id="diagnostics">Separate a slipping ring clamp from an incorrect gear ratio</h2>
+<p>A repeat run reports a sun rate of 1200 rpm and a carrier rate of 375 rpm. Estimate ring rotation implied by ideal rolling contact. Could uniform bearing loss produce that steady change with the ring still rigidly held? Propose measurements before attributing the difference to tooth slip.</p>
+<details><summary>Infer the unobserved shaft and check the system boundary</summary>
+<p>Rearrange the speed constraint to obtain \(\omega_r=[100(375)-30(1200)]/70=21.4\) rpm. A creeping ring clamp in the positive direction could produce the observation. Dissipative tooth and bearing forces change required torque, but under ordinary engaged gearing they do not change the ratio fixed by tooth geometry for a stationary ring. Misidentified gear counts, shaft encoder scaling, backlash during a reversal or nonsteady averaged readings are alternative explanations.</p>
+<p>Mark the ring relative to the casing and acquire all shaft signals on a common clock over complete gear cycles. Counting a planet's absolute spin instead of carrier speed produces a very different quantity, as the earlier calculation shows. If the ring does move, include its torque times angular speed in the power budget. Separately check torque sharing among multiple physical planets: the single kinematic ratio says nothing about elastic load sharing, manufacturing errors or fatigue life. Those require geometry and compliance measurements beyond the shaft-speed test.</p>
+</details>
+<p><a href="https://mechanics.ju.se/MachineElements/planetary-gears.html">Jönköping University Applied Mechanics · planetary gears and their relative motion</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-elements/problem-sheets/7/">Problem sheet 7 · Closing a flexure-guided fixture with a screw drive</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-elements/#case-study">Continue to the applied study</a></span></nav><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

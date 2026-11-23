@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When a periodic dielectric has no propagating Bloch wave · OneSimulation</title>
+<meta name="description" content="Derive a band gap using two lossless transparent materials and distinguish evanescent Bloch propagation from absorption of optical power.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/06-bloch-optics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When a periodic dielectric has no propagating Bloch wave · OneSimulation">
+<meta property="og:description" content="Derive a band gap using two lossless transparent materials and distinguish evanescent Bloch propagation from absorption of optical power.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/06-bloch-optics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/material-response/">Fields and the response of matter</a></p><h1>When a periodic dielectric has no propagating Bloch wave</h1><p class="lead">Derive a band gap using two lossless transparent materials and distinguish evanescent Bloch propagation from absorption of optical power.</p><p class="byline">Unit 6 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#construct-a-unit-cell-whose-waves-interfere">Construct a unit cell whose waves interfere</a><a href="#read-the-dispersion-relation-from-the-trace">Read the dispersion relation from the trace</a><a href="#obtain-a-quantitative-stop-band-width">Obtain a quantitative stop-band width</a><a href="#compare-a-frequency-scan-with-a-finite-mirror">Compare a frequency scan with a finite mirror</a><a href="#tutorial">Tutorial</a><a href="#compare-with-band-calculations">Compare with band calculations</a></nav></aside><article class="prose reference"><section>
+<h2 id="construct-a-unit-cell-whose-waves-interfere">Construct a unit cell whose waves interfere</h2>
+<p>Stack two transparent, lossless, nonmagnetic dielectrics periodically in one dimension. Their refractive indices are \(n_1,n_2\), their physical thicknesses \(d_1,d_2\), and the period \(a=d_1+d_2\). Work at normal incidence, so polarisation directions are equivalent for isotropic layers. Each separate material admits a propagating wave at the chosen optical frequency, yet the periodic stack may not. The effect comes from coherent interface reflections, not from a negative refractive index or an absorptive constituent.</p>
+<p>Describe the local field by its tangential electric and magnetic components. Propagation through one homogeneous layer connects them by a \(2\times2\) transfer matrix with diagonal \(\cos\phi_j\), off-diagonal terms proportional to \(iZ_j\sin\phi_j\) and \(i\sin\phi_j/Z_j\), where \(\phi_j=\omega n_jd_j/c\) and \(Z_j=Z_0/n_j\). Changing the chosen propagation direction or time convention may reverse the two imaginary signs together. The real trace and unit determinant of the cell matrix below are unaffected.</p>
+</section>
+<section>
+<h2 id="read-the-dispersion-relation-from-the-trace">Read the dispersion relation from the trace</h2>
+<p>At an interface both tangential components are continuous in the absence of imposed sheet currents. Multiply the two propagation matrices to form one cell. Its determinant is one because each layer's determinant is \(\cos^2\phi+\sin^2\phi=1\). Thus the two eigenvalues are reciprocal. For a Bloch mode they are \(e^{\pm i k_Ba}\) on a pass band. Taking half the trace gives</p>
+<div class="math display">\[\cos(k_Ba)=\cos\phi_1\cos\phi_2-\frac12\left(\frac{n_1}{n_2}+\frac{n_2}{n_1}\right)\sin\phi_1\sin\phi_2 .\]</div>
+<p>When the right side lies between −1 and 1 a real Bloch phase exists. If its magnitude exceeds one, a decaying and a growing Bloch factor replace a pair of unit-modulus factors. For a bounded excitation of a semi-infinite stack choose the decaying direction. The attenuation per cell is \(\operatorname{arcosh}|\operatorname{trace}(M)/2|\). A lossless semi-infinite crystal in a stop band reflects incident power. Spatial attenuation of a Bloch amplitude in this region is compatible with zero volumetric heat production.</p>
+</section>
+<section>
+<h2 id="obtain-a-quantitative-stop-band-width">Obtain a quantitative stop-band width</h2>
+<p>Choose \(n_1d_1=n_2d_2=\lambda_0/4\). Writing \(s=\omega/\omega_0\), both layer phases are \(\phi=\pi s/2\). At \(s=1\) the half trace is \(-\tfrac12(n_2/n_1+n_1/n_2)\). Recognising \(\cosh(\log r)=(r+r^{-1})/2\) gives centre attenuation \(|\log(n_2/n_1)|\) per cell. For \(n_1=1.5,n_2=2.0\) this is 0.2877, so a decaying eigencomponent has amplitude factor 0.75 per cell. This statement about an eigencomponent should not be confused with the exact transmittance of a specific finite stack, which also depends on entrance and exit impedances.</p>
+<p>The first gap edges obey half trace −1. With \(\cos^2\phi=1-\sin^2\phi\), solve for the edge sine or cosine. The two edge phases are symmetric about \(\pi/2\) and satisfy \(|\cos\phi|=|n_2-n_1|/(n_1+n_2)\). Hence the fractional angular-frequency width is \((4/\pi)\arcsin(|n_2-n_1|/(n_1+n_2))\), about 0.183 for the example. The lowest gap width tends continuously to zero as index contrast vanishes. A gap in a plotted numerical spectrum at \(n_1=n_2\) would indicate an implementation or plotting problem.</p>
+</section>
+<section>
+<h2 id="compare-a-frequency-scan-with-a-finite-mirror">Compare a frequency scan with a finite mirror</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/06-bloch-optics/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-bloch-optics"></div>
+<p>The graph plots half the transfer-matrix trace against normalised frequency and marks the admissible interval for a real Bloch phase. Change the index contrast first, keeping the layers quarter wave at the same reference frequency. The physical layer thickness adjusts in this family; it is a different experiment from changing a material while manufacturing all thicknesses fixed. Use the frequency control to read an attenuation exponent at the centre and just outside the gap.</p>
+<p>At low frequency a wavelength spans many cells and a homogenised description can predict the long-wave speed. At the first gap the field changes phase by order one across a cell, exactly where the homogenisation scale separation fails. Conversely, an electromagnetic calculation showing multiple bands at very low frequency should be checked against a uniform-medium or long-wavelength effective-index limit. Compare a finite stack's reflection with the <a href="/fundamentals/physics/waves-optics/chapters/19-quarter-wave-stacks/#try-it">Bragg-mirror experiment</a>. The bulk trace determines whether a propagating state can exist. A finite sample adds interference between boundaries and possible surface or defect effects.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>If the two refractive indices become equal, simplify the trace formula for arbitrary thicknesses.</p>
+<details><summary>Work through the solution</summary><p>The impedance factor becomes one, so the half trace is \(\cos\phi_1\cos\phi_2-\sin\phi_1\sin\phi_2=\cos(\phi_1+\phi_2)\). It never exceeds unit magnitude. Labelling a uniform medium by an artificial period folds the dispersion into zones but does not create a physical gap.</p></details>
+<p>At the central quarter-wave frequency for index ratio 2, how many periods reduce a decaying Bloch component's amplitude by a factor of 100?</p>
+<details><summary>Work through the solution</summary><p>The amplitude factor per cell is \(e^{-\log2}=1/2\). Require \(2^{-N}\le0.01\), giving \(N\ge7\). A prediction for transmitted optical power also needs termination and impedance matching.</p></details>
+<p>A measured stack exhibits both a transmission minimum and measurable heating. Can the minimum be attributed entirely to a band gap?</p>
+<details><summary>Work through the solution</summary><p>A lossless band gap can reflect power without heating. Measure reflected and transmitted flux under consistent normalisation, then infer absorption from \(1-R-T\) after accounting for diffuse scattering and other exit channels. The bulk stop-band model and material absorption can coexist.</p></details>
+</section>
+<section>
+<h2 id="compare-with-band-calculations">Compare with band calculations</h2>
+<p>MIT's <a href="https://ocw.mit.edu/courses/18-369-mathematical-methods-in-nanophotonics-spring-2008/pages/tools/">mathematical nanophotonics course</a> computes full periodic Maxwell modes. The one-dimensional trace above is a small benchmark with known pass and stop boundaries that a numerical eigenproblem should reproduce.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/05-london-penetration/">Distinguish magnetic screening from electrical diffusion</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/07-effective-tensors/">Why rotating a layered dielectric changes a capacitance measurement</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

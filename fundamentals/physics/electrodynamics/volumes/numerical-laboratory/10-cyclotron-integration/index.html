@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A magnetic orbit that spirals outward in a perfect vacuum · OneSimulation</title>
+<meta name="description" content="Track a charged particle in a prescribed uniform field, derive a rotation update and separate numerical energy growth from a real magnetic force.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/10-cyclotron-integration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A magnetic orbit that spirals outward in a perfect vacuum · OneSimulation">
+<meta property="og:description" content="Track a charged particle in a prescribed uniform field, derive a rotation update and separate numerical energy growth from a real magnetic force.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/10-cyclotron-integration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>A magnetic orbit that spirals outward in a perfect vacuum</h1><p class="lead">Track a charged particle in a prescribed uniform field, derive a rotation update and separate numerical energy growth from a real magnetic force.</p><p class="byline">Unit 10 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#use-the-work-law-before-solving-the-trajectory">Use the work law before solving the trajectory</a><a href="#why-forward-euler-adds-energy-at-every-step">Why forward Euler adds energy at every step</a><a href="#solve-a-centred-magnetic-step-exactly">Solve a centred magnetic step exactly</a><a href="#speed-conservation-does-not-fix-arrival-time">Speed conservation does not fix arrival time</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="use-the-work-law-before-solving-the-trajectory">Use the work law before solving the trajectory</h2>
+<p>A nonrelativistic charged particle of mass \(m\) and charge \(q\) moves perpendicular to a uniform, time-independent magnetic field \(B\hat{\mathbf z}\). There is no electric field and the dilute test particles do not affect the applied field. The Lorentz force gives \(\dot v_x=\omega v_y,\ \dot v_y=-\omega v_x\) for \(\omega=qB/m\). Dotting with \(\mathbf v\) gives zero, so the speed should stay constant. This property holds for either sign of the charge; the direction of rotation changes. It is a better initial test of a trajectory solver than how circular a short segment looks on screen.</p>
+<p>Define \(J(v_x,v_y)=(v_y,-v_x)\), so \(J^T=-J\) and \(J^2=-I\). The exact velocity over a time step \(h\) is \([\cos(\omega h)I+\sin(\omega h)J]\mathbf v\). Integration in time gives a circular orbit of radius \(v_\perp/|\omega|\) once the guiding centre is chosen. A magnetic field alone bends a trajectory without changing its kinetic energy; a slowly growing orbit radius at fixed \(B\) and fixed initial speed demands an explanation.</p>
+</section>
+<section>
+<h2 id="why-forward-euler-adds-energy-at-every-step">Why forward Euler adds energy at every step</h2>
+<p>Euler gives \(\mathbf v_+=(I+dJ)\mathbf v\) with \(d=\omega h\). Squaring the norm eliminates the cross term because \(v^TJv=0\), leaving \(\|\mathbf v_+\|^2=(1+d^2)\|\mathbf v\|^2\). No nonzero step has exact unit gain. A geometric picture makes the bias tangible: a tangent step leaves the initial velocity circle on its outside, whatever the point of departure.</p>
+<p>After \(N\) steps the speed factor is \((1+d^2)^{N/2}\). With 24 steps per physical orbit, \(d=2\pi/24\simeq0.2618\), so a full orbit multiplies speed by roughly 2.2. At shorter times or smaller steps this can resemble weak physical acceleration. Reducing \(h\) at fixed physical duration reduces the growth. Testing one step at fixed count, rather than comparing over a fixed physical interval, underestimates the cumulative error.</p>
+</section>
+<section>
+<h2 id="solve-a-centred-magnetic-step-exactly">Solve a centred magnetic step exactly</h2>
+<p>Use the time-centred velocity in the Lorentz force: \(\mathbf v_+-\mathbf v=d J(\mathbf v_++\mathbf v)/2\). Premultiply by the transpose of \(\mathbf v_++\mathbf v\). The left side is the difference of squared speeds and the right side vanishes, so the update preserves speed for every \(d\) in exact arithmetic. Rearranging yields a two-dimensional linear solve; using \(J^2=-I\) turns it into a rotation,</p>
+<div class="math display equation-chain"><div class="equation-step">\[\mathbf v_+=\frac{1-t^2}{1+t^2}\mathbf v+\frac{2t}{1+t^2}J\mathbf v,\]</div><div class="equation-step">\[t=d/2.\]</div></div>
+<p>These coefficients are \(\cos\alpha\) and \(\sin\alpha\) for \(\alpha=2\arctan(d/2)\). This is the magnetic rotation used in the nonrelativistic Boris integrator. For simultaneous electric fields, the usual split step adds two half electric impulses around the magnetic rotation. The current experiment isolates the magnetic part; it makes no claim about a nonuniform electric field or the accuracy of interpolation from a field mesh to particles.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/10-cyclotron-integration/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-cyclotron-integration"></div>
+</section>
+<section>
+<h2 id="speed-conservation-does-not-fix-arrival-time">Speed conservation does not fix arrival time</h2>
+<p>At small \(d\), \(\alpha=d-d^3/12+O(d^5)\). A speed-preserving orbit lags in gyrophase, even when its energy plot stays perfectly flat. After four true orbits at 24 steps per orbit the predicted lag is about 8.14 degrees. The browser advances the Euler and rotation velocities and reports both norm and lag. The y-axis rescales to fit both curves, so a sharply growing Euler error can flatten the appearance of the well-behaved curve. Inspect numerical values as well as the picture.</p>
+<p>Suppose an optical pickup observes the time at which a dilute ion tracer first crosses a known line of sight after several orbits. A phase error can be an important measurement error even when the speed is exact. To use the trajectory as a reference, refine the step until the crossing time changes by less than the experimental timing resolution. If the required integration spans many revolutions, a uniform field permits exact substeps. In realistic fields one can retain a structure-preserving rotation while resolving spatial variation independently.</p>
+<p>A separate diagnostic is time reversal. Starting from the final velocity and applying the rotation with \(-d\) exactly inverts a centred step, up to rounding. Forward Euler with \(-d\) after \(+d\) gives \((I-dJ)(I+dJ)=(1+d^2)I\). A forward/backward test detects the lost reversibility without knowing a single experimental constant.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>Given an orbit with 48 steps per period, estimate the gyrophase error after ten periods using the leading asymptotic term.</p>
+<details><summary>Work through the solution</summary><p>There are 480 steps with \(d=2\pi/48\). The accumulated lag is about \(480d^3/12\simeq0.0897\) rad, or 5.14 degrees. Doubling the number of steps per period reduces the leading accumulated error fourfold.</p></details>
+<p>A computation preserves speed but reverses the sign of its orbit relative to observation. Would the magnetic work test detect the error?</p>
+<details><summary>Work through the solution</summary><p>Both field signs give zero work. Check a signed initial acceleration component \(a_y=-qBv_x/m\) for a positive initial \(v_x\), or observe the oriented trajectory. A scalar invariant cannot detect all vector-sign errors.</p></details>
+<p>What changes in the relativistic case with appreciable kinetic energy?</p>
+<details><summary>Work through the solution</summary><p>Evolve momentum \(\mathbf p=\gamma m\mathbf v\) and infer velocity from momentum. In a uniform magnetic field without electric work \(\gamma\) stays constant, and the orbital frequency is reduced to \(|q|B/(\gamma m)\). An energy-preserving nonrelativistic integration at the wrong frequency would still give the wrong measured period.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/09-ringdown-estimation/">Estimate a cavity linewidth from a finite, biased record</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/11-differentiating-radiation/">When differentiating a measured dipole invents radiated power</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

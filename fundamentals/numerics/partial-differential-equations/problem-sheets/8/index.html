@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resolve an outflow layer by fitting the numerical face flux · OneSimulation</title>
+<meta name="description" content="A dilute solute moves down a channel and diffuses against its mean flow. Fixed concentrations at the ends generate a thin downstream layer. Construct the cell flux directly from the differential equation, then ask how a solver can return nearly the right total throughput while still predicting an impossible local concentration.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/8/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Resolve an outflow layer by fitting the numerical face flux · OneSimulation">
+<meta property="og:description" content="A dilute solute moves down a channel and diffuses against its mean flow. Fixed concentrations at the ends generate a thin downstream layer. Construct the cell flux directly from the differential equation, then ask how a solver can return nearly the right total throughput while still predicting an impossible local concentration.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/8/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Resolve an outflow layer by fitting the numerical face flux</h1><p class="lead">A dilute solute moves down a channel and diffuses against its mean flow. Fixed concentrations at the ends generate a thin downstream layer. Construct the cell flux directly from the differential equation, then ask how a solver can return nearly the right total throughput while still predicting an impossible local concentration.</p><p class="byline">Problem sheet 8 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#solve-the-physical-flux-problem-before-discretising">Solve the physical flux problem before discretising</a><a href="#derive-the-scharfetter-gummel-face-relation">Derive the Scharfetter–Gummel face relation</a><a href="#diagnose-a-nearly-correct-throughput-with-impossible-concentrations">Diagnose a nearly correct throughput with impossible concentrations</a><a href="#test-fitted-nodes-and-resolve-the-inside-of-a-cell">Test fitted nodes and resolve the inside of a cell</a></nav></aside><article class="prose reference"><section><h2 id="solve-the-physical-flux-problem-before-discretising">Solve the physical flux problem before discretising</h2>
+<p>Let \(x\in[0,1]\), positive constant speed \(a\), and constant diffusivity \(D\). Steady conservation gives \(\partial_x J=0\) with \(J=au-Du_x\). Impose \(u(0)=1\), \(u(1)=0\). Find \(u(x)\) and the flux. Where must the sharp gradient occur when \(a/D\) is large?</p><details><summary>Work through the solution</summary><p>Constant flux turns the equation into \(u'-(a/D)u=-J/D\). Multiplication by \(e^{-ax/D}\) and integration gives a constant plus an exponential. The boundary values yield \(u(x)=[1-e^{-(a/D)(1-x)}]/[1-e^{-a/D}]\) and \(J=a/[1-e^{-a/D}]\). Far upstream for large \(a/D\) the concentration stays near one and most of the flux is advective. At the downstream wall the concentration is zero, but the diffusive term carries the same positive flux. The layer thickness scale is \(D/a\), a length. Constant throughput requires convection and diffusion to trade roles across the layer.</p></details>
+</section>
+<section><h2 id="derive-the-scharfetter-gummel-face-relation">Derive the Scharfetter–Gummel face relation</h2>
+<p>Take a segment from \(x_i\) to \(x_{i+1}\) of length \(h\) with given endpoint concentrations \(u_i,u_{i+1}\). Solve the same constant-coefficient equation across that segment and express the face flux in a form with a well-defined zero-velocity limit.</p><details><summary>Work through the solution</summary><p>Define \(P=ah/D\) and \(B(P)=P/(e^P-1)\) with \(B(0)=1\). Integrating between the endpoints gives \(u_{i+1}=e^P u_i-(J/a)(e^P-1)\). Solving for the common flux and using \(B(-P)=e^P B(P)\) yields \(J_{i+1/2}=(D/h)[B(-P)u_i-B(P)u_{i+1}]\). At \(P=0\) it reduces to the centred diffusive flux. For large positive \(P\), \(B(P)\) becomes small while \(B(-P)\) approaches \(P\); the advective part then uses the upstream value. Both coefficients stay positive for real \(P\), supporting monotone solutions of this one-dimensional problem.</p></details>
+<p>Numerical evaluation requires more than inserting the formula literally. Near zero use \(P/\operatorname{expm1}(P)\) or the series \(1-P/2+P^2/12+\cdots\). At very large positive \(P\), use \(B(P)=P e^{-P}/(1-e^{-P})\) to avoid exponential overflow. The identity \(B(-P)=B(P)+P\) avoids a second evaluation. Equal face fluxes across adjacent cells impose local conservation: whatever leaves one control volume enters its neighbour. For constant properties and no internal source, the exact local solution on each segment matches the analytic global nodal values, even when few grid points lie within the layer.</p>
+</section>
+<section><h2 id="diagnose-a-nearly-correct-throughput-with-impossible-concentrations">Diagnose a nearly correct throughput with impossible concentrations</h2>
+<p>Set \(a=1\), \(D=1/24\) and use eight equal segments. Compare the penultimate nodal concentration from exponential fitting, centred advection and first-order upwinding. Why can global throughput hide the error?</p><details><summary>Work through the solution</summary><p>The cell Péclet number is three. For any two-point constant flux relation with constant coefficients the homogeneous nodal variation is \(r^i\). Exponential fitting gives \(r=e^P\); centred advection gives \(r=(1+P/2)/(1-P/2)=-5\); upwinding gives \(r=1+P=4\). With these Dirichlet values the solution is \((r^N-r^i)/(r^N-1)\). At node seven the three values are approximately \(0.9502,\ 1.2000,\ 0.7500\). The centred approximation exceeds the inflow concentration and alternates around it because \(r\) is negative. Upwinding preserves the admissible interval but makes the layer broader. Exponential fitting gives the true nodal value for this local model.</p></details>
+<p>For each scheme, a constant concentration transports advective flux \(au\), while its \(r^i\) homogeneous part has zero net flux. The numerical throughput consequently equals \(a r^N/(r^N-1)\). With eight cells the centred scheme predicts about \(1.00000256\), remarkably close to the true \(1.00000000004\), despite its local overshoot of twenty percent. A scale measuring total output could validate the wrong spatial solver. Report a pointwise quantity, a monotonicity check and flux conservation in addition to throughput if the concentration near the outlet matters.</p>
+</section>
+<section><h2 id="test-fitted-nodes-and-resolve-the-inside-of-a-cell">Test fitted nodes and resolve the inside of a cell</h2>
+<p>Vary the number of segments and the global Péclet number in the live graph. Under which interpretation is exponential fitting exact, and how could a plotted straight line through its last two values mislead an experimenter?</p><details><summary>Work through the solution</summary><p>Under the specified homogeneous coefficients, zero sources and exact boundary data, the fitted scheme reproduces the analytic solution at every node and returns its correct constant flux. It does not make a piecewise-linear drawing between those nodes the exact local profile. With eight cells at global Péclet number 24, the midpoint of the last cell is \(1/16\) from the outlet. The exact concentration is about \(1-e^{-1.5}=0.777\); linear interpolation between \(0.9502\) and zero gives only \(0.4751\). Reconstruction inside the cell requires the exponential solution with the two endpoint values, or more resolution. Distinguish the face flux actually used in the method from a derivative estimated by visually differentiating the drawn polyline.</p></details>
+<p>Try cell Péclet numbers just below and above two. The centred solution changes from a very sharp monotone profile to a sign-alternating boundary correction. The fitted flux changes continuously through the same transition. If coefficients vary significantly within a cell or a source deposits mass inside it, one needs a corresponding local model, source integration or refinement. An exact result for one constant-coefficient test helps isolate the subsequent approximation. It cannot establish accuracy for every heterogeneous transport problem.</p>
+<div id="try-it" class="interactive-study" data-study="semester-discretisation-fitted-flux"></div>
+<p><a href="https://github.com/usnistgov/sesame/blob/master/doc/physics/discretization.rst">The Sesame semiconductor solver documents exponential fitting of its carrier fluxes.</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/problem-sheets/7/">Problem sheet 7 · Project · Verify a heat solver before interpreting its temperature</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/#case-study">Continue to the applied study</a></span></nav><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-discretisation.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

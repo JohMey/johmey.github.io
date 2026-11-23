@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What can a mesh measure about a point charge? · OneSimulation</title>
+<meta name="description" content="Distinguish conserved charge and measurable exterior fields from a numerical peak that diverges as the source becomes more localised.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/04-regularised-charge/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What can a mesh measure about a point charge? · OneSimulation">
+<meta property="og:description" content="Distinguish conserved charge and measurable exterior fields from a numerical peak that diverges as the source becomes more localised.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/04-regularised-charge/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>What can a mesh measure about a point charge?</h1><p class="lead">Distinguish conserved charge and measurable exterior fields from a numerical peak that diverges as the source becomes more localised.</p><p class="byline">Unit 4 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#ask-three-detectors-different-questions">Ask three detectors different questions</a><a href="#use-a-smooth-source-with-a-known-answer">Use a smooth source with a known answer</a><a href="#hold-the-observable-fixed-while-refining">Hold the observable fixed while refining</a><a href="#use-continuity-as-a-numerical-diagnostic">Use continuity as a numerical diagnostic</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="ask-three-detectors-different-questions">Ask three detectors different questions</h2>
+<p>Imagine three instruments looking at a small charged body in vacuum. One measures the voltage on a spherical probe outside it, one measures the integrated electric flux through a closed surface, and one estimates the largest electric field somewhere near the source. If the body is idealised as a point, which readings have finite limits? The distinction matters when a calculation displays a dramatic change in maximum field after a perfectly reasonable mesh refinement.</p>
+<p>For a positive point charge \(q\), the exterior potential \(V=kq/r\) tends to infinity as the observation point approaches the source. Its radial field magnitude \(kq/r^2\) also diverges. Gauss's law gives a different answer for the flux through any sphere of positive radius: \(4\pi r^2E=q/\epsilon_0\). A finite integral and an unbounded maximum are compatible. Knowing what the instrument measures determines which numerical output should be expected to converge.</p>
+</section>
+<section>
+<h2 id="use-a-smooth-source-with-a-known-answer">Use a smooth source with a known answer</h2>
+<p>Replace the potential by \(V_a=kq/\sqrt{r^2+a^2}\), with \(a>0\) a distance. This is a particular physical regularisation. Differentiating before sampling gives \(E_a=kq r/(r^2+a^2)^{3/2}\). Divide the flux by \(q/\epsilon_0\). The putative enclosed-charge fraction becomes</p>
+<div class="math display">\[F_a(r)=\frac{r^3}{(r^2+a^2)^{3/2}}.\]</div>
+<p>To recover the corresponding density, differentiate \(qF_a(r)\) with respect to radius and divide by shell area. The terms involving \(r^4\) cancel, leaving \(\rho_a(r)=3qa^2/[4\pi(r^2+a^2)^{5/2}]\). This density is smooth, nonnegative and integrates over all space to \(q\), since \(F_a(0)=0\) and \(F_a(\infty)=1\). It has an extended tail. The parameter \(a\) is a smoothing scale rather than an outer radius where charge abruptly stops.</p>
+<p>At \(r=a\) only \(1/(2\sqrt2)\), about 35.36%, of the charge is enclosed. At \(r=2a\) the fraction is about 71.55%. A common intuition that two smoothing distances already contain essentially everything fails for this distribution. Measure the probe radius in units of the source size before blaming the flux calculation.</p>
+</section>
+<section>
+<h2 id="hold-the-observable-fixed-while-refining">Hold the observable fixed while refining</h2>
+<p>The exterior-field ratio relative to the true point charge is \([1+(a/r)^2]^{-3/2}\). At fixed physical \(r\), expanding the bracket gives \(1-\tfrac32(a/r)^2+O((a/r)^4)\). Thus a probe far enough away sees a second-order regularisation error. Locating the maximum of \(E_a\), however, requires setting \(a^2-2r^2=0\), giving \(r=a/\sqrt2\) and a peak proportional to \(1/a^2\). Refine \(a\) and move the observer with the maximum: the reported peak grows even as a fixed exterior probe reading converges.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/04-regularised-charge/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-regularised-charge"></div>
+<p>Keep the probe at 6 mm and reduce \(a\) from 3 to 1.5 mm. The flux rises from about 71.55% to 91.31% of the point-charge value. Now instead halve both the probe radius and \(a\). The measured fraction stays the same. The two procedures have distinct limiting observations; writing “halve the mesh” without recording the source representation and probe definition would make the experiment irreproducible.</p>
+</section>
+<section>
+<h2 id="use-continuity-as-a-numerical-diagnostic">Use continuity as a numerical diagnostic</h2>
+<p>Suppose a code deposits a prescribed charge into nearby cells and then solves for a nodal potential. Summing deposited cell charges tests normalisation of the source. Summing outward face fluxes over a larger box tests a separate constraint on the computed field. A correct finite-volume implementation cancels interior face pairs. Interpolating a nodal field to a smooth plotting surface with an unrelated quadrature need not conserve the same discrete quantity. A box-flux test using the solver's own numerical face fluxes and a smooth-surface test using the reconstructed field answer complementary questions.</p>
+<p>A second check concerns energy. For a true point charge the field-energy integral near the origin scales as \(\int_0 r^2(r^{-2})^2dr\), which diverges. For a body of radius \(a\) this short-distance contribution typically scales like \(1/a\). Comparing two source regularisations through their total self-energy without specifying a physical charge radius is therefore an ill-defined validation exercise. Interaction energy with a smooth distant field, in contrast, can have a well-defined point-particle limit.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>How far from this smooth charge should a flux probe be placed to enclose 99%?</p>
+<details><summary>Work through the solution</summary><p>Solve \([1+(a/r)^2]^{-3/2}=0.99\). This gives \(r/a=[0.99^{-2/3}-1]^{-1/2}\simeq12.2\). The answer depends on the chosen source shape. A uniform finite ball would have a different exterior behaviour.</p></details>
+<p>A code uses \(a=2h\) and reports the field one cell away, \(r=h\), on every refined mesh. What do you expect for its flux fraction and pointwise field?</p>
+<details><summary>Work through the solution</summary><p>The fixed ratio \(a/r=2\) gives \(F=5^{-3/2}\simeq0.0894\) at every resolution. The field still scales as \(r^{-2}\) times that factor and grows like \(h^{-2}\). The observer is moving towards the singular source.</p></details>
+<p>If total deposited charge differs from \(q\) by 2% independently of mesh size, can adjusting \(a\) cure the exterior result?</p>
+<details><summary>Work through the solution</summary><p>At large radius the flux follows the total charge that was actually deposited. Changing width cannot repair an incorrect integral. Fix the source normalisation and cell-volume weights before interpreting a convergence slope.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/03-screening-boundary-layer/">Is a computed screening layer resolved?</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/05-discrete-wave/">Measure the phase speed of a numerical electromagnetic wave</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

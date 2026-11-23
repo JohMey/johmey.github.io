@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count atoms in a trap and predict the onset of condensation · OneSimulation</title>
+<meta name="description" content="A dilute cloud of bosons is confined by three harmonic restoring forces. Cooling moves particles between one-particle states while the total atom number stays constant. Start with counted lattice points in quantum-number space and predict the temperature at which the excited states can no longer hold the whole cloud.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/8/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Count atoms in a trap and predict the onset of condensation · OneSimulation">
+<meta property="og:description" content="A dilute cloud of bosons is confined by three harmonic restoring forces. Cooling moves particles between one-particle states while the total atom number stays constant. Start with counted lattice points in quantum-number space and predict the temperature at which the excited states can no longer hold the whole cloud.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/8/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Count atoms in a trap and predict the onset of condensation</h1><p class="lead">A dilute cloud of bosons is confined by three harmonic restoring forces. Cooling moves particles between one-particle states while the total atom number stays constant. Start with counted lattice points in quantum-number space and predict the temperature at which the excited states can no longer hold the whole cloud.</p><p class="byline">Problem sheet 8 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#count-levels-rather-than-ordering-them-one-by-one">Count levels rather than ordering them one by one</a><a href="#find-how-many-atoms-the-excited-cloud-can-hold">Find how many atoms the excited cloud can hold</a><a href="#a-trap-calibration-as-a-numerical-example">A trap calibration as a numerical example</a><a href="#test-what-a-continuum-approximation-misses">Test what a continuum approximation misses</a></nav></aside><article class="prose reference"><section>
+<h2 id="count-levels-rather-than-ordering-them-one-by-one">Count levels rather than ordering them one by one</h2>
+<p>Measure energy from the single-particle ground state. Suppose the angular frequencies are \(\omega_x,\omega_y,\omega_z\). For energies far above one quantum, recover the density of levels \(g(E)\) by finding the volume of the allowed region in \((n_x,n_y,n_z)\). Check the dimensions. Should one divide by another factorial for indistinguishable atoms?</p>
+<details><summary>Work through the solution</summary>
+<p>Each nonnegative integer triple is a distinct one-particle state. Its excitation energy equals \(\hbar(\omega_x n_x+\omega_y n_y+\omega_z n_z)\). States below energy \(E\) fill a tetrahedron with three intercepts \(E/(\hbar\omega_i)\). Its volume is one sixth of their product. Differentiating the integrated count supplies a density per unit energy.</p>
+<div class="math display equation-chain"><div class="equation-step">\[G(E)\simeq\frac{E^3}{6\hbar^3\omega_x\omega_y\omega_z},\]</div><div class="equation-step">\[g(E)\simeq\frac{E^2}{2(\hbar\bar\omega)^3},\]</div><div class="equation-step">\[\bar\omega=(\omega_x\omega_y\omega_z)^{1/3}.\]</div></div>
+<p>The factor of six came from geometry. Indistinguishability enters later in the count of occupations, through the Bose distribution. Dividing the one-particle density by a factorial of atom number would change the number of available orbitals when one added a second particle. The continuous tetrahedron loses information on its faces and edges, so the estimate is best when \(k_BT\) spans many quanta in every direction.</p>
+</details>
+</section>
+<section>
+<h2 id="find-how-many-atoms-the-excited-cloud-can-hold">Find how many atoms the excited cloud can hold</h2>
+<p>The Bose occupation is \(1/[\exp((E-\mu)/k_BT)-1]\). The chemical potential measured from the lowest state approaches zero from below as the population grows. Evaluate the excited-state population at this limit and determine the condensed fraction as a function of temperature. Explicitly account for the state at zero.</p>
+<details><summary>Work through the solution</summary>
+<p>The smooth density vanishes at zero and loses the one discrete ground orbital. Retain its population separately, \(N=N_0+N_{\rm ex}\). Insert the smooth density only for the excited contribution. Put \(x=E/(k_BT)\). The integrand contains \(x^2/(e^x-1)\). Expanding the reciprocal as \(\sum_{\ell\ge1}e^{-\ell x}\), integrate each nonnegative term. Its integral is \(2/\ell^3\). The result is</p>
+<div class="math display equation-chain"><div class="equation-step">\[N_{\rm ex}^{\max}=\zeta(3)\left(\frac{k_BT}{\hbar\bar\omega}\right)^3,\]</div><div class="equation-step">\[T_c=\frac{\hbar\bar\omega}{k_B}\left(\frac{N}{\zeta(3)}\right)^{1/3}.\]</div></div>
+<p>Below this temperature the excited cloud has the stated capacity and the balance occupies the ground state. Hence \(N_0/N=1-(T/T_c)^3\). Above \(T_c\) the chemical potential is negative and one must solve a number constraint. Extending the cubic formula above the transition would give a negative condensate fraction. This is an especially clear example of a constraint selecting which branch of a calculation has physical meaning.</p>
+</details>
+</section>
+<section>
+<h2 id="a-trap-calibration-as-a-numerical-example">A trap calibration as a numerical example</h2>
+<p>Use \(N=100000\) and cyclic frequencies \(f_x=f_y=80\,\mathrm{Hz}\), \(f_z=160\,\mathrm{Hz}\). Compute \(T_c\), the ideal fraction at 140 nK and the result of halving only the axial frequency. Distinguish the quantities kept fixed in these two comparisons.</p>
+<details><summary>Work through the solution</summary>
+<p>Since \(\hbar\omega=hf\), the geometric-mean cyclic frequency is \(100.79\,\mathrm{Hz}\) and \(h\bar f/k_B=4.84\,\mathrm{nK}\). With \(\zeta(3)=1.20206\) the dimensionless temperature multiplier is about 43.65. Thus \(T_c\) is about 211 nK and the fraction at 140 nK is about 0.71. Halving one frequency at fixed particle number lowers \(T_c\) by \(2^{-1/3}\) to roughly 168 nK. At the same absolute temperature the ideal fraction then falls to about 0.42. At a fixed ratio \(T/T_c\) both clouds would have the same fraction.</p>
+<p>The same equations predict the energy below \(T_c\). Multiplying the occupation integrand by \(E\) changes the sum to \(6\zeta(4)\). Thus \(U=3\zeta(4)(k_BT)^4/(\hbar\bar\omega)^3\), measured relative to all atoms in the ground state. Differentiating at fixed trap gives \(C=12k_B\zeta(4)(k_BT/\hbar\bar\omega)^3\). The population and energy probe different moments of the same density of states. A wrong power of energy in the state count changes both predictions.</p>
+</details>
+</section>
+<section>
+<h2 id="test-what-a-continuum-approximation-misses">Test what a continuum approximation misses</h2>
+<p>Use the isotropic trap experiment below. For frequency \(f\), level \(n\) has energy \(nhf\). Obtain its exact degeneracy before comparing the discrete excited-state sum with the continuum. Vary \(N\) and the frequency separately. Interpret the crossing of each capacity curve with one.</p>
+<div id="try-it" class="interactive-study" data-study="semester-thermodynamics-statistical-physics"></div>
+<details><summary>Work through the solution</summary>
+<p>For each \(n_x=0,\ldots,n\), there are \(n-n_x+1\) choices of \(n_y\). Summing gives \((n+1)(n+2)/2\). The total capacity sums this degeneracy times \(1/[\exp(nhf/k_BT)-1]\) for \(n\ge1\). At a given temperature the faces and edges of the lattice supply positive state-count corrections to the leading volume estimate. Consequently the discrete capacity reaches \(N\) at a lower temperature. Increasing \(N\) makes the fractional correction smaller. Changing \(f\) rescales the temperature axis in kelvin while leaving the discrete curve versus \(T/T_c\) unchanged at fixed \(N\). The reported discrete crossing is a saturation convention for a finite ideal sample. A finite set of atoms has a smooth occupation change and interactions introduce further shifts.</p>
+</details>
+<p>Compare the trap with a gas in a box by reading the quantum-gas chapter in <a href="https://davidtong.org/teaching/statistical-physics/">David Tong’s statistical physics course</a>. Repeating the level count for a box changes the power of energy in the density of states.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/7/">Problem sheet 7 · Can a fluctuation reveal attraction on a surface?</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/#case-study">Continue to the applied study</a></span></nav><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

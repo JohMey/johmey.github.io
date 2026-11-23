@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimate optical thickness when both measurements count photons · OneSimulation</title>
+<meta name="description" content="A dim red calibration source is viewed through an absorbing filter and then with the filter removed. Both observations fluctuate. Build the inverse problem directly from the photon counts, profile out the unknown source brightness, and decide how to distribute scarce observation time.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/8/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Estimate optical thickness when both measurements count photons · OneSimulation">
+<meta property="og:description" content="A dim red calibration source is viewed through an absorbing filter and then with the filter removed. Both observations fluctuate. Build the inverse problem directly from the photon counts, profile out the unknown source brightness, and decide how to distribute scarce observation time.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/8/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Estimate optical thickness when both measurements count photons</h1><p class="lead">A dim red calibration source is viewed through an absorbing filter and then with the filter removed. Both observations fluctuate. Build the inverse problem directly from the photon counts, profile out the unknown source brightness, and decide how to distribute scarce observation time.</p><p class="byline">Problem sheet 8 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#counts">Choose the generative model before transforming the data</a><a href="#conditioning">Check the result with an independent probability model</a><a href="#uncertainty">Ask what the experiment establishes when no photon arrives</a><a href="#design">Allocate the two exposures and interpret the profile graph</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="counts">Choose the generative model before transforming the data</h2>
+<p>Take a linear counter with negligible dark counts and a stable monochromatic source. In a blank exposure of duration \(t_b\) the photon rate is an unknown \(\lambda\); with the sample inserted the rate is \(\lambda e^{-a}\), where optical thickness \(a=\mu L\ge0\) is the desired parameter. Counts \(b\) and \(s\) in disjoint exposure windows are independent Poisson random variables. At only a few photons it is quite possible to record zero. Consider a glass sample of thickness 2.00 mm and ask which part of the inference requires this geometric information.</p>
+<h3>Profile out the source rate</h3><p>Write the joint log likelihood at finite counts, then find the best source brightness for each proposed optical thickness.</p><details><summary>Work through the solution</summary>
+<p>Independence adds the log probabilities. Ignoring only terms independent of both unknown parameters gives</p>
+<div class="math display">\[\ell(\lambda,a)=(b+s)\ln\lambda-sa-\lambda(t_b+t_s e^{-a})+\mathrm{constant}.\]</div>
+<p>Holding \(a\) fixed, set \(\partial_\lambda\ell=0\) to obtain \(\hat\lambda(a)=(b+s)/(t_b+t_se^{-a})\) whenever the total count is positive. Substitution gives \(\ell_p(a)=-sa-(b+s)\ln(t_b+t_se^{-a})+\mathrm{constant}\). The specimen thickness \(L\) has yet to enter the calculation. One measures optical thickness directly; reporting an absorption coefficient \(\mu=a/L\) additionally assumes a known geometrical length and an appropriate single-pass transmission model. Scattering out of the acceptance or reflections can contribute to apparent extinction if the apparatus admits them.</p>
+</details>
+</section>
+<section><h2 id="conditioning">Check the result with an independent probability model</h2>
+<h3>Condition on the observed total count</h3><p>Show that the sample count given total \(n=b+s\) is binomial. Derive the interior maximum and evaluate it for equal exposure times with \(b=40,\ s=10\).</p><details><summary>Work through the solution</summary>
+<p>Conditional on a recorded photon belonging to either run, its probability of being in the sample run is \(p(a)=t_s e^{-a}/(t_b+t_s e^{-a})\). The binomial probability of observing \(s\) such assignments among \(n\) is proportional to \(p^s(1-p)^b\). Substitution reproduces the same profile likelihood as eliminating brightness analytically. The two routes make the disappearance of the source rate transparent. This conditioning removes its information about brightness while keeping the information about relative attenuation when brightness itself is free.</p>
+<p>For positive interior counts the best fraction is \(s/n\), giving \(\hat a=\ln[(b/t_b)/(s/t_s)]\). With equal times it is \(\ln4=1.3863\), and the reported coefficient would be \(693.1\ \mathrm{m^{-1}}\). If the sample rate happens to exceed the blank rate, the constrained maximum is \(a=0\). A negative unconstrained estimate is still informative as a check on fluctuations or alignment. Hiding it with a silent positivity correction makes repeated calibrations difficult to interpret.</p>
+</details>
+</section>
+<section><h2 id="uncertainty">Ask what the experiment establishes when no photon arrives</h2>
+<h3>Contrast a curvature estimate with an exact one-sided statement</h3><p>Evaluate the local standard error for the positive-count example. For a second equal-time experiment with \(b=8,\ s=0\), obtain a one-sided conditional 95% lower bound on optical thickness.</p><details><summary>Work through the solution</summary>
+<p>The profile curvature at the interior maximum has magnitude \(np(1-p)=bs/(b+s)\). Its reciprocal gives the local variance \(1/b+1/s\), so the standard error is \(\sqrt{0.125}=0.354\) for the first run. This local quadratic approximation is a high-count diagnostic. It is weak near a boundary and can miss asymmetry. A direct profile plot of twice the log likelihood loss reveals that asymmetry without taking the logarithm of an observed zero.</p>
+<p>With zero sample counts and eight total, the MLE tends to infinity. Yet the data carry finite information. For a candidate \(p\), the conditional probability of observing zero is \((1-p)^8\). Solve \((1-p_U)^8=0.05\) to obtain \(p_U=1-0.05^{1/8}=0.3123\). At equal exposure \(a=\ln[(1-p)/p]\), giving the exact one-sided conditional lower bound \(a\ge0.789\) after rounding. There is no finite upper bound from these counts alone. Adding one artificial count to numerator and denominator would manufacture a finite point estimate tied to that convention. A specified prior or a measured background can change the inference, but must be included in the generative model.</p>
+</details>
+</section>
+<section><h2 id="design">Allocate the two exposures and interpret the profile graph</h2>
+<p>For a total time \(T=t_b+t_s\) and a provisional transmission \(q=e^{-a}\), use expected counts to approximate \(\operatorname{var}(\hat a)\simeq1/(\lambda t_b)+1/(\lambda q t_s)\). Optimisation requires a provisional attenuation. After a short pilot run its uncertainty can be propagated through a range of candidate designs. The graph below instead holds observed counts fixed and recomputes the profile loss over trial optical thickness. Use its time-ratio slider to correct the transmission for unequal known exposures. It is a reanalysis of those counts under the selected acquisition timing, rather than a simulated independent observation.</p>
+<div id="try-it" class="interactive-study" data-study="semester-algebra-photon-profile"></div>
+<h3>Find the best time ratio and distinguish design from estimation</h3><p>If \(q=1/4\), find the variance-minimising fraction of time spent on the specimen and compare with the strategy of aiming for equal expected counts. How would a fluctuating source alter the protocol?</p><details><summary>Work through the solution</summary>
+<p>Substituting \(t_b=T-t_s\) and differentiating gives \((T-t_s)^{-2}=1/(q t_s^2)\), hence \(t_s/t_b=1/\sqrt q=2\). Spend two thirds of the time on the specimen. The equal-count rule would require a ratio of four, overusing sample time while leaving the blank reference noisy. For \(\lambda T=120\), the optimum expected counts are 40 blank and 20 sample; the predicted variance is 0.075. At equal expected counts it becomes \(2/24=0.0833\). The pilot estimate of transmission affects the best allocation but has no role in the profile formula once exposure times are fixed.</p>
+<p>If source brightness varies systematically between the two runs, a lower sample rate can represent source drift rather than attenuation. Short interleaved blank and sample segments, or a simultaneously monitored reference, provide observations that identify this nuisance effect. More photons within a pair of separately drifting runs reduce counting error while leaving the confounding intact. At appreciable independently measured background, replace each Poisson mean by signal plus background and fit the counts jointly; the simple conditional probability above then also depends on the background rates.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://web.eecs.umich.edu/~fessler/book/c-mav.pdf">University of Michigan · Jeffrey Fessler on exponential transmission models with Poisson counts</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/problem-sheets/7/">Problem sheet 7 · Project · Which thermometer should the laboratory buy?</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/#case-study">Continue to the applied study</a></span></nav><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-algebra.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

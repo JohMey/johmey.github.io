@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can a vibration absorber create a quiet mounting point? · OneSimulation</title>
+<meta name="description" content="A precision instrument sits on a flexible support and is disturbed by a narrowband harmonic force. A smaller mass is attached to the instrument through a spring and damper. Determine when the mounting point becomes still, what happens elsewhere in the system and what a frequency sweep must show before calling the absorber effective.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/8/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Can a vibration absorber create a quiet mounting point? · OneSimulation">
+<meta property="og:description" content="A precision instrument sits on a flexible support and is disturbed by a narrowband harmonic force. A smaller mass is attached to the instrument through a spring and damper. Determine when the mounting point becomes still, what happens elsewhere in the system and what a frequency sweep must show before calling the absorber effective.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/8/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Can a vibration absorber create a quiet mounting point?</h1><p class="lead">A precision instrument sits on a flexible support and is disturbed by a narrowband harmonic force. A smaller mass is attached to the instrument through a spring and damper. Determine when the mounting point becomes still, what happens elsewhere in the system and what a frequency sweep must show before calling the absorber effective.</p><p class="byline">Problem sheet 8 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#primary">Find the force which must balance at a quiet primary mass</a><a href="#poles">Locate both resonances introduced by the absorber</a><a href="#travel">Add damping and check the stroke of the secondary mass</a><a href="#transfer">Design a frequency and displacement verification</a></nav></aside><article class="prose reference"><section><h2 id="primary">Find the force which must balance at a quiet primary mass</h2>
+<p>Let the primary mass and support stiffness be \(M=10\) kg and \(K=40{,}000\) N/m. Attach a secondary mass \(m=1.0\) kg through a spring \(k\), with the external harmonic force \(F\) applied only to the primary. First neglect damping. Write the coupled complex displacement equations. What absorber frequency makes the primary exactly stationary under a finite external force?</p>
+<details><summary>Derive a zero of the measured transfer function</summary>
+<p>For displacements \(X,Y\) measured in the laboratory, the secondary spring force depends on \(Y-X\). Under harmonic forcing the equations have diagonal coefficients \(K+k-M\omega^2\) and \(k-m\omega^2\) and both off-diagonal coefficients equal \(-k\). Eliminating \(Y\) gives</p>
+<div class="math display">\[\frac{X}{F}=\frac{k-m\omega^2}{(K+k-M\omega^2)(k-m\omega^2)-k^2}.\]</div>
+<p>At \(\omega=\sqrt{k/m}\) the numerator vanishes but the denominator is \(-k^2\). The secondary equation enforces \(X=0\), and the primary balance gives \(Y=-F/k\). The quiet coordinate remains in equilibrium because the secondary mass moves enough to create an opposing force. The entire structure is not quiet. To target the original primary frequency choose \(k/m=K/M=4000\) per second squared, giving \(k=4000\) N/m and a target frequency 10.07 Hz.</p>
+</details>
+</section>
+<section><h2 id="poles">Locate both resonances introduced by the absorber</h2>
+<p>The primary response has a zero at the desired speed, but an operating machine also passes through neighbouring frequencies. Find both undamped natural frequencies and compare with the original primary natural frequency. How would a very slow steady sweep differ from a rapid ramp?</p>
+<details><summary>Solve the coupled eigenproblem before interpreting its zeros</summary>
+<p>With \(r=\omega/\sqrt{K/M}\), mass ratio \(\mu=m/M\) and matched tuning, the determinant gives \(r^4-(2+\mu)r^2+1=0\). At \(\mu=0.10\) the two frequency ratios are 0.8543 and 1.1705, corresponding to 8.60 and 11.78 Hz. Their product is one. The original single resonance has become two normal modes separated by an antiresonance in the primary response. Each mode generally exhibits primary motion; its eigenvector follows from either homogeneous equation.</p>
+<p>At vanishing damping, exact indefinitely sustained forcing at either pole has no bounded stationary amplitude. A finite-duration sweep samples transient build-up that depends on sweep rate and initial conditions, so the largest measured amplitude can shift away from the steady-state pole. Compare forward and reverse sweeps at decreasing sweep rates and use a measured damping value before assigning a peak height to a mode.</p>
+</details>
+</section>
+<section><h2 id="travel">Add damping and check the stroke of the secondary mass</h2>
+<p>At 10 N force amplitude calculate the ideal secondary travel at the target frequency. Now include primary damping ratio 0.03 and secondary damping ratio 0.04 relative to its own mass and spring. Compare the graph's primary and relative displacement predictions at exact tuning.</p>
+<details><summary>Distinguish absolute and relative motion in the damper</summary>
+<p>The static primary deflection is \(F/K=0.25\) mm and ideal absorber travel at the antiresonance is \(|F/k|=2.50\) mm. The physical secondary damper sees relative motion \(Y-X\). In the harmonic solution replace \(k\) by \(k+i\omega c_a\) in the coupling terms and add \(i\omega c_p\) to the primary diagonal, using the positive-exponential convention for this calculation. The previous exact numerator zero is then complex and the primary response at a real forcing frequency stays finite.</p>
+<p>At the stated default, the graph gives primary motion about 0.76 times static deflection or 0.19 mm and relative travel about 9.51 times static deflection or 2.38 mm. With an available stroke of only 2.0 mm in either direction the design would exceed its range even near the intended quiet point. The mechanical stop would invalidate the linear calculation and could introduce harmonics. A damped absorber redistributes bandwidth and peak heights at the cost of a shallower ideal notch.</p>
+</details>
+<div id="try-it" class="interactive-study" data-study="semester-engineering-vibration-absorber"></div>
+</section>
+<section><h2 id="transfer">Design a frequency and displacement verification</h2>
+<p>The excitation frequency can vary by five percent and the absorber spring by ten percent after temperature changes. Which measurements would test whether a useful operating band remains? Explain why reducing primary response at only one speed cannot establish this.</p>
+<details><summary>Sweep both operating and material parameters</summary>
+<p>Because absorber tuning is proportional to the square root of stiffness at fixed mass, a ten percent increase in stiffness raises its natural frequency by approximately 4.9 percent. Move the tuning control accordingly, then examine primary amplitude and relative travel over the complete forcing interval. Record worst primary amplitude and secondary stroke separately. An apparent optimum that falls outside the stroke limit is not an implementable steady-state result.</p>
+<p>Measure primary and secondary displacement with a common timing reference. Their relative phase near the notch should produce the opposing spring force required by the primary balance. Use a calibrated applied-force measurement as well: an excitation system whose delivered force falls near the resonance can imitate successful suppression. A comparison with the absorber locked, measured at matched actual force and with the same sensor mass, provides an independent reference. Add further structural modes or frequency-dependent support damping only if residuals show that the two-coordinate approximation no longer explains the measured band.</p>
+</details>
+<p><a href="https://archive.nptel.ac.in/content/storage2/courses/112107088/module1/lecture23/lecture23.pdf">NPTEL Mechanical Vibrations · principles of passive vibration control and absorber design</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/7/">Problem sheet 7 · A sensor changes the resonance it is meant to measure</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/#case-study">Continue to the applied study</a></span></nav><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

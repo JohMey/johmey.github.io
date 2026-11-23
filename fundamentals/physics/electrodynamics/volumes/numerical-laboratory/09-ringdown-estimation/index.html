@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimate a cavity linewidth from a finite, biased record · OneSimulation</title>
+<meta name="description" content="Connect the time and frequency descriptions of one damped mode, then diagnose why a weak detector background systematically biases the inferred quality factor.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/09-ringdown-estimation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Estimate a cavity linewidth from a finite, biased record · OneSimulation">
+<meta property="og:description" content="Connect the time and frequency descriptions of one damped mode, then diagnose why a weak detector background systematically biases the inferred quality factor.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/09-ringdown-estimation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>Estimate a cavity linewidth from a finite, biased record</h1><p class="lead">Connect the time and frequency descriptions of one damped mode, then diagnose why a weak detector background systematically biases the inferred quality factor.</p><p class="byline">Unit 9 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#know-whether-the-detector-reads-field-or-energy">Know whether the detector reads field or energy</a><a href="#derive-the-two-point-fit-with-a-detector-offset">Derive the two-point fit with a detector offset</a><a href="#design-a-second-independent-inference">Design a second independent inference</a><a href="#check-the-single-mode-model-before-refining-its-fit">Check the single-mode model before refining its fit</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="know-whether-the-detector-reads-field-or-energy">Know whether the detector reads field or energy</h2>
+<p>After a drive switches off, let a single cavity mode have complex analytic amplitude \(a(t)=a_0e^{-\kappa t/2}e^{-i\omega_0t}\) for \(t\ge0\). The energy is proportional to \(|a|^2\), giving \(U=U_0e^{-\kappa t}\). Its instantaneous decay rate \(-U'/U=\kappa\) implies \(Q=\omega_0 U/P_\mathrm{loss}=\omega_0/\kappa\). A phase-sensitive receiver measuring field amplitude sees a time constant twice as long as the energy lifetime. Before fitting the data, ask how the measurement transducer converts the field into a reported number.</p>
+<p>Fourier transforming the causal decaying amplitude gives an integral proportional to \(1/[\kappa/2-i(\omega-\omega_0)]\), up to the time convention. Its squared magnitude has half-power points at \(|\omega-\omega_0|=\kappa/2\). Therefore the full power linewidth in hertz is \(\Delta f=\kappa/(2\pi)\). A measurement of either the energy decay time \(\tau_U=1/\kappa\) or the spectral width can test the other without having to calibrate the absolute detector gain.</p>
+<p>At \(f_0=2.0\) GHz and \(\tau_U=0.50\ \mu\mathrm s\), we obtain \(\kappa=2.0\times10^6\) s⁻¹, \(\Delta f\simeq318.3\) kHz and \(Q\simeq6283\). A field receiver would report an amplitude time constant of 1.0 μs. Substituting that time directly into \(Q=2\pi f_0\tau_U\) would double the apparent quality.</p>
+</section>
+<section>
+<h2 id="derive-the-two-point-fit-with-a-detector-offset">Derive the two-point fit with a detector offset</h2>
+<p>Let a power detector report \(S(t)=A e^{-\kappa t}+B\), with a constant background \(B>0\). In the absence of background two samples separated by \(\Delta t\) give \(\widehat\kappa=\log[S(t)/S(t+\Delta t)]/\Delta t\). With background, the logarithmic derivative is</p>
+<div class="math display">\[-\frac{d}{dt}\log S=\kappa\frac{Ae^{-\kappa t}}{Ae^{-\kappa t}+B}.\]</div>
+<p>It starts below the true rate and tends to zero in the tail. A straight line fitted to late log data can therefore look impressively precise while overestimating the lifetime. Increasing the acquisition duration can worsen this bias if the entire record is forced into a straight-line model.</p>
+<p>In the experiment set \(b=B/A=0.04\). A two-point fit from one true lifetime to two has dimensionless rate \(\log[(e^{-1}+0.04)/(e^{-2}+0.04)]\), approximately 0.844. Its apparent lifetime is about 18.5% high. The source, walls and coupling have not changed. Only the interpretation of detector output has changed. Move the start of the fit towards three lifetimes and inspect the increasing gap from the ideal log line.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/09-ringdown-estimation/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-ringdown-estimation"></div>
+</section>
+<section>
+<h2 id="design-a-second-independent-inference">Design a second independent inference</h2>
+<p>With three equally spaced, noiseless readings \(S_0,S_1,S_2\) of one exponential plus a constant, subtract consecutive values before taking a logarithm. If \(a=e^{-\kappa\Delta t}\), the differences are \(A'(1-a)\) and \(A'a(1-a)\), giving \(a=(S_1-S_2)/(S_0-S_1)\). This cancels the constant background. At an interval of one lifetime, a first signal of unit energy and background 0.04 gives approximately \(1.04,0.407879,0.175335\). Their ratio of differences recovers \(e^{-1}\). In a real noise floor two nearly equal readings make this division unreliable. Use multiple windows or fit the raw signal with a measured noise model.</p>
+<p>Finite spectral resolution creates a separate challenge. Multiplying the measured field by a rectangular window of duration \(T\) convolves its spectrum with a sinc-like response of width of order \(1/T\). For the 318 kHz linewidth in the example, \(T=1\) μs gives frequency bins spaced by 1 MHz in a basic Fourier transform. Zero padding can interpolate its curve, but cannot restore the unmeasured late-time signal. A parametric fit may extract a sub-bin frequency or decay rate by using its model assumptions; its uncertainty then depends on signal-to-noise ratio and on whether the one-mode theory is adequate.</p>
+</section>
+<section>
+<h2 id="check-the-single-mode-model-before-refining-its-fit">Check the single-mode model before refining its fit</h2>
+<p>If two nearby modes reach the same detector, their fields add before squaring. The result contains an interference term oscillating at their frequency difference on top of a decaying envelope. A scalar positive background cannot explain that alternating residual. Test by narrowing the excitation band, moving the pickup to a symmetry node of one mode, or examining a complex receiver's quadratures. A model with two exponentials has more degrees of freedom and can fit noise as well as signal; require consistency across independent records.</p>
+<p>An honest linewidth report specifies the measured quantity, acquisition window, background treatment, coupling state, reference frequency and uncertainty. A fit to stored energy measures total loss. Inferring internal absorption alone additionally requires a known port coupling or a measurement that changes it separately, as in the course's cavity project.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>A detector background is independently measured but subtracted too aggressively. What feature can appear in the logarithmic tail?</p>
+<details><summary>Work through the solution</summary><p>The corrected signal can approach zero and cross below it. The logarithm then becomes undefined. Even before that point its apparent local slope can become arbitrarily large. Inspect the raw signed residual and its uncertainty instead of dropping nonpositive points without accounting for selection bias.</p></details>
+<p>A second experiment doubles the peak stored energy while the absolute detector offset is fixed. What should happen to the shape of the normalised log tail?</p>
+<details><summary>Work through the solution</summary><p>\(b=B/A\) halves. Background contamination becomes important later by about \(\tau_U\ln2\). A real change in the physical lifetime need not follow that shift when the response remains linear.</p></details>
+<p>Can a passive resonator's intrinsic losses be determined from a single ring-down measured at one port?</p>
+<details><summary>Work through the solution</summary><p>The observed decay is the sum of internal and external rates. A single accurately measured lifetime identifies their sum. A calibrated change in coupling or an independent power budget is needed to separate them.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/">Separate diffraction from a finite observation window</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/10-cyclotron-integration/">A magnetic orbit that spirals outward in a perfect vacuum</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

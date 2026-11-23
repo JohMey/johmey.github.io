@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measure equilibrium field fluctuations with a capacitor · OneSimulation</title>
+<meta name="description" content="Derive an electrical noise measurement in two ways, determine what fraction reaches a finite-bandwidth detector and use agreement to calibrate an experiment.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/03-thermal-noise-and-bandwidth/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measure equilibrium field fluctuations with a capacitor · OneSimulation">
+<meta property="og:description" content="Derive an electrical noise measurement in two ways, determine what fraction reaches a finite-bandwidth detector and use agreement to calibrate an experiment.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/03-thermal-noise-and-bandwidth/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/material-response/">Fields and the response of matter</a></p><h1>Measure equilibrium field fluctuations with a capacitor</h1><p class="lead">Derive an electrical noise measurement in two ways, determine what fraction reaches a finite-bandwidth detector and use agreement to calibrate an experiment.</p><p class="byline">Unit 3 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-zero-average-voltage-can-store-measurable-energy">A zero-average voltage can store measurable energy</a><a href="#derive-the-same-variance-from-a-spectral-measurement">Derive the same variance from a spectral measurement</a><a href="#include-a-real-observation-bandwidth">Include a real observation bandwidth</a><a href="#a-physical-check-and-a-calibration-check">A physical check and a calibration check</a><a href="#tutorial">Tutorial</a><a href="#compare-with-an-actual-laboratory">Compare with an actual laboratory</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-zero-average-voltage-can-store-measurable-energy">A zero-average voltage can store measurable energy</h2>
+<p>Connect a capacitor \(C\) across a resistor \(R\) at a uniform absolute temperature \(T\), with no external drive. Ideal circuit equations predict that any deliberately deposited charge decays on time scale \(RC\). At thermal equilibrium, microscopic fluctuations continually exchange charge and energy with the capacitor. Symmetry gives zero mean voltage, but the stored energy involves \(V^2\). In the classical limit a quadratic degree of freedom has mean energy \(k_BT/2\), giving \(\langle V^2\rangle=k_BT/C\). The resistor sets the time scale of equilibration; equilibrium mean-square voltage does not depend on resistance in this ideal model.</p>
+<p>Check the dimensions: \(k_BT\) is an energy in joules and capacitance has units coulombs per volt. Their ratio is volts squared. At \(T=300\) K and \(C=100\) pF the RMS voltage is \(\sqrt{k_BT/C}\simeq6.44\ \mu{\rm V}\). A voltmeter that averages the signed voltage for a long time reports a value near zero. Measuring the noise requires an RMS, variance or appropriately calibrated spectral measurement.</p>
+</section>
+<section>
+<h2 id="derive-the-same-variance-from-a-spectral-measurement">Derive the same variance from a spectral measurement</h2>
+<p>Use a one-sided voltage power spectral density per hertz at positive frequencies. The classical Johnson–Nyquist open-circuit result for a resistor is \(S_R(f)=4k_BTR\) V²/Hz. Its square root is an amplitude spectral density in V/\(\sqrt{\mathrm{Hz}}\), not a voltage variance. Use an equivalent series voltage noise source and the RC transfer function \(H(f)=1/[1+2\pi i fRC]\). A stationary linear system multiplies the voltage power spectrum by \(|H|^2\), so</p>
+<div class="math display">\[S_C(f)=\frac{4k_BTR}{1+(2\pi fRC)^2},\qquad\]</div>
+<p>\int_0^\infty S_C(f)\,df=\frac{k_BT}{C}.</p>
+<p>The integral follows by \(u=2\pi RCf\) and \(\int_0^\infty du/(1+u^2)=\pi/2\). It furnishes a detailed check on the factor four, the use of one-sided density, the conversion from hertz to angular frequency and the amplitude-versus-power distinction. If your result disagrees by a constant factor of two or \(2\pi\), audit these conventions before assigning a new noise temperature.</p>
+<p>For \(R=10\) kΩ, \(T=300\) K, the low-frequency amplitude spectral density is approximately 12.9 nV/\(\sqrt{\mathrm{Hz}}\). The RC corner at \(C=100\) pF is \(f_c=1/(2\pi RC)\simeq159\) kHz. The open-circuit low-frequency density rises with \(R\) while the bandwidth shrinks in inverse proportion. Their integrated product gives the earlier resistance-independent variance.</p>
+</section>
+<section>
+<h2 id="include-a-real-observation-bandwidth">Include a real observation bandwidth</h2>
+<p>Suppose a first measurement adds an ideal low-pass cutoff \(B\). The recorded fraction of equilibrium variance is \(F=(2/\pi)\arctan(B/f_c)\). Half of the noise variance lies below the RC corner. That may be surprising if the corner was introduced as the frequency at which the <em>spectral density</em> reaches half its zero-frequency value. These two properties coincide for this single-pole spectrum for different mathematical reasons.</p>
+<p>At \(B=0.1f_c\), \(F\simeq0.06345\), so the recorded RMS is about 25.2% of the infinite-band RMS. At \(B=10f_c\), \(F\simeq0.93655\), giving about 96.8% of the RMS. In an experiment, taking a square root one step too early changes this comparison. A real detector transfer function replaces the sharp cutoff by an integral of \(S_C(f)|H_\mathrm{det}(f)|^2\).</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/material-response/03-thermal-noise-and-bandwidth/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-thermal-noise-and-bandwidth"></div>
+<p>Sweep the resistance by a factor ten. Observe how the corner moves along the frequency axis and how the fraction measured in a fixed bandwidth changes. Then vary temperature. In the classical regime spectral density and integrated variance are proportional to \(T\), while RMS voltage grows only as \(\sqrt T\). A plot labelled “noise” without units cannot distinguish these two dependencies.</p>
+</section>
+<section>
+<h2 id="a-physical-check-and-a-calibration-check">A physical check and a calibration check</h2>
+<p>An RC time-domain experiment provides a second observable beyond integrated power. Under the same single-pole equilibrium model the voltage autocovariance is \(\langle V(t)V(t+\tau)\rangle=(k_BT/C)e^{-|\tau|/(RC)}\). Its variance at zero lag agrees with equipartition, and its decay time is obtained from the homogeneous charge-relaxation equation. Repeating the measurement with a known extra parallel capacitance lowers the RMS and lengthens the correlation time. Seeing only one of those changes suggests that the observed noise may include substantial amplifier input voltage or an independent background.</p>
+<p>The classical approximation assumes \(hf\ll k_BT\) over the relevant band and a resistor that can be treated as frequency independent. A MHz room-temperature experiment is far inside this regime. At sufficiently high frequencies or cryogenic temperatures, a quantum noise model, an explicit definition of the measured ordering of the spectrum and the detector's energy exchange are needed. Extending an ideal classical white source to infinite frequency is only permissible as an approximation inside the convergent low-frequency RC calculation; it is not a microscopic model at arbitrarily high frequency.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>At fixed \(C,T\), doubling \(R\) in a detector with \(B\ll f_c\) changes the measured RMS by what factor? Will the same factor apply when \(B\gg f_c\)?</p>
+<details><summary>Work through the solution</summary><p>At very small bandwidth, \(S_C\simeq4k_BTR\) is nearly constant, so variance doubles and RMS increases by \(\sqrt2\). At large bandwidth the measurement approaches \(k_BT/C\) and becomes independent of \(R\).</p></details>
+<p>A two-sided spectrum in hertz is used instead. What density and integration limits preserve the same variance?</p>
+<details><summary>Work through the solution</summary><p>For this real voltage, the density for each sign of frequency is half the one-sided positive-frequency value. Integrate it over \((-\infty,\infty)\). Integrating the one-sided density over both signs would count the power twice.</p></details>
+<p>A measured RMS is 10 μV, including independent amplifier noise of 6 μV RMS. Can 6 μV simply be subtracted to infer the sample contribution?</p>
+<details><summary>Work through the solution</summary><p>Independent zero-mean voltages add in variance. The inferred sample RMS is \(\sqrt{10^2-6^2}=8\ \mu\mathrm V\). A deterministic offset or correlated noise would require a different treatment.</p></details>
+</section>
+<section>
+<h2 id="compare-with-an-actual-laboratory">Compare with an actual laboratory</h2>
+<p>The <a href="https://ocw.mit.edu/courses/8-13-14-experimental-physics-i-ii-junior-lab-fall-2016-spring-2017/pages/experiments/johnson-noise-and-shot-noise/">MIT Junior Lab noise experiment</a> treats the detector as part of the measurement. Identify its calibration observable before comparing the theoretical density with an instrument reading.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/02-hall-measurement/">Identify mobile charge with a transverse field</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/material-response/04-polarisation-and-stability/">When does a polar crystal change its preferred state?</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

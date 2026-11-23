@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What stress does a curved flexure actually carry? · OneSimulation</title>
+<meta name="description" content="A thin rectangular strip is formed into a circular arc whose radial depth is no longer small compared with its radius. It is loaded by equal and opposite in-plane end couples in a laboratory bending fixture. Derive the neutral radius, determine which face sees the larger stress and design a strain-gauge check that distinguishes initial curvature from accidental axial loading.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/8/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What stress does a curved flexure actually carry? · OneSimulation">
+<meta property="og:description" content="A thin rectangular strip is formed into a circular arc whose radial depth is no longer small compared with its radius. It is loaded by equal and opposite in-plane end couples in a laboratory bending fixture. Derive the neutral radius, determine which face sees the larger stress and design a strain-gauge check that distinguishes initial curvature from accidental axial loading.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/8/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>What stress does a curved flexure actually carry?</h1><p class="lead">A thin rectangular strip is formed into a circular arc whose radial depth is no longer small compared with its radius. It is loaded by equal and opposite in-plane end couples in a laboratory bending fixture. Derive the neutral radius, determine which face sees the larger stress and design a strain-gauge check that distinguishes initial curvature from accidental axial loading.</p><p class="byline">Problem sheet 8 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#force">Use the unequal lengths of the original fibres</a><a href="#moment">Enforce the bending couple and compare face stresses</a><a href="#test">Use the radius sweep and a pair of strain gauges</a><a href="#limit">Decide which independent measurement would settle the discrepancy</a></nav></aside><article class="prose reference"><section><h2 id="force">Use the unequal lengths of the original fibres</h2>
+<p>Consider a homogeneous circular segment of inner radius \(r_i=30\) mm, outer radius \(r_o=50\) mm and out-of-plane width \(b=10\) mm. Far from its ends assume cross-sections remain plane, radial stress is small and material response is linearly elastic. Why may a pure couple give a nonlinear stress distribution through the depth? Derive its form and impose zero axial force.</p>
+<details><summary>Derive the shape using axial equilibrium</summary>
+<p>Two initially radial sections an angle \(d\theta\) apart contain fibres with original lengths \(r\,d\theta\). If the section rotation changes, geometry gives a change in arc length that is linear in radius within the plane-section model. Dividing by the original arc length leaves circumferential strain of the form \(A+B/r\). For constant Young modulus stress has the same form. The inner fibres are initially shorter, so equal increments of end displacement need not give equal strains.</p>
+<p>Write the stress as \(\sigma=C(r_n/r-1)\) with positive inner stress for the chosen moment direction. Its zero is the neutral radius. Zero resultant force requires \(r_n\int_A dA/r=A_s\) where \(A_s=b(r_o-r_i)\). For a rectangular section this gives</p>
+<div class="math display">\[r_n=\frac{r_o-r_i}{\ln(r_o/r_i)}=39.152\ {\rm mm}.\]</div>
+<p>The centroid is at 40 mm; the neutral fibre lies 0.848 mm inward of it. Placing the neutral axis at the centroid would violate axial force balance in this constitutive geometry. Reversing the applied couple reverses stress signs without changing the calculated neutral radius.</p>
+</details>
+</section>
+<section><h2 id="moment">Enforce the bending couple and compare face stresses</h2>
+<p>For a 12 N m couple determine the stress at both radial faces and compare with the straight-beam formula. Choose moment sign explicitly and check that the integrated stress field can deliver the applied couple.</p>
+<details><summary>Use a moment integral about the centroid</summary>
+<p>Take \(M=\int_A(\bar r-r)\sigma\,dA\) so positive \(M\) gives inner tension. Because the axial resultant vanishes, this equals minus the integral of \(r\sigma\). Substitution gives \(M=C A_s(\bar r-r_n)\). Put \(e=\bar r-r_n\), obtain \(C=M/(A_s e)\), and hence predict inner tension 21.59 MPa and outer compression 15.36 MPa in magnitude. A straight beam would have a centroidal second moment \(bd^3/12\), with \(d=r_o-r_i\), and equal face magnitudes \(6M/(bd^2)=18.00\) MPa. That estimate under-predicts the larger inner stress by 16.6 percent relative to the curved-beam result.</p>
+<p>For steel of modulus 210 GPa the calculated circumferential gauge strains are approximately plus 103 and minus 73 microstrain. A gauge averaging over a long length near a fixture contact may not see the pure-couple region. Place it well clear of the ends and align it with the local tangent. The material yield check must use actual material properties and any local stress concentration; the smooth flexure model gives nominal elastic stresses.</p>
+</details>
+</section>
+<section><h2 id="test">Use the radius sweep and a pair of strain gauges</h2>
+<p>Predict how both face stresses change as the inner radius grows with the same depth, width and moment. Compare a gauge pair that records plus 110 and minus 66 microstrain with the predicted pair. Which simple unwanted load might explain the common shift?</p>
+<details><summary>Separate a strain difference from a strain offset</summary>
+<p>For \(d/r_i\ll1\), expand the logarithm to find \(e\simeq d^2/(12\bar r)\). The stress law approaches the linear straight-beam distribution. The two formulas on the graph therefore approach one another as the radius increases without changing the physical applied moment. The pair's measured strain difference is 176 microstrain, essentially the predicted difference. Both measured readings exceed their predictions by about seven microstrain, consistent with a small common tensile strain or a common temperature offset. In a simple superposition a common mechanical stress of approximately 1.5 MPa corresponds to about 300 N on this section.</p>
+</details>
+<div id="try-it" class="interactive-study" data-study="semester-engineering-curved-beam"></div>
+</section>
+<section><h2 id="limit">Decide which independent measurement would settle the discrepancy</h2>
+<p>A technician suggests increasing the moment until the two gauge traces agree with their predicted absolute values. Would this establish the model? Explain how to distinguish a parasitic axial force, thermal strain and fixture end effects with separate measurements.</p>
+<details><summary>Compare reversal and geometry controls</summary>
+<p>Repeat at positive and negative moments and fit signed slopes and intercepts for each gauge. Ideal elastic bending slopes have opposite signs and unequal magnitudes fixed by radius. A common offset that persists at zero moment points toward preload, temperature or electronic zero; a common shift proportional to moment can indicate a force introduced by the loading fixture. Add an independent axial load cell or a temperature-compensated unstrained reference gauge as appropriate. Moving duplicate gauges around the arc tests whether the discrepancy localises near the end contacts.</p>
+<p>The radial-stress approximation is strongest in a region of modest curvature far from applied forces and interfaces. At very large depth-to-radius ratio or close to a concentrated contact, compute a two-dimensional elasticity solution with compatible loading and compare circumference-averaged gauge predictions. Refinement of a one-dimensional curved-beam mesh alone cannot recover a missing contact stress or out-of-plane warping.</p>
+</details>
+<p><a href="https://archive.nptel.ac.in/content/storage2/courses/105106049/lecnotes/mainch10.html">NPTEL Advanced Solid Mechanics · bending of curved beams</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/7/">Problem sheet 7 · Calibrating a compression fixture through three independent readings</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/#case-study">Continue to the applied study</a></span></nav><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Separate diffraction from a finite observation window · OneSimulation</title>
+<meta name="description" content="Recover the far-field angular spectrum of a smooth aperture, then isolate the errors from truncating and sampling the aperture field.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Separate diffraction from a finite observation window · OneSimulation">
+<meta property="og:description" content="Recover the far-field angular spectrum of a smooth aperture, then isolate the errors from truncating and sampling the aperture field.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>Separate diffraction from a finite observation window</h1><p class="lead">Recover the far-field angular spectrum of a smooth aperture, then isolate the errors from truncating and sampling the aperture field.</p><p class="byline">Unit 8 of 12</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#begin-with-a-transform-that-can-be-checked-analytically">Begin with a transform that can be checked analytically</a><a href="#what-the-instrument-has-really-sampled">What the instrument has really sampled</a><a href="#design-a-convergence-test-with-two-axes">Design a convergence test with two axes</a><a href="#recover-a-size-from-a-far-field-measurement">Recover a size from a far-field measurement</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="begin-with-a-transform-that-can-be-checked-analytically">Begin with a transform that can be checked analytically</h2>
+<p>Consider a long slit system whose transmitted scalar field varies along one transverse coordinate \(x\). At a distant observation point in direction \(\theta\), a small aperture element accumulates an approximate relative phase \(-k x\sin\theta\). The Fraunhofer amplitude is proportional to \(\int A(x)e^{-2\pi i f x}\,dx\) with spatial frequency \(f=\sin\theta/\lambda\). The approximation neglects the quadratic phase across the aperture; either a suitable lens or sufficient propagation distance is needed. A numerical Fourier transform cannot cure violation of this optical assumption.</p>
+<p>Take the ideal aperture field \(A(x)=e^{-x^2/w^2}\) and normalise far-field amplitude by its on-axis value. Integrating by parts or completing the square gives \(F(f)/F(0)=e^{-(\pi wf)^2}\). One derivation avoids any complex contour: differentiate \(F\) with respect to \(f\) and replace \(xA=-(w^2/2)A'\). Integrating by parts gives \(F'=-2\pi^2 w^2 f F\). Solve this first-order equation with the measured \(F(0)\). Thus a wider beam on the aperture narrows the far-field distribution. Squaring the amplitude gives the intensity measured by an ordinary detector.</p>
+<p>At \(w=1\) mm, the \(1/e\) amplitude spatial frequency is \(1/(\pi w)\simeq0.3183\) cycles/mm. For 500 nm light this is a small angle of \(1.59\times10^{-4}\) radians. An instrument calibrated in radians per millimetre rather than cycles per millimetre would need a factor \(2\pi\); stating the Fourier convention prevents that frequent scale discrepancy.</p>
+</section>
+<section>
+<h2 id="what-the-instrument-has-really-sampled">What the instrument has really sampled</h2>
+<p>A scanner covers \(-W\le x\le W\) and gives one amplitude at each of \(N\) equally spaced cell midpoints. The numerical transform is the weighted sum \(\Delta x\sum_j A(x_j)e^{-2\pi ifx_j}\), where \(\Delta x=2W/N\). By symmetry its imaginary part vanishes for a perfectly centred real Gaussian; the program sums the cosine projection. It normalises by the numerical on-axis amplitude, allowing us to compare shapes on a common vertical scale.</p>
+<p>Two separate approximations have entered. Truncating the aperture multiplies the field by a rectangle. In frequency space this convolves the Gaussian spectrum with a sinc and can produce signed sidelobes. Sampling at regular intervals makes the spectrum repeat up to a phase convention, with alias copies separated by \(1/\Delta x\). Increasing \(W\) at fixed \(N\) reduces truncation but worsens sampling. Widening the field of view and adding more detector pixels are not interchangeable changes.</p>
+</section>
+<section>
+<h2 id="design-a-convergence-test-with-two-axes">Design a convergence test with two axes</h2>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="field-lab-aperture-sampling"></div>
+<p>Keep \(w=1\) mm and select 40 samples. Compare \(W=w\) and \(W=3w\). The aperture field at the boundary falls from \(e^{-1}\) to \(e^{-9}\), so an apparent sidelobe associated with the abrupt window should decrease strongly. Next fix \(W=3w\) and lower the number of samples. The displayed Nyquist frequency falls as \(\Delta x\) grows. When a plotted point lies above it, a smooth-looking value is an aliased sample of the periodic discrete spectrum.</p>
+<p>At \(W=2w\), a centred Gaussian retains the on-axis amplitude fraction \(\operatorname{erf}(2)\simeq0.9953\) if integrated exactly. The normalised plot hides this 0.47% loss at zero frequency. If absolute power calibration matters, repeat the experiment without normalisation and independently integrate \(|A|^2\) across the aperture. A shape comparison and a throughput comparison are different measurements, both meaningful.</p>
+</section>
+<section>
+<h2 id="recover-a-size-from-a-far-field-measurement">Recover a size from a far-field measurement</h2>
+<p>Suppose a detector measures the intensity falling to one half at \(f_{1/2}\). Since \(I/I_0=e^{-2(\pi wf)^2}\), the inferred \(w\) is \(\sqrt{\ln2/2}/(\pi f_{1/2})\). For \(f_{1/2}=0.1874\) cycles/mm the radius is about 1 mm. If the instrument actually reported amplitude half-width the corresponding formula would have \(\sqrt{\ln2}\) in the numerator; the radius would differ by a factor \(\sqrt2\). The raw measured quantity and its threshold should accompany any quoted fitted radius.</p>
+<p>A positive intensity cannot distinguish a negative sidelobe amplitude from a positive amplitude of the same magnitude. To observe the sign change shown by the finite-window amplitude curve, interfere the field with a phase reference. Conversely, when comparing with a camera image, square the signed numerical amplitude once and apply the detector pixel average. Comparing a real-amplitude plot directly with a recorded intensity array is an avoidable model mismatch.</p>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>How could one distinguish an intrinsic physical sidelobe from ringing produced by the scanner window without a known reference aperture?</p>
+<details><summary>Work through the solution</summary><p>Increase the scanned width while keeping \(\Delta x\) fixed by adding samples. Window artefacts should change as the omitted tails shrink. Repeat with a different smooth weighting and report its effect on resolution. An intrinsic feature that survives these tests can then be compared against an independent physical model.</p></details>
+<p>At \(W=3\) mm and \(N=24\), what spatial frequencies can be represented without aliasing, and what does adding zero padding do?</p>
+<details><summary>Work through the solution</summary><p>\(\Delta x=0.25\) mm, so the Nyquist limit is 2 cycles/mm. Zero padding supplies more displayed frequency samples of the same discrete transform. It adds no measured aperture detail and cannot resolve aliasing already present in the original samples.</p></details>
+<p>A beam shifted by \(x_0\) within a sufficiently wide window has the same far-field intensity. What information changes?</p>
+<details><summary>Work through the solution</summary><p>Substituting \(x'=x-x_0\) in the Fourier integral multiplies its amplitude by \(e^{-2\pi i f x_0}\). The phase ramp records the displacement; the intensity is invariant. A truncated window may break this invariance by clipping different amounts of field.</p></details>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/07-conducting-film/">When a film is thinner than a skin depth</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/09-ringdown-estimation/">Estimate a cavity linewidth from a finite, biased record</a></span></nav><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
