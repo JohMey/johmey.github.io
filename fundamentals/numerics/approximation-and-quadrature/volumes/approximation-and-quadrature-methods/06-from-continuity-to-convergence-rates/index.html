@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What can smoothness buy at a fixed polynomial degree? · OneSimulation</title>
+<meta name="description" content="Prove density for every continuous signal, derive a faster rate for smooth signals and identify the persistent overshoot when a jump violates the assumptions.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/06-from-continuity-to-convergence-rates/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What can smoothness buy at a fixed polynomial degree? · OneSimulation">
+<meta property="og:description" content="Prove density for every continuous signal, derive a faster rate for smooth signals and identify the persistent overshoot when a jump violates the assumptions.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/06-from-continuity-to-convergence-rates/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="What can smoothness buy at a fixed polynomial degree?">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "What can smoothness buy at a fixed polynomial degree?", "description": "Prove density for every continuous signal, derive a faster rate for smooth signals and identify the persistent overshoot when a jump violates the assumptions.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/06-from-continuity-to-convergence-rates/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "What can smoothness buy at a fixed polynomial degree?", "item": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/06-from-continuity-to-convergence-rates/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_06_from_continuity_to_convergence_rates">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>What can smoothness buy at a fixed polynomial degree?</h1><p class="lead">Prove density for every continuous signal, derive a faster rate for smooth signals and identify the persistent overshoot when a jump violates the assumptions.</p><p class="byline">Unit 6 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#density">Construct a convergent polynomial without differentiating the data</a><a href="#nodes">Relate interpolation error to best achievable error</a><a href="#regularity">Compare an analytic continuation, a corner and a jump</a><a href="#tutorial">Tutorial on changing the order of limits</a></nav></aside><article class="prose reference"><section><h2 id="density">Construct a convergent polynomial without differentiating the data</h2>
+<p>For continuous \(f\) on \([0,1]\), let \(K\) count successes in \(n\) independent Bernoulli trials of success probability \(x\). The expected sample \(B_nf(x)=E[f(K/n)]\) is a polynomial of degree at most \(n\). The weights sum to one and \(E[K/n]=x,\ {\rm Var}(K/n)=x(1-x)/n\). Let \(\omega_f(\delta)\) be the largest change in \(f\) between points at distance at most \(\delta\).</p>
+<div class="math display">\[|B_nf(x)-f(x)|\le\omega_f(\delta)+2\|f\|_\infty P(|K/n-x|&gt;\delta) \le\omega_f(\delta)+\frac{\|f\|_\infty}{2n\delta^2}.\]</div>
+<p>Given a target error, choose \(\delta\) using uniform continuity first, then \(n\) to control the second term. The bound holds simultaneously for every \(x\). For an \(L\)-Lipschitz signal, Cauchy–Schwarz improves the argument directly to \(\|B_nf-f\|_\infty\le L/(2\sqrt n)\). For \(f(x)=x^2\), taking the second moment gives the exact excess \(x(1-x)/n\). Existence of a uniformly good polynomial gives no guarantee that interpolating arbitrary samples will find it.</p>
+</section>
+<section><h2 id="nodes">Relate interpolation error to best achievable error</h2>
+<p>For distinct nodes let \(I_n\) interpolate and \(\ell_j\) be the cardinal polynomials. Its operator norm in the maximum norm is \(\Lambda_n=\max_x\sum_j|\ell_j(x)|\). At a maximising point, data with the signs of the cardinal functions attain the bound and can be extended continuously between nodes. For any polynomial \(p\) of degree at most \(n\), \(I_np=p\), so subtraction gives</p>
+<div class="math display">\[\|f-I_nf\|_\infty\le (1+\Lambda_n)\inf_{\deg p\le n}\|f-p\|_\infty .\]</div>
+<p>For Chebyshev extrema the angular representation \(x=\cos\theta\) makes the cardinal functions shifted trigonometric kernels. Their absolute contributions away from the nearest angular node are bounded by a constant times \(1/j\), using \(\sin u\ge 2u/\pi\) on \([0,\pi/2]\). The nearest term is bounded. Summing yields \(O(\log n)\) growth. At equally spaced nodes the barycentric weights are proportional to \((-1)^j{n\choose j}\), giving very large alternating interior weights near an endpoint as degree increases. To obtain an explicit lower bound, measure distance in grid spacings and evaluate at \(1/2\). Since \(\prod_{i=0}^n|1/2-i|/n!={2n\choose n}/(2\,4^n)\), the absolute value of the \(j\)th cardinal polynomial there is this factor times \({n\choose j}/|j-1/2|\). For \(j=\lfloor n/2\rfloor\), the central-binomial estimate gives growth at least proportional to \(2^n/n^2\). A single cardinal function is already enough to prove exponential growth of the norm. This explains why the same best error can coexist with very different interpolation errors.</p>
+</section>
+<section><h2 id="regularity">Compare an analytic continuation, a corner and a jump</h2>
+<p>Put \(g(\theta)=f(\cos\theta)\). Chebyshev coefficients are cosine coefficients of an even periodic function. If the periodic \(g\) has \(m\) absolutely continuous derivatives and the next derivative is integrable, integration by parts \(m+1\) times bounds its coefficients by \(Ck^{-(m+1)}\). For \(m\ge1\), summing the tail gives \(O(n^{-m})\). Piecewise smooth functions can be treated by integrating each smooth interval and retaining internal jump terms. For \(|\cos\theta|\), continuity removes the first boundary term while the derivative jumps, giving coefficients of order \(k^{-2}\) and a tail of order \(1/n\). Analytic extension to an ellipse instead gives the geometric tail developed in the course's interpolation chapter.</p>
+<p>At a jump of height \(J\), continuous approximants cannot have a uniform error below \(|J|/2\) on a domain containing both sides. For a periodic step of height 2, its sine series involves \((4/\pi)\sin((2j+1)x)/(2j+1)\). At \(x=z/(2N)\) the first \(N\) terms form a midpoint Riemann sum tending to \((2/\pi)\int_0^z\sin(t)/t\,dt\). Its first maximum, at \(z=\pi\), is about 1.179. The overshoot persists while its width shrinks. A mean-square error can still decrease.</p>
+<details class="study-aside"><summary>How should a convergence plot treat the jump itself?</summary><p>Report the maximum over the whole interval, a second maximum excluding a fixed physical neighbourhood of the jump and an integrated squared error. Sampling at a fixed small set of points can miss the narrowing peak entirely. Increase the sampling resolution with the polynomial degree.</p></details>
+<!-- numerics-figure --><figure class="study-figure"><img src="/assets/fundamentals-expansion/numerics-regularity-and-rate.png" loading="lazy" alt="Interpolation error decays at different rates for analytic, corner and discontinuous signals."><figcaption>The same Chebyshev sampling rule resolves an analytic profile quickly, converges more slowly at a corner and retains a large maximum error near a jump. The last analytic points reveal finite-precision effects.</figcaption></figure><!-- /numerics-figure -->
+</section>
+<section><h2 id="tutorial">Tutorial on changing the order of limits</h2>
+<h3>Obtain an explicit degree requirement for a bounded slope</h3><details><summary>Work through the solution</summary><p>For a target maximum error \(0.01\) and \(L=2\), the Lipschitz estimate guarantees \(n\ge10^4\). This is a sufficient degree. For the specific quadratic the exact worst error is \(1/(4n)\), requiring only \(n\ge25\).</p></details>
+<h3>Predict the effect of measurement error on both meshes</h3><details><summary>Work through the solution</summary><p>Bounded nodal errors of size \(\epsilon\) perturb the interpolant by at most \(\Lambda_n\epsilon\). Even if the noiseless tail decreases geometrically, at fixed instrument accuracy the noise term eventually dominates. On an equally spaced mesh increasing the degree can make the prediction worse.</p></details>
+<p><a href="https://people.maths.ox.ac.uk/trefethen/ATAP/">Trefethen · approximation, regularity and interpolation</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/05-estimating-a-slope-from-noisy-samples/">How many neighbouring samples belong in a slope estimate?</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/07-choosing-the-poles-of-a-rational-approximation/">When should the denominator be fitted too?</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_06_from_continuity_to_convergence_rates">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

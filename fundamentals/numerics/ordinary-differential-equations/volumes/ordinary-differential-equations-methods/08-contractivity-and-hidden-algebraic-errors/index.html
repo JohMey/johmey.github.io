@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why an accurate position can hide an inaccurate constraint force · OneSimulation</title>
+<meta name="description" content="Derive an energy test for implicit Runge–Kutta stages, then recover missing derivatives in a constrained model and calculate the accuracy lost by a multiplier.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/08-contractivity-and-hidden-algebraic-errors/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why an accurate position can hide an inaccurate constraint force · OneSimulation">
+<meta property="og:description" content="Derive an energy test for implicit Runge–Kutta stages, then recover missing derivatives in a constrained model and calculate the accuracy lost by a multiplier.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/08-contractivity-and-hidden-algebraic-errors/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Why an accurate position can hide an inaccurate constraint force">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Why an accurate position can hide an inaccurate constraint force", "description": "Derive an energy test for implicit Runge–Kutta stages, then recover missing derivatives in a constrained model and calculate the accuracy lost by a multiplier.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/08-contractivity-and-hidden-algebraic-errors/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Why an accurate position can hide an inaccurate constraint force", "item": "https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/08-contractivity-and-hidden-algebraic-errors/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_ordinary_differential_equations_volumes_ordinary_differential_equations_methods_08_contractivity_and_hidden_algebraic_errors">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/">Dynamics and numerical time integration</a></p><h1>Why an accurate position can hide an inaccurate constraint force</h1><p class="lead">Derive an energy test for implicit Runge–Kutta stages, then recover missing derivatives in a constrained model and calculate the accuracy lost by a multiplier.</p><p class="byline">Unit 8 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#stability">Derive a nonlinear contractivity test</a><a href="#constraints">Recover the derivatives needed to see the multiplier</a><a href="#accuracy">Derive a concrete order loss before interpreting an index</a><a href="#index">Derive an index-dependent rate in the constant-coefficient case</a><a href="#tutorial">Tutorial on contractivity and constraint data</a></nav></aside><article class="prose reference"><section><h2 id="stability">Derive a nonlinear contractivity test</h2>
+<p>Suppose \(\langle u-v,f(u)-f(v)\rangle\le0\) for all relevant states. For two trajectories advanced by the same RK step, use \(D_i\) for each stage-state difference and \(g_i\) for the stage-slope differences. Substitute the stage identity \(D_i=d_0+h\sum_j a_{ij}g_j\) into the square of \(d_1=d_0+h\sum_i b_i g_i\). Collecting symmetric products gives</p>
+<div class="math display">\[\|d_1\|^2-\|d_0\|^2=2h\sum_i b_i\langle D_i,g_i\rangle-h^2\sum_{ij}(b_i a_{ij}+b_j a_{ji}-b_i b_j)\langle g_i,g_j\rangle .\]</div>
+<p>If \(b_i\ge0\) and the displayed symmetric coefficient matrix is positive semidefinite, the step cannot increase distances, assuming its nonlinear stage equations have a solution. This sufficient algebraic stability condition applies to nonlinear dissipative fields. For one-stage midpoint \(a=1/2,b=1\) the matrix is zero. Backward Euler \(a=b=1\) gives one. Both are contractive, but their scalar amplification limits as \(h\lambda\to-\infty\) are \(-1\) and 0 respectively. Only the latter damps an unresolved fast mode completely.</p>
+</section>
+<section><h2 id="constraints">Recover the derivatives needed to see the multiplier</h2>
+<p>For index one, \(y'=f(y,z),\ 0=g(y,z)\) with \(g_z\) invertible, the implicit function theorem eliminates \(z\). Perturbing the algebraic constraint at fixed \(y\) by \(\epsilon\) gives \(\delta z=O(\epsilon/\sigma_{\min}(g_z))\). A mechanical position constraint has a different structure:</p>
+<div class="math display equation-chain"><div class="equation-step">\[q'=v,\]</div><div class="equation-step">\[Mv'=F(q,v)-G(q)^T\lambda,\]</div><div class="equation-step">\[g(q)=0,\]</div><div class="equation-step">\[G=g_q .\]</div></div>
+<p>Differentiating once gives \(Gv=0\). Differentiating again gives \(Gv'+g_{qq}[v,v]=0\). For positive definite mass and independent constraints the multiplier matrix \(GM^{-1}G^T\) is invertible and</p>
+<div class="math display">\[(GM^{-1}G^T)\lambda=GM^{-1}F+g_{qq}[v,v].\]</div>
+<p>The position formulation is a differentiation-index-three system in first-order form. Consistent initial data require both position and velocity constraints. A small position residual alone places no bound on multiplier error without regularity of its time dependence.</p>
+</section>
+<section><h2 id="accuracy">Derive a concrete order loss before interpreting an index</h2>
+<p>A manufactured constraint \(q=\sin t\) with \(q'=v,\ v'=\lambda\) has \(v=\cos t,\lambda=-\sin t\). Suppose a position solver introduces an alternating error \(e_n=(-1)^nh^p\). A backward difference for velocity amplifies it to \(2(-1)^n h^{p-1}\), and a second difference for the multiplier amplifies it to \(4(-1)^n h^{p-2}\). A smooth error series instead can gain cancellations. This distinction prevents assigning every index-three method a universal loss of two orders. Consistent stage order, constraint enforcement, regularity, initial conditions and the reconstruction used for the multiplier all affect the theorem.</p>
+<p>Consider a converged Radau collocation step for the simpler index-two constraint \(q' =z,\ q=g(t)\). Its stages enforce the exact sampled \(g(t_n+c_i h)\). Starting from exact \(q_n\), the derivative stages equal those of the degree-\(s\) interpolant through the start and the \(s\) stage nodes. Stiff accuracy identifies the final stage as the output. Interpolant differentiation gives endpoint derivative error \(O(h^s)\) for smooth \(g\). The constrained position is exact here, illustrating precisely how classical differential-variable order fails to predict a multiplier measurement.</p>
+</section>
+<section><h2 id="index">Derive an index-dependent rate in the constant-coefficient case</h2>
+<p>For a regular linear differential-algebraic pencil with constant coefficients, the algebraic part can be written as \(Nz'=z-g(t)\), where \(N^\nu=0\) and \(N^{\nu-1}\ne0\). Repeated substitution gives \(z=g+Ng'+\cdots+N^{\nu-1}g^{(\nu-1)}\). For a single Jordan chain, its last component specifies the input directly while the first can depend on its derivative of order \(\nu-1\). The highest derivative actually seen depends on the input direction and the reported component.</p>
+<p>Interpolate \(g\) through \(s+1\) distinct nodes at fixed relative positions on an interval of length \(h\). Taylor expansion at the endpoint through degree \(s\) is exact for the interpolant. The residual nodal values are \(O(h^{s+1})\). Differentiating the fixed reference cardinal polynomials \(\ell\) times introduces \(h^{-\ell}\), giving \(O(h^{s+1-\ell})\) for derivative order \(\ell\le s\). Smoothness through degree \(s+1\) is required. If nodal observations themselves carry \(O(h^p)\) disturbances, their differentiated contribution is \(O(h^{p-\ell})\). The worst reconstructed component on an index-\(\nu\) chain therefore has order \(\min(s+1,p)-(\nu-1)\), when \(\nu-1\le s\) and the forcing couples to that last derivative. This is an error bound for this specified reconstruction. A different integrator's stage order and enforcement of the constraints need a separate analysis.</p>
+<details class="study-aside"><summary>What does a nonlinear stage tolerance control?</summary><p>A stage solve tolerance on position has the units of position. When converting residuals to a velocity or acceleration tolerance, budget the factors \(1/h\) and \(1/h^2\) and the conditioning of the constraint matrix. Plot force error on a manufactured trajectory as well as the position-constraint residual.</p></details>
+<!-- numerics-figure --><figure class="study-figure"><img src="/assets/fundamentals-expansion/numerics-constraint-errors.png" loading="lazy" alt="Alternating cubic position errors lose one order for each difference."><figcaption>Differencing an alternating position disturbance of amplitude h³ yields 2h² for velocity and 4h for the multiplier. These are the contributions from the disturbance alone. Smooth truncation errors need not follow these slopes.</figcaption></figure><!-- /numerics-figure -->
+</section>
+<section><h2 id="tutorial">Tutorial on contractivity and constraint data</h2>
+<h3>Check the algebraic stability test on forward Euler</h3><details><summary>Work through the solution</summary><p>With \(a=0,b=1\), the matrix coefficient is \(-1\). For \(y'=-y\), the amplification \(1-h\) has magnitude above one for \(h&gt;2\), confirming that increasing the step may violate contractivity.</p></details>
+<h3>What force holds a unit mass on the unit circle at speed three?</h3><details><summary>Work through the solution</summary><p>Choose \(g=(q^Tq-1)/2\), so \(G=q^T\), \(g_{qq}=I\), and \(F=0\). With \(\|q\|=1,\ q^Tv=0\), the multiplier is \(\|v\|^2=9\) and the constraint force is \(-9q\). An outward initial velocity violates the hidden constraint even if the position is exact.</p></details>
+<p><a href="https://link.springer.com/book/10.1007/978-3-642-05221-7">Hairer and Wanner · stiff and differential-algebraic equations</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/07-why-the-root-condition-controls-convergence/">Why consistent multistep formulas can fail under refinement</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/">Volume contents</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_ordinary_differential_equations_volumes_ordinary_differential_equations_methods_08_contractivity_and_hidden_algebraic_errors">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

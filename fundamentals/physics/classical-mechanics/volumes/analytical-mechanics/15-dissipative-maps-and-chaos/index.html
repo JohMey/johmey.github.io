@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From a repeating trajectory to a chaotic attractor · OneSimulation</title>
+<meta name="description" content="A damped pendulum under a periodic drive can settle into the same orbit on each run yet visit a different point on successive drive periods. A return map supplies the right clock for distinguishing a new period from a slowly decaying transient.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/physics/classical-mechanics/volumes/analytical-mechanics/15-dissipative-maps-and-chaos/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From a repeating trajectory to a chaotic attractor · OneSimulation">
+<meta property="og:description" content="A damped pendulum under a periodic drive can settle into the same orbit on each run yet visit a different point on successive drive periods. A return map supplies the right clock for distinguishing a new period from a slowly decaying transient.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/physics/classical-mechanics/volumes/analytical-mechanics/15-dissipative-maps-and-chaos/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="From a repeating trajectory to a chaotic attractor">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "From a repeating trajectory to a chaotic attractor", "description": "A damped pendulum under a periodic drive can settle into the same orbit on each run yet visit a different point on successive drive periods. A return map supplies the right clock for distinguishing a new period from a slowly decaying transient.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/physics/classical-mechanics/volumes/analytical-mechanics/15-dissipative-maps-and-chaos/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "From a repeating trajectory to a chaotic attractor", "item": "https://onesimulation.pages.dev/fundamentals/physics/classical-mechanics/volumes/analytical-mechanics/15-dissipative-maps-and-chaos/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_physics_classical_mechanics_volumes_analytical_mechanics_15_dissipative_maps_and_chaos">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a> / <a href="/fundamentals/physics/classical-mechanics/volumes/analytical-mechanics/">Analytical mechanics from constraints to invariants</a></p><h1>From a repeating trajectory to a chaotic attractor</h1><p class="lead">A damped pendulum under a periodic drive can settle into the same orbit on each run yet visit a different point on successive drive periods. A return map supplies the right clock for distinguishing a new period from a slowly decaying transient.</p><p class="byline">Unit 15 of 16</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#section">Build a map from a continuous mechanical experiment</a><a href="#doubling">Calculate a period doubling in a solvable map</a><a href="#sensitivity">Estimate a growth rate while keeping the observations bounded</a><a href="#tutorial">Tutorial on return maps</a></nav></aside><article class="prose reference"><section><h2 id="section">Build a map from a continuous mechanical experiment</h2>
+<p>Consider a pendulum with dimensionless time in units of its small-angle period divided by \(2\pi\). Let \(q\) be the positive damping rate, \(A\) the drive amplitude and \(\omega\) the drive frequency.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\dot\theta=p,\]</div><div class="equation-step">\[\dot p=-q p-\sin\theta+A\cos(\omega t).\]</div></div>
+<p>Prepare all observations at drive phase zero and evolve for \(T=2\pi/\omega\). The stroboscopic map takes \((\theta_n,p_n)\) to \((\theta_{n+1},p_{n+1})\). Complete rotations can be plotted modulo \(2\pi\) while the unwrapped angle tracks transport. An attracting period-one orbit appears as one point after transients. A period-two orbit alternates between two points and returns after \(2T\).</p>
+<p>For a small patch in the state plane the instantaneous fractional area growth is the divergence \(\partial_\theta p+\partial_p\dot p=-q\). Integration over a period gives a Jacobian determinant \(e^{-qT}\). Phase-area contraction allows an attractor. A periodically driven Hamiltonian system at \(q=0\) instead has a unit determinant.</p>
+<details class="study-aside"><summary>Recall · Why use a section at fixed drive phase?</summary><p>Two trajectories with identical angle and speed can accelerate differently at different phases of an external drive. Sampling once per drive period compares equal external conditions. Recording at a nearby period can turn a perfectly regular response into an apparent cloud of points.</p></details>
+</section>
+<section><h2 id="doubling">Calculate a period doubling in a solvable map</h2>
+<p>Near a flip bifurcation with only one slow direction, a one-dimensional map helps explain stability changes. The logistic map \(f(x)=rx(1-x)\) on \(0\leq x\leq1\) for \(0&lt;r\leq4\) is an illustrative return law. Its \(r\) is not a calibrated pendulum torque. An interior fixed point is \(x_*=1-1/r\). For a small displacement \(\delta_{n+1}\simeq f'(x_*)\delta_n\), giving a multiplier \(2-r\). Its magnitude crosses one at \(r=3\) with negative sign.</p>
+<p>To find the new orbit, solve \(f(f(x))-x=0\) and remove the two fixed-point factors \(x\) and \(x-x_*\). The remaining quadratic has roots</p>
+<div class="math display">\[x_\pm=\frac{r+1\pm\sqrt{(r-3)(r+1)}}{2r}.\]</div>
+<p>Its two-step multiplier is \(f'(x_+)f'(x_-)=-r^2+2r+4\). At \(r=3.2\) it is 0.16 and deviations fall by that factor every two observations. At \(r=1+\sqrt6\) it reaches \(-1\), so that orbit loses stability. Additional doublings create intervals of higher-period motion. Periodic windows interrupt the chaotic parameter range.</p>
+
+<figure><img src="/assets/fundamentals-expansion/physics-logistic-attractors.png" alt="Each column records 120 late iterates at one setting after discarding 850 returns. First one branch splits, then each of its daughters splits. Narrow periodic windows remain visible among broader bands." width="1152" height="640" loading="lazy"><figcaption>Each column records 120 late iterates at one setting after discarding 850 returns. First one branch splits, then each of its daughters splits. Narrow periodic windows remain visible among broader bands.</figcaption></figure>
+</section>
+<section><h2 id="sensitivity">Estimate a growth rate while keeping the observations bounded</h2>
+<p>A separation eventually saturates at the attractor size. To estimate growth over many periods, multiply the local tangent factors and take a logarithm before averaging. Along a sampled orbit the largest exponent of the scalar map is</p>
+<div class="math display">\[\lambda_N=\frac1N\sum_{j=0}^{N-1}\ln\left|r(1-2x_j)\right|.\]</div>
+<p>For \(r=4\) the substitution \(x=\sin^2\phi\) maps an iteration to angle doubling modulo the symmetries of the sine. Typical invariant-measure trajectories have \(\lambda=\ln2\) per iteration. Exceptional exact initial conditions, including a critical point that maps onto zero, do not estimate that typical value. Finite precision eventually creates repetitions. Report the sampling window and discard transient returns.</p>
+<p>For a mechanical test, integrate two nearby pendulum trajectories, sample at \(T\), rescale the difference back to its small original norm and accumulate its log growth. Repeat with smaller time step and different starting points in the same basin. A positive long-time exponent and recurrent bounded motion are distinct pieces of evidence. Slow beats and noisy sensors can broaden a spectrum without deterministic chaos.</p>
+</section>
+<section><h2 id="tutorial">Tutorial on return maps</h2>
+<h3>1 · Predict the number of observed return points</h3><details class="exercise-solution"><summary>Work through the solution</summary><p>For \(r=3.2\), the roots of the two-cycle are about 0.5130 and 0.7995. Check directly that the first maps near 0.7995. Two sensor samples cannot distinguish a two-cycle from a transient. Repeated pairs should approach these values with the calculated two-step multiplier.</p></details>
+<h3>2 · Separate dissipation from instability</h3><details class="exercise-solution"><summary>Work through the solution</summary><p>For \(qT=0.4\) the area factor is 0.6703. If one real multiplier of a period-one orbit is \(-1.2\), its partner is \(0.6703/(-1.2)=-0.559\). The orbit expands along one direction despite contracting area in total.</p></details>
+<h3>3 · Design a finite-time comparison</h3><details class="exercise-solution"><summary>Work through the solution</summary><p>An apparent doubling every three drive periods corresponds to \(\ln2/3=0.231\) per return. Repeat the estimate with several initial separations above roundoff and below the nonlinear scale, increase the observation window and verify persistence when the numerical step is halved.</p></details>
+<p>For further study see <a href="https://henry.pha.jhu.edu/chapters.html">Taylor, Classical Mechanics</a>, chapters 11–12 on nonlinear oscillations, the driven pendulum and chaos.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/volumes/analytical-mechanics/14-drag-and-open-system-momentum/">Motion in a medium and momentum carried across a boundary</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/volumes/analytical-mechanics/16-tidal-gradients-and-elastic-tensors/">From differential acceleration to three-dimensional strain and stress</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_physics_classical_mechanics_volumes_analytical_mechanics_15_dissipative_maps_and_chaos">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

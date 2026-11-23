@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which members carry a load through a truss? · OneSimulation</title>
+<meta name="description" content="A weighing frame can have perfect external force balance and still contain a failed load path. Follow the reactions into individual bars, cut across the middle of the frame, and carry the same reasoning into three dimensions.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/06-truss-joints-sections-and-space/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Which members carry a load through a truss? · OneSimulation">
+<meta property="og:description" content="A weighing frame can have perfect external force balance and still contain a failed load path. Follow the reactions into individual bars, cut across the middle of the frame, and carry the same reasoning into three dimensions.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/06-truss-joints-sections-and-space/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Which members carry a load through a truss?">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Which members carry a load through a truss?", "description": "A weighing frame can have perfect external force balance and still contain a failed load path. Follow the reactions into individual bars, cut across the middle of the frame, and carry the same reasoning into three dimensions.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/06-truss-joints-sections-and-space/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Which members carry a load through a truss?", "item": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/06-truss-joints-sections-and-space/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_mechanical_engineering_engineering_mechanics_volumes_engineering_mechanics_methods_06_truss_joints_sections_and_space">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/">Stress, deformation and structural measurement</a></p><h1>Which members carry a load through a truss?</h1><p class="lead">A weighing frame can have perfect external force balance and still contain a failed load path. Follow the reactions into individual bars, cut across the middle of the frame, and carry the same reasoning into three dimensions.</p><p class="byline">Unit 6 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="#sheet">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#model">Earn the two-force assumption</a><a href="#bridge">Read a two-panel bridge from both ends</a><a href="#spatial">Lift the joint into three dimensions</a><a href="#sheet">Exercises on force paths</a></nav></aside><article class="prose reference"><section><h2 id="model">Earn the two-force assumption</h2>
+<p>Ideal pins transmit forces through their centres. Apply loads at joints, neglect member self-weight or lump it at joints, and treat each initially straight bar as hinged at both ends. Moment balance on that bar requires its two end forces to be collinear. A single scalar \(N\) now describes each member. Positive \(N\) pulls away from the joint. For a bar joining positions \(x_i\) and \(x_j\), use \(e_{ij}=(x_j-x_i)/|x_j-x_i|\). Reversing the joint reverses its column direction.</p>
+<div class="math display">\[sum_{j}N_{ij}e_{ij}+R_i+P_i=0.\]</div>
+<p>At an unloaded joint with two noncollinear bars their coefficients must both vanish. With three bars, two collinear and no applied load, project normal to their shared line to eliminate both and identify the third as a zero-force member. A brace classified this way may still resist the next load case or restrain buckling.</p>
+</section>
+<section><h2 id="bridge">Read a two-panel bridge from both ends</h2>
+<p>Place bottom joints A, B, C at (0,0), (2,0), (4,0) m, and D, E at (1,1), (3,1). Connect AB, BC, AD, DB, BE, EC and DE. Pin A, put C on a vertical-reaction roller. Apply 6 kN down at D and 2 kN down at E. Taking moments about A gives \(4C_y=6(1)+2(3)\), hence \(C_y=3\) and \(A_y=5\) kN. At A, the vertical projection gives \(N_{AD}=-5\sqrt2\) kN, and horizontal equilibrium gives \(N_{AB}=5\) kN. At C the corresponding forces are \(N_{EC}=-3\sqrt2\) and \(N_{BC}=3\) kN.</p>
+<p>Cut AB, DB and DE immediately left of B and take moments on the left fragment about B. AB and DB intersect there. The reaction at A contributes −10 kN m, the downward load at D contributes +6 kN m, and the horizontal force in DE contributes \(-N_{DE}(1\,\mathrm m)\). Thus \(N_{DE}=-4\) kN. Solving at D gives \(N_{DB}=-\sqrt2\) kN. At E the corresponding diagonal BE is in tension at \(+\sqrt2\) kN. The opposite signs are physically measurable under this asymmetric loading.</p>
+<details class="study-aside"><summary>When a section cut can determine three forces</summary><p>Three equilibrium equations suffice only if the three cut-member force lines supply independent force and moment conditions. If all three lines meet at one point, their moments about that point vanish together. Choose another cut or a second free body.</p></details>
+</section>
+<section><h2 id="spatial">Lift the joint into three dimensions</h2>
+<p>Place three feet at equal azimuthal intervals on a circle of radius 1 m. Pin the apex 1 m above its centre. Measure the horizontal 0° direction toward foot 1. The directions from apex to feet are \((\cos\theta,\sin\theta,-1)/\sqrt2\). A downward load \(W\) and horizontal load \(H\) give \(N_2=N_3\) by symmetry. Taking horizontal and vertical projections yields</p>
+<div class="math display equation-chain"><div class="equation-step">\[N_1=-\frac{\sqrt2}{3}(W+2H),\]</div><div class="equation-step">\[N_2=N_3=\frac{\sqrt2}{3}(H-W).\]</div></div>
+<p>At \(W=6\) and \(H=3\) kN, all three bars are in compression. At \(H=6\) kN two members unload simultaneously. Pins capable of taking tension and unanchored compression-only feet then predict different admissible states. The notebook resolves all three joint equations and plots that boundary.</p>
+<details class="study-aside"><summary>OneSimulation experiment · Two legs unload as the horizontal apex force reaches the vertical load</summary><p>Run the notebook with OneSimulation 0.2.0, NumPy, SciPy and Matplotlib. Change the input data and compare your run with the recorded result.</p><pre><code>&quot;&quot;&quot;Resolve measured loads on a three-dimensional tripod into signed member forces.&quot;&quot;&quot;
+import numpy as np
+import matplotlib.pyplot as plt
+from onesim.numerics.nonlinear import LeastSquares
+
+angles = np.deg2rad([0, 120, 240])
+# Columns point from the loaded apex toward a foot; positive force is tension.
+directions = np.array([np.cos(angles), np.sin(angles), -np.ones(3)]) / np.sqrt(2)
+horizontal = np.linspace(0, 6, 61)  # kN
+forces = []
+for load in horizontal:
+    external = np.array([load, 0.0, -6.0])
+    fit = LeastSquares().solve(lambda force: directions @ force + external, [-2.0]*3)
+    assert np.linalg.norm(directions @ fit.x + external) &lt; 1e-6
+    forces.append(fit.x)
+forces = np.array(forces)
+print(&quot;H=3 kN: signed member forces [kN]&quot;, np.round(forces[30], 3))
+print(&quot;H=6 kN: signed member forces [kN]&quot;, np.round(forces[-1], 3))</code></pre><p>Reference run</p><pre><samp>H=3 kN: signed member forces [kN] [-5.657 -1.414 -1.414]
+H=6 kN: signed member forces [kN] [-8.485  0.     0.   ]</samp></pre><figure><img src="/assets/fundamentals-expansion/engineering-tripod.png" alt="Two legs unload as the horizontal apex force reaches the vertical load" loading="lazy"><figcaption>Two legs unload as the horizontal apex force reaches the vertical load</figcaption></figure><p><a href="/downloads/fundamentals/examples/engineering-tripod.ipynb" download>Download editable notebook</a> · <a href="/downloads/fundamentals/examples/engineering-tripod.py" download>Download Python script</a></p></details>
+</section>
+<section><h2 id="sheet">Exercises on force paths</h2>
+<p>Move both bridge loads to E while retaining their combined magnitude. Which support reaction and which top-chord force change?</p><details><summary>Worked solution</summary><p>The right reaction is \(8(3)/4=6\) kN and the left is 2 kN. Taking moments about B on the same left fragment gives \(-2(2)-N_{DE}=0\), so DE still carries −4 kN. An unchanged chord force does not imply unchanged diagonals.</p></details>
+<p>Remove BE from the original frame. Does external equilibrium establish rigidity?</p><details><summary>Worked solution</summary><p>The pin and roller provide three independent reaction components. Five planar joints admit ten equilibrium rows against six members and three reactions. There cannot be full rank. The original load may no longer be supported without motion. For geometries satisfying the count, independence must still be checked.</p></details>
+<p>What happens when the apex height tends to zero at fixed radius and vertical load?</p><details><summary>Worked solution</summary><p>Every vertical component of a member direction tends to zero. Maintaining finite upward resultant requires unbounded compression before the idealised matrix loses rank at zero height. Strength, deformation and buckling constrain the real frame much earlier.</p></details>
+<p class="references">Further reading · <a href="https://www.pearson.com/en-au/media/zqyizo4s/9781292444048-toc.pdf">Hibbeler, Engineering Mechanics: Statics in SI Units, 15th ed.</a>, Chapter 6, especially sections 6.1–6.5.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/05-stress-around-a-circular-opening/">Where does a circular opening concentrate stress?</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/07-unsymmetric-bending/">Where does the neutral axis of an angle section lie?</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_mechanical_engineering_engineering_mechanics_volumes_engineering_mechanics_methods_06_truss_joints_sections_and_space">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

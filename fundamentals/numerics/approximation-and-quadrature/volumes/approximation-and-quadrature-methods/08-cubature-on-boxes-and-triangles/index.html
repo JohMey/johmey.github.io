@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measuring an area integral with finitely many samples · OneSimulation</title>
+<meta name="description" content="Build deterministic multidimensional rules from moments and geometry. Compare tensor products, symmetric triangle rules and sparse combinations at a fixed number of evaluations.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/08-cubature-on-boxes-and-triangles/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measuring an area integral with finitely many samples · OneSimulation">
+<meta property="og:description" content="Build deterministic multidimensional rules from moments and geometry. Compare tensor products, symmetric triangle rules and sparse combinations at a fixed number of evaluations.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/08-cubature-on-boxes-and-triangles/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Measuring an area integral with finitely many samples">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Measuring an area integral with finitely many samples", "description": "Build deterministic multidimensional rules from moments and geometry. Compare tensor products, symmetric triangle rules and sparse combinations at a fixed number of evaluations.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/08-cubature-on-boxes-and-triangles/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Measuring an area integral with finitely many samples", "item": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/08-cubature-on-boxes-and-triangles/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_08_cubature_on_boxes_and_triangles">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>Measuring an area integral with finitely many samples</h1><p class="lead">Build deterministic multidimensional rules from moments and geometry. Compare tensor products, symmetric triangle rules and sparse combinations at a fixed number of evaluations.</p><p class="byline">Unit 8 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#product">Which polynomials does a product rule integrate?</a><a href="#corner">Move the singularity into the Jacobian</a><a href="#sparse">Buy mixed resolution only where it matters</a><a href="#tutorial">Tutorial on domains and evaluation budgets</a></nav></aside><article class="prose reference"><section><h2 id="product">Which polynomials does a product rule integrate?</h2>
+<p>On a rectangle Fubini's theorem factors integrals of \(x^iy^j\). Applying a one-dimensional rule in each direction forms weights \(w_aw_b\) at pairs \((x_a,y_b)\). If each factor integrates through degree \(2n-1\), the tensor rule integrates every monomial with each exponent at most \(2n-1\), including some of total degree above that number. For \(d\) axes the price is \(n^d\) values. Unequal smoothness can justify different orders on different axes.</p>
+<p>On the reference triangle \(x,y\ge0,\ x+y\le1\), integration of the inner monomial followed by the beta integral gives</p>
+<div class="math display">\[\int_T x^i y^j\,dA=\frac{i!j!}{(i+j+2)!}.\]</div>
+<p>Seek a symmetric three-node rule at permutations of barycentric coordinates \((a,b,b)\). Symmetry integrates affine functions once the weights each equal \(1/6\). Matching \(x^2\) gives \((a^2+2b^2)/6=1/12\) with \(a+2b=1\). One solution uses \(a=2/3,b=1/6\). The quadratic cross moment follows from barycentric symmetry and \((x+y+z)^2=1\). For a physical triangle multiply the reference weights by the absolute Jacobian determinant. For a curved mapping the determinant may itself vary across nodes.</p>
+</section>
+<section><h2 id="corner">Move the singularity into the Jacobian</h2>
+<p>Suppose a surface flux density on the same triangle is \(1/\sqrt{x+y}\). With \(s=x+y,\ v=y/(x+y)\), the map \(x=s(1-v),y=sv\) has determinant \(s\). Hence the total is \(\int_0^1\int_0^1 s^{1/2}\,dv\,ds=2/3\). Substituting \(s=u^2\) gives integrand \(2u^2\). Two Gauss nodes along \(u\) and one along \(v\) now suffice in exact arithmetic. A Cartesian mapping \(x=u,y=(1-u)v\) leaves an endpoint singularity even after multiplication by its Jacobian.</p>
+<!-- numerics-experiment -->
+<details class="study-aside" id="try-it"><summary>OneSimulation experiment · Integrate a singular field over a triangle</summary>
+<p>Vary the tensor order. Predict which transformed integrand is exactly integrated first.</p>
+<p><a href="/downloads/fundamentals/examples/numerics-triangle-cubature.ipynb" download>Download the executable notebook</a> · <a href="/downloads/fundamentals/examples/numerics-triangle-cubature.py" download>Python source</a></p>
+<pre><code>&quot;&quot;&quot;Integrate a corner singularity over the unit right triangle by two maps.&quot;&quot;&quot;
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.discretization.geometry.carriers.kernels.quadrature.rules.reference_quadrature import gauss_legendre
+
+orders = [1, 2, 3, 4]
+errors = [[], []]
+for order in orders:
+    points, weights = np.asarray(gauss_legendre(order)).T
+    nodes, weights = (points+1)/2, weights/2
+    u, v = np.meshgrid(nodes, nodes, indexing=&quot;ij&quot;)
+    # First map x=u, y=(1-u)v. Second map x=u²(1-v), y=u²v.
+    values = [(1-u) / np.sqrt(u+(1-u)*v), 2*u**2 * np.ones_like(v)]
+    for sequence, integrand in zip(errors, values):
+        sequence.append(abs(weights @ integrand @ weights - 2/3))
+print(f&quot;Order {orders[-1]} errors: Cartesian map {errors[0][-1]:.6g}, radial map {errors[1][-1]:.3g}&quot;)
+assert max(errors[1][1:]) &lt; 1e-13
+fig, ax = plt.subplots(figsize=(7, 4), layout=&quot;constrained&quot;)
+for err, label in zip(errors, [&quot;Cartesian map&quot;, &quot;Radial map&quot;]):
+    ax.semilogy(np.square(orders), np.maximum(err, 1e-16), &quot;o-&quot;, label=label)
+ax.set(xlabel=&quot;Number of function values&quot;, ylabel=&quot;Absolute error (plot floor 1e−16)&quot;)
+ax.legend()
+fig.savefig(&quot;numerics-triangle-cubature.png&quot;, dpi=170)</code></pre>
+<p>Output from the reference run</p><pre><samp>Order 4 errors: Cartesian map 0.00311717, radial map 1.11e-16</samp></pre>
+<figure><img src="/assets/fundamentals-expansion/numerics-triangle-cubature.png" loading="lazy" style="max-width:100%;height:auto" alt="Two transformations of the same triangle lead to different quadrature errors."><figcaption>Two transformations of the same triangle lead to different quadrature errors.</figcaption></figure>
+</details>
+<!-- /numerics-experiment -->
+</section>
+<section><h2 id="sparse">Buy mixed resolution only where it matters</h2>
+<p>Let \(Q_l\) be nested one-dimensional rules of growing order, \(Q_0=0,\Delta_l=Q_l-Q_{l-1}\). Telescoping the full tensor rule gives a sum of products of increments. In two dimensions retain terms with \(l_1+l_2\le q\), \(l_i\ge1\). This construction spends few evaluations at points fine in both directions. If mixed derivatives control the product increments, many omitted terms are small. A sharp oblique ridge can violate that premise. Refining only along individual axes then misses the ridge.</p>
+<p>For \(q=3\), the combination is \(Q_2\otimes Q_1+Q_1\otimes Q_2-Q_1\otimes Q_1\). Take midpoint and Simpson as nested levels on \([0,1]\). Five distinct points replace the nine in the full tensor Simpson grid. A test on \(x^2y^2\) gives \(1/12+1/12-1/16=5/48\), compared with exact \(1/9\). The difference is exactly the mixed increment omitted from this level.</p>
+<details class="study-aside"><summary>How can two deterministic estimates agree for the wrong reason?</summary><p>A compact nonnegative bump placed between all sampled nodes returns zero on both grids. To certify an error, use an available derivative or interval bound on each region, or change the sampling geometry independently. An observed difference is an estimator whose reliability depends on resolving the integrand.</p></details>
+</section>
+<section><h2 id="tutorial">Tutorial on domains and evaluation budgets</h2>
+<h3>Transport the triangle rule to vertices (0,0), (4,0), (1,2)</h3><details><summary>Work through the solution</summary><p>The matrix mapping coordinate differences has columns \((4,0),(1,2)\) and determinant 8. The three weights are \(8/6\). Their sum is the area 4. Compute each physical node as the same barycentric combination of the physical vertices.</p></details>
+<h3>Decide which quadrature to buy for three dimensions</h3><details><summary>Work through the solution</summary><p>With five levels of points per coordinate, the tensor rule costs \(5^3=125\). If the integrand is a sum \(g(x)+h(y)+k(z)\), product increments involving refinement in two directions vanish because differences annihilate constants. A sparse rule can recover the separate one-dimensional accuracy. A dependence on \(x+y+z\) generally reintroduces mixed terms.</p></details>
+<p><a href="https://www.sciencedirect.com/book/9780122063602/methods-of-numerical-integration">Davis and Rabinowitz · Methods of Numerical Integration</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/07-choosing-the-poles-of-a-rational-approximation/">When should the denominator be fitted too?</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Volume contents</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_08_cubature_on_boxes_and_triangles">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

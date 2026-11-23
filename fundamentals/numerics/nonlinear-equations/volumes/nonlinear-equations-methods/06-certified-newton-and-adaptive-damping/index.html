@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certifying a Newton step before the root is known · OneSimulation</title>
+<meta name="description" content="A small correction is meaningful only together with a curvature estimate. Construct a ball that contains a solution and use a frozen linear solve to make damping decisions independent of equation units.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/06-certified-newton-and-adaptive-damping/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Certifying a Newton step before the root is known · OneSimulation">
+<meta property="og:description" content="A small correction is meaningful only together with a curvature estimate. Construct a ball that contains a solution and use a frozen linear solve to make damping decisions independent of equation units.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/06-certified-newton-and-adaptive-damping/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Certifying a Newton step before the root is known">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Certifying a Newton step before the root is known", "description": "A small correction is meaningful only together with a curvature estimate. Construct a ball that contains a solution and use a frozen linear solve to make damping decisions independent of equation units.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/06-certified-newton-and-adaptive-damping/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Certifying a Newton step before the root is known", "item": "https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/06-certified-newton-and-adaptive-damping/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_nonlinear_equations_volumes_nonlinear_equations_methods_06_certified_newton_and_adaptive_damping">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Nonlinear systems and iterative methods</a></p><h1>Certifying a Newton step before the root is known</h1><p class="lead">A small correction is meaningful only together with a curvature estimate. Construct a ball that contains a solution and use a frozen linear solve to make damping decisions independent of equation units.</p><p class="byline">Unit 6 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#majorant">Bound all future corrections from initial data</a><a href="#scale">Use the linearised correction as the measuring stick</a><a href="#tutorial">Tutorial on certification and damping</a></nav></aside><article class="prose reference"><section><h2 id="majorant">Bound all future corrections from initial data</h2>
+<p>Let \(F\) be differentiable on a convex neighbourhood, \(J_0=F'(x_0)\) invertible, and fix an induced norm. Suppose \(\|J_0^{-1}F(x_0)\|\le b\) and \(\|J_0^{-1}(F'(x)-F'(y))\|\le L\|x-y\|\). These estimates must hold on the entire proposed ball. Define the scalar majorant \(g(t)=b-t+Lt^2/2\). If \(2Lb&lt;1\), its smaller zero is \(r=2b/(1+\sqrt{1-2Lb})\). Require the closed ball of that radius to lie in the domain.</p>
+<p>Set \(t_0=0\) and apply scalar Newton to \(g\). Since \(g\) is decreasing and convex on \([0,r]\), the iterates increase to \(r\). At a point no farther than \(t\) from \(x_0\), the Neumann series for \(J_0^{-1}F'(x)=I+E\), \(\|E\|\le Lt&lt;1\), bounds \(\|F'(x)^{-1}J_0\|\le 1/(1-Lt)\). If \(s\) is an exact Newton correction, the constant and linear terms cancel. Integrating the Jacobian variation along that step gives</p>
+<div class="math display">\[\|J_0^{-1}F(x+s)\|\le L\|s\|^2/2.\]</div>
+<p>At the scalar Newton points exactly the same formula holds with equality for \(g(t_{j+1})=L(t_{j+1}-t_j)^2/2\). Induction now gives \(\|x_{j+1}-x_j\|\le t_{j+1}-t_j\). The vector sequence is Cauchy and stays in the ball, its limit is a root and \(\|x_*-x_j\|\le r-t_j\). Two roots in that ball would be joined by an averaged Jacobian differing from the identity, after scaling, by at most \(Lr&lt;1\). It is invertible, so the roots coincide.</p>
+</section>
+<section><h2 id="scale">Use the linearised correction as the measuring stick</h2>
+<p>Premultiply the equations by any fixed nonsingular matrix \(S\). The Newton correction and the majorant data stay the same since \((SJ_0)^{-1}S=J_0^{-1}\). The Euclidean norm of the raw residual generally changes. For a trial factor \(\lambda\), form \(s=-J^{-1}F(x)\) and \(\bar s=-J^{-1}F(x+\lambda s)\) with the same factorisation. Linear prediction gives \(\bar s=(1-\lambda)s+e\), where local curvature bounded in the current scaled norm implies \(\|e\|\le L_x\lambda^2\|s\|^2/2\). Backtrack until \(\|e\|\le \lambda\|s\|/2\). Then \(\|\bar s\|\le(1-\lambda/2)\|s\|\). For smooth regular points sufficiently small steps pass. Rebuild the Jacobian after acceptance. Global convergence requires additional bounds keeping iterates within a regular level set.</p>
+<p>For \(F=(x_1^2-2,x_2^2-1)\) start at \((1.5,0.9)\) in the maximum norm. Here \(b=0.19/1.8\) and \(L=\max(1/1.5,1/0.9)\). Both follow directly from the diagonal Jacobian. With \(2Lb&lt;1\) the positive quadrant contains the certified ball.</p>
+<!-- numerics-experiment -->
+<details class="study-aside" id="try-it"><summary>OneSimulation experiment · Test the radius after a change of units</summary>
+<p>Replace a starting coordinate by a smaller positive value. Recheck the certificate before iterating.</p>
+<p><a href="/downloads/fundamentals/examples/numerics-certified-newton.ipynb" download>Download the executable notebook</a> · <a href="/downloads/fundamentals/examples/numerics-certified-newton.py" download>Python source</a></p>
+<pre><code>&quot;&quot;&quot;Test a Newton certificate without knowing the solution in advance.&quot;&quot;&quot;
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+
+start = np.array([1.5, 0.9])
+target = np.array([2.0, 1.0])
+beta = np.linalg.norm((start**2 - target) / (2 * start), np.inf)
+lipschitz = max(1 / start)
+radius = 2 * beta / (1 + np.sqrt(1 - 2 * beta * lipschitz))
+print(f&quot;beta={beta:.6f}, L={lipschitz:.6f}, certified radius={radius:.6f}&quot;)
+fig, ax = plt.subplots(figsize=(7, 4), layout=&quot;constrained&quot;)
+for label, scale in [(&quot;Original equations&quot;, [1., 1.]), (&quot;Rescaled equations&quot;, [1e4, 0.01])]:
+    x = start.copy()
+    distances = [0.0]
+    for _ in range(5):
+        residual = np.asarray(scale) * (x*x - target)
+        jacobian = np.diag(2 * np.asarray(scale) * x)
+        x -= solve_dense(jacobian, residual)
+        distances.append(np.linalg.norm(x-start, np.inf))
+    assert max(distances) &lt;= radius and np.allclose(x**2, target)
+    ax.plot(distances, &quot;o-&quot; if scale[0] == 1 else &quot;x--&quot;, label=label)
+ax.axhline(radius, color=&quot;black&quot;, ls=&quot;:&quot;, label=&quot;Guaranteed radius&quot;)
+ax.set(xlabel=&quot;Newton iteration&quot;, ylabel=&quot;Distance from initial point (maximum norm)&quot;)
+ax.legend()
+fig.savefig(&quot;numerics-certified-newton.png&quot;, dpi=170)</code></pre>
+<p>Output from the reference run</p><pre><samp>beta=0.105556, L=1.111111, certified radius=0.112599</samp></pre>
+<figure><img src="/assets/fundamentals-expansion/numerics-certified-newton.png" loading="lazy" style="max-width:100%;height:auto" alt="Two Newton paths coincide inside the same a priori convergence ball."><figcaption>Two Newton paths coincide inside the same a priori convergence ball.</figcaption></figure>
+</details>
+<!-- /numerics-experiment -->
+</section>
+<section><h2 id="tutorial">Tutorial on certification and damping</h2>
+<h3>Compute the first majorant step and use it as a bound</h3><details><summary>Work through the solution</summary><p>Scalar Newton at zero gives \(t_1=b\). The vector correction has size \(b\). After that move the distance to the root is at most \(r-b\), which can be evaluated without substituting a known root.</p></details>
+<h3>Change the starting point to a nearly singular configuration</h3><details><summary>Work through the solution</summary><p>For \((1.5,0.1)\), the second correction is \(0.99/0.2=4.95\) and \(L=10\). The majorant gives no conclusion. For that coordinate a full step reaches \(5.05\), whereas halving the step decreases its size. The failure of the sufficient inequality leaves open whether an actual iteration converges.</p></details>
+<p><a href="https://link.springer.com/book/10.1007/978-3-642-23899-4">Deuflhard · local and global Newton methods</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/05-newton-basins-in-the-complex-plane/">Where does a complex Newton step take its starting point?</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/07-rank-loss-and-continuation-of-boundary-values/">Which correction does an experiment identify?</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_nonlinear_equations_volumes_nonlinear_equations_methods_06_certified_newton_and_adaptive_damping">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

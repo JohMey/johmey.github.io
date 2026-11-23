@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build the field operators in curved coordinates · OneSimulation</title>
+<meta name="description" content="Derive the geometric factors in gradient, divergence, curl and Laplacian, then use dimensional conversion to compare electromagnetic conventions.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/physics/electrodynamics/volumes/static-fields/14-orthogonal-coordinates-and-unit-conventions/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build the field operators in curved coordinates · OneSimulation">
+<meta property="og:description" content="Derive the geometric factors in gradient, divergence, curl and Laplacian, then use dimensional conversion to compare electromagnetic conventions.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/physics/electrodynamics/volumes/static-fields/14-orthogonal-coordinates-and-unit-conventions/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Build the field operators in curved coordinates">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Build the field operators in curved coordinates", "description": "Derive the geometric factors in gradient, divergence, curl and Laplacian, then use dimensional conversion to compare electromagnetic conventions.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/physics/electrodynamics/volumes/static-fields/14-orthogonal-coordinates-and-unit-conventions/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Build the field operators in curved coordinates", "item": "https://onesimulation.pages.dev/fundamentals/physics/electrodynamics/volumes/static-fields/14-orthogonal-coordinates-and-unit-conventions/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_physics_electrodynamics_volumes_static_fields_14_orthogonal_coordinates_and_unit_conventions">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/static-fields/">Electrostatic field theory and measurement</a></p><h1>Build the field operators in curved coordinates</h1><p class="lead">Derive the geometric factors in gradient, divergence, curl and Laplacian, then use dimensional conversion to compare electromagnetic conventions.</p><p class="byline">Unit 14 of 14</p><nav class="study-links" aria-label="Study this unit"><a href="#practice">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#metric">Attach a length to a coordinate increment</a><a href="#flux">Derive divergence by subtracting opposite face fluxes</a><a href="#circulation">Derive curl from the oriented boundary of one face</a><a href="#laplacian">Compose the two operators</a><a href="#units">Convert a physical experiment between conventions</a><a href="#practice">Exercises on geometry and conversion</a></nav></aside><article class="prose reference"><figure><img src="/assets/fundamentals-expansion/electrodynamics-coordinates.png" alt="Cylindrical coordinate curves and local radial and azimuthal basis vectors. Equal angular increments span longer arcs at larger radius." loading="lazy"><figcaption>Cylindrical coordinate curves and local radial and azimuthal basis vectors. Equal angular increments span longer arcs at larger radius.</figcaption></figure>
+<section><h2 id="metric">Attach a length to a coordinate increment</h2>
+<p>Coordinates label points, while differential operators describe spatial change. In a right-handed orthogonal system q₁,q₂,q₃ write the position as r(q). The coordinate tangent vectors are mutually perpendicular. Define hᵢ=|∂r/∂qᵢ| and unit vectors eᵢ=(∂r/∂qᵢ)/hᵢ. A small displacement is Σeᵢhᵢdqᵢ. Matching dV=Σ(∂V/∂qᵢ)dqᵢ with dV=∇V·dr gives the gradient.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\nabla V=\sum_i{\mathbf e_i\over h_i}{\partial V\over\partial q_i},\]</div><div class="equation-step">\[d\mathcal V=h_1h_2h_3\,dq_1dq_2dq_3.\]</div></div>
+<p>For cylindrical coordinates (s,φ,z), r=(s cosφ,s sinφ,z). Differentiation gives h=(1,s,1), e_s=(cosφ,sinφ,0) and e_φ=(−sinφ,cosφ,0). Thus ∂φ e_s=e_φ and ∂φ e_φ=−e_s. For spherical coordinates (r,θ,φ), direct differentiation gives h=(1,r,r sinθ). The coordinate basis changes direction even if the components of a field stay constant.</p>
+<details class="study-aside"><summary>Recall · Angle increments are dimensionless</summary><p>An angular change dφ corresponds to arc length s dφ in a cylinder. Accordingly the azimuthal derivative of potential has physical component (1/s)∂φV. This has the same units, volts per metre, as ∂sV. Omitting the geometric factor changes both dimensions and the electric field.</p></details></section>
+<section><h2 id="flux">Derive divergence by subtracting opposite face fluxes</h2>
+<p>A small face normal to e₁ has area h₂h₃dq₂dq₃. The two opposite faces have different field and potentially different area. Subtract their outward fluxes using a first-order expansion, sum over the three coordinate directions and divide by cell volume.</p>
+<div class="math display">\[\nabla\cdot\mathbf A={1\over h_1h_2h_3}\left[\partial_1(h_2h_3A_1)+\partial_2(h_3h_1A_2)+\partial_3(h_1h_2A_3)\right].\]</div>
+<p>The cylindrical radial term is (1/s)∂s(sA_s). The spherical radial term is (1/r²)∂r(r²A_r). These follow from circumference and surface area respectively. For A=Cr e_r in a sphere, the divergence is 3C. A sphere of radius R then encloses flux 4πCR³, matching the volume integral of 3C.</p></section>
+<section><h2 id="circulation">Derive curl from the oriented boundary of one face</h2>
+<p>Choose the q₂–q₃ face with positive normal e₁. Circulation along its four edges gives ∂₂(h₃A₃)−∂₃(h₂A₂), multiplied by dq₂dq₃. Divide by h₂h₃dq₂dq₃. Cyclic permutation supplies all three components.</p>
+<div class="math display">\[(\nabla\times\mathbf A)_1={\partial_2(h_3A_3)-\partial_3(h_2A_2)\over h_2h_3}.\]</div>
+<p>In cylindrical symmetry A=Aφ(s)eφ yields (curl A)z=s⁻¹d(sAφ)/ds. Aφ=Bs/2 has curl B ez, the familiar vector potential for a uniform axial magnetic field. Aφ=C/s has zero local curl away from the axis but a nonzero circulation 2πC around it. The excluded axis supplies the topological or singular information.</p>
+<details class="study-aside"><summary>Remember · Zero local curl needs a domain condition</summary><p>Stokes' theorem requires a spanning surface inside the region where the field is regular. A loop encircling an excluded axis need not have such a surface. To infer a single-valued potential from zero curl, check the domain as well as the local differential equation.</p></details></section>
+<section><h2 id="laplacian">Compose the two operators</h2>
+<p>Insert the gradient components into the divergence formula. The scalar Laplacian is therefore</p>
+<div class="math display">\[\nabla^2V={1\over h_1h_2h_3}\sum_i\partial_i\left({h_1h_2h_3\over h_i^2}\partial_iV\right).\]</div>
+<p>In spherical coordinates this becomes r⁻²∂r(r²∂rV)+(r² sinθ)⁻¹∂θ(sinθ∂θV)+(r²sin²θ)⁻¹∂φ²V. For V=r²P₂(cosθ), the radial contribution is 6P₂ and the angular contribution is −6P₂. The potential is harmonic even though neither contribution vanishes separately. This cancellation underlies separation into radial powers and angular eigenfunctions.</p></section>
+<section><h2 id="units">Convert a physical experiment between conventions</h2>
+<p>In SI vacuum electrostatics the point-source law is E=q/(4πε₀r²), with force qE. Gaussian conventions write the corresponding laws E=q/r² and F=qE, while magnetic force contains v×B/c. The numerical values and dimensions of both charge and field change. To convert, equate a measurable force in the same physical experiment first. One statcoulomb is 3.335640952×10⁻¹⁰ C, one statvolt/cm is 29979.2458 V/m, and one gauss is 10⁻⁴ T.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\nabla\cdot\mathbf E_{\rm G}=4\pi\rho_{\rm G},\]</div><div class="equation-step">\[\nabla\times\mathbf B_{\rm G}={1\over c}\partial_t\mathbf E_{\rm G}+{4\pi\over c}\mathbf J_{\rm G}.\]</div></div>
+<p>Gaussian electric and magnetic fields share dimensions. Rationalised Heaviside–Lorentz conventions absorb the source factors 4π into the field and charge normalisation. A conversion must state whether c is retained or set to unity. The route from an equation to a voltage or force requires restoring that convention. A ratio E/B in SI is a velocity, whereas E_G/B_G for a plane vacuum wave equals one.</p></section>
+<section><h2 id="practice">Exercises on geometry and conversion</h2>
+<p>1. Derive the cylindrical Laplacian and apply it to V=s²cos2φ. What Cartesian polynomial does this represent?</p><details><summary>Work through the solution</summary><p>The radial term is 4cos2φ and the angular term is −4cos2φ. Their sum vanishes. Since s²cos2φ=x²−y², the Cartesian Laplacian is 2−2=0.</p></details>
+<p>2. A plane wave has E=300 V/m. Determine B in tesla and gauss, then check the Gaussian electric-field number.</p><details><summary>Work through the solution</summary><p>B=E/c≈1.00069 μT=0.0100069 G. Dividing 300 V/m by 29979.2458 V/m per statvolt/cm gives 0.0100069 statvolt/cm, the same Gaussian number.</p></details>
+<p>3. Evaluate the outward flux of C e_s/s through a cylindrical shell and explain why local zero divergence does not remove an axial source.</p><details><summary>Work through the solution</summary><p>The curved outer face gives 2πCL for length L, independent of radius. A shell with both inner and outer faces has net zero flux. A solid cylinder includes the singular axis, where the distributional source supplies 2πC per unit length.</p></details></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/volumes/static-fields/13-induced-charge-on-a-strip/">Which electrode sees a charge moving above a detector?</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/volumes/static-fields/">Volume contents</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_physics_electrodynamics_volumes_static_fields_14_orthogonal_coordinates_and_unit_conventions">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

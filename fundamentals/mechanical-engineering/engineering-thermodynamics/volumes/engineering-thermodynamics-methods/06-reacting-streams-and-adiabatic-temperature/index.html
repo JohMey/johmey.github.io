@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where does the temperature of a reacting gas come from? · OneSimulation</title>
+<meta name="description" content="A heater in an ideal cycle can supply a prescribed amount of heat. A steady combustor converts chemical enthalpy into sensible enthalpy. Compute a state from atomic balances and show where the complete-conversion model begins to overpredict its temperature.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/06-reacting-streams-and-adiabatic-temperature/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Where does the temperature of a reacting gas come from? · OneSimulation">
+<meta property="og:description" content="A heater in an ideal cycle can supply a prescribed amount of heat. A steady combustor converts chemical enthalpy into sensible enthalpy. Compute a state from atomic balances and show where the complete-conversion model begins to overpredict its temperature.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/06-reacting-streams-and-adiabatic-temperature/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Where does the temperature of a reacting gas come from?">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Where does the temperature of a reacting gas come from?", "description": "A heater in an ideal cycle can supply a prescribed amount of heat. A steady combustor converts chemical enthalpy into sensible enthalpy. Compute a state from atomic balances and show where the complete-conversion model begins to overpredict its temperature.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/06-reacting-streams-and-adiabatic-temperature/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Where does the temperature of a reacting gas come from?", "item": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/06-reacting-streams-and-adiabatic-temperature/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_mechanical_engineering_engineering_thermodynamics_volumes_engineering_thermodynamics_methods_06_reacting_streams_and_adiabatic_temperature">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/">Thermal processes and transport in engineering</a></p><h1>Where does the temperature of a reacting gas come from?</h1><p class="lead">A heater in an ideal cycle can supply a prescribed amount of heat. A steady combustor converts chemical enthalpy into sensible enthalpy. Compute a state from atomic balances and show where the complete-conversion model begins to overpredict its temperature.</p><p class="byline">Unit 6 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="#six-species">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#inventory">Element balances determine the complete-conversion products</a><a href="#enthalpy">Use a common reference for chemical and sensible energy</a><a href="#equilibrium">Close energy and composition together</a><a href="#six-species">Solve two independent reactions and the energy equation numerically</a><a href="#sheet">Exercises on model closure</a></nav></aside><article class="prose reference"><section><h2 id="inventory">Element balances determine the complete-conversion products</h2>
+<p>Choose one mole of methane as the feed basis, ideal dry air represented by oxygen plus 3.76 nitrogen molecules per oxygen molecule, and an air ratio \(\lambda\) relative to stoichiometric. For \(\lambda\geq1\) and complete conversion to carbon dioxide and water vapour, balance carbon, hydrogen, oxygen and nitrogen separately:</p>
+<div class="math display">\[\mathrm{CH_4}+2\lambda(\mathrm{O_2}+3.76\,\mathrm{N_2})\longrightarrow\mathrm{CO_2}+2\mathrm{H_2O}+2(\lambda-1)\mathrm{O_2}+7.52\lambda\mathrm{N_2}.\]</div>
+<p>This balances atoms even though individual chemical species are created and consumed. At \(\lambda=1.3\) the products include 0.6 mol oxygen and 9.776 mol nitrogen per mole of fuel. The equivalence ratio is \(1/\lambda\) for this feed. If oxygen is deficient, the assumed set of products cannot satisfy these balances with nonnegative amounts.</p>
+</section>
+<section><h2 id="enthalpy">Use a common reference for chemical and sensible energy</h2>
+<p>In steady adiabatic operation without shaft work or appreciable kinetic-energy change the inlet and outlet enthalpy flows are equal. For an ideal gas write \(h_i(T)=\Delta h^\circ_{f,i}(T_r)+\int_{T_r}^T c_{p,i}(u)du\). Elements in their reference states have zero standard formation enthalpy. Water vapour and liquid water have different formation enthalpies. Use the product phase appearing in the balance.</p>
+<div class="math display">\[\sum_{p}n_i\int_{T_r}^{T_{ad}}c_{p,i}(u)\,du=-\Delta H^\circ_{rxn}(T_r)+\sum_r n_i\int_{T_r}^{T_{in,i}}c_{p,i}(u)\,du.\]</div>
+<p>Use feeds at 298 K and an illustrative heat release of 802.3 kJ/mol of methane for vapour water. Take constant mean product heat capacities 51, 42, 35 and 33 J/(mol K) for carbon dioxide, water, oxygen and nitrogen, respectively. For stoichiometric air the total is \(51+2(42)+7.52(33)=383.16\) J/K per mole of fuel. The resulting estimate is 2392 K. With 30% excess air the sum rises to 478.61 J/K and the estimate falls to 1974 K. Both are deliberately conditional on constant averaged heat capacities and the assumed product set.</p>
+<figure><img src="/assets/fundamentals-expansion/engineering-adiabatic-estimate.png" alt="Additional air raises the heat capacity of the products. Both plotted states assume complete conversion with water vapour and the mean heat capacities given above." loading="lazy"><figcaption>Additional air raises the heat capacity of the products. Both plotted states assume complete conversion with water vapour and the mean heat capacities given above.</figcaption></figure>
+</section>
+<section><h2 id="equilibrium">Close energy and composition together</h2>
+<p>At high temperature allow the product reaction \(\mathrm{CO_2}\rightleftharpoons\mathrm{CO}+\tfrac12\mathrm{O_2}\) to proceed by extent \(\xi\). Replace carbon dioxide by \(1-\xi\), add \(\xi\) carbon monoxide, and add \(\xi/2\) oxygen. For ideal gases define \(a_i=y_i p/p^\circ\). Chemical equilibrium and the energy balance are now two equations for \(T\) and \(\xi\):</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{a_{CO}a_{O_2}^{1/2}}{a_{CO_2}}=K_p(T),\]</div><div class="equation-step">\[\sum_i n_i(\xi)h_i(T)=H_{in}.\]</div></div>
+<p>Dissociation stores energy in chemical form, altering temperature and oxygen content. With one illustrative reaction the calculation isolates that effect. A quantitative high-temperature property model requires all important species, pressure and temperature-dependent thermochemical data. The physical root must have nonnegative species amounts.</p>
+<details class="study-aside"><summary>Is there heat crossing the wall?</summary><p>In this adiabatic model wall heat transfer is zero. Formation enthalpies carry the chemical energy with the flowing matter. Adding a separate fuel heating value to a balance that already includes formation enthalpies counts the same conversion twice.</p></details>
+</section>
+<section><h2 id="six-species">Solve two independent reactions and the energy equation numerically</h2>
+<p>Use the preceding methane basis with stoichiometric air, at 298.15 K and initially 1 bar. Permit the carbon reaction above with extent \(x\) and the water dissociation \(\mathrm{H_2O}\rightleftharpoons\mathrm{H_2}+\tfrac12\mathrm{O_2}\) with extent \(y\). The product amounts in the order carbon dioxide, carbon monoxide, steam, hydrogen, oxygen and nitrogen are</p>
+<div class="math display">\[n=(1-x,\ x,\ 2-y,\ y,\ (x+y)/2,\ 7.52).\]</div>
+<p>These amounts preserve all four elemental inventories for any admissible pair. At an air ratio above one, add \(2(\lambda-1)\) mol oxygen and use \(7.52\lambda\) mol nitrogen. Both reactions share the same oxygen activity. Solving them as independent single-reaction mixtures would give two incompatible oxygen partial pressures.</p>
+<p>In the stated species order use standard formation enthalpies \((-393.52,-110.53,-241.83,0,0,0)\) kJ/mol and standard entropies \((213.79,197.66,188.84,130.68,205.15,191.61)\) J/(mol K) at \(T_r=298.15\) K. For this pedagogical approximation use constant mean heat capacities \((51,33,42,31,35,33)\) J/(mol K) over the whole interval. The inlet formation enthalpy is −74.87 kJ per mole of methane. The common pressure reference is 1 bar. For each species integrate \(c_p\) for enthalpy and \(c_p/T\) for entropy. With reaction stoichiometric vectors \(\nu_j\), compute</p>
+<div class="math display equation-chain"><div class="equation-step">\[h_i=h_{f,i}^\circ+c_{p,i}(T-T_r),\]</div><div class="equation-step">\[s_i^\circ=s_{i,r}^\circ+c_{p,i}\ln(T/T_r),\]</div><div class="equation-step">\[\ln K_j=-\frac{\sum_i\nu_{ji}(h_i-Ts_i^\circ)}{RT}.\]</div></div>
+<p>Enforce \(\sum_i\nu_{ji}\ln[(n_i/\sum n)(p/p^\circ)]-\ln K_j=0\) for both reactions and \(\sum n_i h_i-H_{in}=0\) for energy. The notebook bounds \(x\) between zero and one and \(y\) between zero and two. It scales the energy residual by 100 kJ and verifies both equilibrium residuals and the atomic balances independently. At 1 bar the solution has \(x=0.11117\), \(y=0.03649\) mol and \(T=2286.01\) K, about 106 K below the corresponding complete-conversion estimate. Products contain 0.07383 mol oxygen per mole of methane even though the feed was stoichiometric.</p>
+<details class="study-aside"><summary>OneSimulation experiment · Air ratio and total pressure change the temperature of the six-species adiabatic equilibrium mixture</summary><p>Run the notebook with OneSimulation 0.2.0, NumPy, SciPy and Matplotlib. Change the input data and compare your run with the recorded result.</p><pre><code>&quot;&quot;&quot;Solve a two-reaction, six-product adiabatic equilibrium model for a methane-air stream.&quot;&quot;&quot;
+import numpy as np
+import matplotlib.pyplot as plt
+from onesim.numerics.nonlinear import LeastSquares
+
+# Species order: CO2, CO, H2O(g), H2, O2, N2. Reference state 298.15 K and 1 bar.
+reference = 298.15
+gas_constant = 8.314462618  # J/(mol K)
+hf = 1000*np.array([-393.52, -110.53, -241.83, 0.0, 0.0, 0.0])  # J/mol
+entropy_ref = np.array([213.79,197.66,188.84,130.68,205.15,191.61])  # J/(mol K)
+cp = np.array([51.,33.,42.,31.,35.,33.])  # constant teaching-model mean heat capacities
+nu = np.array([[-1.,1.,0.,0.,0.5,0.], [0.,0.,-1.,1.,0.5,0.]])
+element_counts = np.array([[1,1,0,0,0,0], [0,0,2,2,0,0],
+                           [2,1,1,0,2,0], [0,0,0,0,0,2]])
+inlet_enthalpy = -74870.0  # J per mole methane, with all reactants at 298.15 K
+
+def equilibrate(air_ratio, pressure_bar):
+    complete = np.array([1.,0.,2.,0.,2*(air_ratio-1),7.52*air_ratio])
+    def residual(state):
+        extents, temperature = state[:2],state[2]
+        moles = complete + extents @ nu
+        enthalpies = hf + cp*(temperature-reference)
+        entropies = entropy_ref + cp*np.log(temperature/reference)
+        log_k = -(nu @ (enthalpies-temperature*entropies))/(gas_constant*temperature)
+        log_q = nu @ np.log(pressure_bar*moles/moles.sum())
+        return np.r_[log_q-log_k, (moles @ enthalpies-inlet_enthalpy)/1e5]
+    optimum = LeastSquares(options={&quot;gtol&quot;:1e-13,&quot;xtol&quot;:1e-13,&quot;ftol&quot;:1e-13}).solve(
+        residual,[0.06,0.04,2200.0], bounds=([1e-12,1e-12,500.],[1-1e-12,2-1e-12,3500.]))
+    assert np.max(np.abs(optimum.fun)) &lt; 1e-8
+    moles = complete + optimum.x[:2] @ nu
+    assert np.allclose(element_counts @ moles, element_counts @ complete)
+    return optimum.x, moles
+
+for pressure in [1.,5.]:
+    result, moles = equilibrate(1.0, pressure)
+    print(f&quot;{pressure:.0f} bar: T = {result[2]:.2f} K, extents = {result[0]:.5f}, {result[1]:.5f} mol&quot;)
+    print(&quot;product moles&quot;,np.round(moles,5))
+ratios = np.linspace(1.0, 1.4, 30)
+fig,ax = plt.subplots(figsize=(6.4,3.7),layout=&quot;constrained&quot;)
+for pressure in [1.,5.]:
+    temperature = [equilibrate(r,pressure)[0][2] for r in ratios]
+    ax.plot(ratios,temperature,label=f&quot;Two reactions, {pressure:g} bar&quot;)
+complete_temp = reference + 802310/(51+2*42+2*(ratios-1)*35+7.52*ratios*33)
+ax.plot(ratios,complete_temp,&quot;--&quot;,label=&quot;Complete conversion&quot;)
+ax.set(xlabel=&quot;Air ratio&quot;,ylabel=&quot;Adiabatic equilibrium temperature (K)&quot;)
+ax.legend()
+plt.show()</code></pre><p>Reference run</p><pre><samp>1 bar: T = 2286.01 K, extents = 0.11117, 0.03649 mol
+product moles [0.88883 0.11117 1.96351 0.03649 0.07383 7.52   ]
+5 bar: T = 2319.34 K, extents = 0.07711, 0.02403 mol
+product moles [0.92289 0.07711 1.97597 0.02403 0.05057 7.52   ]</samp></pre><figure><img src="/assets/fundamentals-expansion/engineering-reacting-mixture.png" alt="Air ratio and total pressure change the temperature of the six-species adiabatic equilibrium mixture" loading="lazy"><figcaption>Air ratio and total pressure change the temperature of the six-species adiabatic equilibrium mixture</figcaption></figure><p><a href="/downloads/fundamentals/examples/engineering-reacting-mixture.ipynb" download>Download editable notebook</a> · <a href="/downloads/fundamentals/examples/engineering-reacting-mixture.py" download>Download Python script</a></p></details>
+<p>At 5 bar the computed extents are 0.07711 and 0.02403 mol. Reconstruct the oxygen amount and explain why the new temperature, 2319.34 K, is higher.</p><details><summary>Worked solution</summary><p>The released oxygen is \((0.07711+0.02403)/2=0.05057\) mol. Both reactions increase the mole count. At higher pressure their equilibrium extents shrink, leaving more energy as sensible enthalpy. The difference between 2286 and 2319 K follows from the model, not a direct pressure dependence of ideal-gas species enthalpy.</p></details>
+<details class="study-aside"><summary>How could this model approach a thermochemical-table calculation?</summary><p>Replace the constant heat capacities by temperature-dependent species functions with a common reference, then enlarge the allowed product set to include radical species when required. The elemental constraints and energy residual still apply. The present six-species answer is reproducible for its named property law.</p></details>
+<p>Reference gas data · <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&amp;Mask=1">NIST carbon dioxide</a> · <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C630080&amp;Mask=1">carbon monoxide</a> · <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&amp;Mask=1">water</a> · <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C1333740&amp;Mask=1">hydrogen</a> · <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&amp;Mask=1">oxygen</a> · <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&amp;Mask=1">nitrogen</a> · <a href="https://webbook.nist.gov/cgi/cbook.cgi?ID=C74828&amp;Mask=1">methane</a>.</p>
+</section>
+<section><h2 id="sheet">Exercises on model closure</h2>
+<p>At \(\lambda=1.3\) preheat all feed gases so their combined sensible inlet enthalpy rises by 20 kJ per mole of methane. Estimate the temperature change.</p><details><summary>Worked solution</summary><p>Holding the product composition and heat capacities fixed gives \(20000/478.61=41.8\) K of additional temperature rise. At equilibrium the reaction extent changes and this simple ratio is only an initial estimate.</p></details>
+<p>In an ideal-gas equilibrium calculation, increase total pressure while holding \(T\) and composition momentarily fixed. Which way does the dissociation quotient move?</p><details><summary>Worked solution</summary><p>The net mole change is +1/2, so the quotient scales as \(p^{1/2}\). It rises above its original equilibrium value, favouring recombination. The coupled adiabatic temperature must then be solved again.</p></details>
+<p class="references">Further reading · <a href="https://www.mheducation.com/highered/product/thermodynamics-an-engineering-approach-cengel.html">Çengel, Boles and Kanoğlu, Thermodynamics: An Engineering Approach, 10th ed.</a>, Chapters 16–17.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/05-radiation-error-in-a-temperature-probe/">What temperature does a probe in a hot gas measure?</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/07-convection-from-flow-to-wall-temperature/">How can a flow measurement determine a wall temperature?</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_mechanical_engineering_engineering_thermodynamics_volumes_engineering_thermodynamics_methods_06_reacting_streams_and_adiabatic_temperature">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

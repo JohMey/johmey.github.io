@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which correction does an experiment identify? · OneSimulation</title>
+<meta name="description" content="Separate parameter combinations visible in a nonlinear fit, pass a regular fold by continuation and decide when to refine a boundary-value mesh before trusting its Newton residual.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/07-rank-loss-and-continuation-of-boundary-values/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Which correction does an experiment identify? · OneSimulation">
+<meta property="og:description" content="Separate parameter combinations visible in a nonlinear fit, pass a regular fold by continuation and decide when to refine a boundary-value mesh before trusting its Newton residual.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/07-rank-loss-and-continuation-of-boundary-values/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Which correction does an experiment identify?">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Which correction does an experiment identify?", "description": "Separate parameter combinations visible in a nonlinear fit, pass a regular fold by continuation and decide when to refine a boundary-value mesh before trusting its Newton residual.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/07-rank-loss-and-continuation-of-boundary-values/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Which correction does an experiment identify?", "item": "https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/07-rank-loss-and-continuation-of-boundary-values/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_nonlinear_equations_volumes_nonlinear_equations_methods_07_rank_loss_and_continuation_of_boundary_values">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Nonlinear systems and iterative methods</a></p><h1>Which correction does an experiment identify?</h1><p class="lead">Separate parameter combinations visible in a nonlinear fit, pass a regular fold by continuation and decide when to refine a boundary-value mesh before trusting its Newton residual.</p><p class="byline">Unit 7 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#rank">Solve only for directions constrained by data</a><a href="#continuation">Exchange a failing parameter for a curve coordinate</a><a href="#tutorial">Tutorial on a fold with an exact reference</a></nav></aside><article class="prose reference"><section><h2 id="rank">Solve only for directions constrained by data</h2>
+<p>Given covariance \(C&gt;0\), whiten the residual \(r=C^{-1/2}(f(x)-d)\) and its Jacobian \(J\). Gauss–Newton minimises \(\|r+Js\|^2/2\). Write \(J=U\Sigma V^T\). Components orthogonal to its range cannot be changed to first order. Each reliably measured direction obeys \(v_i^Ts=-u_i^Tr/\sigma_i\). A direction in the nullspace is free. Setting its correction to zero selects the minimum Euclidean norm in the chosen parameter units.</p>
+<div class="math display">\[s_\tau=-\sum_{\sigma_i&gt;\tau}(u_i^Tr/\sigma_i)v_i,\qquad \|s_\tau\|\le\|r\|/\min_{\sigma_i&gt;\tau}\sigma_i .\]</div>
+<p>If the forward derivative carries error \(e_J\), singular values below \(\|e_J\|\) cannot be distinguished reliably from zero. Also compare predicted changes to measurement noise over physically allowed parameter displacements. Damping with a penalty gives factors \(\sigma_i/(\sigma_i^2+\lambda^2)\) and is continuous in the singular values. A penalty adds assumptions about scales.</p>
+<p>Take two equal-noise readings whose model rows depend only on \(a+b\), with sensitivities \((1,1),(2,2)\). At \(a=b=0\) readings \((3,6)\) demand \(a+b=3\). Minimum norm assigns \(a=b=1.5\). Changing parameter units can change that individual assignment while retaining the identifiable sum. A new observation of \(a-b\) adds an independent singular direction.</p>
+</section>
+<section><h2 id="continuation">Exchange a failing parameter for a curve coordinate</h2>
+<p>Let \(F(u,p)=0\) be \(n\) equations in \(n+1\) unknowns and suppose \([F_u,F_p]\) has row rank \(n\). Its nullspace supplies a unit tangent \(t\) oriented with the preceding tangent. Predict \(z_p=z_k+h t\). The corrector solves \(F(z)=0,\ t^T(z-z_p)=0\). At \(z_k\) the augmented derivative is invertible since its nullspace would lie both along \(t\) and perpendicular to it. This remains true locally for sufficiently small prediction steps, including a simple fold with singular \(F_u\).</p>
+<p>For a boundary-value application consider \(u''+\lambda e^u=0,\ u(0)=u(1)=0\). A centred grid gives \(F_i=(u_{i-1}-2u_i+u_{i+1})/\Delta x^2+\lambda e^{u_i}\). The augmented rows have tridiagonal state derivative with diagonal \(-2/\Delta x^2+\lambda e^{u_i}\) and parameter column \(e^{u_i}\). Use grid-weighted state inner products for tangents so refinement does not change the meaning of arclength. Halve \(h\) and repeat the prediction if corrector displacements are too large relative to \(h\). If halving reduces the displacement by about four, the quadratic predictor defect is a geometrical effect.</p>
+<details class="study-aside"><summary>How can a perfectly converged branch still predict a wrong maximum load?</summary><p>Newton controls the residual of the chosen grid only. Correct the same branch point on a grid of half the spacing, matching arclength or a monotonic observed amplitude rather than load at the fold. In the regular second-order regime divide the fine–coarse output difference by three to estimate the fine-grid error. Refine the grid when this exceeds the output tolerance. Tighten the augmented linear and nonlinear solves enough that their estimated effect on that output is smaller.</p></details>
+<!-- numerics-figure --><figure class="study-figure"><img src="/assets/fundamentals-expansion/numerics-bratu-refinement.png" loading="lazy" alt="Two discrete Bratu branches compared with the analytic fold using midpoint temperature."><figcaption>A small nonlinear residual places a point on its discrete branch. Increasing the number of intervals changes the predicted turning load even after the nonlinear solves converge.</figcaption></figure><!-- /numerics-figure -->
+</section>
+<section><h2 id="tutorial">Tutorial on a fold with an exact reference</h2>
+<h3>Find a mesh-independent check for the boundary-value branch</h3><details><summary>Work through the solution</summary><p>Set \(u(x)=2\log[\cosh(a/2)/\cosh(a(x-1/2))]\). Then \(u''=-2a^2\operatorname{sech}^2(a(x-1/2))\) and \(e^u=\cosh^2(a/2)\operatorname{sech}^2(a(x-1/2))\). Hence \(\lambda=2a^2/\cosh^2(a/2)\) and the end values vanish. This parametric curve can test either side of the turning point.</p></details>
+<h3>Locate the fold and choose a comparison observable</h3><details><summary>Work through the solution</summary><p>Differentiating \(\log\lambda\) gives \(2/a-\tanh(a/2)\). Solve \(a\tanh(a/2)=2\), yielding \(a\) near 2.40 and \(\lambda\) near 3.51. The midpoint temperature \(2\log\cosh(a/2)\) is strictly increasing for positive \(a\), making it a well-defined matching observable across meshes.</p></details>
+<p><a href="https://link.springer.com/book/10.1007/978-3-642-23899-4">Deuflhard · Gauss–Newton and continuation</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/06-certified-newton-and-adaptive-damping/">Certifying a Newton step before the root is known</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Volume contents</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_nonlinear_equations_volumes_nonlinear_equations_methods_07_rank_loss_and_continuation_of_boundary_values">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

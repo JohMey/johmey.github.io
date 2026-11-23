@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How an integral instrument becomes a matrix · OneSimulation</title>
+<meta name="description" content="Construct two discrete models of the same measurement, diagnose noise with a Picard plot and test a regularisation parameter against a deliberately imperfect instrument model.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/06-discretising-an-instrument-and-testing-its-resolution/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How an integral instrument becomes a matrix · OneSimulation">
+<meta property="og:description" content="Construct two discrete models of the same measurement, diagnose noise with a Picard plot and test a regularisation parameter against a deliberately imperfect instrument model.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/06-discretising-an-instrument-and-testing-its-resolution/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="How an integral instrument becomes a matrix">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "How an integral instrument becomes a matrix", "description": "Construct two discrete models of the same measurement, diagnose noise with a Picard plot and test a regularisation parameter against a deliberately imperfect instrument model.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/06-discretising-an-instrument-and-testing-its-resolution/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "How an integral instrument becomes a matrix", "item": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/06-discretising-an-instrument-and-testing-its-resolution/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_inverse_problems_volumes_inverse_problems_methods_06_discretising_an_instrument_and_testing_its_resolution">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a> / <a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/">Inferring parameters and fields from observations</a></p><h1>How an integral instrument becomes a matrix</h1><p class="lead">Construct two discrete models of the same measurement, diagnose noise with a Picard plot and test a regularisation parameter against a deliberately imperfect instrument model.</p><p class="byline">Unit 6 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#operator">Derive the matrix twice from the same kernel</a><a href="#noise">Read data and singular values together</a><a href="#parameter">Derive what an L-curve actually plots</a><a href="#tutorial">Tutorial on weighted spectra and resolution</a></nav></aside><article class="prose reference"><section><h2 id="operator">Derive the matrix twice from the same kernel</h2>
+<p>Suppose an instrument measures \(b(s)=\int_0^1 K(s,t)x(t)\,dt+e(s)\). With square-integrable kernel this forward operator is compact on \(L^2\). Small singular values suppress some source directions. For a midpoint rule with source nodes \(t_j\) and weights \(w_j\), collocation at receiver nodes \(s_i\) gives \(b_i\simeq\sum_j K(s_i,t_j)w_j x(t_j)\). To compare spectra over nonuniform meshes, use the variables \(\sqrt{w_j}x(t_j)\) and data \(\sqrt{v_i}b(s_i)\). The Euclidean matrix is \(A_{ij}=\sqrt{v_i}K(s_i,t_j)\sqrt{w_j}\). Noise whitening is an additional operation using the measurement covariance.</p>
+<p>Projection instead represents \(x=\sum_j c_j\phi_j\) and tests against \(\psi_i\). For orthonormal bases the matrix and data are</p>
+<div class="math display equation-chain"><div class="equation-step">\[G_{ij}=\int_0^1\int_0^1\psi_i(s)K(s,t)\phi_j(t)\,dt\,ds,\]</div><div class="equation-step">\[d_i=\int_0^1\psi_i(s)b(s)\,ds.\]</div></div>
+<p>For cell indicators normalised by the square root of cell length this double integral averages the response over both the detector and the source footprint. For nonorthonormal bases use mass matrices to measure physical norms. Omitting these metrics changes the meaning of singular values as the mesh changes.</p>
+<p>Take \(K=1+st\), two equal cells and coincident midpoint receivers. The weighted midpoint and cell-average projection agree because the kernel is affine in each argument. The two matrices equal one half times the matrix with rows \((17/16,19/16),(19/16,25/16)\). Their determinant is \(1/16\). Changing to \(K=1+s^2t^2\) gives midpoint squares \(1/16,9/16\) while their cell averages are \(1/12,7/12\). The resulting spectra differ even with exact arithmetic. Refining both grids and inspecting the spectrum that stays above the data-noise floor distinguishes discretisation from information.</p>
+</section>
+<section><h2 id="noise">Read data and singular values together</h2>
+<p>For \(A=U\Sigma V^T\), the noise-free continuum solution has finite energy if \(\sum |u_i^Tb_{\rm exact}/\sigma_i|^2&lt;\infty\), with no inaccessible data component. With independent whitened noise of similar variance in each left singular direction, \(|u_i^Tb|\) eventually follows a roughly flat noise floor. A Picard diagram plots \(\sigma_i\), \(|u_i^Tb|\) and their quotient against index. For an exact quotient proportional to \(i^{-1}\) the squared sum converges. If the noise coefficients have typical size \(\delta\) and \(\sigma_i\sim i^{-2}\), their quotients typically grow like \(\delta i^2\). The index where the data cease to decay depends on the observation and its noise.</p>
+</section>
+<section><h2 id="parameter">Derive what an L-curve actually plots</h2>
+<p>For identity Tikhonov and strength \(\mu\), write \(b_i=u_i^Tb\) and \(f_i=\sigma_i^2/(\sigma_i^2+\mu^2)\). The residual and solution coordinates of the L-curve are</p>
+<div class="math display equation-chain"><div class="equation-step">\[R^2=\sum_i(1-f_i)^2 b_i^2+\|b_\perp\|^2,\]</div><div class="equation-step">\[S^2=\sum_i(f_i b_i/\sigma_i)^2 .\]</div></div>
+<p>Mark \((\log R,\log S)\) against \(\log\mu\). A bend can reveal the transition from fitting signal to amplifying noise. With \(\eta=\log\mu\) its curvature magnitude is \(|X'Y''-Y'X''|/(X'^2+Y'^2)^{3/2}\) for \(X=\log R,Y=\log S\). Sparse sampling or multiple spectral clusters can give competing curvature peaks. If \(b\) has energy in only one singular direction, the curve reflects the scale of that mode even with zero noise. A corner by itself then provides no data-driven noise estimate. Compare with a discrepancy level justified by instrument noise, or held-out predictive error and GCV.</p>
+<p>For a reproducible ambiguous corner choose singular values \((1,s)\) and data coefficients \((1,\sqrt{s})\), with \(s=10^{-3}\). Replacing \(\mu\) by \(s/\mu\) swaps each filter with the complement of the other. Substitution gives \(R(s/\mu)=\sqrt{s}\,S(\mu)\) and \(S(s/\mu)=R(\mu)/\sqrt{s}\). In log coordinates this transformation is a reflection and preserves curvature magnitude. The two outward bends near \(\mu=s\) and \(\mu=1\) therefore have equal curvature. These choices differ by roughly a thousand in regularisation strength. If the second measured coefficient is reliable, damping it away costs information. If that coefficient is mostly noise, keeping it produces a state component amplified by \(1/s\). The shape of this curve cannot decide which measurement assumption applies.</p>
+<!-- numerics-experiment -->
+<details class="study-aside" id="try-it"><summary>OneSimulation experiment · Reconstruct data from an independently discretised instrument</summary>
+<p>Vary the true blur width or noise seed. Decide which feature persists across plausible instruments.</p>
+<p><a href="/downloads/fundamentals/examples/numerics-inverse-blur.ipynb" download>Download the executable notebook</a> · <a href="/downloads/fundamentals/examples/numerics-inverse-blur.py" download>Python source</a></p>
+<pre><code>&quot;&quot;&quot;Observe model error in a periodic deblurring experiment on different grids.&quot;&quot;&quot;
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import solve_dense
+
+def instrument(receivers, sources, width):
+    delta = (receivers[:, None] - sources[None, :] + 0.5) % 1 - 0.5
+    kernel = np.exp(-(delta/width)**2/2)
+    return kernel / kernel.sum(axis=1)[:, None]
+
+def signal(x):
+    return np.cos(2*np.pi*x) + 0.4*np.sin(10*np.pi*x)
+
+fine = (np.arange(1024)+0.5)/1024
+coarse = (np.arange(32)+0.5)/32
+design = instrument(coarse, coarse, 0.045)
+rng = np.random.default_rng(17)
+noise = rng.normal(0, 0.002, coarse.size)
+strengths = np.logspace(-4, -0.4, 32)
+fig, (picard, resolution, ax) = plt.subplots(1, 3, figsize=(11.2, 4), layout=&quot;constrained&quot;)
+left, singular, _ = np.linalg.svd(design, full_matrices=False)
+indices = np.arange(1, len(singular)+1)
+picard.semilogy(indices, singular, color=&quot;black&quot;, label=&quot;Singular values&quot;)
+for trial in [0.01, 0.1]:
+    gain = singular**2 / (singular**2 + trial**2)
+    resolution.plot(indices, gain, label=f&quot;μ = {trial:g}&quot;)
+resolution.set(xlabel=&quot;Mode&quot;, ylabel=&quot;Resolution gain&quot;)
+resolution.legend()
+for width in [0.045, 0.065]:
+    data = instrument(coarse, fine, width) @ signal(fine) + noise
+    picard.semilogy(indices, abs(left.T @ data), &quot;.&quot;, label=f&quot;Data, width {width}&quot;)
+    errors = []
+    for mu in strengths:
+        state = solve_dense(design.T @ design + mu**2*np.eye(coarse.size), design.T @ data)
+        errors.append(np.linalg.norm(state-signal(coarse))/np.sqrt(coarse.size))
+    print(f&quot;True width {width:.3f}: minimum grid RMS error {min(errors):.5f}&quot;)
+    ax.loglog(strengths, errors, label=f&quot;True instrument width {width}&quot;)
+ax.set(xlabel=&quot;Tikhonov parameter&quot;, ylabel=&quot;Reconstruction RMS error&quot;)
+ax.legend(fontsize=8)
+picard.set(xlabel=&quot;Mode&quot;, ylabel=&quot;Magnitude&quot;)
+picard.legend(fontsize=8)
+fig.savefig(&quot;numerics-inverse-blur.png&quot;, dpi=170)</code></pre>
+<p>Output from the reference run</p><pre><samp>True width 0.045: minimum grid RMS error 0.01013
+True width 0.065: minimum grid RMS error 0.18949</samp></pre>
+<figure><img src="/assets/fundamentals-expansion/numerics-inverse-blur.png" loading="lazy" style="max-width:100%;height:auto" alt="Noise, spectral resolution and reconstruction error expose different limitations of two blur models."><figcaption>Noise, spectral resolution and reconstruction error expose different limitations of two blur models.</figcaption></figure>
+</details>
+<!-- /numerics-experiment -->
+<details class="study-aside"><summary>Why separate the generation and inversion grids?</summary><p>Matrices on the same grid share quadrature and representation errors. Synthesising \(b=Ax\) and inverting with exactly that \(A\) omits those errors from the test. A finer source grid and slightly perturbed blur width create two separately controllable discrepancies. The reconstruction notebook shows how the best achievable error changes when only the assumed width is wrong.</p></details>
+</section>
+<section><h2 id="tutorial">Tutorial on weighted spectra and resolution</h2>
+<h3>Calculate the two singular values of the midpoint example</h3><details><summary>Work through the solution</summary><p>The matrix is symmetric positive definite with trace \(21/16\) and determinant \(1/16\). Its eigenvalues are \((21\pm\sqrt{377})/32\), also its singular values. The smaller mode is much more sensitive to perturbations in the measurements.</p></details>
+<h3>Distinguish variance reduction from regained resolution</h3><details><summary>Work through the solution</summary><p>In singular direction \(i\) the mean reconstruction of a true coefficient \(x_i\) is \(f_ix_i\) and independent data noise of variance \(\delta^2\) contributes variance \(\delta^2 f_i^2/\sigma_i^2\). Larger \(\mu\) lowers both gain and variance. A small repeat-to-repeat spread can coexist with a strongly suppressed feature.</p></details>
+<p><a href="https://www2.imm.dtu.dk/~pcha/DIPbook.html">Hansen · discrete inverse problems and teaching materials</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/05-estimating-lifetime-with-an-unfinished-test/">What can unfinished endurance tests reveal about lifetime?</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/07-krylov-filters-and-generalised-singular-values/">Early stopping and penalties that leave part of a field free</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_inverse_problems_volumes_inverse_problems_methods_06_discretising_an_instrument_and_testing_its_resolution">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

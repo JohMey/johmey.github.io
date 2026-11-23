@@ -6,28 +6,35 @@
 <title>Separate diffraction from a finite observation window · OneSimulation</title>
 <meta name="description" content="Recover the far-field angular spectrum of a smooth aperture, then isolate the errors from truncating and sampling the aperture field.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Separate diffraction from a finite observation window · OneSimulation">
 <meta property="og:description" content="Recover the far-field angular spectrum of a smooth aperture, then isolate the errors from truncating and sampling the aperture field.">
-<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/">
-<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Separate diffraction from a finite observation window">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Separate diffraction from a finite observation window", "description": "Recover the far-field angular spectrum of a smooth aperture, then isolate the errors from truncating and sampling the aperture field.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Separate diffraction from a finite observation window", "item": "https://onesimulation.pages.dev/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/08-aperture-sampling/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_physics_electrodynamics_volumes_numerical_laboratory_08_aperture_sampling">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>Separate diffraction from a finite observation window</h1><p class="lead">Recover the far-field angular spectrum of a smooth aperture, then isolate the errors from truncating and sampling the aperture field.</p><p class="byline">Unit 8 of 13</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#begin-with-a-transform-that-can-be-checked-analytically">Begin with a transform that can be checked analytically</a><a href="#what-the-instrument-has-really-sampled">What the instrument has really sampled</a><a href="#design-a-convergence-test-with-two-axes">Design a convergence test with two axes</a><a href="#recover-a-size-from-a-far-field-measurement">Recover a size from a far-field measurement</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a> / <a href="/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/">Numerical field laboratory</a></p><h1>Separate diffraction from a finite observation window</h1><p class="lead">Recover the far-field angular spectrum of a smooth aperture, then isolate the errors from truncating and sampling the aperture field.</p><p class="byline">Unit 8 of 13</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#begin-with-a-transform-that-can-be-checked-analytically">Begin with a transform that can be checked analytically</a><a href="#what-the-instrument-has-really-sampled">What the instrument has really sampled</a><a href="#design-a-convergence-test-with-two-axes">Design a convergence test with two axes</a><a href="#recover-a-size-from-a-far-field-measurement">Recover a size from a far-field measurement</a><a href="#tutorial">Get Started</a></nav></aside><article class="prose reference"><section>
 <h2 id="begin-with-a-transform-that-can-be-checked-analytically">Begin with a transform that can be checked analytically</h2>
 <p>Consider a long slit system whose transmitted scalar field varies along one transverse coordinate \(x\). At a distant observation point in direction \(\theta\), a small aperture element accumulates an approximate relative phase \(-k x\sin\theta\). The Fraunhofer amplitude is proportional to \(\int A(x)e^{-2\pi i f x}\,dx\) with spatial frequency \(f=\sin\theta/\lambda\). The approximation neglects the quadratic phase across the aperture; either a suitable lens or sufficient propagation distance is needed. A numerical Fourier transform cannot cure violation of this optical assumption.</p>
 <p>Take the ideal aperture field \(A(x)=e^{-x^2/w^2}\) and normalise far-field amplitude by its on-axis value. Integrating by parts or completing the square gives</p>
@@ -54,7 +61,7 @@
 <p>A positive intensity cannot distinguish a negative sidelobe amplitude from a positive amplitude of the same magnitude. To observe the sign change shown by the finite-window amplitude curve, interfere the field with a phase reference. Conversely, when comparing with a camera image, square the signed numerical amplitude once and apply the detector pixel average. Comparing a real-amplitude plot directly with a recorded intensity array is an avoidable model mismatch.</p>
 </section>
 <section>
-<h2 id="tutorial">Tutorial</h2>
+<h2 id="tutorial">Get Started</h2>
 <p>How could one distinguish an intrinsic physical sidelobe from ringing produced by the scanner window without a known reference aperture?</p>
 <details><summary>Work through the solution</summary><p>Increase the scanned width while keeping \(\Delta x\) fixed by adding samples. Window artefacts should change as the omitted tails shrink. Repeat with a different smooth weighting and report its effect on resolution. An intrinsic feature that survives these tests can then be compared against an independent physical model.</p></details>
 <p>At \(W=3\) mm and \(N=24\), what spatial frequencies can be represented without aliasing, and what does adding zero padding do?</p>
@@ -68,7 +75,7 @@
 <nav aria-label="Related links">
 <a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_physics_electrodynamics_volumes_numerical_laboratory_08_aperture_sampling">Plans &amp; trial</a>
 <a href="/about/">About the Developer</a>
 <a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
 </nav>

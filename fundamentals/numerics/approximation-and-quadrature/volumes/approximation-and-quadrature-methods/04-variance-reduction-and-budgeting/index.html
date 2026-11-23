@@ -6,28 +6,35 @@
 <title>Spend random samples where they reduce uncertainty · OneSimulation</title>
 <meta name="description" content="A Monte Carlo estimate can be unbiased and still too noisy to be useful. Derive control variates, allocate a fixed budget across strata, and distinguish variance reduction from an underestimated standard error.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/04-variance-reduction-and-budgeting/">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/04-variance-reduction-and-budgeting/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spend random samples where they reduce uncertainty · OneSimulation">
 <meta property="og:description" content="A Monte Carlo estimate can be unbiased and still too noisy to be useful. Derive control variates, allocate a fixed budget across strata, and distinguish variance reduction from an underestimated standard error.">
-<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/04-variance-reduction-and-budgeting/">
-<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/04-variance-reduction-and-budgeting/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Spend random samples where they reduce uncertainty">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Spend random samples where they reduce uncertainty", "description": "A Monte Carlo estimate can be unbiased and still too noisy to be useful. Derive control variates, allocate a fixed budget across strata, and distinguish variance reduction from an underestimated standard error.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/04-variance-reduction-and-budgeting/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Spend random samples where they reduce uncertainty", "item": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/04-variance-reduction-and-budgeting/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_04_variance_reduction_and_budgeting">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>Spend random samples where they reduce uncertainty</h1><p class="lead">A Monte Carlo estimate can be unbiased and still too noisy to be useful. Derive control variates, allocate a fixed budget across strata, and distinguish variance reduction from an underestimated standard error.</p><p class="byline">Unit 4 of 5</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/12-random-quadrature/">Background · Monte Carlo integration and stratification</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#control">Subtract a fluctuation with an independently known mean</a><a href="#stratify">Partition the input space and allocate observations</a><a href="#pairs">Choose an antithetic pair with a justified covariance</a><a href="#numerical-investigation">When does the control increase the noise?</a><a href="#tutorial">Tutorial · verify variance and bias separately</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="control">Subtract a fluctuation with an independently known mean</h2>
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>Spend random samples where they reduce uncertainty</h1><p class="lead">A Monte Carlo estimate can be unbiased and still too noisy to be useful. Derive control variates, allocate a fixed budget across strata, and distinguish variance reduction from an underestimated standard error.</p><p class="byline">Unit 4 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/12-random-quadrature/">Background · Monte Carlo integration and stratification</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#control">Subtract a fluctuation with an independently known mean</a><a href="#stratify">Partition the input space and allocate observations</a><a href="#pairs">Choose an antithetic pair with a justified covariance</a><a href="#numerical-investigation">When does the control increase the noise?</a><a href="#tutorial">Tutorial · verify variance and bias separately</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="control">Subtract a fluctuation with an independently known mean</h2>
 <p>To estimate \(I=\mathbb E[f(X)]\), suppose evaluating \(f(X)\) also supplies a cheap correlated quantity \(g(X)\) with known exact mean \(\mu_g\). For any fixed coefficient \(\beta\), \(Y=f(X)-\beta[g(X)-\mu_g]\) has the same mean \(I\). Its variance is \(V_f-2\beta C_{fg}+\beta^2V_g\). Differentiating gives optimum \(\beta_*=C_{fg}/V_g\) if \(V_g&gt;0\) and minimum \(V_f(1-\rho_{fg}^2)\). For a crude physical surrogate it is accuracy of its fluctuations, not its absolute scale, that matters. A negatively correlated surrogate can also reduce variance by a negative coefficient. A constant control carries no information and should not be divided by zero variance.</p>
 <p>As an exact example take \(X\sim U[0,1]\), \(f=X^2\), \(g=X\). We know \(\mu_g=1/2\) and seek \(I=1/3\). Direct moments give</p>
 <div class="math display">\[V_f=1/5-1/9=4/45,\ V_g=1/12,\ C=1/4-1/6=1/12.\]</div>
@@ -66,7 +73,7 @@
 <nav aria-label="Related links">
 <a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_04_variance_reduction_and_budgeting">Plans &amp; trial</a>
 <a href="/about/">About the Developer</a>
 <a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
 </nav>

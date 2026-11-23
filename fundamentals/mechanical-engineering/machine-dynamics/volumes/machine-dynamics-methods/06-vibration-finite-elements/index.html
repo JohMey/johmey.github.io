@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From beam curvature to a mass matrix and a frequency measurement · OneSimulation</title>
+<meta name="description" content="A coarse cantilever model often predicts its first resonance accurately while putting the third far too high. Derive both matrices from the same displacement field and inspect how each mode converges.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/06-vibration-finite-elements/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From beam curvature to a mass matrix and a frequency measurement · OneSimulation">
+<meta property="og:description" content="A coarse cantilever model often predicts its first resonance accurately while putting the third far too high. Derive both matrices from the same displacement field and inspect how each mode converges.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/06-vibration-finite-elements/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="From beam curvature to a mass matrix and a frequency measurement">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "From beam curvature to a mass matrix and a frequency measurement", "description": "A coarse cantilever model often predicts its first resonance accurately while putting the third far too high. Derive both matrices from the same displacement field and inspect how each mode converges.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/06-vibration-finite-elements/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "From beam curvature to a mass matrix and a frequency measurement", "item": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/06-vibration-finite-elements/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_mechanical_engineering_machine_dynamics_volumes_machine_dynamics_methods_06_vibration_finite_elements">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/">Vibration and identification in machinery</a></p><h1>From beam curvature to a mass matrix and a frequency measurement</h1><p class="lead">A coarse cantilever model often predicts its first resonance accurately while putting the third far too high. Derive both matrices from the same displacement field and inspect how each mode converges.</p><p class="byline">Unit 6 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="#sheet">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#field">Turn distributed kinetic and strain energy into coordinates</a><a href="#assembly">Recover the vibration equation and its boundary conditions</a><a href="#interpretation">Explain the disagreement between modes</a><a href="#sheet">Exercises on model assembly</a></nav></aside><article class="prose reference"><section><h2 id="field">Turn distributed kinetic and strain energy into coordinates</h2>
+<p>Take a uniform slender beam at rest, with transverse displacement \(w(x,t)\) and small rotation. Neglect cross-section rotary inertia, shear compliance and prestress. An element of length \(h\) stores strain energy \(\int EI(w'')^2dx/2\) and kinetic energy \(\int\rho A\dot w^2dx/2\). Continuity of both displacement and slope at the interfaces prevents a spurious concentrated curvature. A cubic polynomial has four coefficients, exactly enough to interpolate the displacement and slope at each end.</p>
+<p>Put \(s=x/h\) and \(q_e=(w_1,\theta_1,w_2,\theta_2)^T\). Apply the four endpoint conditions to a cubic, or verify them directly, to obtain \(w=Nq_e\) with</p>
+<div class="math display">\[N=(1-3s^2+2s^3,\ h(s-2s^2+s^3),\ 3s^2-2s^3,\ h(-s^2+s^3)).\]</div>
+<p>Substitution into the energy integrals gives the element stiffness and consistent mass. The word consistent records that the same shape functions transport mass and displacement.</p>
+<div class="math display equation-chain"><div class="equation-step">\[K_e=\int_0^h EI(N'')^TN''\,dx,\]</div><div class="equation-step">\[M_e=\int_0^h\rho A N^TN\,dx.\]</div></div>
+<p>For example, \(N_1''=(-6+12s)/h^2\), so \(K_{11}=12 EI/h^3\). Integrating \(N_1^2\) gives \(M_{11}=156\rho Ah/420\). Mass couplings to rotations carry one additional length factor, and rotation–rotation terms carry two. These dimensions catch sign and assembly errors which a plausible first eigenvalue can hide.</p>
+</section>
+<section><h2 id="assembly">Recover the vibration equation and its boundary conditions</h2>
+<p>Scatter-add each element into both global matrices at its shared nodal indices. A clamped root imposes \(w_0=\theta_0=0\). Delete those rows and columns from both matrices. The free end has no applied transverse force or moment, which the weak form already enforces as natural conditions. Lagrange’s equations give \(M\ddot q+Kq=0\). A harmonic ansatz gives \(K\phi=\omega^2M\phi\). Eigenvectors from different frequencies are orthogonal in the mass inner product. Their overall signs remain arbitrary.</p>
+<p>Take a one-metre steel cantilever, 30 mm wide and 10 mm deep, \(E=210\) GPa and \(\rho=7800\) kg/m³. The analytical clamped-free roots solve \(\cosh\beta\cos\beta=-1\). Their frequencies scale as \(\beta^2\sqrt{EI/(\rho A)}/(2\pi L^2)\). The test provides three independent references and a direct check on units and boundary conditions.</p>
+<details class="study-aside"><summary>OneSimulation experiment · Convergence of the first three cantilever frequencies under mesh refinement</summary><p>Run the notebook with OneSimulation 0.2.0, NumPy, SciPy and Matplotlib. Change the input data and compare your run with the recorded result.</p><pre><code>&quot;&quot;&quot;Assemble a cantilever from Hermite elements; validate its first three modes.&quot;&quot;&quot;
+import numpy as np
+import matplotlib.pyplot as plt
+from onesim.numerics.linear import SparseSymmetricEigenSolver
+
+length, width, depth = 1.0, 0.03, 0.01  # m
+E, density = 210e9, 7800.0
+area, inertia = width*depth, width*depth**3/12
+
+def beam_frequencies(elements):
+    h = length/elements
+    k = E*inertia/h**3*np.array([[12,6*h,-12,6*h],[6*h,4*h*h,-6*h,2*h*h],
+                                 [-12,-6*h,12,-6*h],[6*h,2*h*h,-6*h,4*h*h]])
+    m = density*area*h/420*np.array([[156,22*h,54,-13*h],[22*h,4*h*h,13*h,-3*h*h],
+                                    [54,13*h,156,-22*h],[-13*h,-3*h*h,-22*h,4*h*h]])
+    size = 2*(elements+1)
+    mass, stiffness = np.zeros((size,size)), np.zeros((size,size))
+    for element in range(elements):
+        dofs = np.arange(2*element,2*element+4)
+        mass[np.ix_(dofs,dofs)] += m
+        stiffness[np.ix_(dofs,dofs)] += k
+    values, modes = SparseSymmetricEigenSolver()(mass[2:,2:], stiffness[2:,2:],
+                                                 mode_count=3, target=0.0)
+    assert np.allclose(modes.T @ mass[2:,2:] @ modes, np.eye(3), atol=1e-8)
+    return np.sqrt(values)/(2*np.pi)
+
+beta = np.array([1.875104069,4.694091133,7.854757438])
+exact = beta**2*np.sqrt(E*inertia/(density*area))/(2*np.pi*length**2)
+counts = [2, 4, 8, 16]
+frequencies = np.array([beam_frequencies(count) for count in counts])
+print(&quot;2 elements [Hz]&quot;, np.round(frequencies[0], 4))
+print(&quot;16 elements [Hz]&quot;, np.round(frequencies[-1], 4))
+print(&quot;analytical [Hz]&quot;, np.round(exact, 4))</code></pre><p>Reference run</p><pre><samp>2 elements [Hz] [  8.386   52.9742 179.1685]
+16 elements [Hz] [  8.3819  52.5288 147.0871]
+analytical [Hz] [  8.3819  52.5285 147.0813]</samp></pre><figure><img src="/assets/fundamentals-expansion/engineering-beam-modes.png" alt="Convergence of the first three cantilever frequencies under mesh refinement" loading="lazy"><figcaption>Convergence of the first three cantilever frequencies under mesh refinement</figcaption></figure><p><a href="/downloads/fundamentals/examples/engineering-beam-modes.ipynb" download>Download editable notebook</a> · <a href="/downloads/fundamentals/examples/engineering-beam-modes.py" download>Download Python script</a></p></details>
+</section>
+<section><h2 id="interpretation">Explain the disagreement between modes</h2>
+<p>With two elements the first mode is 8.3860 Hz against 8.3819 Hz analytically, an error of about 0.05%. The third mode is 179.1685 Hz against 147.0813 Hz, about 22% high. A conforming displacement space restricts admissible shapes and typically overestimates Ritz frequencies when integration is exact. Shorter spatial wavelengths require more independent shape degrees of freedom. The sixth significant digit of the first mode cannot certify the third.</p>
+<details class="study-aside"><summary>Why attaching a sensor at a node changes the prediction</summary><p>An accelerometer of mass \(m_s\) at coordinate \(x_s\) adds \(m_sN(x_s)^TN(x_s)\) to the element mass. It shifts a mode strongly where that mode moves, while its first-order effect at a true modal node vanishes. A location that resolves mode one may be almost blind to mode two.</p></details>
+</section>
+<section><h2 id="sheet">Exercises on model assembly</h2>
+<p>Suppress the root deflection but release its rotation. Which diagnostic should fail?</p><details><summary>Worked solution</summary><p>A beam with one pinned end and a free end can rotate rigidly with \(w=ax\). This mode has zero curvature and stiffness. The smallest eigenvalue should tend to zero. The remaining list must not be compared in order with cantilever roots.</p></details>
+<p>If the beam thickness doubles while width and length stay fixed, predict the frequency change without remeshing.</p><details><summary>Worked solution</summary><p>Inertia scales as thickness cubed and area as thickness, so \(\sqrt{I/A}\) doubles. All Euler–Bernoulli frequencies double within the slender-beam regime. A thick-beam test can depart systematically owing to shear and rotary inertia.</p></details>
+<p>Test whether a calculated eigenvector is numerically valid without a known exact frequency.</p><details><summary>Worked solution</summary><p>Form \(K\phi-\omega^2 M\phi\) and scale its norm by \(\lVert K\phi\rVert+\omega^2\lVert M\phi\rVert\). A small residual certifies the discrete eigenpair. Only refinement or physical data test whether the discrete system is adequate.</p></details>
+<p class="references">Further reading · <a href="https://www.pearson.com/en-us/subject-catalog/p/Rao-Mechanical-Vibrations-6th-Edition/P200000003425/9780134361307">Rao, Mechanical Vibrations, 6th ed.</a>, Chapters 7, 8 and 12.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/05-separating-viscous-and-sliding-friction/">Which damping law produced the free-decay trace?</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/07-modal-truncation-and-time-resolution/">Which approximation shifted the resonance?</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_mechanical_engineering_machine_dynamics_volumes_machine_dynamics_methods_06_vibration_finite_elements">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

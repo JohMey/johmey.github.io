@@ -6,28 +6,35 @@
 <title>Recovering sparse coefficients without hiding amplitude bias · OneSimulation</title>
 <meta name="description" content="A sensor records a linear mixture of a few active components. Derive the soft-threshold map, use it in an iterative reconstruction and decide when correlated response columns make an apparently sharp sparse answer ambiguous.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/03-sparse-inversion-and-shrinkage/">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/03-sparse-inversion-and-shrinkage/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Recovering sparse coefficients without hiding amplitude bias · OneSimulation">
 <meta property="og:description" content="A sensor records a linear mixture of a few active components. Derive the soft-threshold map, use it in an iterative reconstruction and decide when correlated response columns make an apparently sharp sparse answer ambiguous.">
-<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/03-sparse-inversion-and-shrinkage/">
-<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/03-sparse-inversion-and-shrinkage/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Recovering sparse coefficients without hiding amplitude bias">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Recovering sparse coefficients without hiding amplitude bias", "description": "A sensor records a linear mixture of a few active components. Derive the soft-threshold map, use it in an iterative reconstruction and decide when correlated response columns make an apparently sharp sparse answer ambiguous.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/03-sparse-inversion-and-shrinkage/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Recovering sparse coefficients without hiding amplitude bias", "item": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/03-sparse-inversion-and-shrinkage/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_inverse_problems_volumes_inverse_problems_methods_03_sparse_inversion_and_shrinkage">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a> / <a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/">Inferring parameters and fields from observations</a></p><h1>Recovering sparse coefficients without hiding amplitude bias</h1><p class="lead">A sensor records a linear mixture of a few active components. Derive the soft-threshold map, use it in an iterative reconstruction and decide when correlated response columns make an apparently sharp sparse answer ambiguous.</p><p class="byline">Unit 3 of 5</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/inverse-problems/chapters/03-singular-systems/">Background · Singular systems and the amplification of noise</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#threshold">Derive a nonsmooth optimum before choosing a solver</a><a href="#iteration">Majorise the smooth loss and solve its local model exactly</a><a href="#ambiguity">Interpret support and debias only after validating it</a><a href="#numerical-investigation">Can support and amplitudes both be correct?</a><a href="#tutorial">Tutorial · verify an inverse solution using subgradients</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="threshold">Derive a nonsmooth optimum before choosing a solver</h2>
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a> / <a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/">Inferring parameters and fields from observations</a></p><h1>Recovering sparse coefficients without hiding amplitude bias</h1><p class="lead">A sensor records a linear mixture of a few active components. Derive the soft-threshold map, use it in an iterative reconstruction and decide when correlated response columns make an apparently sharp sparse answer ambiguous.</p><p class="byline">Unit 3 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/inverse-problems/chapters/03-singular-systems/">Background · Singular systems and the amplification of noise</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#threshold">Derive a nonsmooth optimum before choosing a solver</a><a href="#iteration">Majorise the smooth loss and solve its local model exactly</a><a href="#ambiguity">Interpret support and debias only after validating it</a><a href="#numerical-investigation">Can support and amplitudes both be correct?</a><a href="#tutorial">Tutorial · verify an inverse solution using subgradients</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="threshold">Derive a nonsmooth optimum before choosing a solver</h2>
 <p>Let a whitened linear model be \(y=Ax+\eta\) and consider minimising \(F(x)=\|Ax-y\|^2/2+\lambda\sum_j|x_j|\). The parameter \(\lambda\ge0\) balances fit with sparsity in this chosen coordinate system. Rescaling one column of \(A\) while leaving its penalty unchanged changes how expensive the corresponding physical component is; normalise columns or use documented coefficient-specific weights before comparing support selection across different quantities. Sparsity of a signal in one basis is a modelling assumption, not evidence generated by the penalty itself.</p>
 <p>For an orthonormal design \(A^TA=I\), expanding the square shows that minimisation separates into scalar terms \((x_j-z_j)^2/2+\lambda|x_j|\), with \(z=A^Ty\). For a positive solution the derivative is \(x-z+\lambda=0\); for a negative one it is \(x-z-\lambda=0\). At zero the absolute-value subgradient is the interval \([-1,1]\), so zero is optimal when \(|z|\le\lambda\). These cases give</p>
 <div class="math display">\[S_\lambda(z)=\operatorname{sign}(z)\max(|z|-\lambda,0).\]</div>
@@ -67,7 +74,7 @@
 <nav aria-label="Related links">
 <a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_inverse_problems_volumes_inverse_problems_methods_03_sparse_inversion_and_shrinkage">Plans &amp; trial</a>
 <a href="/about/">About the Developer</a>
 <a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
 </nav>

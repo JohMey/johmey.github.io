@@ -6,28 +6,35 @@
 <title>When stable eigenvalues allow large transient growth · OneSimulation</title>
 <meta name="description" content="Two damped states exchange energy in only one direction. Its eigenvalues predict ultimate decay, while a short-time response can grow by a large factor. Compute the matrix exponential, its gain and a resolvent-based sensitivity check.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="When stable eigenvalues allow large transient growth · OneSimulation">
 <meta property="og:description" content="Two damped states exchange energy in only one direction. Its eigenvalues predict ultimate decay, while a short-time response can grow by a large factor. Compute the matrix exponential, its gain and a resolvent-based sensitivity check.">
-<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/">
-<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="When stable eigenvalues allow large transient growth">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "When stable eigenvalues allow large transient growth", "description": "Two damped states exchange energy in only one direction. Its eigenvalues predict ultimate decay, while a short-time response can grow by a large factor. Compute the matrix exponential, its gain and a resolvent-based sensitivity check.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "When stable eigenvalues allow large transient growth", "item": "https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_linear_algebra_volumes_linear_algebra_methods_01_nonnormal_growth_and_resolvents">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Matrix computations and spectral accuracy</a></p><h1>When stable eigenvalues allow large transient growth</h1><p class="lead">Two damped states exchange energy in only one direction. Its eigenvalues predict ultimate decay, while a short-time response can grow by a large factor. Compute the matrix exponential, its gain and a resolvent-based sensitivity check.</p><p class="byline">Unit 1 of 5</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/linear-algebra/chapters/01-conditioning/">Background · Conditioning and backward error</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#evolution">Solve the evolution one component at a time</a><a href="#singular">Find the input that grows most at a chosen time</a><a href="#resolvent">Link a small singular value to sensitivity of eigenvalues</a><a href="#lab">Compare one preparation with the worst-case envelope</a><a href="#sensor">How a detector can miss the strongest transient</a><a href="#tutorial">Tutorial · verify three distinct amplification diagnostics</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="evolution">Solve the evolution one component at a time</h2>
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Matrix computations and spectral accuracy</a></p><h1>When stable eigenvalues allow large transient growth</h1><p class="lead">Two damped states exchange energy in only one direction. Its eigenvalues predict ultimate decay, while a short-time response can grow by a large factor. Compute the matrix exponential, its gain and a resolvent-based sensitivity check.</p><p class="byline">Unit 1 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/linear-algebra/chapters/01-conditioning/">Background · Conditioning and backward error</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#evolution">Solve the evolution one component at a time</a><a href="#singular">Find the input that grows most at a chosen time</a><a href="#resolvent">Link a small singular value to sensitivity of eigenvalues</a><a href="#lab">Compare one preparation with the worst-case envelope</a><a href="#sensor">How a detector can miss the strongest transient</a><a href="#tutorial">Tutorial · verify three distinct amplification diagnostics</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="evolution">Solve the evolution one component at a time</h2>
 <p>Consider dimensionless time \(t\) and state \(x=(x_1,x_2)^T\) with \(\dot x=Ax\), \(A=\left(\begin{smallmatrix}-1&amp;K\\0&amp;-2\end{smallmatrix}\right)\), for real \(K\ge0\). The second component decays independently; its transient drives the first. A physical example is a linearised pair of relaxation processes with one readout feeding another. Choose state units so the Euclidean norm represents the amplification of interest. If the coordinates measure unrelated quantities such as volts and kelvins, the unweighted norm changes if one simply changes units. A physical energy or covariance supplies a more appropriate weighted norm.</p>
 <p>Starting from \(x(0)=(u,v)\), integrate the second row to find</p>
 <div class="math display">\[x_2=e^{-2t}v.\]</div>
@@ -69,7 +76,7 @@
 <nav aria-label="Related links">
 <a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_linear_algebra_volumes_linear_algebra_methods_01_nonnormal_growth_and_resolvents">Plans &amp; trial</a>
 <a href="/about/">About the Developer</a>
 <a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
 </nav>

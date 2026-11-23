@@ -6,28 +6,35 @@
 <title>Choosing a derivative step in a nonlinear solve · OneSimulation</title>
 <meta name="description" content="A smaller finite-difference step eventually makes Newton iterations worse. Derive truncation and evaluation errors, compare a complex perturbation and a directional derivative, and test which numerical derivative is meaningful for the actual residual implementation.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Choosing a derivative step in a nonlinear solve · OneSimulation">
 <meta property="og:description" content="A smaller finite-difference step eventually makes Newton iterations worse. Derive truncation and evaluation errors, compare a complex perturbation and a directional derivative, and test which numerical derivative is meaningful for the actual residual implementation.">
-<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/">
-<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Choosing a derivative step in a nonlinear solve">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Choosing a derivative step in a nonlinear solve", "description": "A smaller finite-difference step eventually makes Newton iterations worse. Derive truncation and evaluation errors, compare a complex perturbation and a directional derivative, and test which numerical derivative is meaningful for the actual residual implementation.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Choosing a derivative step in a nonlinear solve", "item": "https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_nonlinear_equations_volumes_nonlinear_equations_methods_01_derivatives_at_machine_precision">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Nonlinear systems and iterative methods</a></p><h1>Choosing a derivative step in a nonlinear solve</h1><p class="lead">A smaller finite-difference step eventually makes Newton iterations worse. Derive truncation and evaluation errors, compare a complex perturbation and a directional derivative, and test which numerical derivative is meaningful for the actual residual implementation.</p><p class="byline">Unit 1 of 5</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/nonlinear-equations/chapters/03-tangent-and-secant/">Background · Newton and secant updates</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#difference">Derive competing contributions to error</a><a href="#complex">Obtain the slope from an imaginary perturbation</a><a href="#direction">Audit a Jacobian action before assembling a matrix</a><a href="#experiment">Find the useful step before a Newton update</a><a href="#stable-form">Change the evaluation before changing the step</a><a href="#tutorial">Tutorial · design tests for smoothness and implementation errors</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="difference">Derive competing contributions to error</h2>
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Nonlinear systems and iterative methods</a></p><h1>Choosing a derivative step in a nonlinear solve</h1><p class="lead">A smaller finite-difference step eventually makes Newton iterations worse. Derive truncation and evaluation errors, compare a complex perturbation and a directional derivative, and test which numerical derivative is meaningful for the actual residual implementation.</p><p class="byline">Unit 1 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/nonlinear-equations/chapters/03-tangent-and-secant/">Background · Newton and secant updates</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#difference">Derive competing contributions to error</a><a href="#complex">Obtain the slope from an imaginary perturbation</a><a href="#direction">Audit a Jacobian action before assembling a matrix</a><a href="#experiment">Find the useful step before a Newton update</a><a href="#stable-form">Change the evaluation before changing the step</a><a href="#tutorial">Tutorial · design tests for smoothness and implementation errors</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="difference">Derive competing contributions to error</h2>
 <p>Suppose \(f\) is smooth and you need its slope at \(x\) to form a Newton correction. A forward difference \(D_h=[f(x+h)-f(x)]/h\) has Taylor expansion \(f'(x)+hf''(x)/2+O(h^2)\). A centred difference \([f(x+h)-f(x-h)]/(2h)\) instead cancels the even terms, leaving \(f'(x)+h^2 f'''(x)/6+O(h^4)\). Both limits are exact in real arithmetic as \(h\to0\). The program, however, returns approximate residual values, and a subtraction of nearby values can lose significant digits. If each absolute evaluation error is at most \(\delta\), the derivative error from those perturbations is at most \(2\delta/h\) for forward difference and \(\delta/h\) for the centred one.</p>
 <p>Thus an illustrative forward error bound has shape \(a h+b/h\); minimisation gives</p>
 <div class="math display">\[h_*=\sqrt{b/a}.\]</div>
@@ -71,7 +78,7 @@
 <nav aria-label="Related links">
 <a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_nonlinear_equations_volumes_nonlinear_equations_methods_01_derivatives_at_machine_precision">Plans &amp; trial</a>
 <a href="/about/">About the Developer</a>
 <a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
 </nav>

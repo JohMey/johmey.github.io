@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From existence of a trajectory to the order of a time step · OneSimulation</title>
+<meta name="description" content="Establish what an initial-value solver approximates, derive Runge–Kutta order conditions for a general smooth vector field and construct an alternative high-order step by extrapolation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/06-from-an-integral-equation-to-adaptive-high-order-steps/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From existence of a trajectory to the order of a time step · OneSimulation">
+<meta property="og:description" content="Establish what an initial-value solver approximates, derive Runge–Kutta order conditions for a general smooth vector field and construct an alternative high-order step by extrapolation.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/06-from-an-integral-equation-to-adaptive-high-order-steps/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="From existence of a trajectory to the order of a time step">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "From existence of a trajectory to the order of a time step", "description": "Establish what an initial-value solver approximates, derive Runge–Kutta order conditions for a general smooth vector field and construct an alternative high-order step by extrapolation.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/06-from-an-integral-equation-to-adaptive-high-order-steps/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "From existence of a trajectory to the order of a time step", "item": "https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/06-from-an-integral-equation-to-adaptive-high-order-steps/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_ordinary_differential_equations_volumes_ordinary_differential_equations_methods_06_from_an_integral_equation_to_adaptive_high_order_steps">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/">Dynamics and numerical time integration</a></p><h1>From existence of a trajectory to the order of a time step</h1><p class="lead">Establish what an initial-value solver approximates, derive Runge–Kutta order conditions for a general smooth vector field and construct an alternative high-order step by extrapolation.</p><p class="byline">Unit 6 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#picard">Construct the trajectory on a short interval</a><a href="#trees">Collect elementary derivatives without losing branching terms</a><a href="#extrapolation">Select accuracy by spending more substeps</a><a href="#tutorial">Tutorial on existence and order</a></nav></aside><article class="prose reference"><section><h2 id="picard">Construct the trajectory on a short interval</h2>
+<p>Let \(f(t,y)\) be continuous on a time–state cylinder, bounded there by \(M\) and Lipschitz in \(y\) with constant \(L\). For initial value \(y_0\), seek a continuous curve in the closed sup-norm ball of radius \(R\) around \(y_0\). On an interval of length \(H\), apply</p>
+<div class="math display">\[(Tz)(t)=y_0+\int_{t_0}^{t} f(s,z(s))\,ds.\]</div>
+<p>If \(HM\le R\) and \(HL&lt;1\), \(T\) maps the ball into itself and is a contraction. Iteration from the constant curve changes by at most \(HL\) times the preceding change. The geometric series of increments converges uniformly and the limit satisfies the integral equation. Differentiation gives the ODE. Two such limits have distance at most \(HL\) times their distance, hence coincide. Overlapping short cylinders extend the trajectory until continuation fails. For \(y'=y^2,\ y(0)=1\), the explicit \(1/(1-t)\) illustrates why local existence gives no promise at \(t=1\).</p>
+<p>The perturbed integral inequality \(e(t)\le e_0+\int_0^t(Le(s)+d(s))ds\) leads, by an integrating factor for the right-hand side, to \(e(t)\le e^{Lt}e_0+\int_0^t e^{L(t-s)}d(s)ds\). It explains why a finite-time global error bound for a numerical solver needs an appropriate domain and a perturbation-growth estimate.</p>
+</section>
+<section><h2 id="trees">Collect elementary derivatives without losing branching terms</h2>
+<p>For an autonomous smooth \(f\), the first three elementary differentials are \(f,\ f'f,\ f''(f,f)\), together with the third-order chain \(f'(f'f)\). Represent a derivative acting on child differentials by a node with one branch per argument. A single node has order and density one. Recursively, a tree \(\tau=[\tau_1,\ldots,\tau_k]\) has \(|\tau|=1+\sum|\tau_j|\) and density \(\gamma(\tau)=|\tau|\prod\gamma(\tau_j)\). This factor follows by integrating the power of time once when a root is added. Multiplicities of identical branches give the same symmetry factor on the exact and numerical sides.</p>
+<p>Define stage weights \(\Phi_i(\bullet)=1\). Taylor expanding each RK stage about the initial state replaces an integral for every child by a weighted stage sum. Consequently</p>
+<div class="math display equation-chain"><div class="equation-step">\[\Phi_i([\tau_1,\ldots,\tau_k])=\prod_{\ell=1}^k\sum_j a_{ij}\Phi_j(\tau_\ell),\]</div><div class="equation-step">\[\sum_i b_i\Phi_i(\tau)=1/\gamma(\tau).\]</div></div>
+<p>Matching every tree through order \(p\) gives classical order \(p\) for general sufficiently smooth vector fields. The local defect is order \(p+1\), yielding global order \(p\) under the perturbation bound above. For the fourth-order tree consisting of a root, a child, and two leaves on that child, the condition is \(b^TAc^2=1/12\), with \(c=A\mathbf1\) and the square componentwise. For a root with three leaves it is \(b^Tc^3=1/4\). A scalar linear test equation supplies only chains.</p>
+</section>
+<section><h2 id="extrapolation">Select accuracy by spending more substeps</h2>
+<p>For a smooth problem over one macrostep \(H\), let \(T_{j,0}\) be its endpoint from \(N_j=2^j\) Euler substeps. At fixed \(H\), assume the endpoint error has an asymptotic expansion in powers of \(1/N_j\). This follows for smooth solutions by expanding the local error and propagating its coefficients. The leading term halves on doubling. Eliminate successive powers by</p>
+<div class="math display">\[T_{j,k}=T_{j,k-1}+\frac{T_{j,k-1}-T_{j-1,k-1}}{2^k-1}.\]</div>
+<p>For \(y'=y,\ y(0)=1,\ H=0.2\), the one- and two-substep estimates are \(1.2\) and \(1.21\), so the extrapolate is \(1.22\), close to \(e^{0.2}\). Four substeps give \(1.21550625\). Extrapolating once gives \(1.2210125\) and twice gives \(1.22135\). Use the separation between successive columns to estimate the lower-order local error. For a column of global order \(k+1\), a local tolerance suggests a trial next \(H\) proportional to the tolerance ratio raised to \(1/(k+2)\) if using that column's error estimate. Compare accepted advance per function evaluation at candidate orders. Restart the expansion after a discontinuity and impose the stability restriction of the underlying method.</p>
+<details class="study-aside"><summary>When can a correct extrapolation tableau be misleading?</summary><p>An unresolved event or a nonsmooth forcing invalidates the common power expansion across grids. Agreement among columns can then mean that every grid missed the same feature. Split at a known event and test the reconstruction against the defect in the integral equation.</p></details>
+<!-- numerics-figure --><figure class="study-figure"><img src="/assets/fundamentals-expansion/numerics-extrapolation-cost.png" loading="lazy" alt="Extrapolation columns reduce endpoint error for exponential growth at fixed evaluation cost."><figcaption>Each column cancels another inverse power of the substep count. Work includes all Euler subintegrations computed through the current row. The reference at time one is exp(1).</figcaption></figure><!-- /numerics-figure -->
+</section>
+<section><h2 id="tutorial">Tutorial on existence and order</h2>
+<h3>Bound the Picard iteration for a linear cooling model</h3><details><summary>Work through the solution</summary><p>With \(f=-2y+1,\ y_0=1,\ R=1\), \(|f|\le3\) and \(L=2\) on \([0,2]\). Taking \(H=1/4\) gives \(HM=3/4\) and contraction ratio at most \(1/2\). The sum of all remaining differences after an iterate is bounded by the last difference times \((1/2)/(1-1/2)\).</p></details>
+<h3>Distinguish two fourth-order calculations experimentally</h3><details><summary>Work through the solution</summary><p>A linear exponential tests the chain \(b^TA^2c\) and is blind to \(f''\). To excite branching terms choose a smooth nonlinear vector field and compare to an independent fine solution at successively halved step sizes. A nonlinear test can reveal an incorrect coefficient, but the general order proof needs every independent tree condition.</p></details>
+<p><a href="https://link.springer.com/book/10.1007/978-3-540-78862-1">Hairer, Nørsett and Wanner · nonstiff problems</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/05-cayley-rotation-and-phase-lag/">How far does an energy-preserving rotation lag behind?</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/07-why-the-root-condition-controls-convergence/">Why consistent multistep formulas can fail under refinement</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_ordinary_differential_equations_volumes_ordinary_differential_equations_methods_06_from_an_integral_equation_to_adaptive_high_order_steps">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

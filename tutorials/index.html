@@ -3,73 +3,183 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OneSimulation tutorials · OneSimulation</title>
-<meta name="description" content="Install the Runtime, solve a physical problem in Python and verify the result.">
+<title>Get Started · OneSimulation</title>
+<meta name="description" content="Install OneSimulation, run and verify your first calculation, then build a spatial simulation.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/">
+<link rel="canonical" href="https://onesimulation.pages.dev/tutorials/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="website">
-<meta property="og:title" content="OneSimulation tutorials · OneSimulation">
-<meta property="og:description" content="Install the Runtime, solve a physical problem in Python and verify the result.">
-<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/">
-<meta property="og:image" content="https://onesimulation.onrender.com/assets/step-result.png">
-
+<meta property="og:title" content="Get Started · OneSimulation">
+<meta property="og:description" content="Install OneSimulation, run and verify your first calculation, then build a spatial simulation.">
+<meta property="og:url" content="https://onesimulation.pages.dev/tutorials/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/step-result.png">
+<meta property="og:image:alt" content="Get Started">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.pages.dev/tutorials/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="page">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="page">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell">
-  <h1>OneSimulation tutorials</h1>
-  <p class="lead">Install the Runtime, build a physical model in Python, check the result against a reference and use the same workflow for your own problem.</p>
-</header>
-<div class="shell article-layout">
-  <aside class="article-nav"><nav aria-label="Tutorial path"><a href="#install">Download and setup</a><a href="#model">Build and run a model</a><a href="#results">Read and verify results</a><a href="#advanced">Change the numerical method</a></nav></aside>
-  <article class="prose">
-    <section>
-      <h2 id="install">Download and setup</h2>
-      <p>Start with the <a href="/tutorials/install/">installation tutorial</a>. It covers downloading a wheel from Gumroad, checking CPython 3.13, creating a virtual environment, installing dependencies and activating the licence on macOS, Ubuntu and Windows.</p>
-      <p>For an interactive workflow, follow <a href="/tutorials/notebook/">the Jupyter setup</a> and verify that the selected kernel imports <code>onesim</code> from the environment you installed.</p>
-    </section>
-    <section>
-      <h2 id="model">Build and run a model</h2>
-      <p>Start with <a href="/tutorials/time-dependent/">a body cooling by radiation or a damped oscillator</a>. Both have an analytical time history. They let you learn how to specify the physical model and make a unit-aware check before dealing with a spatial mesh.</p>
-      <p>For a spatial problem, follow <a href="/tutorials/spatial-models/">the conduction, diffusion and flow studies</a> or <a href="/tutorials/step/">import a 3D STEP sleeve and apply a tensile load</a>. The <a href="/blog/3d/">3D example index</a> includes models with several materials, boundary patches and coupled fields.</p>
-      <p>In each case the workflow is:</p>
-      <ol>
-        <li><strong>Geometry and regions.</strong> Select the volume, faces and named boundaries that the physical model acts on.</li>
-        <li><strong>Physics and data.</strong> Specify material properties, state variables, loads and boundary or initial conditions in a <code>Problem</code>.</li>
-        <li><strong>Mesh and method.</strong> Choose a mesh suited to the geometry and a numerical method suited to the equations.</li>
-        <li><strong>Execution.</strong> Build <code>Simulation</code> with the problem, mesh and <code>Numerics</code>, then choose the stationary or transient solve used in the worked example.</li>
-        <li><strong>Reference.</strong> Extract fields or time histories and check them against an analytical solution, a balance or a published benchmark.</li>
-      </ol>
-    </section>
-    <section>
-      <h2 id="results">Read and verify results</h2>
-      <p><a href="/tutorials/results/">Read fields, make plots and export results</a>. A field probe, a boundary integral and a time history answer different questions. Choose which one measures your physical quantity before plotting.</p>
-      <p><a href="/tutorials/diagnose/">Diagnose a suspect result</a> by checking material units and boundary assignments first. Change one numerical input at a time and record the observable used for comparison.</p>
-    </section>
-    <section>
-      <h2 id="advanced">Change the numerical method</h2>
-      <ul>
-        <li><a href="/tutorials/discretization/">Choose spatial discretizations and operators</a> for the geometry and governing equation.</li>
-        <li><a href="/tutorials/method-comparison/">Compare five methods for a manufactured Poisson problem</a>.</li>
-        <li><a href="/tutorials/solvers/">Configure linear and nonlinear solvers, time integration and coupled fields</a>.</li>
-        <li><a href="/tutorials/custom-equation/">Define and solve your own equation</a> using a reference solution to check the discretization.</li>
-      </ul>
-      <p>The <a href="/tutorials/numerical-lab/">14-week numerical methods lab</a> and its <a href="/tutorials/numerical-lab/exercises/">eight computational exercises</a> extend these comparisons to meshes, solvers and time integrators.</p>
-      <p>Use the <a href="/blog/">notebook blog</a> for a worked case in your field, then keep its verification check as you change the data. The <a href="/fundamentals/">course notes</a> derive the reference equations and offer follow-on exercises.</p>
-    </section>
-  </article>
-</div>
+<header class="article-header shell"><h1>Get Started</h1>
+<p class="lead">Install OneSimulation, build a complete physical model, inspect its output and check whether the result is accurate enough for your question.</p></header>
+<div class="shell article-layout"><aside class="article-nav"><nav aria-label="Getting started"><a href="#install">Install and check Python</a><a href="#question">Choose a first physical question</a><a href="#model">Build the model</a><a href="#run">Run the complete example</a><a href="#verify">Verify and change the result</a><a href="#spatial">Move to spatial fields</a><a href="#diagnose">Diagnose a calculation</a><a href="#continue">Continue with your subject</a></nav></aside>
+<article class="prose reference">
+<section><h2 id="install">Install and check the environment that will run your code</h2>
+<p>Use the <a href="/tutorials/install/">platform-specific installation guide</a> to download the Runtime wheel, create the supported Python environment, install the wheel and activate your licence. The guide gives the current commands for macOS, Windows and Ubuntu. In a terminal belonging to that environment, verify which Python is running and where it imports the package.</p>
+<pre><code>python -c "import sys, onesim; print(sys.executable); print(onesim.__file__)"</code></pre>
+<p>The first line should identify the Python executable in your selected environment. The second should identify the installed OneSimulation package. If either path belongs to another environment, select the intended interpreter before continuing. For Jupyter, follow the <a href="/tutorials/notebook/">kernel setup</a> and run the same imports inside a notebook cell.</p>
+<details class="study-aside"><summary>Remember · A notebook kernel is a Python process</summary><p>Installing a package from one terminal does not automatically change the process executing an open notebook. Inspect <code>sys.executable</code> in the notebook. After installation or an update, restart that kernel and run the cells from the beginning. This avoids combining variables created by different versions of the model.</p></details>
+<p>The example below uses NumPy and Matplotlib alongside OneSimulation. Save the supplied Python file in a writable working folder so the resulting figure has a predictable location. The downloadable notebook performs the same calculation in your local environment.</p></section>
+<section><h2 id="question">Start with a physical quantity you can predict</h2>
+<p>A sealed, well-mixed batch contains species A, which converts irreversibly into B. There is no inflow or outflow. A first-order rate coefficient k means each unit of A has the same conversion probability per unit time. With concentrations measured in mol/m³, the model is</p>
+<div class="math display">\[\dot C_A=-kC_A,\qquad \dot C_B=kC_A.\]</div>
+<p>Adding the equations gives d(CA+CB)/dt=0. Dividing the first by CA and integrating gives ln(CA/CA0)=−kt. For an initial concentration CA0 and initially absent B, the reference solution is</p>
+<div class="math display">\[C_A(t)=C_{A0}e^{-kt},\qquad C_B(t)=C_{A0}(1-e^{-kt}).\]</div>
+<p>Choose k=0.8 s⁻¹ and CA0=1 mol/m³. The characteristic time is 1/k=1.25 s. After five characteristic times, CA is about 0.006738 mol/m³. The sum of concentrations should stay one throughout. These are two independent questions for the calculation, time-history accuracy and conservation.</p>
+<details class="study-aside"><summary>Background · Why this first model has no spatial mesh</summary><p>Well mixed means the model assumes one concentration for the entire reactor at each time. A lumped mesh represents that state. If diffusion is slow compared with reaction, the same physical vessel can develop concentration gradients and require a spatial model. A successful lumped calculation verifies the computation under its mixing assumption. It does not establish that every real vessel is well mixed.</p></details></section>
+<section><h2 id="model">Connect each part of the physical description to the model</h2>
+<table><thead><tr><th>Object in the example</th><th>Physical or numerical role</th></tr></thead><tbody>
+<tr><td><code>ReactionNetworkIR</code></td><td>Names the two species and declares A → B with its rate. Equal composition and particle mass make the reaction balance check meaningful.</td></tr>
+<tr><td><code>LumpedDomain</code> and <code>ReactionKinetics</code></td><td>Define the spatially uniform reactor and its concentration variables.</td></tr>
+<tr><td><code>Problem</code> and <code>InitialValue</code></td><td>Collect the physics and the state at time zero. The initial concentration belongs to the physical problem.</td></tr>
+<tr><td><code>Numerics</code></td><td>Selects lumped spatial representation and fourth-order Runge–Kutta time integration. The time step belongs to the numerical approximation.</td></tr>
+<tr><td><code>Simulation</code></td><td>Combines the model and method, validates their compatibility and advances the state.</td></tr>
+<tr><td><code>result.field(...).time_series()</code></td><td>Retrieves times and concentration values for an explicit reference comparison.</td></tr></tbody></table>
+<p>Keeping the initial condition and the time step in their respective roles makes subsequent experiments easier to interpret. Changing k asks another physical question. Reducing the time step asks whether the same physical question has been computed more accurately.</p></section>
+<section><h2 id="run">Run the complete OneSimulation example</h2>
+<p><a href="/downloads/get-started-reaction.py" download>Download Python script</a> · <a href="/downloads/get-started-reaction.ipynb" download>Download Jupyter notebook</a></p>
+<p>Run <code>python get-started-reaction.py</code> in the environment you checked above. The script builds the model, performs the calculation, prints the comparison and saves <code>get-started-reaction.png</code> in the current working directory. The assertions at the end test the supplied baseline parameters.</p>
+<details class="study-aside"><summary>OneSimulation · Complete code, measured output and plot</summary><pre><code>&quot;&quot;&quot;First complete OneSimulation model, verified against an exponential solution.&quot;&quot;&quot;
+import numpy as np
+from onesim.cad.geometry import LumpedDomain
+from onesim.meshing import LumpedMesh
+from onesim.numerics import Numerics
+from onesim.numerics.discretization import LumpedParameters
+from onesim.numerics.time import ClassicalRungeKutta4
+from onesim.physics.chemistry import (
+    ReactionIR,
+    ReactionKinetics,
+    ReactionNetworkIR,
+    SpeciesIR,
+)
+from onesim.simulation import Problem, Simulation
+from onesim.simulation.initial_conditions import InitialValue
+import matplotlib.pyplot as plt
+
+k = 0.8
+C_A0 = 1.0
+C_B0 = 0.0
+tau = 1.0 / k
+end_time = 5.0 * tau
+time_step = 0.05 * tau
+print(
+    f&quot;k = {k:.3f} 1/s,  characteristic time 1/k = {tau:.2f} s,  end time = {end_time:.2f} s&quot;
+)
+
+network = ReactionNetworkIR(
+    &quot;first_order_decay&quot;,
+    &quot;1&quot;,
+    species=(
+        SpeciesIR(&quot;A&quot;, 0, 1e-27, composition={&quot;H&quot;: 1}),
+        SpeciesIR(&quot;B&quot;, 0, 1e-27, composition={&quot;H&quot;: 1}),
+    ),
+    reactions=(
+        ReactionIR(&quot;decay&quot;, {&quot;A&quot;: 1}, {&quot;B&quot;: 1}, {&quot;kind&quot;: &quot;constant&quot;, &quot;value&quot;: k}),
+    ),
+    strict_balance=True,
+)
+
+domain = LumpedDomain()
+model = ReactionKinetics(domain=domain.system, temperature=300.0, network=network)
+C_A = model.concentration(&quot;A&quot;)
+C_B = model.concentration(&quot;B&quot;)
+
+problem = Problem(
+    name=&quot;First-order reaction decay&quot;,
+    geometry=domain,
+    physics=(model,),
+    initial_conditions=(
+        InitialValue(C_A, C_A0),
+        InitialValue(C_B, C_B0),
+    ),
+)
+simulation = Simulation(
+    problem=problem,
+    mesh=LumpedMesh(domain),
+    numerics=Numerics(
+        spatial=LumpedParameters(),
+        time_integrator=ClassicalRungeKutta4(),
+    ),
+)
+simulation.validate().require_valid()
+result = simulation.run(start_time=0.0, end_time=end_time, time_step=time_step)
+
+times, num_A = result.field(C_A).time_series()
+_, num_B = result.field(C_B).time_series()
+
+exact_A = C_A0 * np.exp(-k * times)
+exact_B = C_A0 * (1.0 - np.exp(-k * times))
+
+err_A = float(np.max(np.abs(num_A - exact_A)))
+err_B = float(np.max(np.abs(num_B - exact_B)))
+rel_error = max(err_A, err_B) / C_A0
+print(
+    f&quot;Maximum absolute error against the exponential: {max(err_A, err_B):.3e} mol/m^3&quot;
+    f&quot;  ({100 * rel_error:.4f} % of C_A0)&quot;
+)
+
+mass_error = float(np.max(np.abs(num_A + num_B - C_A0)))
+print(f&quot;Maximum mass-balance error C_A+C_B-C_A0: {mass_error:.3e} mol/m^3&quot;)
+
+fig, ax = plt.subplots(figsize=(7, 4), layout=&quot;constrained&quot;)
+ax.plot(times, num_A, &quot;o&quot;, markevery=5, label=&quot;A computed&quot;)
+ax.plot(times, num_B, &quot;s&quot;, markevery=5, label=&quot;B computed&quot;)
+ax.plot(times, exact_A, &quot;--&quot;, label=&quot;A exact&quot;)
+ax.plot(times, exact_B, &quot;--&quot;, label=&quot;B exact&quot;)
+ax.set(xlabel=&quot;Time (s)&quot;, ylabel=&quot;Concentration (mol/m³)&quot;)
+ax.grid(alpha=0.2)
+ax.legend()
+fig.savefig(&quot;get-started-reaction.png&quot;, dpi=170)
+assert max(err_A, err_B) &lt; 3e-8
+assert mass_error &lt; 1e-12
+</code></pre>
+<p>Output from the supplied model</p><pre><code>k = 0.800 1/s,  characteristic time 1/k = 1.25 s,  end time = 6.25 s
+Maximum absolute error against the exponential: 1.998e-08 mol/m^3  (0.0000 % of C_A0)
+Maximum mass-balance error C_A+C_B-C_A0: 4.441e-16 mol/m^3
+</code></pre>
+<figure><img src="/assets/fundamentals-expansion/get-started-reaction.png" alt="Computed A and B concentrations over 6.25 seconds compared with their analytical exponential curves" loading="lazy"><figcaption>A disappears at the same rate that B appears. Markers show computed values and dashed lines show the analytical solution. A nearly exact total concentration alone would not establish that the conversion occurred at the correct rate.</figcaption></figure></details>
+<p>For this run the maximum error against the exact concentration is approximately 2.0×10⁻⁸ mol/m³. The concentration-sum error is approximately 4.4×10⁻¹⁶ mol/m³. Final digits can depend on platform and numerical backend.</p></section>
+<section><h2 id="verify">Make three changes and predict their effects first</h2>
+<p><strong>Change the rate.</strong> Double k to 1.6 s⁻¹. The half-life should halve from ln2/0.8≈0.8664 s to about 0.4332 s. The script defines duration and step as multiples of 1/k, so the dimensionless conversion curve against kt stays the same. To compare the two reactions over the same elapsed seconds, prescribe a fixed end time.</p>
+<p><strong>Refine the time step.</strong> Keep k and the end time fixed and halve the time step. In the resolved regime a fourth-order method should reduce its leading global error by approximately 16. Repeat once more. Compare error at the same physical times, or compare the maximum error against the exact solution sampled on each grid. Near floating-point roundoff the reduction will eventually level off.</p>
+<p><strong>Change the initial amount.</strong> Double CA0. Both concentration curves should double while their normalised shapes stay fixed. The numerical error in absolute concentration should scale similarly. If you add an initial B concentration, update the exact B solution and the expected conserved sum together.</p>
+<details class="study-aside"><summary>Remember · A useful numerical check can fail</summary><p>Deliberately take a very large time step and inspect concentrations. The Runge–Kutta stability polynomial approximates exp(−kh). Outside its useful regime it can produce an incorrect decay despite a preserved sum. Negative concentrations or growth in an irreversible closed decay are physical diagnostics. The baseline assertions may fail after you change parameters. Recalculate the reference and set an accuracy requirement appropriate to the modified experiment.</p></details>
+<p>Write down the parameter set, predicted change, measured change and error for each run. The <a href="/tutorials/results/">results guide</a> extends this workflow to field probes, integrals, plots and exported data.</p></section>
+<section><h2 id="spatial">Move from one state to a field</h2>
+<p>A spatial simulation adds position-dependent unknowns and boundary data. Begin with a one-dimensional diffusion or conduction example from the <a href="/tutorials/spatial-models/">spatial modelling guide</a>. Identify the governing balance, the material coefficients, the source, and the prescribed value or flux on each boundary before choosing a mesh.</p>
+<p>For a slab of thickness L with uniform conductivity k and fixed endpoint temperatures T0 and TL, the steady source-free balance gives d(k dT/dx)/dx=0. Constant k gives T(x)=T0+(TL−T0)x/L and heat flux q=−k(TL−T0)/L. This reference predicts a line and a constant flux. If a computed curve bends, inspect sources, geometry, coefficients and boundary assignments before interpreting it as a new physical effect.</p>
+<details class="study-aside"><summary>Background · A boundary value and a boundary flux need different checks</summary><p>A prescribed temperature fixes a field value. A prescribed outward heat flux fixes energy crossing the boundary. For a pure flux problem, the global source and outward flux must balance, and an additive temperature constant may remain undetermined. Adding a physical temperature reference resolves that freedom. Assigning both a value and a flux to the same independent boundary can overconstrain the model.</p></details>
+<p>Record a physical observable such as total heat flow or displacement at a named point. Refine the mesh and compare that same quantity. Then tighten the linear solver tolerance separately. The <a href="/tutorials/method-comparison/">five-method Poisson example</a> provides a reference for a more systematic discretisation comparison. For CAD geometry, the <a href="/tutorials/step/">STEP sleeve tutorial</a> walks through a tensile problem and its analytical displacement scale.</p></section>
+<section><h2 id="diagnose">Diagnose an unexpected calculation in order</h2>
+<ol><li>Read the first validation or runtime error and identify the object it names. Confirm imports and the active interpreter.</li><li>Check units and physical scales. A millimetre interpreted as a metre changes gradients, areas and volumes differently.</li><li>Inspect the selected regions and boundaries. Confirm that each load and constraint acts on the intended geometry.</li><li>Check balance and limiting behaviour. Zero source, zero load or identical boundary values can provide a simpler reference.</li><li>Change one numerical setting at a time. Compare mesh size, solver tolerance and time step against a fixed observable.</li><li>Save the smallest model that reproduces the discrepancy, together with parameters and the measured error.</li></ol>
+<p>The <a href="/tutorials/diagnose/">diagnostic guide</a> develops these checks. The <a href="/tutorials/solvers/">solver guide</a> explains linear, nonlinear, transient and coupled calculations after the physical problem has been specified.</p></section>
+<section><h2 id="continue">Continue with the question you want to answer</h2>
+<ul><li>Use the <a href="/blog/">Application Library</a> for an existing model with geometry, inputs, plots, reference checks and a downloadable notebook.</li><li>Use <a href="/fundamentals/">Fundamentals</a> for derivations, prerequisites and exercises in physics, mechanical engineering and numerical mathematics.</li><li>Use the <a href="/tutorials/discretization/">discretisation guide</a> and <a href="/tutorials/custom-equation/">custom-equation guide</a> when your governing equation or numerical method needs a different formulation.</li><li>Work through the <a href="/tutorials/numerical-lab/">numerical methods lab</a> and its <a href="/tutorials/numerical-lab/exercises/">computational exercises</a> to practise comparing methods on controlled problems.</li></ul>
+</section></article></div>
 
 </main>
 <footer class="site-footer"><div class="shell footer-row">
@@ -77,7 +187,7 @@
 <nav aria-label="Related links">
 <a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials">Plans &amp; trial</a>
 <a href="/about/">About the Developer</a>
 <a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
 </nav>

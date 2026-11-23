@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a computer can lose a sensor direction · OneSimulation</title>
+<meta name="description" content="Two sensors report almost the same quantity. Trace a perturbation through orthogonalisation, a Gram matrix and a rectangular SVD, then decide which computed digits the data support.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/06-orthogonality-and-the-smallest-singular-value/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a computer can lose a sensor direction · OneSimulation">
+<meta property="og:description" content="Two sensors report almost the same quantity. Trace a perturbation through orthogonalisation, a Gram matrix and a rectangular SVD, then decide which computed digits the data support.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/06-orthogonality-and-the-smallest-singular-value/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="How a computer can lose a sensor direction">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "How a computer can lose a sensor direction", "description": "Two sensors report almost the same quantity. Trace a perturbation through orthogonalisation, a Gram matrix and a rectangular SVD, then decide which computed digits the data support.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/06-orthogonality-and-the-smallest-singular-value/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "How a computer can lose a sensor direction", "item": "https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/06-orthogonality-and-the-smallest-singular-value/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_linear_algebra_volumes_linear_algebra_methods_06_orthogonality_and_the_smallest_singular_value">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Matrix computations and spectral accuracy</a></p><h1>How a computer can lose a sensor direction</h1><p class="lead">Two sensors report almost the same quantity. Trace a perturbation through orthogonalisation, a Gram matrix and a rectangular SVD, then decide which computed digits the data support.</p><p class="byline">Unit 6 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#projection">Subtracting a projection in finite precision</a><a href="#backward">Why a reflector gives a backward-error result</a><a href="#svd">Turn a rectangular matrix into a bidiagonal one</a><a href="#tutorial">Tutorial on orientation and detectability</a></nav></aside><article class="prose reference"><section><h2 id="projection">Subtracting a projection in finite precision</h2>
+<p>Let \(A\) be a real \(m\)-by-\(n\) matrix, with \(m\ge n\) and independent columns. The first unit vector is \(q_1=a_1/\|a_1\|_2\). To construct another, classical Gram–Schmidt computes all coefficients \(r_{ij}=q_i^Ta_j\) against the original column before subtracting the sum. Modified Gram–Schmidt instead updates a running residual \(v\) after each projection, computing the next coefficient from that residual.</p>
+<div class="math display equation-chain"><div class="equation-step">\[v^{(0)}=a_j,\]</div><div class="equation-step">\[r_{ij}=q_i^Tv^{(i-1)},\]</div><div class="equation-step">\[v^{(i)}=v^{(i-1)}-q_ir_{ij}.\]</div></div>
+<p>In exact arithmetic the two formulas agree by orthogonality. In floating point, a component along an earlier \(q_i\) can survive subtraction. Dividing by the norm of a nearly cancelled column amplifies that component. For the three columns of the matrix with first row \((1,1,1)\) and lower block \(\delta I_3\), the difference of two original columns has size proportional to \(\delta\). Computing both of the third column's coefficients before either subtraction carries the error of previously computed directions into both coefficients. Sequential projection removes some of that contamination. A second pass projects the surviving residual again. Monitor both \(\|A-QR\|/\|A\|\) and \(\|I-Q^TQ\|\). A small first diagnostic alone permits poor orthogonality.</p>
+</section>
+<section><h2 id="backward">Why a reflector gives a backward-error result</h2>
+<p>Given nonzero \(x\), set \(v=x+\operatorname{sign}(x_1)\|x\|e_1\), using positive sign at zero. Then \(H=I-2vv^T/(v^Tv)\) is orthogonal and \(Hx\) has only its first entry nonzero. The sign ensures the construction of \(v_1\) adds magnitudes. Assume normal-range floating-point arithmetic with unit roundoff \(u\) and \(mu\ll1\). A length-\(m\) dot product has absolute error bounded by \(\gamma_m |v|^T|x|\), with \(\gamma_m=mu/(1-mu)\), by multiplying the factors \(1+\delta_i\), \(|\delta_i|\le u\), along the sum. Cauchy–Schwarz bounds this by \(\gamma_m\|v\|\|x\|\).</p>
+<p>Apply a stored, normalised reflector as a dot product and an axpy. Each column incurs a perturbation of order \(mu\) times its norm, including normalisation error. The exact reflector for the stored direction has norm one. Pull each local error backwards through the preceding exact orthogonal transformations and add. In Frobenius norm this yields</p>
+<div class="math display">\[A+\Delta A=Q\widehat R,\qquad \|\Delta A\|_F\le Cmn u\,\|A\|_F+O(u^2),\]</div>
+<p>where \(C\) accommodates the implementation's fixed number of elementary operations. This explains the nature of the bound without claiming an implementation-independent sharp constant. A tiny singular value may still have large relative uncertainty under this absolute perturbation.</p>
+</section>
+<section><h2 id="svd">Turn a rectangular matrix into a bidiagonal one</h2>
+<p>Apply a left reflector to column 1 and a right reflector to row 1, starting its operation in column 2. Repeat on the trailing block. Each transformation preserves earlier zeros. This yields \(A=UBV^T\) with orthogonal factors and upper bidiagonal \(B\). As a concrete first step take rows \((3,0),(4,5),(0,12)\). Multiplying the first two rows by the rotation with rows \((3/5,4/5),(-4/5,3/5)\) leaves rows \((5,4),(0,3),(0,12)\). A second left rotation combines \(3,12\), giving diagonal entries \(5,\sqrt{153}\) and superdiagonal \(4\). Two columns make the right step trivial here. A third column would require eliminating the new first row's tail.</p>
+<p>For a bidiagonal matrix one can carry out shifted QR on \(B^TB\) implicitly. If the first diagonal and off-diagonal entries of that tridiagonal matrix are \(a,b\), select a right rotation from \((a-\mu,b)\). Applying it to \(B\) introduces a subdiagonal entry. A left rotation eliminates that entry and moves the disturbance to the next column pair. Repeat to the bottom and accumulate both sets of rotations. Vanishing superdiagonals split independent blocks. This obtains singular values without explicitly storing an already rounded Gram matrix. For two almost parallel sensor columns \((1,\delta,0)^T,(1,-\delta,0)^T\) the singular values are \(\sqrt2,\sqrt2|\delta|\). The entries \(1\pm\delta^2\) of the Gram matrix can round to the same number.</p>
+<!-- numerics-experiment -->
+<details class="study-aside" id="try-it"><summary>OneSimulation experiment · Resolve the smaller singular value</summary>
+<p>Change the separation grid. Which lost singular value can a direct SVD still measure?</p>
+<p><a href="/downloads/fundamentals/examples/numerics-small-singular-value.ipynb" download>Download the executable notebook</a> · <a href="/downloads/fundamentals/examples/numerics-small-singular-value.py" download>Python source</a></p>
+<pre><code>&quot;&quot;&quot;Measure loss of the weaker of two almost parallel sensor directions.&quot;&quot;&quot;
+import matplotlib.pyplot as plt
+import numpy as np
+from onesim.numerics.linear.matrices.dense_linear_algebra import symmetric_eigenvalues
+
+separations = np.logspace(-12, -2, 31)
+direct, normal = [], []
+for delta in separations:
+    matrix = np.array([[1.0, 1.0], [delta, -delta], [0.0, 0.0]])
+    reference = np.sqrt(2.0) * delta
+    direct.append(np.linalg.svd(matrix, compute_uv=False)[-1] / reference)
+    smallest = symmetric_eigenvalues(matrix.T @ matrix)[0]
+    normal.append(np.sqrt(max(smallest, 0.0)) / reference)
+
+assert np.allclose(direct, 1.0)
+assert normal[0] == 0.0
+print(f&quot;At delta={separations[0]:.0e}: direct/reference={direct[0]:.3f}, Gram/reference={normal[0]:.3f}&quot;)
+fig, ax = plt.subplots(figsize=(7, 4), layout=&quot;constrained&quot;)
+ax.semilogx(separations, direct, label=&quot;Direct rectangular SVD&quot;)
+ax.semilogx(separations, normal, &quot;o-&quot;, ms=3, label=&quot;Eigenvalues of the Gram matrix&quot;)
+ax.set(xlabel=&quot;Separation of sensor directions, δ&quot;, ylabel=&quot;Estimated / exact small singular value&quot;)
+ax.legend()
+fig.savefig(&quot;numerics-small-singular-value.png&quot;, dpi=170)</code></pre>
+<p>Output from the reference run</p><pre><samp>At delta=1e-12: direct/reference=1.000, Gram/reference=0.000</samp></pre>
+<figure><img src="/assets/fundamentals-expansion/numerics-small-singular-value.png" loading="lazy" style="max-width:100%;height:auto" alt="A Gram-matrix eigenvalue collapses as the separation of two sensor directions decreases."><figcaption>A Gram-matrix eigenvalue collapses as the separation of two sensor directions decreases.</figcaption></figure>
+</details>
+<!-- /numerics-experiment -->
+</section>
+<section><h2 id="tutorial">Tutorial on orientation and detectability</h2>
+<h3>Reconstruct the product for the bidiagonal example</h3><details><summary>Work through the solution</summary><p>The trace of \(B^TB\) is \(25+16+153=194\), equal to the sum of squares of the six input entries. Its determinant is \(25(153)=3825\). Trace and determinant determine the two squared singular values independently.</p></details>
+<h3>Predict a failure threshold and compare two noise sources</h3><details><summary>Work through the solution</summary><p>When \(\delta^2\) is of order \(u\), rounding an explicitly formed Gram matrix threatens its weaker eigenvalue. Perturbations in the original data of norm \(10^{-5}\) already permit errors of that size in singular values by the variational characterisation. A stable algorithm cannot certify a sensor separation much smaller than instrument uncertainty.</p></details>
+<p><a href="https://people.maths.ox.ac.uk/trefethen/text.html">Trefethen and Bau · QR, rounding error and numerical SVD</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/05-edge-leverage-in-a-resistor-network/">Which resistor can carry its current through another path?</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/07-lanczos-and-spectral-measurements/">Recovering a spectrum from three-term recurrences</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_linear_algebra_volumes_linear_algebra_methods_06_orthogonality_and_the_smallest_singular_value">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

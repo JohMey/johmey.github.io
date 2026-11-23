@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The scattering integral equation and successive Born terms · OneSimulation</title>
+<meta name="description" content="A weak potential often produces an angular pattern resembling its Fourier transform. What controls that approximation? A particle can propagate between two interactions with the same potential. Accounting for that propagation builds an integral equation and supplies a calculable second term.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/physics/quantum-mechanics/volumes/quantum-theory/15-the-born-series-and-its-breakdown/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The scattering integral equation and successive Born terms · OneSimulation">
+<meta property="og:description" content="A weak potential often produces an angular pattern resembling its Fourier transform. What controls that approximation? A particle can propagate between two interactions with the same potential. Accounting for that propagation builds an integral equation and supplies a calculable second term.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/physics/quantum-mechanics/volumes/quantum-theory/15-the-born-series-and-its-breakdown/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="The scattering integral equation and successive Born terms">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "The scattering integral equation and successive Born terms", "description": "A weak potential often produces an angular pattern resembling its Fourier transform. What controls that approximation? A particle can propagate between two interactions with the same potential. Accounting for that propagation builds an integral equation and supplies a calculable second term.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/physics/quantum-mechanics/volumes/quantum-theory/15-the-born-series-and-its-breakdown/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "The scattering integral equation and successive Born terms", "item": "https://onesimulation.pages.dev/fundamentals/physics/quantum-mechanics/volumes/quantum-theory/15-the-born-series-and-its-breakdown/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_physics_quantum_mechanics_volumes_quantum_theory_15_the_born_series_and_its_breakdown">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a> / <a href="/fundamentals/physics/quantum-mechanics/volumes/quantum-theory/">Quantum states, dynamics and measurement</a></p><h1>The scattering integral equation and successive Born terms</h1><p class="lead">A weak potential often produces an angular pattern resembling its Fourier transform. What controls that approximation? A particle can propagate between two interactions with the same potential. Accounting for that propagation builds an integral equation and supplies a calculable second term.</p><p class="byline">Unit 15 of 17</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#outgoing">Construct a Green function with the outgoing boundary condition</a><a href="#iteration">Interpret each application of the free propagator</a><a href="#example">Sum a solvable sequence and test a numerical truncation</a><a href="#tutorial">Tutorial on recognising repeated scattering</a></nav></aside><article class="prose reference"><section><h2 id="outgoing">Construct a Green function with the outgoing boundary condition</h2>
+<p>For a short-range potential and incident energy \(E=\hbar^2k^2/(2m)&gt;0\), move the potential to the right side of the stationary Schrödinger equation. The outgoing Helmholtz kernel satisfies \((\nabla^2+k^2)e^{ikR}/R=-4\pi\delta(\mathbf R)\). Its outward phase is appropriate for incident states normalised to a plane wave \(e^{i\mathbf k\cdot\mathbf r}\) and time dependence \(e^{-iEt/\hbar}\).</p>
+<div class="math display">\[\psi(\mathbf r)=e^{i\mathbf k\cdot\mathbf r}-\frac{m}{2\pi\hbar^2}\int d^3r'\,\frac{e^{ik|\mathbf r-\mathbf r'|}}{|\mathbf r-\mathbf r'|}V(\mathbf r')\psi(\mathbf r').\]</div>
+<p>Apply the differential operator to check the source and sign. Far outside the interaction region expand the distance in the phase as \(r-\hat{\mathbf r}\cdot\mathbf r'\) and in the denominator as \(r\). For elastic scattering \(\mathbf k'=k\hat{\mathbf r}\), the coefficient of \(e^{ikr}/r\) is the amplitude.</p>
+<div class="math display">\[f(\mathbf k',\mathbf k)=-\frac{m}{2\pi\hbar^2}\int d^3r'\,e^{-i\mathbf k'\cdot\mathbf r'}V(\mathbf r')\psi(\mathbf r').\]</div>
+</section>
+<section><h2 id="iteration">Interpret each application of the free propagator</h2>
+<p>In operator notation the integral equation reads \(|\psi\rangle=|\mathbf k\rangle+G_0^{(+)}V|\psi\rangle\). Substitution of its right side for \(|\psi\rangle\) gives a plane wave, one intermediate propagation, then two propagations and so forth. The corresponding transition operator obeys</p>
+<div class="math display">\[T=V+VG_0^{(+)}T=V+VG_0^{(+)}V+VG_0^{(+)}VG_0^{(+)}V+\cdots.\]</div>
+<p>The first term measures the transform of \(V\) at the measured momentum transfer. In the second term an intermediate momentum is integrated over with denominator \(E-\hbar^2p^2/(2m)+i0\) for \(p\) a wave number. It can differ from the incident momentum. Energy is conserved between the asymptotic states. The infinitesimal imaginary part retains the outgoing-wave condition in the integral.</p>
+<details class="study-aside"><summary>Recall · A practical failure of first order</summary><p>For a real potential the first Born forward amplitude is real. The exact optical theorem reads \(\sigma_{\rm tot}=(4\pi/k)\operatorname{Im} f(0)\). The first nonzero total cross section is order \(V^2\). Its consistent forward contribution comes from second order, so combining orders indiscriminately can produce an apparent violation of flux conservation.</p></details>
+</section>
+<section><h2 id="example">Sum a solvable sequence and test a numerical truncation</h2>
+<p>Consider a separable interaction \(V=\lambda|g\rangle\langle g|\) with a square-integrable form factor. Each repeated propagation contributes the scalar \(I(E)=\langle g|G_0^{(+)}(E)|g\rangle\). Trying \(T=|g\rangle\tau\langle g|\) gives \(\tau=\lambda+\lambda I\tau\) and hence</p>
+<div class="math display equation-chain"><div class="equation-step">\[\tau=\frac{\lambda}{1-\lambda I},\]</div><div class="equation-step">\[\tau_N=\lambda\sum_{j=0}^{N-1}(\lambda I)^j .\]</div></div>
+<p>For \(q=\lambda I=0.20-0.10i\) the first-order relative amplitude error is \(|q|=0.224\). Truncating after two and three terms reduces it to \(|q|^2=0.050\) and \(|q|^3=0.0112\). A value approaching \(q=1\) signals strong enhancement. Exact poles follow by continuation to the correct energy domain. A small cross section in just one detector can arise from a form-factor zero even when the repeated-scattering factor is large.</p>
+
+<figure><img src="/assets/fundamentals-expansion/physics-born-convergence.png" alt="Exact relative errors for the separable model. A small change in the magnitude of the repeated-scattering factor can greatly change how many Born terms are useful." width="1152" height="640" loading="lazy"><figcaption>Exact relative errors for the separable model. A small change in the magnitude of the repeated-scattering factor can greatly change how many Born terms are useful.</figcaption></figure>
+</section>
+<section><h2 id="tutorial">Tutorial on recognising repeated scattering</h2>
+<h3>1 · Check a Born-amplitude dimension</h3><details class="exercise-solution"><summary>Work through the solution</summary><p>\(m/\hbar^2\) has units of inverse energy times inverse length squared. Multiplying by an energy and a three-dimensional volume produces length. Squaring the amplitude gives the area per unit solid angle.</p></details>
+<h3>2 · Choose the number of terms</h3><details class="exercise-solution"><summary>Work through the solution</summary><p>For a scalar \(|q|=0.40\), the relative truncation error is \(|q|^N\). Five terms give 0.01024, slightly above 1%. Six give 0.00410. In a general potential no single scalar controls every channel, so repeat convergence tests with multiple incident energies and angles.</p></details>
+<h3>3 · Distinguish invertibility from convergence</h3><details class="exercise-solution"><summary>Work through the solution</summary><p>At \(q=-1.2\) the exact expression \(\lambda/(1-q)\) is finite. Individual Born terms grow and alternate. Failure of the expansion need not signal an infinite physical scattering amplitude. Solving the full integral equation and checking its residual are different tests from summing the series.</p></details>
+<p>For further study see <a href="https://assets.cambridge.org/97811071/89638/frontmatter/9781107189638_frontmatter.pdf">Griffiths and Schroeter, Introduction to Quantum Mechanics, 3rd edition</a>, sections 10.3–10.4 on phase shifts, the integral equation and the Born series.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/quantum-mechanics/volumes/quantum-theory/14-shell-filling-and-molecular-binding/">From electron exchange to atomic shells and molecular binding</a></span><span>Next<br><a href="/fundamentals/physics/quantum-mechanics/volumes/quantum-theory/16-atomic-radiation-and-thermal-equilibrium/">Spontaneous radiation, stimulated transitions and thermal detailed balance</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_physics_quantum_mechanics_volumes_quantum_theory_15_the_born_series_and_its_breakdown">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

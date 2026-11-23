@@ -6,28 +6,35 @@
 <title>Solve a singular network without inventing a ground current · OneSimulation</title>
 <meta name="description" content="A floating resistor network has unique voltage drops but no absolute voltage reference. Derive its nullspace, test charge balance, and distinguish adding a computational gauge from changing the physical boundary conditions.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Solve a singular network without inventing a ground current · OneSimulation">
 <meta property="og:description" content="A floating resistor network has unique voltage drops but no absolute voltage reference. Derive its nullspace, test charge balance, and distinguish adding a computational gauge from changing the physical boundary conditions.">
-<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/">
-<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Solve a singular network without inventing a ground current">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Solve a singular network without inventing a ground current", "description": "A floating resistor network has unique voltage drops but no absolute voltage reference. Derive its nullspace, test charge balance, and distinguish adding a computational gauge from changing the physical boundary conditions.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Solve a singular network without inventing a ground current", "item": "https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_linear_algebra_volumes_linear_algebra_methods_03_singular_network_laplacians">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Matrix computations and spectral accuracy</a></p><h1>Solve a singular network without inventing a ground current</h1><p class="lead">A floating resistor network has unique voltage drops but no absolute voltage reference. Derive its nullspace, test charge balance, and distinguish adding a computational gauge from changing the physical boundary conditions.</p><p class="byline">Unit 3 of 5</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/linear-algebra/chapters/09-sparsity/">Background · Graph structure and fill-in</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#incidence">Build the conductance matrix as an energy Hessian</a><a href="#gauge">Compare grounding, projection and a bordered solve</a><a href="#network">Verify a triangle by current conservation and work</a><a href="#numerical-investigation">What changes when a floating voltmeter is re-zeroed?</a><a href="#tutorial">Tutorial · audit gauges, disconnected graphs and sensitivities</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="incidence">Build the conductance matrix as an energy Hessian</h2>
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Matrix computations and spectral accuracy</a></p><h1>Solve a singular network without inventing a ground current</h1><p class="lead">A floating resistor network has unique voltage drops but no absolute voltage reference. Derive its nullspace, test charge balance, and distinguish adding a computational gauge from changing the physical boundary conditions.</p><p class="byline">Unit 3 of 7</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/linear-algebra/chapters/09-sparsity/">Background · Graph structure and fill-in</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#incidence">Build the conductance matrix as an energy Hessian</a><a href="#gauge">Compare grounding, projection and a bordered solve</a><a href="#network">Verify a triangle by current conservation and work</a><a href="#numerical-investigation">What changes when a floating voltmeter is re-zeroed?</a><a href="#tutorial">Tutorial · audit gauges, disconnected graphs and sensitivities</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="incidence">Build the conductance matrix as an energy Hessian</h2>
 <p>Orient each of the \(m\) connections of a connected graph and form an incidence matrix \(B\) with one row per edge, containing \(+1\) at its upstream node and \(-1\) at its downstream node. For node voltages \(v\), differences \(Bv\) determine currents \(i_e=g_e(Bv)_e\) in edges of conductance \(g_e&gt;0\). Conservation at nodes reads \(B^Ti=b\), where externally injected currents \(b\) are positive into the network. Eliminating edge currents yields \(Lv=b,\ L=B^TGB\) with \(G=\operatorname{diag}(g_e)\). Reversing an edge changes a row of \(B\) and its current sign together; \(L\) and physical voltage predictions are invariant.</p>
 <p>The identity \(v^TLv=\sum_e g_e(v_i-v_j)^2\ge0\) gives the nullspace directly. Equality forces equal voltage along each edge and hence constant voltage on a connected graph. Thus \(\ker L=\operatorname{span}\{\mathbf1\}\) and its range is \(\mathbf1^\perp\). A solution exists exactly when total injection is zero. On a graph with disconnected components the current sum must vanish separately on each component; one global cancellation can hide two incompatible islands. This is a compatibility condition on the physical data, distinct from the gauge freedom that persists for already compatible data.</p>
 </section>
@@ -69,7 +76,7 @@
 <nav aria-label="Related links">
 <a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_linear_algebra_volumes_linear_algebra_methods_03_singular_network_laplacians">Plans &amp; trial</a>
 <a href="/about/">About the Developer</a>
 <a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
 </nav>

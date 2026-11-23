@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When should the denominator be fitted too? · OneSimulation</title>
+<meta name="description" content="Develop a minimax certificate for rational approximants, find the pole of a measured response and identify the obstruction that appears when a trial denominator vanishes inside the interval.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/07-choosing-the-poles-of-a-rational-approximation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When should the denominator be fitted too? · OneSimulation">
+<meta property="og:description" content="Develop a minimax certificate for rational approximants, find the pole of a measured response and identify the obstruction that appears when a trial denominator vanishes inside the interval.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/07-choosing-the-poles-of-a-rational-approximation/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="When should the denominator be fitted too?">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "When should the denominator be fitted too?", "description": "Develop a minimax certificate for rational approximants, find the pole of a measured response and identify the obstruction that appears when a trial denominator vanishes inside the interval.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/07-choosing-the-poles-of-a-rational-approximation/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "When should the denominator be fitted too?", "item": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/07-choosing-the-poles-of-a-rational-approximation/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_07_choosing_the_poles_of_a_rational_approximation">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>When should the denominator be fitted too?</h1><p class="lead">Develop a minimax certificate for rational approximants, find the pole of a measured response and identify the obstruction that appears when a trial denominator vanishes inside the interval.</p><p class="byline">Unit 7 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#family">Count independently adjustable coefficients</a><a href="#construction">Recompute the extreme points after changing the pole</a><a href="#tutorial">Tutorial on poles and certificates</a></nav></aside><article class="prose reference"><section><h2 id="family">Count independently adjustable coefficients</h2>
+<p>Write \(r(x)=p_m(x)/q_n(x)\) on a compact real interval. Scaling numerator and denominator together leaves the response unchanged. Require a pole-free denominator of fixed sign and a normalisation, such as \(q(0)=1\) when admissible. For \(r,s\) of the same type,</p>
+<div class="math display">\[r-s=\frac{p_m\widetilde q_n-\widetilde p_m q_n}{q_n\widetilde q_n}.\]</div>
+<p>The numerator has degree at most \(m+n\). If the error of a candidate takes alternating signs with magnitude \(E\) at \(m+n+2\) ordered points and never exceeds \(E\), any strictly better pole-free approximant would force \(m+n+1\) sign changes of the numerator. That is impossible unless the difference vanishes identically. This proves sufficiency. Common factors or unused degrees cause defects and can reduce the necessary alternation count. The certificate requires the global maximum between tested points to be checked.</p>
+</section>
+<section><h2 id="construction">Recompute the extreme points after changing the pole</h2>
+<p>For \(m=n=1\), \(q=1+cx\), impose \(p(x_i)=[f(x_i)-(-1)^i E](1+cx_i)\) at four proposed points. Products \(Ec\) make this nonlinear. One Remez-type iteration solves those four equations for the coefficients and \(E\), searches between the old points for extrema of \(f-r\), then exchanges points until magnitudes agree and the denominator retains its sign. Locating roots of \((f-r)'\), plus testing endpoints, is essential. A dense sample alone gives only a lower bound on the supremum.</p>
+<p>For an explicit example approximate \(f(x)=1/(2-x)\) on \([-1,1]\). A linear best approximant must have the endpoint-error line as a starting shape. The endpoint secant is \(s(x)=2/3+x/3\). Convexity makes \(s-f\ge0\), maximised where \(1/(2-x)^2=1/3\), hence \(x=2-\sqrt3\). Set \(d=s(x)-f(x)=(4-2\sqrt3)/3\) there. Moving the line down by \(d/2\) produces three equal alternating errors and proves optimality for degree one. The type \((0,1)\) rational function \(p=1/2,\ q=1-x/2\) gives zero error. A comparison at equal parameter count has a physical interpretation when a material response genuinely has a nearby pole.</p>
+<details class="study-aside"><summary>Why does matching a series at the origin give a different optimisation problem?</summary><p>Padé chooses derivatives at one point. Uniform best approximation chooses the largest error over an interval. For a response with a small additional smooth background the Padé coefficients still reproduce the local series, but its largest positive and negative errors generally have unequal magnitudes. Use held-out values near the interval boundaries.</p></details>
+<!-- numerics-figure --><figure class="study-figure"><img src="/assets/fundamentals-expansion/numerics-alternating-errors.png" loading="lazy" alt="The optimal affine residual alternates at three extrema while the rational residual vanishes."><figcaption>The three signed extrema certify the best affine fit. Allowing one denominator parameter puts a pole at the physical location and reproduces this response exactly.</figcaption></figure><!-- /numerics-figure -->
+</section>
+<section><h2 id="tutorial">Tutorial on poles and certificates</h2>
+<h3>Give an interval-wide error bound when the fitted pole is uncertain</h3><details><summary>Work through the solution</summary><p>For \(f_a=1/(a-x)\) with \(a&gt;1+\epsilon\) and \(|\Delta a|\le\epsilon\), subtraction gives \(|f_{a+\Delta a}-f_a|\le\epsilon/[(a-1)(a-1-\epsilon)]\). A tightly fitted pole near the endpoint can still create a large uncertainty in the response.</p></details>
+<h3>Construct a counterexample to using a few residuals as the certificate</h3><details><summary>Work through the solution</summary><p>Samples at \(-1,0,1\) all avoid \(x=0.3\). The function \(\eta/(x-0.3)\) has arbitrarily small values at those samples when \(\eta\) is small, yet unbounded interior magnitude. Verify the denominator is nonzero over the entire interval before interpreting alternation at measured points.</p></details>
+<p><a href="https://people.maths.ox.ac.uk/trefethen/ATAP/">Trefethen · rational approximation and minimax theory</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/06-from-continuity-to-convergence-rates/">What can smoothness buy at a fixed polynomial degree?</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/08-cubature-on-boxes-and-triangles/">Measuring an area integral with finitely many samples</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_07_choosing_the_poles_of_a_rational_approximation">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

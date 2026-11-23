@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which waves are allowed to enter a numerical boundary? · OneSimulation</title>
+<meta name="description" content="Diagonalise linear acoustics, impose one physical condition per incoming wave and compare diffusive and dispersive transport schemes on the same spatial Fourier mode.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/08-characteristic-boundaries-and-wave-schemes/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Which waves are allowed to enter a numerical boundary? · OneSimulation">
+<meta property="og:description" content="Diagonalise linear acoustics, impose one physical condition per incoming wave and compare diffusive and dispersive transport schemes on the same spatial Fourier mode.">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/08-characteristic-boundaries-and-wave-schemes/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Which waves are allowed to enter a numerical boundary?">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Which waves are allowed to enter a numerical boundary?", "description": "Diagonalise linear acoustics, impose one physical condition per incoming wave and compare diffusive and dispersive transport schemes on the same spatial Fourier mode.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/08-characteristic-boundaries-and-wave-schemes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Which waves are allowed to enter a numerical boundary?", "item": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/08-characteristic-boundaries-and-wave-schemes/"}]}]}</script>
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_partial_differential_equations_volumes_partial_differential_equations_methods_08_characteristic_boundaries_and_wave_schemes">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a> / <a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/">Spatial discretisation and field equations</a></p><h1>Which waves are allowed to enter a numerical boundary?</h1><p class="lead">Diagonalise linear acoustics, impose one physical condition per incoming wave and compare diffusive and dispersive transport schemes on the same spatial Fourier mode.</p><p class="byline">Unit 8 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#diagonalise">Separate acoustic waves by their directions</a><a href="#compare">Derive one amplitude and phase experiment for three methods</a><a href="#boundary">Transfer the calculation to both members of the system</a><a href="#tutorial">Tutorial on waves in an acoustic tube</a></nav></aside><article class="prose reference"><section><h2 id="diagonalise">Separate acoustic waves by their directions</h2>
+<p>For small perturbations in a uniform fluid, \(p_t+\rho c^2v_x=0,\ v_t+p_x/\rho=0\) with density \(\rho&gt;0\), speed \(c&gt;0\). Add and subtract \(\rho c\) times the second equation. The combinations \(w_\pm=p\pm\rho c v\) satisfy \(\partial_t w_\pm\pm c\,\partial_x w_\pm=0\). Reconstruct \(p=(w_++w_-)/2,\ v=(w_+-w_-)/(2\rho c)\). At the left boundary \(w_+\) enters and \(w_-\) leaves. These roles exchange at the right boundary.</p>
+<p>For a rigid wall \(v=0\), set the incoming characteristic equal to the outgoing one. The reflected pressure has the same sign. At a pressure-release boundary \(p=0\), it has opposite sign. Prescribing \(p\) and \(v\) independently at the same boundary generally overspecifies a first-order system. For a diagonalizable hyperbolic matrix \(A=R\Lambda R^{-1}\) the same counting follows from \(R^{-1}u\), subject to independent boundary conditions on incoming components. Zero-speed or glancing modes require separate analysis.</p>
+</section>
+<section><h2 id="compare">Derive one amplitude and phase experiment for three methods</h2>
+<p>For scalar right-going \(u_t+a u_x=0\), set \(\nu=ah/\Delta x\). First-order upwind uses the upstream difference. Lax–Friedrichs replaces the central value by the average of its neighbours before taking the centred first derivative. Lax–Wendroff expands time to second order and uses \(u_{tt}=a^2u_{xx}\). With Fourier angle \(\theta=k\Delta x\), the three amplification factors are</p>
+<div class="math display equation-chain"><div class="equation-step">\[G_U=1-\nu(1-e^{-i\theta}),\]</div><div class="equation-step">\[G_F=\cos\theta-i\nu\sin\theta,\quad\]</div></div>
+<p>G_W=1-i\nu\sin\theta+\nu^2(\cos\theta-1).</p>
+<p>For \(0\le\nu\le1\) these are stable in the periodic discrete \(L^2\) norm. For the last factor direct expansion gives \(|G_W|^2=1-4\nu^2(1-\nu^2)\sin^4(\theta/2)\). The exact factor \(e^{-i\nu\theta}\) has modulus one. At \(\nu=1/2,\theta=\pi/2\), upwind gives \(0.5-0.5i\), Lax–Friedrichs gives \(-0.5i\) and Lax–Wendroff gives \(0.75-0.5i\). Their magnitudes and arguments distinguish loss of contrast from arrival-time error.</p>
+</section>
+<section><h2 id="boundary">Transfer the calculation to both members of the system</h2>
+<p>On a uniform grid update \(w_+\) by a right-going scheme and \(w_-\) by its mirrored left-going counterpart. For first-order upwind the outgoing stencil at either wall uses only interior data. Supply the incoming value using the physical relation. For centred and second-order stencils, ghost values or one-sided closures must also approximate derivatives at the boundary with a compatible accuracy and stability. A periodic amplification test alone cannot certify them.</p>
+<details class="study-aside"><summary>Why can a second-order scheme create negative overshoots?</summary><p>In Lax–Wendroff the downstream coefficient \((\nu^2-\nu)/2\) is negative for \(0&lt;\nu&lt;1\). At a step discontinuity the update can leave the interval spanned by neighbouring data. Its Fourier stability bound controls a norm and does not imply a maximum principle.</p></details>
+<!-- numerics-figure --><figure class="study-figure"><img src="/assets/fundamentals-expansion/numerics-transport-dispersion.png" loading="lazy" alt="Amplitude and phase of three transport rules at Courant number one half."><figcaption>Perfect propagation has unit amplitude and phase advance νθ. Near the shortest resolved wavelengths, amplitude loss and phase error select different methods even at identical Courant number.</figcaption></figure><!-- /numerics-figure -->
+</section>
+<section><h2 id="tutorial">Tutorial on waves in an acoustic tube</h2>
+<h3>Calculate one update next to a marked step</h3><details><summary>Work through the solution</summary><p>Take \(\nu=1/2\) and \(u_{j-1}=u_j=0,\ u_{j+1}=1\). Upwind gives zero, Lax–Friedrichs gives \(1/4\), Lax–Wendroff gives \(-1/8\). The exact right-going step has not reached this upstream cell centre.</p></details>
+<h3>Infer the reflected wave from a non-ideal termination</h3><details><summary>Work through the solution</summary><p>At the right boundary impose \(p=Zv\). Substituting the characteristic pair gives \(w_-=(Z-\rho c)w_+/(Z+\rho c)\). A matched termination \(Z=\rho c\) transmits the wave with zero reflection. Verify the rigid and pressure-release limits before using this relation in ghost cells.</p></details>
+<p><a href="https://staff.washington.edu/rjl/fdmbook/">LeVeque · advection equations and hyperbolic systems</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/07-why-triangle-shape-enters-the-error-bound/">Following the error from one reference triangle to an entire mesh</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/">Volume contents</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_partial_differential_equations_volumes_partial_differential_equations_methods_08_characteristic_boundaries_and_wave_schemes">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

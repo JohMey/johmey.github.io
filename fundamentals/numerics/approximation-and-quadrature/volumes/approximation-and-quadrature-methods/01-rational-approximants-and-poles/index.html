@@ -6,28 +6,35 @@
 <title>Approximating a resonance with a rational function · OneSimulation</title>
 <meta name="description" content="A smooth response on a measured interval can be governed by a nearby pole. Derive a low-order Padé fit, construct a barycentric rational approximant from samples and check whether a predicted pole survives independent data.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/">
+<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Approximating a resonance with a rational function · OneSimulation">
 <meta property="og:description" content="A smooth response on a measured interval can be governed by a nearby pole. Derive a low-order Padé fit, construct a barycentric rational approximant from samples and check whether a predicted pole survives independent data.">
-<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/">
-<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/">
+<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:image:alt" content="Approximating a resonance with a rational function">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Approximating a resonance with a rational function", "description": "A smooth response on a measured interval can be governed by a nearby pole. Derive a low-order Padé fit, construct a barycentric rational approximant from samples and check whether a predicted pole survives independent data.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Approximating a resonance with a rational function", "item": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_01_rational_approximants_and_poles">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>Approximating a resonance with a rational function</h1><p class="lead">A smooth response on a measured interval can be governed by a nearby pole. Derive a low-order Padé fit, construct a barycentric rational approximant from samples and check whether a predicted pole survives independent data.</p><p class="byline">Unit 1 of 5</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/01-local-interpolation/">Background · Piecewise interpolation and error bounds</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#series">Match series coefficients without requiring a polynomial model</a><a href="#barycentric">Interpolate at selected support points while fitting other samples</a><a href="#model">Compare local and global descriptions on a known response</a><a href="#experiment">Compare a Taylor and a rational continuation</a><a href="#held-out">Test the assumed response law on an unused reading</a><a href="#tutorial">Tutorial · separate a useful fit from a physical pole</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="series">Match series coefficients without requiring a polynomial model</h2>
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>Approximating a resonance with a rational function</h1><p class="lead">A smooth response on a measured interval can be governed by a nearby pole. Derive a low-order Padé fit, construct a barycentric rational approximant from samples and check whether a predicted pole survives independent data.</p><p class="byline">Unit 1 of 8</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/01-local-interpolation/">Background · Piecewise interpolation and error bounds</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#series">Match series coefficients without requiring a polynomial model</a><a href="#barycentric">Interpolate at selected support points while fitting other samples</a><a href="#model">Compare local and global descriptions on a known response</a><a href="#experiment">Compare a Taylor and a rational continuation</a><a href="#held-out">Test the assumed response law on an unused reading</a><a href="#tutorial">Tutorial · separate a useful fit from a physical pole</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="series">Match series coefficients without requiring a polynomial model</h2>
 <p>Let \(f(x)=c_0+c_1x+c_2x^2+\cdots\) near zero. A polynomial Taylor approximation fixes coefficients but cannot represent a finite pole. A type \([m/n]\) Padé approximant \(P_m(x)/Q_n(x)\) uses polynomials of degree at most \(m,n\), and fixes the arbitrary common scaling by \(Q_n(0)=1\) where possible. Require</p>
 <div class="math display">\[Q_n f-P_m=O(x^{m+n+1}).\]</div>
 <p>For powers above \(m\) the unknown numerator cannot contribute; they give linear equations \(\sum_{j=0}^n q_jc_{k-j}=0,\ k=m+1,\ldots,m+n\) for the denominator, with missing negative-index coefficients taken zero. Lower coefficients then give</p>
@@ -73,7 +80,7 @@
 <nav aria-label="Related links">
 <a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
-<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_approximation_and_quadrature_volumes_approximation_and_quadrature_methods_01_rational_approximants_and_poles">Plans &amp; trial</a>
 <a href="/about/">About the Developer</a>
 <a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
 </nav>
