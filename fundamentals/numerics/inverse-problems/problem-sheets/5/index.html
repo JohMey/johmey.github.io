@@ -6,21 +6,21 @@
 <title>Derivatives and early stopping · OneSimulation</title>
 <meta name="description" content="Check a forward solver gradient independently, then decide when its iterative inverse has started fitting noise.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/problem-sheets/5/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/5/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Derivatives and early stopping · OneSimulation">
 <meta property="og:description" content="Check a forward solver gradient independently, then decide when its iterative inverse has started fitting noise.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/problem-sheets/5/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/5/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Derivatives and early stopping">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Derivatives and early stopping", "description": "Check a forward solver gradient independently, then decide when its iterative inverse has started fitting noise.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/problem-sheets/5/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Derivatives and early stopping", "item": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/problem-sheets/5/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Derivatives and early stopping", "description": "Check a forward solver gradient independently, then decide when its iterative inverse has started fitting noise.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/5/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Derivatives and early stopping", "item": "https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/5/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -38,19 +38,19 @@
 <p>A steady sensor reads \(u\) satisfying \(pu=2\). The normalised measured value is 0.8 and \(J=(u-0.8)^2/2\). (a) At \(p=2\), compute the adjoint, gradient and direct derivative. (b) What sign would a one-step gradient descent change have? (c) Does that sign make physical sense?</p>
 <details><summary>Check the sign against the forward response</summary>
 <p>The state is 1, residual 0.2. The adjoint equation \(p\lambda=0.2\) gives 0.1. With no forcing derivative the gradient is \(-\lambda u=-0.1\). Directly \(du/dp=-2/p^2=-0.5\), yielding the same gradient. A descent step increases \(p\); increasing \(p\) lowers the model output toward the observation.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/inverse-problems/chapters/09-adjoint-gradients/#live-adjoint-gradient">Explore the related calculation with adjustable inputs</a>. Inspect the Taylor remainder with the correct and wrong-sign adjoint. The explorer uses a two-state equilibrium; apply the stated scalar or nonsymmetric operator to obtain this exercise’s exact gradient.</p></details>
 </section>
 <section><h2 id="2-a-directional-derivative-check">2. A directional derivative check</h2>
 <p>At \(p=1\) for \(J(p)=p^3\), choose direction \(v=2\). (a) Derive the Taylor remainder after subtracting the predicted linear term. (b) Evaluate it for \(h=0.10\) and 0.05. (c) Predict what halving \(h\) would do if the component gradient 3 were accidentally coded as 2.</p>
 <details><summary>Examine the order of the diagnostic</summary>
 <p>The exact directional slope is \(3v=6\). Expanding \((1+2h)^3\) leaves \(12h^2+8h^3\) after subtracting 1 and \(6h\). The remainders are 0.128 and 0.031, close to a factor of four apart. With incorrect slope 4 the error becomes \(2h+12h^2+8h^3\). At small enough \(h\) it will fall by about a factor of two instead, until numerical noise intervenes.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/nonlinear-equations/chapters/10-inexact-newton/#live-complex-step">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section><h2 id="3-stop-before-the-weakest-direction-is-inverted">3. Stop before the weakest direction is inverted</h2>
 <p>Use \(B=\operatorname{diag}(1,0.2),\ b=(1,0.1),\ x_0=0,\ \omega=1\). (a) Derive the second coordinate and residual after \(k\ge1\) iterations. (b) Find the first iteration whose residual norm is at most 0.09. (c) Compare the result there with the converged second coordinate and explain when early stopping helps.</p>
 <details><summary>Solve the scalar recurrence</summary>
 <p>The first coordinate reaches 1 in one step. The second tends to 0.5 as \(x_{2,k}=0.5(1-0.96^k)\). Thus \(\|r_k\|=0.1(0.96)^k\), and crossing 0.09 requires \(k\ge\ln(0.9)/\ln(0.96)=2.58\), or three updates. The early estimate is 0.0576 while the converged one is 0.5. If most of the observed weak-mode coefficient is noise the early estimate is protective; if it mostly represents signal the same stopping rule underestimates it.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/inverse-problems/chapters/10-iterative-regularisation/#live-cgls-stop">Explore the related calculation with adjustable inputs</a>. Vary noise and iteration count to distinguish a decreasing training residual from a worsening reconstruction. CGLS in the explorer and the exercise’s Landweber recurrence have different polynomial filters.</p></details>
 </section>
 <section>
 <h2 id="transfer-regularisation-time">When explicit reconstruction has its own stability limit</h2>
@@ -62,7 +62,7 @@
 <p>At \(h=1/4\) the strong factor is zero, and the weak factor is</p>
 <div class="math display">\[1-(1/4)(1/4)=15/16.\]</div>
 <p>Solve \((15/16)^k\le1/2\): the real threshold is \(10.7401\), hence the first integer is \(11\). Its artificial time is \(11/4=2.75\). The continuous half-time is \(4\log2=2.7726\). The small difference reflects the exponential approximation and inspection at discrete steps.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/inverse-problems/chapters/10-iterative-regularisation/#live-cgls-stop">Explore the related calculation with adjustable inputs</a>. Vary noise and iteration count to distinguish a decreasing training residual from a worsening reconstruction. CGLS in the explorer and the exercise’s Landweber recurrence have different polynomial filters.</p></details>
 <p class="source-note">Revisit chapter 10 · <a href="/fundamentals/numerics/inverse-problems/chapters/10-iterative-regularisation/#asymptotic-regularisation">Regularise with an artificial evolution time</a>.</p>
 </section><p class="notebook-practice"><strong>Notebook practice</strong> · <a href="/fundamentals/numerics/inverse-problems/notebooks/chapter/">Does the gradient see where the instruments were actually placed?</a></p><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/chapters/10-iterative-regularisation/">Chapter 10 · Iteration as a regulariser</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/chapters/11-constraints-and-edges/">Chapter 11 · Constraints, sparse signals and edge-preserving penalties</a></span></nav></article></div>
 </main>

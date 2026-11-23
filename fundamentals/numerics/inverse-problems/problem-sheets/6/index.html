@@ -6,21 +6,21 @@
 <title>Edges, decision thresholds and validation · OneSimulation</title>
 <meta name="description" content="Determine whether an apparent feature survives a change of penalty, a noise calculation and an independent test.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/problem-sheets/6/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/6/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Edges, decision thresholds and validation · OneSimulation">
 <meta property="og:description" content="Determine whether an apparent feature survives a change of penalty, a noise calculation and an independent test.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/problem-sheets/6/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/6/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Edges, decision thresholds and validation">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Edges, decision thresholds and validation", "description": "Determine whether an apparent feature survives a change of penalty, a noise calculation and an independent test.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/problem-sheets/6/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Edges, decision thresholds and validation", "item": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/problem-sheets/6/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Edges, decision thresholds and validation", "description": "Determine whether an apparent feature survives a change of penalty, a noise calculation and an independent test.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/6/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Edges, decision thresholds and validation", "item": "https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/6/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -38,13 +38,13 @@
 <p>Take identity observations \(b=(1,2.2)\). Minimise \(\frac12\sum(x_i-b_i)^2+\lambda|x_2-x_1|\). (a) Compute both fitted values for \(\lambda=0.2\) and 0.7. (b) Identify the fusion threshold. (c) Does observing a flat fit establish equal true values?</p>
 <details><summary>Retain the mean and shrink the half-difference</summary>
 <p>The observed mean is 1.6 and half-difference 0.6. At \(\lambda=0.2\), the fitted half-difference is 0.4 and the fit is \((1.2,2.0)\). At 0.7 it is zero, giving \((1.6,1.6)\). Fusion starts at \(\lambda=0.6\). A flat solution can be induced by the penalty; report the relevant contrast, noise and sensitivity to penalty strength before making a physical equality claim.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/inverse-problems/chapters/11-constraints-and-edges/#live-penalty-shrinkage">Explore the related calculation with adjustable inputs</a>. Inspect soft-thresholding and quadratic shrinkage. For two-cell total variation, apply the threshold to the half-difference and retain the mean as derived here.</p></details>
 </section>
 <section><h2 id="2-a-blur-and-a-threshold">2. A blur and a threshold</h2>
 <p>A sensor attenuates a physical contrast by 0.20 and gives a measured difference 0.60 K with standard deviation 0.20 K. (a) Find the data-only estimated contrast and standard deviation. (b) Can a one-sided 95% lower limit establish that the contrast exceeds 2 K? Use the Gaussian multiplier 1.645. (c) Assuming independent repeats with identical mean, how many would make that lower limit exceed 2 K?</p>
 <details><summary>Propagate the contrast scale only once</summary>
 <p>The estimate is 3 K with standard deviation 1 K. The lower limit \(3-1.645=1.355\) K is below 2 K. If the sample mean remains 3 K when expressed in physical units, require \(1.645/\sqrt N&lt;1\), so three independent repeats suffice for that projected precision. Future means are random, hence this is a conditional planning calculation rather than a guaranteed outcome.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/inverse-problems/chapters/01-forward-maps/#live-sensor-contrast">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section><h2 id="3-challenge-a-smooth-reconstruction">3. Challenge a smooth reconstruction</h2>
 <p>A smoothed image fits all training readings within their stated noise and shows one broad transition. (a) Describe two distinct synthetic truths to use in a resolution audit. (b) Specify two numerical metrics and one measurement to hold out. (c) Explain how a code error, statistical uncertainty and regularisation bias would appear differently across the tests.</p>
@@ -58,7 +58,7 @@
 <p>In the orthonormal directions s = (1,1)/√2 and d = (1,−1)/√2, the first measurement row is (√2,0). Its precision contribution has diagonal (200,0). Adding the unit prior precision gives posterior variances 1/201 and 1. Multiplying the precision-inverse by Aᵀb/0.01 gives a posterior mean with both components 200/201 ≈ 0.995.</p>
 <p>Repeating the sum doubles the sum-direction information, giving variances 1/401 and 1. Measuring the difference instead adds information along d, giving 1/201 for both directions. The trace of the second covariance is about 0.00995, versus about 1.0025 for the repeated-sum design. The second measured value changes the posterior mean but, for this linear Gaussian model, not the covariance.</p>
 <p>An objective concerned only with the sum would favour the repeated sensor. For reconstructing both parameters, sensitivity in independent directions matters. A very small residual for the original measurement is compatible with a whole line of plausible parameter pairs, which is why reporting only that residual would conceal the design difference.</p>
-</details></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/chapters/12-resolution-audit/">Chapter 12 · A reconstruction audit from observations to a defensible claim</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/chapters/13-discrepancy-and-gcv/">Chapter 13 · Choosing regularisation when the true answer is hidden</a></span></nav></article></div>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/inverse-problems/chapters/17-posterior-prediction/#try-it">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/chapters/12-resolution-audit/">Chapter 12 · A reconstruction audit from observations to a defensible claim</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/chapters/13-discrepancy-and-gcv/">Chapter 13 · Choosing regularisation when the true answer is hidden</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

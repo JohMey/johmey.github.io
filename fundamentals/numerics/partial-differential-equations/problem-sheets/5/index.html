@@ -6,21 +6,21 @@
 <title>Transport weights and pressure spaces · OneSimulation</title>
 <meta name="description" content="Locate the onset of a sign error and test which discrete pressure differences actually drive a velocity.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/problem-sheets/5/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/5/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Transport weights and pressure spaces · OneSimulation">
 <meta property="og:description" content="Locate the onset of a sign error and test which discrete pressure differences actually drive a velocity.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/problem-sheets/5/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/5/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Transport weights and pressure spaces">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Transport weights and pressure spaces", "description": "Locate the onset of a sign error and test which discrete pressure differences actually drive a velocity.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/problem-sheets/5/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Transport weights and pressure spaces", "item": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/problem-sheets/5/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Transport weights and pressure spaces", "description": "Locate the onset of a sign error and test which discrete pressure differences actually drive a velocity.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/5/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Transport weights and pressure spaces", "item": "https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/5/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -42,7 +42,7 @@
 <div class="math display">\[\ell=\kappa/a=0.02\,\mathrm{m}.\]</div>
 <p>The sign test requires \(h\le2\ell=0.04\) m, hence at least 25 cells. Five cells across \(\ell\) require \(h\le0.004\) m or 250 cells.</p>
 <p>The upwind addition \(ah/2\) is 0.06 m²/s at 25 cells and 0.006 at 250. The monotonicity threshold and satisfactory physical resolution describe quite different demands.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/partial-differential-equations/chapters/09-advection-diffusion/#live-advection-layer">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="change-transport-direction">Change transport direction</h2>
@@ -50,7 +50,7 @@
 <details><summary>Worked solution</summary>
 <p>With flow toward decreasing \(x\), upstream information lies to the right, giving \((u_{j+1}-u_j)/h=u'_j+hu''_j/2+O(h^2)\).</p>
 <p>Multiplying by a negative speed gives the modified coefficient \(-(\kappa+|a|h/2)u''\). On \([0,L]\) inflow is at \(L\) and outflow at zero. The term \(e^{ax/\kappa}\) decays away from zero, locating a possible outflow boundary layer there.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/partial-differential-equations/chapters/09-advection-diffusion/#live-advection-layer">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="find-the-pressure-nullspace">Find the pressure nullspace</h2>
@@ -60,7 +60,7 @@
 <div class="math display">\[p_{j+2}=p_j.\]</div>
 <p>Six nodes split into independent even and odd cycles, giving two arbitrary amplitudes. Removing the constant leaves one alternating mode.</p>
 <p>With five nodes, increments of two cycle through every index, so all entries agree. Only the constant remains and zero mean removes it. This finite odd-grid observation by itself does not establish a mesh-independent mixed stability bound.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/partial-differential-equations/chapters/10-mixed-systems/#live-checkerboard">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/10-mixed-systems/">Chapter 10 · Incompressibility and discrete pressure modes</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/11-multigrid/">Chapter 11 · Multigrid and coarse-grid correction</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">

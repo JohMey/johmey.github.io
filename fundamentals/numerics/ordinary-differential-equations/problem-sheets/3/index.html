@@ -6,21 +6,21 @@
 <title>Events and long trajectories · OneSimulation</title>
 <meta name="description" content="Adapt a time step to a tolerance, analyse a grazing event and estimate phase drift on an energy-preserving orbit.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Events and long trajectories · OneSimulation">
 <meta property="og:description" content="Adapt a time step to a tolerance, analyse a grazing event and estimate phase drift on an energy-preserving orbit.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Events and long trajectories">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Events and long trajectories", "description": "Adapt a time step to a tolerance, analyse a grazing event and estimate phase drift on an energy-preserving orbit.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Events and long trajectories", "item": "https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Events and long trajectories", "description": "Adapt a time step to a tolerance, analyse a grazing event and estimate phase drift on an energy-preserving orbit.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Events and long trajectories", "item": "https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/3/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -42,7 +42,7 @@
 <div class="math display">\[0.3(0.9)/\sqrt{4.5}=0.1273\,\mathrm{s}.\]</div>
 <p>Since the difference scales quadratically, the expected new ratio is \(4.5(0.1273/0.3)^2\simeq0.81\), assuming the scale stays unchanged.</p>
 <p>Recompute both stages from the state and time at the start of the rejected trial. The accepted time remains unchanged until a valid trial has finished.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/05-adaptive-steps/#live-step-controller">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="bound-timing-uncertainty">Bound timing uncertainty</h2>
@@ -50,7 +50,7 @@
 <details><summary>Worked solution</summary>
 <p>The mean value theorem applied to the monotone crossing gives time uncertainty at most \(0.004/0.2=0.02\) s. Interpolation or time-discretisation errors need their own contributions if they are not already included in the state error.</p>
 <p>At the tangency, \(g=0.004\) occurs at \(1\pm\sqrt{0.004}\), about 0.0632 s from the exact event. The event derivative vanishes at the root and the signal has the same sign on both sides, so a standard sign-change trigger can miss it.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/17-grazing-events/#try-it">Explore the related calculation with adjustable inputs</a>. Decrease the crossing speed in the threshold example and inspect the growth of timing sensitivity.</p></details>
 </section>
 <section>
 <h2 id="check-energy-separately-from-phase">Check energy separately from phase</h2>
@@ -58,7 +58,7 @@
 <details><summary>Worked solution</summary>
 <p>The step angle is \(2\arctan(0.1)=0.1993373\) rad, compared with the physical 0.2 rad. After 100 steps the numerical solution lags by approximately \(0.06627\) rad.</p>
 <p>Both energies are 0.5 in exact arithmetic because implicit midpoint preserves this quadratic invariant. Comparing energy histories alone therefore hides a positional error that continues to accumulate with elapsed time.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/06-geometric-integration/#live-num-ode-midpoint">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="transfer-double-an-euler-step">Accept or retry a nonautonomous Euler step</h2>
@@ -68,7 +68,7 @@
 <div class="math display">\[1.2+0.2(1.4)=1.48.\]</div>
 <p>With \(p=1\) the correction estimate is \(0.08\), so the extrapolated value is 1.56. The exact endpoint \(2e^{0.4}-1.4\approx1.58365\) shows the size of the remaining higher-order contribution.</p>
 <p>The estimated fine error magnitude exceeds 0.02. The proposed step is \(0.9(0.4)(0.02/0.08)^{1/2}=0.18\), retried from time zero. Using a slope evaluated at time zero for the second half would skip the explicit time dependence and invalidate the estimate.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/05-adaptive-steps/#live-step-controller">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 <p class="source-note">Revisit chapter 5 · <a href="/fundamentals/numerics/ordinary-differential-equations/chapters/05-adaptive-steps/#step-doubling">Estimate error using one full step and two half steps</a>.</p>
 </section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/06-geometric-integration/">Chapter 6 · Energy and geometric integration</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/07-exponential-integrators/">Chapter 7 · Variation of constants and exponential steps</a></span></nav></article></div>
 </main>

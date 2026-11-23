@@ -6,21 +6,21 @@
 <title>Boundary and algebraic conditions · OneSimulation</title>
 <meta name="description" content="Recover missing initial data, measure shooting amplification, and calculate a consistent implicit step for a constrained state.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Boundary and algebraic conditions · OneSimulation">
 <meta property="og:description" content="Recover missing initial data, measure shooting amplification, and calculate a consistent implicit step for a constrained state.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Boundary and algebraic conditions">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Boundary and algebraic conditions", "description": "Recover missing initial data, measure shooting amplification, and calculate a consistent implicit step for a constrained state.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Boundary and algebraic conditions", "item": "https://onesimulation.pages.dev/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Boundary and algebraic conditions", "description": "Recover missing initial data, measure shooting amplification, and calculate a consistent implicit step for a constrained state.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Boundary and algebraic conditions", "item": "https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -42,7 +42,7 @@
 <div class="math display">\[1+2s+4-3=2+2s.\]</div>
 <p>Its derivative is 2.</p>
 <p>The update from zero gives \(s=-1\) exactly because the residual is affine. At \(t=1\) the fitted value is 1; at \(t=2\) it returns 3. The trajectory initially decreases before turning upward.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/11-shooting/#live-num-ode-bvp">Explore the related calculation with adjustable inputs</a>. Change the propagation length scale and mesh resolution to compare shooting sensitivity with a boundary-value discretisation.</p></details>
 </section>
 <section>
 <h2 id="quantify-an-unstable-direction">Quantify an unstable direction</h2>
@@ -52,7 +52,7 @@
 <div class="math display">\[y(t)=(s/4)\sinh(4t).\]</div>
 <p>Hence \(s=8/\sinh4\approx0.29315\) and the endpoint sensitivity is \(\sinh4/4\approx6.8225\).</p>
 <p>A slope error of 0.001 causes terminal error about 0.00682. This is exact up to rounding in the multiplier because the differential equation and its slope dependence are linear.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/11-shooting/#live-num-ode-bvp">Explore the related calculation with adjustable inputs</a>. Change the propagation length scale and mesh resolution to compare shooting sensitivity with a boundary-value discretisation.</p></details>
 </section>
 <section>
 <h2 id="enforce-a-time-dependent-constraint">Enforce a time-dependent constraint</h2>
@@ -60,7 +60,7 @@
 <details><summary>Worked solution</summary>
 <p>The initial constraint gives \(z(0)=1\) and therefore \(y'(0)=1\). At the new time \(y_1=0.5z_1\), \(y_1+z_1=1.5\), yielding \(y_1=0.5,z_1=1\).</p>
 <p>The reduced equation \(y'=1+t-y\) has exact solution \(y=t\) with this initial value. Its derivative is constant along the trajectory, so backward Euler reproduces it exactly here. Different initial data introduce an exponential transient for which the step would have time-discretisation error.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/14-implicit-explicit-relaxation/#try-it">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section class="course-synthesis"><h2 id="course-synthesis">Separate conservation, stability and accuracy in a decay calculation</h2>
 <p>A transfers to B with rate 0.8 s⁻¹ and A+B = 1 mol/m³. Start from pure A. Use Euler with a 1.5 s step, backward Euler with the same step, and the exact solution to find A and B after one step. Which tests pass? Predict the fine-grid error ratio for RK4 in the downloadable run, and identify a meaningful comparison of computational effort.</p>
@@ -68,7 +68,7 @@
 <p>The exact A concentration is exp(−1.2) ≈ 0.3010, leaving B ≈ 0.6990. Forward Euler multiplies A by 1−1.2 = −0.2, giving A = −0.2 and B = 1.2. Total concentration is conserved. The amplification modulus is less than one, so repeated steps decay, but every other A value is negative. Absolute stability and positivity test different properties.</p>
 <p>Backward Euler gives A = 1/(1+1.2) ≈ 0.4545 and B ≈ 0.5455. Both are positive and their sum is one, yet the A error is about 0.1535. These invariant checks detect important failures, but their success cannot quantify time-discretisation error.</p>
 <p>For a smooth solution on a fixed interval the global RK4 error should fall by approximately 2⁴ when the step is halved in its asymptotic range. Use the chapter 2 OneSimulation plot to estimate the order from the last two mesh sizes. For a cost comparison count four right-hand-side calls per RK4 step versus one per Euler step. This model is deliberately small enough that wall-clock startup time would obscure that comparison.</p>
-</details></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/12-algebraic-constraints/">Chapter 12 · Differential–algebraic equations and consistency</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/13-symmetric-midpoint/">Chapter 13 · Implicit midpoint, reversibility and the phase of an oscillator</a></span></nav></article></div>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/02-runge-kutta/#live-reaction-order">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/12-algebraic-constraints/">Chapter 12 · Differential–algebraic equations and consistency</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/13-symmetric-midpoint/">Chapter 13 · Implicit midpoint, reversibility and the phase of an oscillator</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

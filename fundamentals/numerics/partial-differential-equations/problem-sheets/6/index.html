@@ -6,21 +6,21 @@
 <title>Transfers and observation error · OneSimulation</title>
 <meta name="description" content="Track which error can survive a grid transfer and compute an exact adjoint correction for a nonsymmetric system.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/problem-sheets/6/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/6/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Transfers and observation error · OneSimulation">
 <meta property="og:description" content="Track which error can survive a grid transfer and compute an exact adjoint correction for a nonsymmetric system.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/problem-sheets/6/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/6/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Transfers and observation error">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Transfers and observation error", "description": "Track which error can survive a grid transfer and compute an exact adjoint correction for a nonsymmetric system.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/problem-sheets/6/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Transfers and observation error", "item": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/problem-sheets/6/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Transfers and observation error", "description": "Track which error can survive a grid transfer and compute an exact adjoint correction for a nonsymmetric system.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/6/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Transfers and observation error", "item": "https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/6/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -40,7 +40,7 @@
 <details><summary>Worked solution</summary>
 <p>For \(\pi/3\) the multiplier is \(1-(2/3)(1-1/2)=2/3\), leaving \(4/9\) after two sweeps. At \(2\pi/3\) it is \(1-(2/3)(1+1/2)=0\), so the error vanishes in one sweep.</p>
 <p>Smoother errors can persist while oscillatory components decay. A coarse interpolation space should approximate those persistent smooth components. A coarse solve alone cannot remove arbitrary fine-grid error.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/linear-algebra/chapters/04-stationary-iterations/#live-jacobi-smoothing">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="test-exact-coarse-correction">Test exact coarse correction</h2>
@@ -50,7 +50,7 @@
 <div class="math display">\[A(3,1)^T=(5,-1)^T.\]</div>
 <p>Its restriction is 2, giving coarse correction \(P\,2=(2,2)^T\).</p>
 <p>The remaining error is \((1,-1)^T\), with residual \((3,-3)^T\). Restricting gives zero even though the fine error remains. An exact coarse solve eliminated only the represented component.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/linear-algebra/chapters/04-stationary-iterations/#live-jacobi-smoothing">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="use-the-transpose">Use the transpose</h2>
@@ -62,7 +62,7 @@
 <p>The error equation gives \(e_2=0.1,\ 2e_1+0.1=0\), hence</p>
 <div class="math display">\[c^Te=-0.05.\]</div>
 <p>A positive second-row defect forces a negative first-component change through the positive off-diagonal coupling. Using \(A\) instead of its transpose for the dual would miss that effect.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/inverse-problems/chapters/09-adjoint-gradients/#live-adjoint-gradient">Explore the related calculation with adjustable inputs</a>. Inspect the Taylor remainder with the correct and wrong-sign adjoint. The explorer uses a two-state equilibrium; apply the stated scalar or nonsymmetric operator to obtain this exercise’s exact gradient.</p></details>
 </section>
 <section class="course-synthesis"><h2 id="course-synthesis">Decide if another grid refinement answers the engineering question</h2>
 <p>A steady diffusion solver predicts a dimensionless mean sensor value of 0.42800, 0.42200 and 0.42050 on meshes with 16, 32 and 64 cells per side. The linear solver reports relative residuals below 10⁻¹⁰. Estimate the converged value and the error on the finest grid. A measurement reads 0.4170 with uncertainty ±0.0010. Can the discrepancy be attributed to mesh error alone?</p>
@@ -70,7 +70,7 @@
 <p>Assume the same smooth solution, geometry, sensor integration and refinement ratio on all three grids. The ratio of successive differences is 0.0060/0.0015 = 4.0, giving observed order p = 2. Extrapolate the fine estimate by adding (0.42050−0.42200)/(2²−1) = −0.00050. The resulting estimate is 0.42000.</p>
 <p>The fine-grid spatial error magnitude is therefore about 0.00050. A relative algebraic residual near 10⁻¹⁰ describes the discrete equations and is in different units from the absolute sensor error. It cannot replace this grid calculation. Repeating the study with a local peak instead of a mean can give a different observed order.</p>
 <p>The measurement interval spans 0.4160 to 0.4180. Even the extrapolated prediction exceeds its upper end by 0.0020. Under the assumed error model mesh refinement alone appears too small to explain that gap. Test coefficient uncertainty, boundary data and sensor averaging separately. The numerical experiment in chapter 6 supplies a known exact field for checking the discretisation independently of the physical measurement.</p>
-</details></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/12-output-errors/">Chapter 12 · Adjoints and errors in a chosen output</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/13-neumann-nullspace/">Chapter 13 · Pure flux boundaries, compatibility and the missing constant</a></span></nav></article></div>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/partial-differential-equations/chapters/06-verification/#live-manufactured-poisson">Explore the related calculation with adjustable inputs</a>. Refine the grid on a known solution and keep the small linear-solver residual separate from the spatial field error.</p></details></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/12-output-errors/">Chapter 12 · Adjoints and errors in a chosen output</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/13-neumann-nullspace/">Chapter 13 · Pure flux boundaries, compatibility and the missing constant</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

@@ -6,21 +6,21 @@
 <title>Measurements and elimination · OneSimulation</title>
 <meta name="description" content="Use explicit perturbations, row exchanges and reusable factors to diagnose errors in small linear balances.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/problem-sheets/1/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/1/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Measurements and elimination · OneSimulation">
 <meta property="og:description" content="Use explicit perturbations, row exchanges and reusable factors to diagnose errors in small linear balances.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/problem-sheets/1/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/1/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Measurements and elimination">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Measurements and elimination", "description": "Use explicit perturbations, row exchanges and reusable factors to diagnose errors in small linear balances.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/problem-sheets/1/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Measurements and elimination", "item": "https://onesimulation.pages.dev/fundamentals/numerics/linear-algebra/problem-sheets/1/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Measurements and elimination", "description": "Use explicit perturbations, row exchanges and reusable factors to diagnose errors in small linear balances.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/1/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Measurements and elimination", "item": "https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/1/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -42,7 +42,7 @@
 <div class="math display">\[x=(1,1)^T.\]</div>
 <p>The singular values are 2 and 0.02, so \(\kappa_2=100\). The first disturbance changes the solution by \((0.001,0)^T\), whereas the second gives \((0,0.1)^T\). The second direction therefore produces a hundred times more absolute force error for the same measurement error.</p>
 <p>For equal admissible absolute errors in the two forces, the second measurement needs a hundred times smaller absolute uncertainty. Rescaling its output by a factor of 100 makes the two matrix rows comparable but also rescales its uncertainty by 100. It cannot turn the original sensor into a more precise one.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/linear-algebra/chapters/01-conditioning/#live-residual-direction">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="compare-a-componentwise-and-a-global-test">Compare a componentwise and a global test</h2>
@@ -52,7 +52,7 @@
 <div class="math display">\[0.02/1000=2\times10^{-5}.\]</div>
 <p>In the separate equations the ratios are zero and \(0.02/1=0.02\).</p>
 <p>The second equation misses its 0.5% specification by a factor of four. Global normalisation uses the much larger first equation to set the denominator. One remedy is to divide each equation by its nonzero measurement uncertainty and judge the largest resulting scaled residual.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/linear-algebra/chapters/11-refinement/#live-backward-error">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="pivot-and-reuse">Pivot and reuse</h2>
@@ -60,7 +60,7 @@
 <details><summary>Worked solution</summary>
 <p>Exchange rows with \(P=\left(\begin{smallmatrix}0&amp;1\\1&amp;0\end{smallmatrix}\right)\). The permuted matrix is already upper triangular, so \(L=I\) and \(U=\left(\begin{smallmatrix}3&amp;1\\0&amp;2\end{smallmatrix}\right)\). For \(Pb=(5,4)^T\), back substitution gives \(x_2=2\), \(x_1=1\). For \(Pc=(1,2)^T\), it gives \(x_2=1\), \(x_1=0\).</p>
 <p>The determinant is \(-6\), so the matrix is nonsingular. A zero at one candidate pivot location merely prevents that ordering of elimination. Applying the row permutation to both the matrix and every new load preserves the original problem.</p>
-</details>
+<p><strong>Try this calculation.</strong> Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p><p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/1/#sheet-live-linear-algebra-1-pivot-and-reuse">Open this adjustable calculation</a></p><div id="sheet-live-linear-algebra-1-pivot-and-reuse" class="interactive-study" data-study="complete-numerics-pivoted-load"></div></details>
 </section>
 <section>
 <h2 id="transfer-tridiagonal-pivots">Reuse chain factors after a load change</h2>
@@ -73,7 +73,7 @@
 <p>Back substitution gives</p>
 <div class="math display">\[x_3=1,\ x_2=(9/2+1)/(11/4)=2,\ x_1=(2+2)/4=1.\]</div>
 <p>The incremental load transforms to \((0,0,1)\). Back substitution through the same factors gives increments \(11/18,\ 2/9,\ 1/18\) in reverse node order. They are positive throughout the connected chain. In the final matrix the first pivot is zero, although its determinant is −1. A row exchange can solve it. The unpivoted recurrence cannot divide by its first pivot.</p>
-</details>
+<p><strong>Try this calculation.</strong> Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p><p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/1/#sheet-live-linear-algebra-1-transfer-tridiagonal-pivots">Open this adjustable calculation</a></p><div id="sheet-live-linear-algebra-1-transfer-tridiagonal-pivots" class="interactive-study" data-study="complete-numerics-chain-factors"></div></details>
 <p class="source-note">Revisit chapter 2 · <a href="/fundamentals/numerics/linear-algebra/chapters/02-elimination/#tridiagonal-sweeps">Eliminate a chain in two linear-time sweeps</a>.</p>
 </section>
 <section><h2 id="rounded-dot-product">Predict a dot product in a tiny floating-point system</h2>
@@ -83,8 +83,8 @@
 <div class="math display">\[2^{3+1-4}=1.\]</div>
 <p>Both 8 and 9 are representable. The intermediate 8.5 is halfway between them and rounds to the even significand of \(8=(1.000)_2\,2^3\). Left-to-right accumulation therefore returns 8 after both additions.</p>
 <p>The sum of the two half-units is exactly one. Grouping them gives 8+1 = 9, equal to the exact dot product. A single final rounding also gives 9. The products with one are exact here. All of the discrepancy enters through the intermediate additions. A componentwise explanation can identify the two lost half-units even when the input vector is perfectly well conditioned for this sum.</p>
-</details><p class="source-note">Revisit chapter 1 · <a href="/fundamentals/numerics/linear-algebra/chapters/01-conditioning/#binary-rounding">Determine which perturbations a machine can represent</a>.</p>
-</section><p class="notebook-practice"><strong>Notebook practice</strong> · <a href="/fundamentals/numerics/linear-algebra/notebooks/chapter/">How large can the last column grow?</a></p><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/02-elimination/">Chapter 2 · Elimination, pivoting and factorisation</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/03-least-squares/">Chapter 3 · Least squares and orthogonal factorisation</a></span></nav></article></div>
+<p><strong>Try this calculation.</strong> Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p><p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/problem-sheets/1/#sheet-live-linear-algebra-1-rounded-dot-product">Open this adjustable calculation</a></p><div id="sheet-live-linear-algebra-1-rounded-dot-product" class="interactive-study" data-study="complete-numerics-binary-sum"></div></details><p class="source-note">Revisit chapter 1 · <a href="/fundamentals/numerics/linear-algebra/chapters/01-conditioning/#binary-rounding">Determine which perturbations a machine can represent</a>.</p>
+</section><p class="notebook-practice"><strong>Notebook practice</strong> · <a href="/fundamentals/numerics/linear-algebra/notebooks/chapter/">How large can the last column grow?</a></p><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/02-elimination/">Chapter 2 · Elimination, pivoting and factorisation</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/03-least-squares/">Chapter 3 · Least squares and orthogonal factorisation</a></span></nav><script defer src="/assets/practical-complete-numerics.js"></script><script defer src="/assets/practical-spatial-view.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

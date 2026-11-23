@@ -23,6 +23,12 @@
     const ctx = canvas.getContext("2d");
     ctx.scale(ratio, ratio);
     const left = width < 420 ? 74 : 84, right = width - 20, top = 16, bottom = height - 51;
+    const tickFormat = value => {
+      if (width >= 420) return format(value);
+      const size = Math.abs(value);
+      return size && (size < .01 || size >= 10000)
+        ? value.toExponential(1) : String(Number(value.toPrecision(4)));
+    };
     let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
     for (const series of data.curves) {
       for (const [x,y] of series.points) {
@@ -44,8 +50,8 @@
       const x = xmin + (xmax-xmin)*i/4, y = ymin + (ymax-ymin)*i/4;
       ctx.beginPath(); ctx.moveTo(X(x),top); ctx.lineTo(X(x),bottom);
       ctx.moveTo(left,Y(y)); ctx.lineTo(right,Y(y)); ctx.stroke();
-      ctx.textAlign = i === 4 ? "right" : i === 0 ? "left" : "center"; ctx.fillText(format(x),X(x),bottom+17);
-      ctx.textAlign = "right"; ctx.fillText(format(y),left-6,Y(y)+4);
+      ctx.textAlign = i === 4 ? "right" : i === 0 ? "left" : "center"; ctx.fillText(tickFormat(x),X(x),bottom+17);
+      ctx.textAlign = "right"; ctx.fillText(tickFormat(y),left-6,Y(y)+4);
     }
     ctx.textAlign = "center"; ctx.font = "13px system-ui, sans-serif";
     ctx.fillText(xLabel,(left+right)/2,height-5,right-left+22);
@@ -101,8 +107,10 @@
   }
 
   function initialise(panel) {
+    if (panel.dataset.studyInitialised) return;
     const model = window.fundamentalStudies?.[panel.dataset.study];
     if (!model) return;
+    panel.dataset.studyInitialised = 'true';
     if (window.location.hash === '#' + panel.id) {
       for (let parent = panel.parentElement; parent; parent = parent.parentElement) {
         if (parent.tagName === 'DETAILS') parent.open = true;
@@ -194,5 +202,40 @@
     observer.observe(figure);
     update();
   }
-  for (const panel of document.querySelectorAll(".interactive-study[data-study]")) initialise(panel);
+  const selector = '.interactive-study[data-study]';
+  // A collected course can contain hundreds of experiments. Closed boxes do not
+  // need a calculation or a canvas until the reader opens them.
+  window.initialiseFundamentalStudies = (scope = document) => {
+    for (const panel of scope.querySelectorAll(selector)) initialise(panel);
+  };
+  const isClosed = panel => {
+    for (let ancestor = panel.parentElement; ancestor; ancestor = ancestor.parentElement)
+      if (ancestor.tagName === 'DETAILS' && !ancestor.open) return true;
+    return false;
+  };
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) if (entry.isIntersecting && !isClosed(entry.target)) {
+      initialise(entry.target); observer.unobserve(entry.target);
+    }
+  }, {rootMargin:'500px'});
+  for (const panel of document.querySelectorAll(selector)) {
+    if (window.location.hash === '#' + panel.id) initialise(panel);
+    else observer.observe(panel);
+  }
+  window.addEventListener('hashchange', () => {
+    const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+    const panel = target?.matches(selector) ? target : target?.closest(selector);
+    if (!panel) return;
+    for (let ancestor = panel.parentElement; ancestor; ancestor = ancestor.parentElement)
+      if (ancestor.tagName === 'DETAILS') ancestor.open = true;
+    initialise(panel); observer.unobserve(panel);
+    requestAnimationFrame(() => panel.scrollIntoView({block:'start'}));
+  });
+  document.addEventListener('toggle', event => {
+    if (event.target.tagName !== 'DETAILS' || !event.target.open) return;
+    for (const panel of event.target.querySelectorAll(selector)) {
+      if (!isClosed(panel)) { initialise(panel); observer.unobserve(panel); }
+    }
+  }, true);
+  window.addEventListener('beforeprint', () => window.initialiseFundamentalStudies());
 })();

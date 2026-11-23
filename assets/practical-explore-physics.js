@@ -103,6 +103,12 @@
         caption:"Three-dimensional phase-speed surface: in each propagation direction n, the radius is the selected eigenvalue's speed v(n). Coordinates are v(n)n in km/s. This is a material property surface, not a deformed crystal or a group-velocity wavefront."}};
   });
 
+  studies["explore-physics-cubic-sound"].localModel = {
+    file: "complete-physics-cubic-surface.py",
+    url: "/downloads/fundamentals/examples/complete-physics-cubic-surface.py",
+    args: ([c44,density,branch]) => `--c44 ${c44} --density ${density} --branch ${branch}`
+  };
+
   register("harmonic",[["Phase mismatch Δk·Lnl",0,8,.1,2],["Crystal length / Lnl",1,6,.1,3],
     ["RK4 step / Lnl",.005,.05,.005,.01]],"Distance / nonlinear coupling length","Power fraction",([mismatch,length,step])=>{
     const count=Math.ceil(length/step),h=length/count;

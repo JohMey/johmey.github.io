@@ -6,21 +6,21 @@
 <title>Smooth pieces and integrated loads · OneSimulation</title>
 <meta name="description" content="Build a constrained trajectory, infer a spline curvature, and check quadrature by energy conservation over a measured interval.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Smooth pieces and integrated loads · OneSimulation">
 <meta property="og:description" content="Build a constrained trajectory, infer a spline curvature, and check quadrature by energy conservation over a measured interval.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Smooth pieces and integrated loads">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Smooth pieces and integrated loads", "description": "Build a constrained trajectory, infer a spline curvature, and check quadrature by energy conservation over a measured interval.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Smooth pieces and integrated loads", "item": "https://onesimulation.pages.dev/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Smooth pieces and integrated loads", "description": "Build a constrained trajectory, infer a spline curvature, and check quadrature by energy conservation over a measured interval.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Smooth pieces and integrated loads", "item": "https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/problem-sheets/2/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -40,7 +40,7 @@
 <details><summary>Worked solution</summary>
 <p>With \(s=t/2\) the trajectory is \(4(3s^2-2s^3)\). Differentiating with respect to time gives \(v=12s(1-s)\) m/s, so \(v(1\ {\rm s})=3\) m/s. Acceleration is \(6(1-2s)\) m/s², giving \(+6\) and \(-6\) at the endpoints.</p>
 <p>The velocity can join rest continuously. The stationary segment has zero acceleration, so this particular cubic cannot also give a continuous acceleration there. Enforcing both endpoint accelerations adds two constraints, motivating a higher-degree segment.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/07-divided-differences/#live-hermite-data">Explore the related calculation with adjustable inputs</a>. Vary a slope or endpoint value and examine how an interpolant changes between observations. Map this exercise’s interval to the unit interval before comparing the basis functions.</p></details>
 </section>
 <section>
 <h2 id="identify-what-a-natural-endpoint-buys">Identify what a natural endpoint buys</h2>
@@ -52,7 +52,7 @@
 <div class="math display">\[S=3x-x^3.\]</div>
 <p>The initial slope is 3 and midpoint value 1.375.</p>
 <p>The global quadratic is \(4x-2x^2\), with initial slope 4 and midpoint value 1.5. Both match every measured value. The difference is detectable in unmeasured derivatives and in the interior prediction because the quadratic has nonzero end curvature.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/03-splines/#live-shape-spline">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="recover-a-missing-quadratic-load">Recover a missing quadratic load</h2>
@@ -60,7 +60,7 @@
 <details><summary>Worked solution</summary>
 <p>Simpson integrates the quadratic exactly, so \(3=(2+4P_m+6)/6\), giving \(P_m=2.5\) W. The midpoint estimate is 2.5 J and the trapezoidal estimate is 4 J. Their weighted combination \((2\cdot2.5+4)/3=3\) J reproduces the measured energy.</p>
 <p>The signal midpoint lies below the endpoint chord value 4 W, so the curvature is positive. These conclusions use the stipulated quadratic law; the same three observations cannot uniquely determine an arbitrary power history.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/04-composite-quadrature/#live-composite-quadrature">Explore the related calculation with adjustable inputs</a>. Compare errors from common-node composite rules; the explorer uses an exponential reference, while the polynomial identities in this exercise can be checked exactly.</p></details>
 </section>
 <section>
 <h2 id="transfer-romberg-exactness">Does three-level extrapolation integrate every smooth input exactly?</h2>
@@ -71,7 +71,7 @@
 <p>Removing the quartic term gives</p>
 <div class="math display">\[(16(893/6144)-17/96)/15=55/384.\]</div>
 <p>The exact value is \(1/7\), so the excess is \(1/2688\). Both cancellations were exact algebraically, but the trapezoid expansion for this polynomial also contains an \(h^6\) term. Three grids remove two independent error coefficients. Exact integration of every smooth function cannot follow from that finite information.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/15-richardson-tableau/#try-it">Explore the related calculation with adjustable inputs</a>. Compare trapezoidal and extrapolated estimates as the power of the integrand changes; track when the smooth-error expansion needed for cancellation is valid.</p></details>
 <p class="source-note">Revisit chapter 4 · <a href="/fundamentals/numerics/approximation-and-quadrature/chapters/04-composite-quadrature/#romberg-table">Build a Romberg table from nested panels</a>.</p>
 </section>
 <section class="lab-problem"><h2 id="laboratory-problem">Recover an integral using two biased readings</h2>

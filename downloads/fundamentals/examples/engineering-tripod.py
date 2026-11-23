@@ -23,3 +23,19 @@ ax.axhline(0, color="0.5", lw=0.8)
 ax.set(xlabel="Horizontal apex load (kN)", ylabel="Axial force (kN)")
 ax.legend()
 plt.show()
+
+# Inspect the same solved three-dimensional joint, not an unrelated planar sketch.
+fig = plt.figure(figsize=(6,4.5), layout="constrained")
+ax = fig.add_subplot(111, projection="3d")
+apex = np.array([0.,0.,1.])
+feet = np.column_stack((np.cos(angles),np.sin(angles),np.zeros(3)))
+selected_forces = forces[30]  # H=3 kN, W=6 kN
+for foot, value in zip(feet, selected_forces):
+    segment = np.vstack((apex,foot))
+    ax.plot(*segment.T, linewidth=3, color="#aa462a" if value<0 else "#19596a")
+    ax.text(*foot, f"{value:.3f} kN",fontsize=9)
+ax.scatter(*apex, color="black")
+ax.quiver(*apex, .3,0,-.6, color="#695082")
+ax.set(xlabel="x (m)",ylabel="y (m)",zlabel="z (m)",title="Solved space tripod; compression shown orange")
+ax.set_box_aspect((2,2,1))
+plt.show()

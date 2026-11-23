@@ -6,21 +6,21 @@
 <title>Pole placement, gain and phase · OneSimulation</title>
 <meta name="description" content="Design a second-order transient, examine a hidden stability limit, and test a delay budget against a frequency response.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/control-engineering/problem-sheets/2/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/2/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Pole placement, gain and phase · OneSimulation">
 <meta property="og:description" content="Design a second-order transient, examine a hidden stability limit, and test a delay budget against a frequency response.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/control-engineering/problem-sheets/2/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Pole placement, gain and phase">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Pole placement, gain and phase", "description": "Design a second-order transient, examine a hidden stability limit, and test a delay budget against a frequency response.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/control-engineering/problem-sheets/2/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Pole placement, gain and phase", "item": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/control-engineering/problem-sheets/2/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Pole placement, gain and phase", "description": "Design a second-order transient, examine a hidden stability limit, and test a delay budget against a frequency response.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/2/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Pole placement, gain and phase", "item": "https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/2/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -75,12 +75,14 @@
 </details>
 <p class="source-note">Revisit chapter 4 · <a href="/fundamentals/mechanical-engineering/control-engineering/chapters/04-frequency-response/#nyquist-winding">Use a winding count when the uncontrolled plant is unstable</a>.</p>
 </section>
+<p class="exercise-live-links">Explore the governing equations after solving the sheet: <a href="/fundamentals/mechanical-engineering/control-engineering/chapters/03-closed-loop-poles/#derive-live-derive-cubic-margin">Closed-loop poles, damping and performance</a>; <a href="/fundamentals/mechanical-engineering/control-engineering/chapters/04-frequency-response/#derive-live-derive-resonance">Frequency response, disturbance rejection and robustness</a>. Compare the assumptions and units before transferring your chosen parameters; the controls may cover a different numerical range from the written exercise.</p>
 <section class="lab-problem"><h2 id="laboratory-problem">Identify a controller from a finite-time observation</h2>
 <p>A zero-initial-state, first-order proportional-feedback loop has plant static gain 2. A unit step gives error 0.11331 at six fitted closed-loop time constants. The fitted time constant is 2.22222 s. Infer the controller gain and the original plant time constant, retaining the residual exponential at the sample time.</p>
 <details><summary>Work through the solution</summary><p>The first-order error is</p>
 <div class="math display">\[e(t)=e_\infty+(1-e_\infty)e^{-t/\tau_c}.\]</div>
 <p>Thus \(e_\infty=(0.11331-e^{-6})/(1-e^{-6})=0.11111\) to rounding. With negative unity feedback, \(e_\infty=1/(1+2K_p)\) gives \(K_p\simeq4.00\). The closed-loop denominator gives \(\tau_c=\tau_p/(1+2K_p)\), so \(\tau_p\simeq20.0\) s. Treating the sampled error as the asymptotic value would slightly underestimate gain.</p></details>
-<p><a href="/fundamentals/mechanical-engineering/control-engineering/#experiment">Use the OneSimulation laboratory to check your answer</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/04-frequency-response/">Chapter 4 · Frequency response, disturbance rejection and robustness</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/05-state-feedback/">Chapter 5 · States, reachability and estimation</a></span></nav></article></div>
+<p><a href="/fundamentals/mechanical-engineering/control-engineering/#experiment">Use the OneSimulation laboratory to check your answer</a></p></section>
+<p class="exercise-live-links"><a href="/fundamentals/mechanical-engineering/control-engineering/#lab-live-control-engineering">Vary the corresponding laboratory reference interactively</a>. Compare the recalculated observable with the recorded OneSimulation runs and the approximation used in this exercise.</p><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/04-frequency-response/">Chapter 4 · Frequency response, disturbance rejection and robustness</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/05-state-feedback/">Chapter 5 · States, reachability and estimation</a></span></nav></article></div>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

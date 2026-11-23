@@ -6,21 +6,21 @@
 <title>Tangents and Jacobians · OneSimulation</title>
 <meta name="description" content="Compute scalar, secant and coupled Newton corrections, and test what an incorrectly assembled derivative changes.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/problem-sheets/2/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/problem-sheets/2/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tangents and Jacobians · OneSimulation">
 <meta property="og:description" content="Compute scalar, secant and coupled Newton corrections, and test what an incorrectly assembled derivative changes.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/problem-sheets/2/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/problem-sheets/2/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Tangents and Jacobians">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Tangents and Jacobians", "description": "Compute scalar, secant and coupled Newton corrections, and test what an incorrectly assembled derivative changes.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/problem-sheets/2/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Tangents and Jacobians", "item": "https://onesimulation.pages.dev/fundamentals/numerics/nonlinear-equations/problem-sheets/2/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Tangents and Jacobians", "description": "Compute scalar, secant and coupled Newton corrections, and test what an incorrectly assembled derivative changes.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/problem-sheets/2/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Tangents and Jacobians", "item": "https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/problem-sheets/2/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
@@ -40,7 +40,7 @@
 <details><summary>Worked solution</summary>
 <p>The secant slope is \((5-(-2))/(2-1)=7\), giving \(x_2=2-5/7=9/7\) and residual \(729/343-3\simeq-0.875\). Newton uses slope 12, giving \(19/12\simeq1.58333\) and residual \(6859/1728-3\simeq0.970\).</p>
 <p>The methods take corrections from different local models. One residual comparison on early iterates does not establish their asymptotic rates, which concern successive errors near the root.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/nonlinear-equations/chapters/03-tangent-and-secant/#live-newton-secant">Explore the related calculation with adjustable inputs</a>. Explore how initial values and the residual slope affect Newton and secant convergence on the quadratic reference problem; retain the stated residual when checking the present hand calculation.</p></details>
 </section>
 <section>
 <h2 id="locate-two-coupled-unknowns">Locate two coupled unknowns</h2>
@@ -50,7 +50,7 @@
 <div class="math display">\[x=y=4/3.\]</div>
 <p>Both new residuals equal \(1/9\).</p>
 <p>Dropping the off-diagonal entries instead gives \(s_x=s_y=1/2\), landing at 1.5 in both coordinates with residual \(0.75\) in each row. The uncoupled derivative overestimates the correction because each unknown changes both balances.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/nonlinear-equations/chapters/04-coupled-newton/#live-coupled-newton">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="roundoff-in-a-derivative-test">Roundoff in a derivative test</h2>
@@ -58,7 +58,7 @@
 <details><summary>Worked solution</summary>
 <p>Subtracting the function values and dividing by \(s\) gives \(3+s\), so the exact truncation error is \(s\). Numerator noise contributes at most \(10^{-14}/s\). The sum \(s+10^{-14}/s\) is minimised by \(s^2=10^{-14}\), giving \(s=10^{-7}\) and a bound \(2\times10^{-7}\).</p>
 <p>A perturbation smaller than this model’s optimum amplifies cancellation. The numerical optimum depends on evaluation scale and arithmetic, so use several step sizes when testing an unfamiliar Jacobian.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/nonlinear-equations/chapters/10-inexact-newton/#live-complex-step">Explore the related calculation with adjustable inputs</a>. Change the parameters in the corresponding calculation and compare its independently recomputed values with the equation derived in this solution.</p></details>
 </section>
 <section>
 <h2 id="transfer-frozen-refresh">Decide when a reused slope is still informative</h2>
@@ -71,7 +71,7 @@
 <p>Refreshing the slope to \(25/4\) gives</p>
 <div class="math display">\[25/8-(49/64)(4/25)=3.0025.\]</div>
 <p>At the root the error multiplier is \(1-6/B\). The strict inequality \(|1-6/B|&lt;1\) requires \(B&gt;3\). In particular \(B=8\) gives multiplier \(1/4\): factor reuse converges but does not retain Newton's local quadratic rate.</p>
-</details>
+<p class="worksheet-experiment"><a href="/fundamentals/numerics/nonlinear-equations/chapters/03-tangent-and-secant/#live-newton-secant">Explore the related calculation with adjustable inputs</a>. Explore how initial values and the residual slope affect Newton and secant convergence on the quadratic reference problem; retain the stated residual when checking the present hand calculation.</p></details>
 <p class="source-note">Revisit chapter 4 · <a href="/fundamentals/numerics/nonlinear-equations/chapters/04-coupled-newton/#frozen-jacobian">Quantify the cost of freezing a Jacobian</a>.</p>
 </section>
 <section class="lab-problem"><h2 id="laboratory-problem">Distinguish root accuracy from temperature sensitivity</h2>
