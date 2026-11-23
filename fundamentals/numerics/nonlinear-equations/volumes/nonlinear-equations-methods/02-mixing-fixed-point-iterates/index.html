@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accelerating fixed points with differences of residuals · OneSimulation</title>
+<meta name="description" content="A slowly convergent physical iteration contains information in the direction of successive errors. Use a scalar extrapolation and a small residual-minimisation problem to exploit that information, then test the extrapolated state against the original equation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/02-mixing-fixed-point-iterates/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Accelerating fixed points with differences of residuals · OneSimulation">
+<meta property="og:description" content="A slowly convergent physical iteration contains information in the direction of successive errors. Use a scalar extrapolation and a small residual-minimisation problem to exploit that information, then test the extrapolated state against the original equation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/02-mixing-fixed-point-iterates/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Nonlinear systems and iterative methods</a></p><h1>Accelerating fixed points with differences of residuals</h1><p class="lead">A slowly convergent physical iteration contains information in the direction of successive errors. Use a scalar extrapolation and a small residual-minimisation problem to exploit that information, then test the extrapolated state against the original equation.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/nonlinear-equations/chapters/02-contraction/">Background · Fixed-point iteration and contraction</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#scalar">Eliminate an unknown leading error without knowing the root</a><a href="#vector">Choose affine weights that minimise residual history</a><a href="#example">Separate fast and slow modes in a two-component relaxation</a><a href="#experiment">Follow a two-mode residual through a real mixing step</a><a href="#tutorial">Tutorial · identify good and bad extrapolation data</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="scalar">Eliminate an unknown leading error without knowing the root</h2>
+<p>Suppose a sequence obeys \(x_j=x_*+c q^j\) for an unknown limit and mode multiplier \(q\ne1\). Subtract successive terms to find \(\Delta x_{j+1}/\Delta x_j=q\). Eliminating \(q,c\) yields the Aitken extrapolation \(\hat x_j=x_j-(x_{j+1}-x_j)^2/(x_{j+2}-2x_{j+1}+x_j)\). For a single exact geometric error it returns the limit after observing three values, even if the multiplier is negative and the iterates oscillate. If the denominator is near zero relative to numerical uncertainty, the extrapolation can amplify noise. A nearly constant first difference may indicate almost linear drift rather than a trustworthy asymptotic geometric error.</p>
+<p>For \(g(x)=0.95x+0.10\), ordinary iteration from zero gives \(0,0.10,0.195\); the fixed point is 2. The second difference is \(-0.005\) and the formula gives exactly 2. If the last reported value is rounded to 0.196, the denominator changes to \(-0.004\), giving an extrapolated 2.50. Substituting this candidate into the original residual \(g(x)-x\) gives \(-0.025\): it is a worse fixed point than 2 but still has a modest residual because the fixed point itself is weakly conditioned. Always evaluate the actual residual and estimate its relation to state error if a meaningful physical tolerance is required.</p>
+</section>
+<section><h2 id="vector">Choose affine weights that minimise residual history</h2>
+<p>For a vector fixed-point map \(g\), let \(f_i=g(x_i)-x_i\). Seek a combination of recent residuals with small norm while preserving a fixed point under averaging. Anderson mixing chooses coefficients \(\alpha_i\) minimising \(\|\sum_i\alpha_i f_i\|\) subject to \(\sum_i\alpha_i=1\), then evaluates a candidate \(x_{\rm new}=\sum_i\alpha_i g(x_i)\) in a basic undamped formulation. The affine constraint allows negative coefficients, which is precisely what makes acceleration beyond ordinary averaging possible. For one-dimensional affine maps the combination can eliminate a single mode exactly.</p>
+<p>For two residual vectors write their affine combination as \(f_1+\beta(f_0-f_1)\). Its least-squares optimum is \(\beta=-f_1^T(f_0-f_1)/\|f_0-f_1\|^2\) if the denominator is nonzero. With several vectors a small QR or SVD solve in terms of differences is preferable to building normal equations when differences are nearly collinear. Choose component units or a weighted norm consistent with the physical equation. Otherwise a residual expressed in large numerical units can dominate the fit and accelerate one variable while neglecting another important constraint.</p>
+<p>For a strictly affine map \(g(x)=Gx+c\), \(f(\sum\alpha_i x_i)=\sum\alpha_i f_i\). The predicted residual at the affine combination of old states is exactly the linear combination. The candidate formed by applying \(g\) to it has residual \(G\sum\alpha_i f_i\). For nonlinear \(g\) neither equality need hold globally. An Anderson residual minimisation is a local extrapolation hypothesis, not a proof that the next nonlinear state decreases residual or stays feasible. Evaluating \(f(x_{\rm new})\), accepting a damped mixture when appropriate, and dropping near-dependent history are practical ways to test that hypothesis.</p>
+</section>
+<section><h2 id="example">Separate fast and slow modes in a two-component relaxation</h2>
+<p>Use \(g(x,y)=(0.9x+0.1,0.2y+0.8)\), whose fixed point is \((1,1)\). Start at \((0,0)\), then \(x_1=(0.1,0.8)\). Residuals are \(f_0=(0.1,0.8)\) and \(f_1=(0.09,0.16)\); their difference is \((0.01,0.64)\). The two-history coefficient above is about \(-0.252\). The predicted residual of the affine state is approximately \((0.0875,-0.0010)\), largely eliminating the fast second component while leaving the slower first. Three appropriately independent histories can eliminate two geometrically distinct error directions for this affine example if their residual vectors affinely span zero in exact arithmetic. Near-equal decay factors can make that calculation badly conditioned. A finite memory window trades acceleration against conditioning, storage and the cost of residual evaluation.</p>
+</section>
+<section><h2 id="experiment">Follow a two-mode residual through a real mixing step</h2>
+<p>Set the slow multiplier to 0.90 and the second to 0.20. The first two ordinary states coincide in both runs because the accelerated iteration has no history at the start. Thereafter the calculator solves the two-vector minimisation at each iteration, forms the proposed mixed state and evaluates its actual residual. The second component initially dominates the residual norm even though it is the more rapidly damped mode. Notice how the mixed and plain curves separate as the slow component becomes limiting. The plotted logarithmic residual measures convergence to the stated map; the physical state error in mode j is its residual divided by the magnitude of one minus that mode multiplier.</p>
+<p>Move the two multipliers close together so the map becomes nearly a scalar relaxation, then choose a negative second multiplier so its errors alternate. Explain why affine mixing can nearly remove a single geometric mode, while nearly dependent histories make weights sensitive to evaluation noise. The implementation falls back to the ordinary map if the difference norm is already at the roundoff threshold. Very small residuals are marked at a finite plotting floor. Compare curves before that floor rather than fitting a convergence rate to the flat portion.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/02-mixing-fixed-point-iterates/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-anderson"></div>
+</section>
+<section><h2 id="tutorial">Tutorial · identify good and bad extrapolation data</h2>
+<h3>Check an alternating scalar series</h3><p>Three iterates are 1.50, 0.75 and 1.125. Infer the geometric multiplier and limit. How should the next value be checked?</p><details><summary>Work through the solution</summary>
+<p>The differences are \(-0.75\) and \(+0.375\), so \(q=-0.5\). The Aitken prediction is \(1.50-0.75^2/1.125=1.00\). If the geometric assumption persists, the next raw iterate would be \(1-0.0625=0.9375\). Comparing both the new observed iterate and the actual residual at 1 tests the single-mode hypothesis. Three arbitrary numbers alone can always fit such a geometric extrapolation when the denominator is nonzero.</p>
+</details>
+<h3>Show the connection to a secant root step</h3><p>Use two scalar residuals \(f_i=g(x_i)-x_i\). Derive the affine combination of \(x_0,x_1\) whose predicted residual is zero and compare with a secant step for \(f=0\).</p><details><summary>Work through the solution</summary>
+<p>Solve \(\alpha f_0+(1-\alpha)f_1=0\) to get \(\alpha=-f_1/(f_0-f_1)\). The mixed state is \(x_1-f_1(x_1-x_0)/(f_1-f_0)\), the ordinary secant prediction. The combination of \(g(x_i)\) is the same state because the weighted residual vanishes. For nearly equal residuals the denominator can be tiny, generating a large extrapolation. A bounded step or fallback to the base fixed-point map may be necessary if the candidate leaves the valid state domain.</p>
+</details>
+<h3>Select a restart from nearly identical residual columns</h3><p>Two stored vectors have residuals \((1,0)\) and \((1,10^{-9})\), measured with absolute component errors \(10^{-7}\). Can their difference support a reliable two-history fit?</p><details><summary>Work through the solution</summary>
+<p>The direction being used for the second independent sample is smaller than the evaluation uncertainty by two orders of magnitude. Its orientation and length can be dominated by numerical error, so a large coefficient in a least-squares solve carries little physical information. Drop the redundant direction or use a rank-revealing solve scaled to the expected residual error. Evaluate any retained candidate on the original model. A tiny predicted mixed residual from cancelling inaccurate large coefficients has no independent evidential value.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://users.wpi.edu/~walker/Papers/Walker-Ni%2CSINUM%2CV49%2C1715-1735.pdf">Walker and Ni · Anderson acceleration for fixed-point iterations</a></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/02-contraction/">Course investigation · contractive maps and error bounds</a></li><li><a href="/fundamentals/numerics/nonlinear-equations/#experiment">Solve an implicit cooling step with a changing residual</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/">Choosing a derivative step in a nonlinear solve</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/03-deflating-known-solutions/">Finding another equilibrium after one root is known</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

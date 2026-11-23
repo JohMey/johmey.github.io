@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cam displacement laws, contact geometry and follower acceleration · OneSimulation</title>
+<meta name="description" content="An inspection station uses a roller to lift a specimen for imaging, hold it and return it. Specifying a ten-millimetre rise determines neither the force on the guide nor whether the follower can follow the prescribed geometry. Construct two different motions through the same endpoints and separate their geometric and dynamic consequences.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/volumes/machine-elements-methods/01-cam-law-and-follower-geometry/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cam displacement laws, contact geometry and follower acceleration · OneSimulation">
+<meta property="og:description" content="An inspection station uses a roller to lift a specimen for imaging, hold it and return it. Specifying a ten-millimetre rise determines neither the force on the guide nor whether the follower can follow the prescribed geometry. Construct two different motions through the same endpoints and separate their geometric and dynamic consequences.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/volumes/machine-elements-methods/01-cam-law-and-follower-geometry/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/volumes/machine-elements-methods/">Design and analysis of machine components</a></p><h1>Cam displacement laws, contact geometry and follower acceleration</h1><p class="lead">An inspection station uses a roller to lift a specimen for imaging, hold it and return it. Specifying a ten-millimetre rise determines neither the force on the guide nor whether the follower can follow the prescribed geometry. Construct two different motions through the same endpoints and separate their geometric and dynamic consequences.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/13-kinematic-location/">Background · Locating a part with six contacts and predicting datum error</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#pitch">Construct the pitch curve from the prescribed motion</a><a href="#motion">Compare motion laws at a dwell boundary</a><a href="#geometry">How a smooth pitch curve can make a poor physical cam</a><a href="#imaging">Reconstruct the motion from a camera and phase mark</a><a href="#tutorial-one">Tutorial · Turn a lift diagram into a measured acceleration</a><a href="#tutorial-two">Tutorial · Interpret a guide measurement</a><a href="#tutorial-three">Tutorial · Check the roller offset independently</a></nav></aside><article class="prose reference"><section><h2 id="pitch">Construct the pitch curve from the prescribed motion</h2>
+<p>Imagine holding the cam still and rotating the entire guide around it in the opposite direction. The centre of an inline roller traces a polar curve in the cam frame. Let the prime radius be the distance from cam axis to roller centre at zero lift. At angle \(\theta\) the pitch radius is \(r=R+s(\theta)\). A small rotation advances the centre tangentially by \(r\,d\theta\) and radially by \(s'\,d\theta\). The tangent therefore makes an angle with the circumferential direction whose tangent is the ratio of these increments. The common normal makes the same angle with the radial guide direction. For a frictionless, inline translating roller the pressure angle follows immediately:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\tan\alpha=\frac{s'(\theta)}{R+s(\theta)},\]</div><div class="equation-step">\[N\cos\alpha=F,\]</div><div class="equation-step">\[F_{\rm guide}=F\tan\alpha.\]</div></div>
+<p>Here the force along the follower includes inertia and any spring or specimen load. Reversing the rise changes the sign of the lateral reaction. Angular derivatives must be per radian because the tangential increment is an arc length. A calculation performed per degree systematically underestimates the slope by a factor of about fifty-seven. The actual metal profile is a normal offset of the pitch curve by the roller radius. Simply subtracting the roller radius radially works on a concentric dwell but generally gives the wrong point on the rise.</p>
+</section>
+<section><h2 id="motion">Compare motion laws at a dwell boundary</h2>
+<p>Write \(u=\theta/\beta\) from zero to one on the rise. A harmonic motion is half a cosine. A cycloidal motion adds a sinusoidal correction to a linear ramp. Both end at zero velocity, making a stationary dwell possible without a jump in speed. Differentiation resolves what else happens:</p>
+<div class="math display equation-chain"><div class="equation-step">\[s_H=\tfrac h2(1-\cos\pi u),\]</div><div class="equation-step">\[s_C=h\left(u-\frac{\sin 2\pi u}{2\pi}\right),\]</div><div class="equation-step">\[s_C'=\frac h\beta(1-\cos2\pi u).\]</div></div>
+<p>For constant angular speed the acceleration is \(\Omega^2s''\). Harmonic acceleration has a finite nonzero value just inside the rise and vanishes on the dwell. The cycloidal law has zero endpoint acceleration, although its jerk changes when entering the dwell. At mid-rise the cycloidal slope is greater. Thus an improvement in acceleration continuity can cost additional side load. At a varying spindle speed add \(s'\dot\Omega\) by the chain rule. A measured acceleration trace during run-up can disagree with a constant-speed prediction even with an accurately cut contour.</p>
+<p>For 10 mm rise through 120 degrees from a prime radius of 25 mm, the middle cycloidal slope is 9.55 mm per radian. The pitch radius there is 30 mm and the pressure angle is 17.66 degrees. The slope reaches its maximum there, yet the largest angle occurs slightly earlier because the denominator was still increasing. Compare both laws across the complete rise. Increase only the prime radius and predict whether the slope or the guide force changes.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/volumes/machine-elements-methods/01-cam-law-and-follower-geometry/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-cam"></div>
+</section>
+<section><h2 id="geometry">How a smooth pitch curve can make a poor physical cam</h2>
+<p>The curvature depends on the second derivative as well as the pressure angle. For a polar curve, differentiate its Cartesian position twice and apply the signed planar curvature formula. With outward radial coordinates its signed radius, positive on a circular convex arc, is</p>
+<div class="math display">\[\rho_p=\frac{(r^2+r'^2)^{3/2}}{r^2+2r'^2-rr''}.\]</div>
+<p>On a convex segment the inward offset by roller radius has signed radius \(\rho_p-r_{\rm roller}\). At zero an offset develops a cusp. A smaller roller helps in this local geometric check but can raise contact pressure at fixed normal force. Numerical differentiation of a measured cam profile twice amplifies encoder noise; estimate curvature on a documented angular window and repeat the calculation with another window. A sharp reproducible feature demands a different explanation from a peak moving with the smoothing window.</p>
+</section>
+<section><h2 id="imaging">Reconstruct the motion from a camera and phase mark</h2>
+<p>Place an angular reference on the shaft and record the follower at equally spaced phase values for several turns. Average positions at equal phase to reduce uncorrelated readout noise. Differentiate the average only after expressing the phase in radians. A centred local fit yields slope and curvature with more usable precision than subtracting adjacent noisy samples twice. Inspect the first and last part of the rise separately, because smoothing across a dwell hides a real acceleration jump in the harmonic schedule.</p>
+<p>As a cross-check, integrate the estimated derivative over the rise. It should recover the measured ten-millimetre travel. At the same time inspect the pressure angle derived from it. A fit can preserve the correct total travel while underestimating the peak local slope through excessive smoothing. Independent displacement and guide-force measurements at several phase angles help distinguish these two errors.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Turn a lift diagram into a measured acceleration</h2>
+<p>A cycloidal 10 mm lift takes 120 degrees at 300 rpm. Find the peak follower acceleration and the value after doubling the speed with the same cam.</p>
+<details><summary>Convert the time base before differentiating</summary>
+<p>The rise lasts one third of a 0.200 s revolution, giving 0.06667 s. Differentiating the displacement twice in physical time gives peak acceleration \(2\pi h/t_r^2=14.14\) metres per second squared. At 600 rpm the rise time halves and peak acceleration reaches 56.55 metres per second squared. The corresponding inertial contribution of a moving mass of 0.20 kg grows from 2.83 to 11.31 N. It changes sign across the rise. A spring holding the roller in contact consequently has a different margin on the two halves.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Interpret a guide measurement</h2>
+<p>A force transducer reads 120 N along the guide at the middle of the slower rise. Estimate contact and lateral force. Would a larger prime radius halve the axial force?</p>
+<details><summary>Resolve the normal with the pitch-curve slope</summary>
+<p>Using the angle above gives a lateral force of 38.2 N and normal load of approximately 126 N. Increasing radius reduces the angle at the same kinematic point. The specified axial force comes from specimen, spring and moving mass. Reducing angle changes its resolution into normal and transverse components, while the prescribed lift history still requests the same axial acceleration. Guide friction couples the directions and would require a fresh force balance. A changing spring lever arm could change the applied axial force as well.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Check the roller offset independently</h2>
+<p>A convex portion of a pitch curve has local radius 8 mm; the proposed roller radius is 9 mm. The maximum pressure angle passes the design team's geometric requirement. Explain whether the nominal profile can realise that local curvature.</p>
+<details><summary>Inspect the normal offset</summary>
+<p>The local offset radius would be minus one millimetre after crossing a cusp at eight. The normal-offset construction folds and the roller cannot follow the intended envelope there. Pressure angle uses the first derivative, so it cannot certify curvature. Test a smaller roller or a wider rise and recalculate normal load and contact stress. A tolerance on the measured first derivative alone leaves this failure undetected. Recheck the return as well, because its angular duration and signed curvature can differ.</p>
+</details>
+<p><a href="https://www.cs.cmu.edu/~rapidproto/mechanisms/chpt6.html">Carnegie Mellon · Introduction to Mechanisms, chapter 6, cam motion and profile inversion</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-elements/volumes/machine-elements-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-elements/volumes/machine-elements-methods/02-helical-gear-forces-and-bearing-reactions/">Helical gears, mesh forces and bearing reactions</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

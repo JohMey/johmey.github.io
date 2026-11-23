@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solve a singular network without inventing a ground current · OneSimulation</title>
+<meta name="description" content="A floating resistor network has unique voltage drops but no absolute voltage reference. Derive its nullspace, test charge balance, and distinguish adding a computational gauge from changing the physical boundary conditions.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solve a singular network without inventing a ground current · OneSimulation">
+<meta property="og:description" content="A floating resistor network has unique voltage drops but no absolute voltage reference. Derive its nullspace, test charge balance, and distinguish adding a computational gauge from changing the physical boundary conditions.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Matrix computations and spectral accuracy</a></p><h1>Solve a singular network without inventing a ground current</h1><p class="lead">A floating resistor network has unique voltage drops but no absolute voltage reference. Derive its nullspace, test charge balance, and distinguish adding a computational gauge from changing the physical boundary conditions.</p><p class="byline">Unit 3 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/linear-algebra/chapters/09-sparsity/">Background · Graph structure and fill-in</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#incidence">Build the conductance matrix as an energy Hessian</a><a href="#gauge">Compare grounding, projection and a bordered solve</a><a href="#network">Verify a triangle by current conservation and work</a><a href="#numerical-investigation">What changes when a floating voltmeter is re-zeroed?</a><a href="#tutorial">Tutorial · audit gauges, disconnected graphs and sensitivities</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="incidence">Build the conductance matrix as an energy Hessian</h2>
+<p>Orient each of the \(m\) connections of a connected graph and form an incidence matrix \(B\) with one row per edge, containing \(+1\) at its upstream node and \(-1\) at its downstream node. For node voltages \(v\), differences \(Bv\) determine currents \(i_e=g_e(Bv)_e\) in edges of conductance \(g_e&gt;0\). Conservation at nodes reads \(B^Ti=b\), where externally injected currents \(b\) are positive into the network. Eliminating edge currents yields \(Lv=b,\ L=B^TGB\) with \(G=\operatorname{diag}(g_e)\). Reversing an edge changes a row of \(B\) and its current sign together; \(L\) and physical voltage predictions are invariant.</p>
+<p>The identity \(v^TLv=\sum_e g_e(v_i-v_j)^2\ge0\) gives the nullspace directly. Equality forces equal voltage along each edge and hence constant voltage on a connected graph. Thus \(\ker L=\operatorname{span}\{\mathbf1\}\) and its range is \(\mathbf1^\perp\). A solution exists exactly when total injection is zero. On a graph with disconnected components the current sum must vanish separately on each component; one global cancellation can hide two incompatible islands. This is a compatibility condition on the physical data, distinct from the gauge freedom that persists for already compatible data.</p>
+</section>
+<section><h2 id="gauge">Compare grounding, projection and a bordered solve</h2>
+<p>If \(b\) is compatible, choosing one node potential as zero removes one variable and one redundant conservation equation. The remaining principal submatrix is positive definite because a zero-energy vector extending with zero at the reference must vanish everywhere. An alternative chooses mean-zero voltage without favouring one node. Introduce a Lagrange multiplier \(\lambda\) and solve</p>
+<div class="math display">\[\begin{pmatrix}L&amp;\mathbf1\\\mathbf1^T&amp;0\end{pmatrix}\begin{pmatrix}v\\\lambda\end{pmatrix}=\begin{pmatrix}b\\0\end{pmatrix}.\]</div>
+<p>The last equation fixes the gauge. Multiplying the first block by \(\mathbf1^T\) gives \(\lambda=(\sum b_i)/n\). For consistent data \(\lambda=0\), so the bordered solution satisfies the original equations exactly and is the Moore–Penrose minimum-norm solution. For inconsistent data the solver effectively removes a uniform current \(\lambda\) from every node. This may be sensible as a least-squares projection under an explicitly chosen equal-error model, but it is not the same physical network as a returning current concentrated at an actual external lead. Retain and interpret the multiplier.</p>
+<p>Another formulation works directly in the zero-mean subspace with projector \(P=I-\mathbf1\mathbf1^T/n\). Iterative methods can project the right side and reproject iterates to remove accumulated constant drift. A preconditioner must preserve the intended subspace or be followed by the appropriate projection. The gauge-invariant observable \(v_i-v_j\) is always preferable for comparing solvers with different references. Comparing raw voltages node by node can report a large error between mathematically equivalent physical solutions. A separate edge-current balance and dissipated power check validate more than one reference-dependent vector residual.</p>
+</section>
+<section><h2 id="network">Verify a triangle by current conservation and work</h2>
+<p>Connect nodes 1–2 and 2–3 with 1 S each, and 1–3 with 0.5 S. Inject 1 A at node 1 and remove it at node 3. The direct branch has 2 Ω and the two-edge indirect branch also totals 2 Ω, so 0.5 A flows along each path. The terminal difference is 1 V. Taking \(v_3=0\) gives \(v=(1,0.5,0)\) V, while subtracting their mean yields \((0.5,0,-0.5)\) V. Both produce Joule power \(2(0.5^2/1)+(0.5^2/0.5)=1\) W. The terminal injection work is \(b^Tv=1\) W in either gauge because the sum of \(b\) vanishes.</p>
+<p>A guard against concealed modelling error is to solve first with all conservation rows, reporting the incompatible component of \(b\); only then introduce the intended reference. If measured injected currents are \(1.00,0,-0.97\) A and node 3 is grounded by deleting its equation, the computed branch currents imply that node 3 actually returns 1.00 A. The measured 0.03 A mismatch is thereby absorbed entirely by the chosen reference. The bordered projection instead distributes 0.01 A equally among the nodes. A calibrated return-lead model or a covariance-weighted correction can choose between such interpretations. A small residual after row deletion alone cannot tell whether the three measured currents were physically consistent.</p>
+</section>
+<section><h2 id="numerical-investigation">What changes when a floating voltmeter is re-zeroed?</h2>
+<p>Connect three nodes by a triangle. The 1–3 and 2–3 conductances are each 1 S. Inject the selected current at node 1 and remove it at node 3. The graph sweeps a common reference-voltage shift. Use the oriented drop across branch 1–2 to predict its current, then compare the total injected power with the displayed dissipation.</p>
+<p>The downloadable OneSimulation circuit solves the three resistors and current source twice, choosing a different reference node. The two absolute voltage reports change. Their branch drops must agree.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="math-lab-network-gauge"></div></section>
+<section><h2 id="tutorial">Tutorial · audit gauges, disconnected graphs and sensitivities</h2>
+<h3>Find an effective resistance without choosing a reference</h3><p>For connected \(L\), point injection pair \(b=I(e_a-e_b)\) and minimum-norm inverse \(L^+\), derive the effective resistance and verify its sign.</p><details><summary>Work through the solution</summary>
+<p>The gauge-fixed solution is \(v=L^+b\), so terminal voltage divided by \(I\) is \(R=(e_a-e_b)^TL^+(e_a-e_b)\). Positive definiteness on the zero-sum subspace gives nonnegative \(R\), strictly positive for distinct connected nodes. In the example it is 1 Ω, independently confirmed by the parallel branches. Summing injected power \(I^2R\) matches edge dissipation.</p>
+</details>
+<h3>Determine how much one connection is worth</h3><p>What is the first derivative of the triangle's effective resistance with respect to the direct conductance? Compare a prediction for raising it by 0.01 S with a direct circuit reduction.</p><details><summary>Work through the solution</summary>
+<p>For unit injection, differentiating \(Lv=b\) on the fixed gauge subspace gives \(dR=-v^T(dL)v\). A single conductance change has \(dL=(e_i-e_j)(e_i-e_j)^Tdg\), so \(dR/dg=-(v_i-v_j)^2\). The direct drop is 1 V per ampere, giving \(-1\) in compatible units. Prediction is \(R\simeq0.990\) Ω; exact parallel conductance becomes 1.01 S, so \(R=0.99010\) Ω. A positive conductance increment cannot increase effective resistance here.</p>
+</details>
+<h3>Diagnose an island and an unobservable offset</h3><p>Remove every link between two internally connected components carrying net injections \(+0.10,-0.10\) A. Is one ground constraint enough? What if both component sums are corrected to zero?</p><details><summary>Work through the solution</summary>
+<p>The disconnected graph has two independent constant null vectors, one per component. Although the total current is zero, both component compatibility tests fail. No voltage gauge can make the missing inter-island return path appear. If both sums become zero, two independent gauge constraints still remain necessary for unique node voltages. Potential differences within either component are uniquely determined; differences across the two floating components remain arbitrary unless a physical reference or coupling is introduced.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://people.math.ethz.ch/~grsam/NumMeth/NumCSE_Lecture_Document.pdf">ETH Zürich · numerical methods for CSE, sparse systems and positive definite forms</a></li><li><a href="/fundamentals/numerics/linear-algebra/chapters/12-schur-complements/">Course investigation · constrained systems and Schur complements</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/02-randomised-range-finding/">How a random sketch finds a dominant subspace</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/04-streaming-qr-and-downdates/">Refitting a sensor as observations arrive or disappear</a></span></nav><script defer src="/assets/practical-mathematical-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

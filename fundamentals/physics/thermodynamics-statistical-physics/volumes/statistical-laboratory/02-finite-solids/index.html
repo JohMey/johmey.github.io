@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measure the heat capacity of a reservoir from the width of an energy histogram · OneSimulation</title>
+<meta name="description" content="Two small Einstein solids share a fixed number of excitation quanta. A calorimeter records how many are in the first solid. Count the allowed microstates, compare the exact distribution with a reservoir approximation and see how energy conservation correlates the readings.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/02-finite-solids/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Measure the heat capacity of a reservoir from the width of an energy histogram · OneSimulation">
+<meta property="og:description" content="Two small Einstein solids share a fixed number of excitation quanta. A calorimeter records how many are in the first solid. Count the allowed microstates, compare the exact distribution with a reservoir approximation and see how energy conservation correlates the readings.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/02-finite-solids/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/">Counting, correlations and thermal measurements</a></p><h1>Measure the heat capacity of a reservoir from the width of an energy histogram</h1><p class="lead">Two small Einstein solids share a fixed number of excitation quanta. A calorimeter records how many are in the first solid. Count the allowed microstates, compare the exact distribution with a reservoir approximation and see how energy conservation correlates the readings.</p><p class="byline">Unit 2 of 6</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#count-the-ways-to-store-an-integer-number-of-quanta">Count the ways to store an integer number of quanta</a><a href="#separate-the-mean-from-the-fluctuations">Separate the mean from the fluctuations</a><a href="#compare-with-a-canonical-ensemble-at-the-same-mean">Compare with a canonical ensemble at the same mean</a><a href="#calculate-the-distribution-without-enormous-factorials">Calculate the distribution without enormous factorials</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="count-the-ways-to-store-an-integer-number-of-quanta">Count the ways to store an integer number of quanta</h2>
+<p>Let solid A contain \(a\) independent harmonic modes and solid B contain \(b\), all with energy spacing \(\varepsilon\). Omit their fixed zero-point energy. The total excitation count \(Q\) is fixed. In one solid a configuration is an ordered list of nonnegative mode occupations. An arrangement of \(q\) identical excitation symbols and \(a-1\) separators specifies such a list. The multiplicity is \(\binom{q+a-1}{a-1}\). The count for distinguishable packets would be different, because exchanging two excitations between identical occupations introduces no new configuration here.</p>
+<div class="math display equation-chain"><div class="equation-step">\[P(q)=\frac{\binom{q+a-1}{a-1}\binom{Q-q+b-1}{b-1}}{\binom{Q+a+b-1}{a+b-1}},\]</div><div class="equation-step">\[q=0,\dots,Q.\]</div></div>
+<p>The denominator counts all occupations of the \(a+b\) modes; summing the numerator over every partition must reproduce it. As a simple check, set \(a=2,b=1,Q=2\). The unnormalised weights for \(q=0,1,2\) are 1, 2 and 3. The most probable count is 2, but the mean is \(4/3\). “Thermal equilibrium” does not require every observed energy to coincide with the most likely energy.</p>
+</section>
+<section>
+<h2 id="separate-the-mean-from-the-fluctuations">Separate the mean from the fluctuations</h2>
+<p>By permutation symmetry each individual mode holds mean \(Q/(a+b)\). Therefore \(\langle q\rangle=Qa/(a+b)\). For the second moment, introduce an auxiliary variable \(x\) marking quanta in solid A. The coefficient of \(z^Q\) in \(G(x,z)=(1-xz)^{-a}(1-z)^{-b}\) is the unnormalised probability generating function. Differentiating once in \(x\) weights by \(q\), twice by \(q(q-1)\). At \(x=1\) the second derivative is \(a(a+1)z^2(1-z)^{-(a+b+2)}\). Divide its coefficient by the total multiplicity and combine first and second moments. Writing \(s=a+b\) gives</p>
+<div class="math display">\[\operatorname{var}(q)=\frac{Qab(s+Q)}{s^2(s+1)}.\]</div>
+<p>The second solid contains exactly \(Q-q\). Its variance is identical, and the covariance of the two measured energies is minus their common variance in energy units. A pair of independently fitted canonical distributions cannot reproduce this anticorrelation. At \(Q=24,\ a=4,\ b=8\) the mean number in A is 8 and the variance is about 14.77. These are fluctuations of a perfectly isolated combined system, not a leak in the calorimeter.</p>
+</section>
+<section>
+<h2 id="compare-with-a-canonical-ensemble-at-the-same-mean">Compare with a canonical ensemble at the same mean</h2>
+<p>In a canonical description each mode has a geometric distribution. Match its mean to \(\bar n=Q/s\). A single mode then has variance \(\bar n(1+\bar n)\), and \(a\) independent modes have variance \(a\bar n(1+\bar n)\). Dividing the exact microcanonical variance by this canonical variance leaves \(b/(s+1)\). At the example point this is \(8/13\). Increasing \(a\) along with \(b\) at fixed fraction does not make a macroscopic subsystem independent of the reservoir; the ratio stays below one. Holding \(a\) fixed, taking \(b\) large and keeping \(Q/s\) fixed does recover the canonical width.</p>
+<p>The negative-binomial canonical distribution has support on every nonnegative integer, even those above \(Q\). This is another sign that it describes another experiment. Merely deleting the tail without changing its other weights does not recover the true finite-reservoir conditional probability.</p>
+</section>
+<section>
+<h2 id="calculate-the-distribution-without-enormous-factorials">Calculate the distribution without enormous factorials</h2>
+<p>The ratio of successive unnormalised weights is \((q+a)(Q-q)/[(q+1)(Q-q+b-1)]\). Start with a positive arbitrary initial weight, march through the allowed \(q\) and normalise once. The graph compares this exact probability to a canonical law at the same mean. Adjust reservoir size and total energy; use the displayed first two moments to distinguish a shift in the average from a change in the width. The plotted canonical values cover the physically accessible count interval, so their displayed partial sum can be less than one.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/02-finite-solids/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="physics-lab-finite-solids"></div>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>If A and B contain identical mode counts, is \(Q/2\) necessarily the most likely observed value?</p>
+<details><summary>Work through the solution</summary><p>The distribution is symmetric. For odd \(Q\) there is no integer value at exactly \(Q/2\); two equally likely central counts are possible. With one mode in each solid, every admissible value is equally likely. Symmetry fixes the mean exactly even when it does not identify a unique most probable observation.</p></details>
+<p>For \(a=4,b=8,Q=24\) what variance would an unconditioned canonical fit predict?</p>
+<details><summary>Work through the solution</summary><p>Here \(\bar n=2\). The canonical count variance is \(4(2)(3)=24\). Multiplying by \(8/13\) returns \(14.769\) for the closed pair. Count-to-energy conversion multiplies variances by \(\varepsilon^2\).</p></details>
+<p>An experiment finds a noisy sum of the two reported energies. What can one infer before relaxing the energy-conservation model?</p>
+<details><summary>Work through the solution</summary><p>In the ideal model \(E_A+E_B\) is constant. Check both readouts' measurement noise and energy calibration. Independently fluctuating detector errors add variance in the sum even for a closed sample. Record a reference configuration or estimate detector noise from repeated measurements of the same state.</p></details>
+<p>The <a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/13-finite-reservoirs/#try-it">finite-reservoir chapter</a> connects this exact count to the curvature of the entropy.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/01-colour-chain/">How many lattice sites remember the colour of a neighbour?</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/03-work-histograms/">Recover a free-energy difference from a distribution of work</a></span></nav><script defer src="/assets/practical-physics-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

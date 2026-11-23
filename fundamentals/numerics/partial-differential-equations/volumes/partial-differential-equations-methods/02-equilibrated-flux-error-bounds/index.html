@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bound diffusion error by balancing a reconstructed flux · OneSimulation</title>
+<meta name="description" content="A temperature field from a finite-element calculation looks smooth. Reconstruct a heat flux which exactly balances the source, then derive an upper bound for the true energy error without knowing the exact temperature.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/02-equilibrated-flux-error-bounds/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bound diffusion error by balancing a reconstructed flux · OneSimulation">
+<meta property="og:description" content="A temperature field from a finite-element calculation looks smooth. Reconstruct a heat flux which exactly balances the source, then derive an upper bound for the true energy error without knowing the exact temperature.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/02-equilibrated-flux-error-bounds/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a> / <a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/">Spatial discretisation and field equations</a></p><h1>Bound diffusion error by balancing a reconstructed flux</h1><p class="lead">A temperature field from a finite-element calculation looks smooth. Reconstruct a heat flux which exactly balances the source, then derive an upper bound for the true energy error without knowing the exact temperature.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/partial-differential-equations/chapters/02-weak-form/">Background · Weak forms and finite elements</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#primal">Identify the natural error measure in a diffusion problem</a><a href="#identity">Prove an upper bound by cancelling a cross term</a><a href="#example">Carry out the entire construction on two elements</a><a href="#refinement">Use element contributions without confusing local and global bounds</a><a href="#experiment">Vary an equilibrated flux while holding the solution fixed</a><a href="#tutorial">Tutorial · verify an error certificate rather than a residual plot</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="primal">Identify the natural error measure in a diffusion problem</h2>
+<p>Consider \(-\nabla\cdot(k\nabla u)=f\) on a bounded domain, with homogeneous Dirichlet temperature for clarity and strictly positive scalar conductivity \(k(\mathbf x)\) bounded above and below. The weak form is \(\int k\nabla u\cdot\nabla w=\int f w\) for every test \(w\) vanishing on the boundary. A conforming approximate temperature \(v\) satisfies the prescribed boundary trace but may not solve the equation. Its energy error \(\|\nabla(u-v)\|_k^2=\int k|\nabla(u-v)|^2\) weights local gradient errors according to their physical conductivity. This differs from pointwise temperature error, total dissipation error or the absolute error of one designated sensor.</p>
+<p>Define true heat flux \(q=-k\nabla u\). It obeys \(\nabla\cdot q=f\). Suppose a reconstructed flux \(\sigma\) obeys the same divergence exactly and has the prescribed normal flux on any Neumann boundary, with normal component continuous across interior mesh faces. Such fluxes belong naturally to a space often written \(H(\mathrm{div})\). Conforming temperature and equilibrated flux are separate requirements: a continuous piecewise-linear temperature gives generally discontinuous normal gradient flux across faces, even if all global nodal equations were solved accurately.</p>
+</section>
+<section><h2 id="identity">Prove an upper bound by cancelling a cross term</h2>
+<p>Take the weighted constitutive defect \(\sigma+k\nabla v=(\sigma-q)+k\nabla(v-u)\). Expand its squared \(k^{-1}\) norm. The cross term is \(2\int(\sigma-q)\cdot\nabla(v-u)\). Integrating by parts gives a volume term proportional to \(\nabla\cdot(\sigma-q)=0\) and a boundary term zero where \(v-u=0\) or the normal flux difference is prescribed zero. Interior normal continuity prevents an extra jump term. Hence</p>
+<div class="math display">\[\|\sigma+k\nabla v\|_{k^{-1}}^2=\|\sigma-q\|_{k^{-1}}^2+\|\nabla(v-u)\|_k^2 .\]</div>
+<p>The left side can be calculated from the approximation and reconstruction. It bounds the unknown energy error from above, with equality precisely when the reconstructed flux equals the true flux. A divergence-compatible but inaccurate \(\sigma\) still certifies an upper bound, albeit possibly a loose one. This identity is an instance of the Prager–Synge hypercircle principle. With approximated data or inexact equilibration, extra data oscillation and residual terms must be bounded before calling an indicator a guaranteed bound.</p>
+</section>
+<section><h2 id="example">Carry out the entire construction on two elements</h2>
+<p>On \([0,1]\) let \(k=1,\ f=2,\ u(0)=u(1)=0\). The exact \(u=x(1-x)\) is available for checking although unnecessary for the estimator. The conforming piecewise-linear interpolant on two half-elements has slopes \(+0.5,-0.5\). Any flux \(\sigma(x)=2x+C\) exactly balances the source. Choose \(C\) to minimise \(\int(\sigma+v')^2dx\). Its derivative is \(2\int(2x+C+v')dx=2(1+C)\), since \(v(1)-v(0)=0\). Thus \(C=-1\), giving \(\sigma=2x-1=q\). The estimator is \(\sqrt{1/12}=0.288675\): on each half interval the defect is a linear ramp from \(-0.5\) to \(+0.5\) or its translated equivalent. Direct integration of \((u'-v')^2\) confirms equality.</p>
+<p>If instead choose \(C=-0.8\), source equilibrium is still exact but the flux carries a uniform 0.2 offset. Its squared error contribution is 0.04, giving bound \(\sqrt{1/12+0.04}=0.3512\). Choosing an equilibrated flux means satisfying local balance; optimising its closeness to the constitutive flux sharpens the estimate. The true temperature error is unchanged in both comparisons. In more dimensions mixed finite elements or local face-flux reconstructions enforce shared normal flux degrees of freedom; local least-squares choices can improve sharpness without requiring a global exact solution.</p>
+</section>
+<section><h2 id="refinement">Use element contributions without confusing local and global bounds</h2>
+<p>The squared estimator splits as \(\sum_K\int_K k^{-1}|\sigma+k\nabla v|^2\). Large element contributions can guide refinement and give a reproducible stopping rule for global energy error. The exact orthogonality proof, however, integrated over the full domain. Boundary terms between elements may fail to vanish on one element individually, so one local contribution need not be a strict independent upper bound on that element's actual error. For a particular output of interest, e.g. a mean temperature in a small sensor region, use the dual problem or a proven continuous inequality to translate energy uncertainty into output uncertainty.</p>
+</section>
+<section><h2 id="experiment">Vary an equilibrated flux while holding the solution fixed</h2>
+<p>The source and exact quadratic temperature are those of the worked one-dimensional example. The plot compares the exact flux, the raw elementwise flux from the continuous linear temperature and a reconstructed flux with the correct divergence and a freely chosen constant offset. Changing this constant is permitted because the original problem specifies boundary temperatures. The mean energy-error contribution from an offset appears in quadrature with the true temperature-gradient error, exactly as in the derived identity. For two elements and offset 0.20 the bound is about 0.3512 while the actual energy error is 0.2887.</p>
+<p>Increase the number of cells with the offset held fixed. The raw staircase becomes more accurate, but the reconstruction bound eventually plateaus near the absolute offset because the reconstructed flux still contains its deliberate uniform error. Set the offset to zero to recover the sharp certificate on each mesh. Notice that a constant flux offset preserves the source balance in this Dirichlet test; it would generally violate a specified Neumann flux at a boundary. A valid estimator depends as much on the boundary conditions as on the differential equation.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/02-equilibrated-flux-error-bounds/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-flux-certificate"></div>
+</section>
+<section><h2 id="tutorial">Tutorial · verify an error certificate rather than a residual plot</h2>
+<h3>Predict refinement on a uniform mesh</h3><p>Use the same quadratic exact solution and \(N\) equal elements. Find the energy error of the nodal interpolant and verify the two-element value.</p><details><summary>Work through the solution</summary>
+<p>On each interval \(v'\) is the average of the linear exact derivative \(1-2x\). The derivative difference is a line of slope \(-2\) centred at the midpoint. Its squared integral is \(4h^3/12=h^3/3\). Summing \(N\) terms gives error \(h/\sqrt3\). At \(h=1/2\) this equals \(1/\sqrt{12}\). Halving the element size halves the energy error even though the nodal temperature error for this interpolation is exactly zero at the nodes.</p>
+</details>
+<h3>Diagnose a spuriously perfect estimator</h3><p>An engineer chooses \(\sigma=-k\nabla v\) directly and gets a zero constitutive defect. Why does this not prove \(v=u\) for the two-element example?</p><details><summary>Work through the solution</summary>
+<p>This piecewise-constant flux has zero derivative inside each element and a jump at the middle node. It fails the required divergence equation \(f=2\) as a distributed source and fails normal continuity. The missing volume and interface cross terms invalidate the orthogonality argument. A zero defect certifies a true solution only alongside both primal admissibility and flux equilibrium with the stated boundary conditions.</p>
+</details>
+<h3>Bound the error of a mean temperature</h3><p>On the unit interval with zero endpoint error, use \(\|w\|_2\le\|w'\|_2/\pi\) to bound the domain-mean error from the sharp two-element certificate. Compare with direct integration.</p><details><summary>Work through the solution</summary>
+<p>Cauchy–Schwarz on a unit-length domain gives \(|\int(u-v)|\le\|u-v\|_2\le0.288675/\pi=0.0919\). The exact integral of \(u\) is \(1/6\); the triangular interpolant has area \(1/8\), giving actual mean error \(1/24=0.04167\), within the bound. An error certificate for the gradient can yield a conservative output bound through an independently justified inequality; its units and domain constants cannot simply be omitted.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://who.rocq.inria.fr/Martin.Vohralik/Files/Exp_MAMERN_17.pdf">INRIA · Vohralík on flux reconstruction and guaranteed error bounds</a></li><li><a href="/fundamentals/numerics/partial-differential-equations/chapters/12-output-errors/">Course investigation · output error and the dual problem</a></li><li><a href="/fundamentals/numerics/partial-differential-equations/#experiment">Measure spatial convergence against an exact field</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/01-burgers-entropy-and-godunov-flux/">Choose the physically admissible wave in a conservative update</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/03-periodic-poisson-and-dealiasing/">A Fourier Poisson solver and the trouble caused by unresolved products</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

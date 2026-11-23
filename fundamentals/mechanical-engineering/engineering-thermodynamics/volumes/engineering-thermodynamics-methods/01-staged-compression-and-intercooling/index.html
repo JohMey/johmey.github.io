@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staged compression with an imperfect intercooler · OneSimulation</title>
+<meta name="description" content="A laboratory compressed-air supply has two compressor stages and an intercooler. Equal pressure ratios minimise work only under particular assumptions. Derive the optimum, compare it with a single-stage machine and identify which temperature and power measurements reveal imperfect cooling or unequal efficiency.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/01-staged-compression-and-intercooling/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Staged compression with an imperfect intercooler · OneSimulation">
+<meta property="og:description" content="A laboratory compressed-air supply has two compressor stages and an intercooler. Equal pressure ratios minimise work only under particular assumptions. Derive the optimum, compare it with a single-stage machine and identify which temperature and power measurements reveal imperfect cooling or unequal efficiency.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/01-staged-compression-and-intercooling/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/">Thermal processes and transport in engineering</a></p><h1>Staged compression with an imperfect intercooler</h1><p class="lead">A laboratory compressed-air supply has two compressor stages and an intercooler. Equal pressure ratios minimise work only under particular assumptions. Derive the optimum, compare it with a single-stage machine and identify which temperature and power measurements reveal imperfect cooling or unequal efficiency.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/02-steady-flow/">Background · Open systems, enthalpy and steady-flow devices</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#stages">Work follows the actual enthalpy rise</a><a href="#compare">Use pressure, temperature and electrical power together</a><a href="#work-meter">Close the work and rejected-heat balances separately</a><a href="#tutorial-one">Tutorial · Find the new optimum for incomplete cooling</a><a href="#tutorial-two">Tutorial · Include an intercooler pressure loss</a><a href="#tutorial-three">Tutorial · A temperature measurement conflicts with the power estimate</a></nav></aside><article class="prose reference"><section><h2 id="stages">Work follows the actual enthalpy rise</h2>
+<p>Model dry air as an ideal gas with constant \(c_p=1.005\) kJ per kilogram kelvin and \(\gamma=1.40\). Assume steady adiabatic compressor stages, negligible changes in kinetic and potential energy, and negligible intercooler pressure drop initially. For a fixed inlet temperature \(T_i\) and pressure ratio \(r_i\), an isentropic reference ends at \(T_{os}=T_i r_i^a\), \(a=(\gamma-1)/\gamma\). Isentropic compressor efficiency compares reference enthalpy rise with actual rise, so actual shaft work per unit mass is \(w_i=c_pT_i(r_i^a-1)/\eta_i\).</p>
+<p>An intercooler reduces the second-stage inlet temperature by rejecting heat to a colder stream. It does not undo the pressure work already delivered by the first stage. For overall ratio \(R\) and first-stage ratio \(r\), assume the measured second-stage inlet \(T_2\) can be held fixed across the comparison. Adding both work contributions gives</p>
+<div class="math display">\[w(r)=c_p\left[\frac{T_1}{\eta_1}(r^a-1)+\frac{T_2}{\eta_2}((R/r)^a-1)\right].\]</div>
+<p>Direct differentiation with respect to \(\log r\) balances the incremental work costs of transferring pressure ratio between stages. The stationary split is</p>
+<div class="math display">\[r_{\rm opt}=\sqrt R\left(\frac{T_2\eta_1}{T_1\eta_2}\right)^{1/(2a)} .\]</div>
+<p>Both exponential-power terms have positive second derivatives in \(\log r\), giving a unique interior minimum when the root lies between one and \(R\). Otherwise the constrained optimum is a boundary under this simplified model. A hot or inefficient second stage favours assigning more ratio to the first. Perfect intercooling with identical efficiencies gives \(r=\sqrt R\), the geometric mean rule for intermediate absolute pressure.</p>
+</section>
+<section><h2 id="compare">Use pressure, temperature and electrical power together</h2>
+<p>For \(R=9,T_1=T_2=300\) K and efficiencies 0.85, each stage ideally uses ratio three. Each consumes 130.79 kJ/kg and the combined work is 261.59 kJ/kg. The otherwise identical single stage uses 309.82 kJ/kg. At 0.020 kg/s, two-stage shaft power is 5.23 kW before motor losses. The first-stage discharge temperature is about 430.1 K; cooling it back to 300 K rejects 130.8 kJ/kg, numerically equal to that first adiabatic stage's work under these property assumptions.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/01-staged-compression-and-intercooling/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-intercooling"></div>
+<p>Raise the second inlet temperature or reduce its efficiency. The minimum now moves toward a higher first pressure ratio. The graph compares total specific work, keeping final absolute pressure fixed. It does not guarantee that a real compressor can operate at every displayed split: stage flow maps, surge, choke, motor limits and heat exchanger capacity may restrict the admissible point. Measure actual mass flow and pressure drop at each tested condition. A wattmeter upstream of a motor reports more than shaft power; use measured or justified motor efficiency when comparing with a gas enthalpy rise.</p>
+</section>
+<section><h2 id="work-meter">Close the work and rejected-heat balances separately</h2>
+<p>The two-stage minimum is a statement about shaft work per kilogram of ideal gas. An experimenter can test it by weighing delivered gas over a timed interval and measuring electrical energy or shaft torque. Converting an electrical reading to specific shaft work requires the motor efficiency at the measured operating point. A small motor often operates at a different efficiency when the intermediate pressure changes. Dividing the same electrical input by two different mass-flow readings can obscure a compressor change behind a motor change.</p>
+<p>For an illustrative mass flow of 0.10 kg/s, a computed 262 kJ/kg corresponds to 26.2 kW at the shaft. At 90 percent motor efficiency the electrical input is about 29.1 kW. If the first compressor delivers at 430 K and the intercooler returns the gas to 300 K, its separate steady heat duty at the stated constant heat capacity is approximately 13.1 kW. A flow of cooling water warming by 10 K at 4.18 kJ per kilogram kelvin would need about 0.31 kg/s. These two measurements test different assumptions. Work compares both compressor stages; the cooling-water enthalpy rise compares only the intermediate exchanger, including any loss through its casing.</p>
+<p>When measuring intake and discharge temperatures, distinguish stagnation from static temperature if velocity changes appreciably in connecting ducts. A thermocouple close to a wall may also respond to conduction along its sheath. Repeat each setting after allowing the intercooler and casing to approach steady temperatures. Heat retained in a warming machine changes the short-time coolant balance while leaving the algebraic optimum calculated for fully steady operation unchanged.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Find the new optimum for incomplete cooling</h2>
+<p>Suppose \(R=9,T_1=300\) K, \(T_2=330\) K and both efficiencies remain 0.85. Predict the optimal first ratio and decide whether it is physically sensible. Estimate its work advantage over equal ratios using the graph or direct substitution.</p>
+<details><summary>Balance the two marginal temperature-weighted costs</summary>
+<p>Since \(1/(2a)=1.75\), \(r_{\rm opt}=3(1.10)^{1.75}=3.545\), so the second ratio is about 2.54. The hotter second stage now receives less compression work. Direct substitution gives approximately 273.5 kJ/kg versus 274.7 kJ/kg at equal ratios, an improvement only around one kJ/kg. Imperfect cooling itself costs much more relative to the original 261.6 kJ/kg. A noisy power sweep can therefore locate a rather broad minimum poorly even when cooling quality clearly matters.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Include an intercooler pressure loss</h2>
+<p>The cooler outlet pressure is a fraction \(1-\delta\) of first-stage discharge pressure. For fixed compressor inlet and final discharge pressures, what happens to the product of the actual compressor-stage ratios? Compute the equal-efficiency, fully cooled optimum at \(R=9\), \(\delta=0.05\).</p>
+<details><summary>Use absolute pressures on both sides of the exchanger</summary>
+<p>With \(p_2=(1-\delta)p_1r_1\), final pressure \(p_f=p_2r_2\), so \(r_1r_2=R/(1-\delta)=9.474\). Under identical stage inlet temperatures and efficiencies the optimum actual compressor ratios are equal to \(\sqrt{9.474}=3.078\). Thus the pressures around the cooler straddle the ideal loss-free geometric-mean intermediate pressure. A pressure tap only at first discharge cannot determine the second-stage ratio when exchanger loss is appreciable.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · A temperature measurement conflicts with the power estimate</h2>
+<p>A trial records 0.020 kg/s, first-stage inlet 300 K and discharge 430 K. The drive wattmeter reports 3.25 kW for that stage. Estimate gas enthalpy power and explain two possible sources of the difference that have distinguishable signatures.</p>
+<details><summary>Draw separate drive and gas control volumes</summary>
+<p>The gas enthalpy gain is \(0.020(1.005)(130)=2.61\) kW. Relative to electrical input this gives an apparent conversion fraction of 0.804. Electrical and mechanical motor losses are candidates, but heat rejected by a nonadiabatic compressor, temperature probe recovery errors, flow calibration and auxiliary equipment can also enter. Compare shaft torque times angular speed with electrical power to isolate drive losses. Measure casing heat rejection or obtain an energy balance around compressor plus coolant if shaft power remains above the gas gain. A single inferred efficiency cannot identify which physical boundary carries the missing 0.64 kW.</p>
+</details>
+<p><a href="https://bpb-us-w2.wpmucdn.com/u.osu.edu/dist/a/73194/files/2019/04/AAE2405-Thermo-Chapter-7.pdf">Ohio State thermal sciences · multistage compression with intercooling</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/02-laminar-film-condensation/">How a gravity-drained condensate film limits heat transfer</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a random sketch finds a dominant subspace · OneSimulation</title>
+<meta name="description" content="An instrument returns a matrix too large to factor densely but cheap enough to multiply by a few vectors. Build a low-rank approximation by probing its range, explain what a random draw can miss and design a residual check using fresh probes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/02-randomised-range-finding/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a random sketch finds a dominant subspace · OneSimulation">
+<meta property="og:description" content="An instrument returns a matrix too large to factor densely but cheap enough to multiply by a few vectors. Build a low-rank approximation by probing its range, explain what a random draw can miss and design a residual check using fresh probes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/02-randomised-range-finding/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Matrix computations and spectral accuracy</a></p><h1>How a random sketch finds a dominant subspace</h1><p class="lead">An instrument returns a matrix too large to factor densely but cheap enough to multiply by a few vectors. Build a low-rank approximation by probing its range, explain what a random draw can miss and design a residual check using fresh probes.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/linear-algebra/chapters/08-singular-values/">Background · Singular values and minimum-norm solutions</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#range">Start with the approximation that would be best if its subspace were known</a><a href="#gap">Derive the effect of gap and starting alignment</a><a href="#probing">Independently test an approximation after building it</a><a href="#numerical-investigation">Which starting direction defeats a random range probe?</a><a href="#tutorial">Tutorial · check an apparently good random approximation</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="range">Start with the approximation that would be best if its subspace were known</h2>
+<p>Let \(A\) be an \(m\times n\) real data matrix. It can represent a collection of spatial snapshots, one per column. A reduced rank-\(k\) model stores \(k\) spatial patterns and a small coefficient matrix. If a matrix \(Q\) has orthonormal columns spanning a proposed range, then the closest approximation with columns in that range in Frobenius norm is \(QQ^TA\): each snapshot is independently orthogonally projected. Store \(B=Q^TA\); its singular-value decomposition is small when \(Q\) has relatively few columns. The distinction between finding the subspace and factoring within it is important. A perfect small SVD cannot recover a spatial direction missing from \(Q\).</p>
+<p>If \(A=U\Sigma V^T\) is exactly rank \(k\), choose \(n\times k\) test matrix \(\Omega\) and form \(Y=A\Omega=U_k\Sigma_k V_k^T\Omega\). If the last \(k\times k\) factor is invertible, \(Y\) spans exactly the range of \(A\). Independent Gaussian columns make singularity a zero-probability event in exact arithmetic, because the rotated coefficients are again a continuous Gaussian matrix. This statement does not imply every draw has a well-conditioned factor, nor that a single probe spans every near-rank-\(k\) matrix. Orthogonalising \(Y\) with a numerically reliable QR yields the candidate basis \(Q\).</p>
+</section>
+<section><h2 id="gap">Derive the effect of gap and starting alignment</h2>
+<p>Consider rank reduction of \(A=\operatorname{diag}(10,1)\) with one unit probe \(\omega=(\cos\theta,\sin\theta)\). Its image is \((10\cos\theta,\sin\theta)\), so the angle \(\phi\) between the sampled direction and dominant left singular vector obeys \(\tan\phi=\tan\theta/10\) whenever \(\cos\theta\ne0\). A typical mixed direction is pulled toward the dominant range. A nearly perpendicular probe can still give a poor direction even with a substantial singular gap. For \(\theta=45^\circ\), \(\tan\phi=0.1\). The residual \((I-qq^T)A\) has only one nonzero singular value because its left range is one-dimensional. With \(q=(\cos\phi,\sin\phi)\), its norm squared is \(100\sin^2\phi+\cos^2\phi\), giving \(\sqrt{200/101}=1.407\). The optimal rank-one error is the discarded singular value 1.</p>
+<p>One power step forms \(Y=(AA^T)A\Omega\), raising singular values to the third power in the sampled direction while the approximation is still formed for the original \(A\). The angle ratio shrinks to \(\tan\theta/1000\); the residual norm is then about 1.00005 for the same \(45^\circ\) probe. Additional steps require more passes over data. In finite precision reorthogonalise between multiplications so weak required directions are not erased by a large gap. If the target includes both leading and moderate directions, blindly powering a block without intermediate QR can make the very reduced subspace one wants numerically rank deficient.</p>
+</section>
+<section><h2 id="probing">Independently test an approximation after building it</h2>
+<p>Add \(p\) extra columns to \(\Omega\) to reduce the chance of poorly exciting a dominant combination. An oversampled \(Q\) has \(k+p\) columns; project to \(B=Q^TA\), take its dominant \(k\) small left singular vectors and map them back through \(Q\). For an exactly rank-\(k\) input the extra columns need appropriate numerical rank handling. In the nearly low-rank case they provide room to represent part of the tail and improve the final cut. Cost depends on access: computing \(A^TQ\) or performing every additional power pass can dominate on streamed or distributed data, even though the final dense SVD is tiny.</p>
+<p>Freeze the fitted approximation \(\tilde A\) and consider an independent random sign vector \(g\) with entries equally likely \(\pm1\). Write \(R=A-\tilde A\). Since \(\mathbb E[gg^T]=I\), \(\mathbb E\|Rg\|^2=\operatorname{tr}(R^TR)=\|R\|_F^2\). Multiple independent checks estimate residual energy and its sampling spread without explicitly assembling \(R\). This estimates Frobenius norm squared; the maximum directional error is a different objective. A single small response does not certify a small spectral norm or guarantee missed directions are unimportant to a particular downstream measurement. Test the physically relevant load or measurement directions as well.</p>
+</section>
+<section><h2 id="numerical-investigation">Which starting direction defeats a random range probe?</h2>
+<p>For a diagonal matrix with singular values 1 and r, rotate a test vector through the dominant right singular direction. Each power iteration multiplies the tangent of its output angle by r². Set r to 0.45, compare zero and two iterations, then inspect the exactly orthogonal probe at 90°. Explain why its residual stays at one.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/02-randomised-range-finding/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="math-lab-range-sketch"></div></section>
+<section><h2 id="tutorial">Tutorial · check an apparently good random approximation</h2>
+<h3>Identify a failure when the test vector is reused</h3><p>A matrix \(A\) is approximated by the orthogonal projection onto the range of \(A\Omega\). You test residuals only on the original columns of \(\Omega\) and find zeros. What does this certify?</p><details><summary>Work through the solution</summary>
+<p>By construction \(QQ^TA\Omega=A\Omega\), up to roundoff if the full sampled range was kept. Thus the test is nearly tautological and does not measure error on independent directions. If \(\Omega\) has a missing dominant right singular direction, all these residuals can vanish while the leading reconstruction is poor. Use fresh random probes and targeted physical snapshots held out during fitting. If a final rank truncation is applied within \(Q\), the original probe residual need no longer vanish exactly but remains dependent on the fitted subspace.</p>
+</details>
+<h3>Calculate a deliberately poor draw</h3><p>Use \(A=\operatorname{diag}(10,1)\) and \(\tan\theta=100\). Compare the one-pass angle and residual with one power iteration.</p><details><summary>Work through the solution</summary>
+<p>Initially \(\tan\phi=10\), so \(\sin^2\phi=100/101\) and the residual norm squared is \((10000+1)/101\), giving about 9.95. With one power step \(\tan\phi=0.10\), giving 1.407 instead. The bad starting direction had a small but nonzero overlap, so powering can recover it. An exactly perpendicular deterministic probe remains perpendicular after every power step. Oversampling adds independent opportunities to see a missed direction.</p>
+</details>
+<h3>Design a stopping criterion for snapshot energies</h3><p>Independent residual probes give squared norms \(1.0,1.4,0.8,1.6,1.2\) in scaled energy units, while independently known \(\|A\|_F^2=100\). Estimate the residual energy fraction and its sampling uncertainty. Does it imply a 1.2% relative error on every snapshot?</p><details><summary>Work through the solution</summary>
+<p>The sample mean is 1.2 and sample standard deviation \(\sqrt{0.10}=0.316\), so the standard error is about 0.141 for independent probes. The estimated fraction of total squared Frobenius norm is \(1.20\%\), with approximate standard error 0.14 percentage points. The relative Frobenius norm itself is about \(\sqrt{0.012}=0.110\). Individual snapshots may fare much better or worse; the tests estimate a global aggregate. Five samples give only a rough uncertainty estimate, particularly if residual energy is concentrated in a few directions.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://tropp.caltech.edu/papers/HMT11-Finding-Structure.pdf">Caltech · Halko, Martinsson and Tropp on randomised matrix decompositions</a></li><li><a href="/fundamentals/numerics/linear-algebra/chapters/08-singular-values/">Course investigation · singular values and low-rank error</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/">When stable eigenvalues allow large transient growth</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/03-singular-network-laplacians/">Solve a singular network without inventing a ground current</a></span></nav><script defer src="/assets/practical-mathematical-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parametric resonance under periodic stiffness modulation · OneSimulation</title>
+<meta name="description" content="A carriage supported by a spring whose stiffness changes periodically can gain oscillation energy with no additive force at its natural frequency. Compare this mechanism with an ordinary forced resonance, estimate the first instability band and learn how to measure growth before nonlinear saturation invalidates the prediction.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/02-parametric-resonance-and-damping/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Parametric resonance under periodic stiffness modulation · OneSimulation">
+<meta property="og:description" content="A carriage supported by a spring whose stiffness changes periodically can gain oscillation energy with no additive force at its natural frequency. Compare this mechanism with an ordinary forced resonance, estimate the first instability band and learn how to measure growth before nonlinear saturation invalidates the prediction.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/02-parametric-resonance-and-damping/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/">Vibration and identification in machinery</a></p><h1>Parametric resonance under periodic stiffness modulation</h1><p class="lead">A carriage supported by a spring whose stiffness changes periodically can gain oscillation energy with no additive force at its natural frequency. Compare this mechanism with an ordinary forced resonance, estimate the first instability band and learn how to measure growth before nonlinear saturation invalidates the prediction.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/02-free-vibration/">Background · Free vibration, energy loss and ring-down data</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#energy">A varying stiffness supplies work even at zero additive force</a><a href="#envelope">Find slow growth and detuning near twice resonance</a><a href="#map">Distinguish the real part of a growth exponent from detuning phase</a><a href="#tutorial-one">Tutorial · Determine the threshold from a measured decay</a><a href="#tutorial-two">Tutorial · Predict whether a detuned pump grows</a><a href="#tutorial-three">Tutorial · Use a one-period map beyond weak modulation</a></nav></aside><article class="prose reference"><section><h2 id="energy">A varying stiffness supplies work even at zero additive force</h2>
+<p>Let \(k(t)=k_0[1+h\cos(\Omega t)]\) with \(|h|\ll1\), and use a linear damper. The free coordinate obeys \(\ddot x+2\zeta\omega_0\dot x+\omega_0^2[1+h\cos\Omega t]x=0\), \(\omega_0^2=k_0/m\). Differentiating its instantaneous mechanical energy \(m\dot x^2/2+k(t)x^2/2\) and using the equation gives \(\dot E=-c\dot x^2+\dot k x^2/2\). Modulating stiffness can therefore do positive or negative work depending on the oscillation phase. For an exactly zero initial displacement and velocity the ideal equation stays at zero; real noise or a deliberate small initial motion supplies a seed.</p>
+<p>The squared displacement has a component at twice the oscillation frequency. A stiffness variation near twice \(\omega_0\) can preferentially raise stiffness at large displacement and lower it near a zero crossing, supplying net energy over a cycle. This identifies the principal parametric band but does not determine its threshold. A nonzero damping loss must first be overcome.</p>
+</section>
+<section><h2 id="envelope">Find slow growth and detuning near twice resonance</h2>
+<p>Write the motion as slowly varying cosine and sine quadratures at half the modulation frequency. Substitute into the oscillator equation, drop second derivatives of slow amplitudes and average out terms oscillating near three times the basic frequency. With detuning \(\Delta=\Omega/2-\omega_0\) and retaining first orders in small damping, modulation and detuning, the two coupled quadratures have exponents</p>
+<div class="math display">\[s_\pm=-\zeta\omega_0\ \pm\sqrt{(h\omega_0/4)^2-\Delta^2}.\]</div>
+<p>The square-root term is real sufficiently near the principal band. Net growth requires its positive branch to exceed damping. At exact tuning the approximate threshold is \(h&gt;4\zeta\); away from tuning the unstable interval narrows according to \(\Delta^2&lt;(h\omega_0/4)^2-(\zeta\omega_0)^2\). The calculation assumes the damping, relative modulation and fractional detuning are small. For large modulation use the periodic linear system and compute its Floquet multipliers directly.</p>
+<p>For \(\omega_0=100\) rad/s, \(\zeta=0.015\) and \(h=0.10\), exact-tuning growth is \(2.5-1.5=1.0\) per second. The unstable half-width in \(\Omega/2\) is 2.0 rad/s, hence in the actual drive \(\Omega\) it is 4.0 rad/s. A one-percent change of pump frequency near 200 rad/s already changes half-frequency detuning by 1 rad/s. Distinguish the drive-frequency width from oscillation-frequency width when comparing an experimental scan.</p>
+<p><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/01-critical-speed-and-synchronous-whirl/#try-it">Compare this finite instability band with the bounded steady response of a damped rotating force</a></p>
+</section>
+<section><h2 id="map">Distinguish the real part of a growth exponent from detuning phase</h2>
+<p>Outside the principal resonance tongue the square root in the approximate exponent becomes imaginary. The oscillation phase then drifts relative to half the modulation frequency, while the real part remains the viscous decay rate at this order. A graph showing only the real part therefore develops a flat negative floor. This floor means exponential decay of the envelope, not that the instantaneous displacement has stopped oscillating. At the tongue boundaries the larger real exponent crosses zero; inside the band the early envelope increases if the initial condition contains the growing quadrature.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/02-parametric-resonance-and-damping/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-mathieu"></div>
+<p>At a natural frequency of ten hertz, modulation fraction 0.16 and damping ratio 0.025, the exact-tuning early exponent is about 0.942 per second. An amplitude doubles in approximately 0.736 seconds. Halving the modulation gives a negative exponent at the centre, even though the stiffness is still being varied periodically. Compare measured amplitude over many oscillation periods but stay within the early linear regime. Starting the drive with a phase almost entirely in the initially decaying quadrature can delay the emergence of the growing component and make a short time record look stable.</p>
+<p>A direct numerical check uses a pair of independent initial states. Integrate the original periodic oscillator for one modulation period from each initial state, then place their final states in the columns of a two-by-two transition matrix. Repeating the evolution multiplies by this same matrix. A multiplier of magnitude greater than one means that a suitable initial state grows from period to period. The logarithm of its magnitude divided by the period estimates a growth rate without assuming weak detuning. Agreement with the simpler displayed equation should improve near the primary band when damping and modulation both decrease.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Determine the threshold from a measured decay</h2>
+<p>With modulation off, a freely released oscillator decays in amplitude as \(e^{-0.80t}\) and has natural frequency 80 rad/s. Estimate the damping ratio and minimum small periodic stiffness variation required near exact principal tuning.</p>
+<details><summary>Translate an amplitude decay into a pump threshold</summary>
+<p>The measured decay rate is \(\zeta\omega_0\), so \(\zeta=0.010\) and the threshold is about \(h=0.040\), a four-percent relative modulation amplitude. If the measured quantity were energy rather than amplitude, its exponential rate would be twice as large for the same damping. A stiffness swing quoted peak-to-peak is also twice the \(h\) amplitude in the stated equation. Both conventions must be resolved before claiming agreement to a factor of two.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Predict whether a detuned pump grows</h2>
+<p>For the numerical 100 rad/s oscillator driven with \(h=0.10\), compare modulation frequencies 202 and 205 rad/s. Estimate growth or decay of the dominant quadrature.</p>
+<details><summary>Use half the drive detuning</summary>
+<p>At 202, \(\Delta=1\), giving \(s_+=-1.5+\sqrt{6.25-1}=0.791\) per second, hence growth. At 205, \(\Delta=2.5\) and the leading square root vanishes, giving decay at 1.5 per second at this approximation level. Starting in a predominantly decaying quadrature can delay visibly growing motion even inside the band. Record a long enough early linear window and vary initial phase rather than inferring stability from one quiet short trace.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Use a one-period map beyond weak modulation</h2>
+<p>Describe a numerical procedure that determines linear stability without fitting an arbitrary initial envelope. How can it be checked in the limit of zero periodic modulation?</p>
+<details><summary>Propagate independent displacement and velocity states</summary>
+<p>Integrate two independent initial states, for example unit displacement with zero velocity and vice versa, through one pump period. Place their final states in the columns of a monodromy matrix. An eigenvalue of magnitude greater than one implies linear growth with repeated periods. Its magnitude sets the growth rate through its logarithm divided by the period. Refine the integration time step until both multipliers converge. The determinant should be \(e^{-2\zeta\omega_0T}\) from the trace of the state matrix. With \(h=0\) and underdamping both multipliers have magnitude \(e^{-\zeta\omega_0T}\). A nonlinear spring or motion stops ultimately limit real growing amplitudes; linear multipliers predict onset and early growth, not the final oscillation level.</p>
+</details>
+<p><a href="https://archive.nptel.ac.in/content/syllabus_pdf/112103112.pdf">NPTEL Mechanical Vibrations · parametrically excited systems and stability</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/01-critical-speed-and-synchronous-whirl/">Critical speed, synchronous whirl and two different rotor centres</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/03-random-vibration-and-bandwidth/">Random base motion, spectral density and rms response</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

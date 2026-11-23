@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When stable eigenvalues allow large transient growth · OneSimulation</title>
+<meta name="description" content="Two damped states exchange energy in only one direction. Its eigenvalues predict ultimate decay, while a short-time response can grow by a large factor. Compute the matrix exponential, its gain and a resolvent-based sensitivity check.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When stable eigenvalues allow large transient growth · OneSimulation">
+<meta property="og:description" content="Two damped states exchange energy in only one direction. Its eigenvalues predict ultimate decay, while a short-time response can grow by a large factor. Compute the matrix exponential, its gain and a resolvent-based sensitivity check.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a> / <a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Matrix computations and spectral accuracy</a></p><h1>When stable eigenvalues allow large transient growth</h1><p class="lead">Two damped states exchange energy in only one direction. Its eigenvalues predict ultimate decay, while a short-time response can grow by a large factor. Compute the matrix exponential, its gain and a resolvent-based sensitivity check.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/linear-algebra/chapters/01-conditioning/">Background · Conditioning and backward error</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#evolution">Solve the evolution one component at a time</a><a href="#singular">Find the input that grows most at a chosen time</a><a href="#resolvent">Link a small singular value to sensitivity of eigenvalues</a><a href="#lab">Compare one preparation with the worst-case envelope</a><a href="#sensor">How a detector can miss the strongest transient</a><a href="#tutorial">Tutorial · verify three distinct amplification diagnostics</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="evolution">Solve the evolution one component at a time</h2>
+<p>Consider dimensionless time \(t\) and state \(x=(x_1,x_2)^T\) with \(\dot x=Ax\), \(A=\left(\begin{smallmatrix}-1&amp;K\\0&amp;-2\end{smallmatrix}\right)\), for real \(K\ge0\). The second component decays independently; its transient drives the first. A physical example is a linearised pair of relaxation processes with one readout feeding another. Choose state units so the Euclidean norm represents the amplification of interest. If the coordinates measure unrelated quantities such as volts and kelvins, the unweighted norm changes if one simply changes units. A physical energy or covariance supplies a more appropriate weighted norm.</p>
+<p>Starting from \(x(0)=(u,v)\), integrate the second row to find \(x_2=e^{-2t}v\). The first row obeys \((e^t x_1)'=K e^{-t}v\), hence</p>
+<div class="math display">\[e^{tA}=\begin{pmatrix}e^{-t}&amp;K(e^{-t}-e^{-2t})\\0&amp;e^{-2t}\end{pmatrix}.\]</div>
+<p>Both eigenvalues are negative and the whole matrix exponential tends to zero. Yet for \(v=1,u=0\) the driven component reaches \(K/4\) at \(t=\ln2\), since \(e^{-t}-e^{-2t}\) is maximal there. With \(K=12\), the state at this instant is \((3,0.25)\) and its norm is 3.010. This is a lower bound on the maximum possible gain over unit input vectors and on the maximum over all times. The peak of the driven component need not coincide exactly with the peak of the total norm.</p>
+</section>
+<section><h2 id="singular">Find the input that grows most at a chosen time</h2>
+<p>For \(M=e^{tA}\), the squared output norm is \(x_0^TM^TMx_0\). Its maximum over unit vectors is the largest eigenvalue of \(M^TM\), hence the gain is the largest singular value of \(M\). For the triangular matrix above denote its entries by \(a,b,d\) on the first diagonal, off-diagonal and second diagonal. The characteristic polynomial of \(M^TM\) has trace \(s=a^2+b^2+d^2\) and determinant \(a^2d^2\). Its larger eigenvalue is \([s+\sqrt{s^2-4a^2d^2}]/2\). This direct formula lets a simulation compare a specified initial condition with the optimal combination at each time. The optimal right singular vector varies with time; a plot of the optimal curve is an envelope of different preparations.</p>
+<p>Another test asks whether any instantaneous squared norm can increase at \(t=0\). Its derivative is \(x_0^T(A^T+A)x_0\). The largest eigenvalue of the symmetric part \(H=(A+A^T)/2\) is \((-3+\sqrt{1+K^2})/2\). It is positive precisely when \(K&gt;\sqrt8\). If \(H\) is negative semidefinite every instantaneous state has a nonpositive norm derivative and the Euclidean semigroup is contractive. This criterion concerns energy growth in a specified norm and is distinct from asymptotic stability. At \(K=12\) the eigenvector of \(H\) giving fastest initial growth is also not generally the input giving largest long-time response.</p>
+</section>
+<section><h2 id="resolvent">Link a small singular value to sensitivity of eigenvalues</h2>
+<p>For \(z\) away from either eigenvalue, direct triangular inversion gives an off-diagonal resolvent entry \(K/[(z+1)(z+2)]\). Even at complex points visibly far from the eigenvalues the resolvent norm can be large. To see what that means, let \(\sigma_{\min}(zI-A)=\varepsilon\) with unit right and left singular vectors \(v,u\). Then \((zI-A)v=\varepsilon u\). The rank-one perturbation \(E=\varepsilon u v^*\) makes \((A+E)v=zv\), while its spectral norm is precisely \(\varepsilon\). Conversely any perturbation moving an eigenvalue to \(z\) must have norm at least \(\sigma_{\min}\). Therefore a contour of \(1/\|(zI-A)^{-1}\|\) maps the perturbation required for an eigenvalue there. This is the pseudospectrum construction. Physical perturbations may have additional sparsity or sign constraints, so unstructured contours describe the allowed full matrix perturbations of the stated norm.</p>
+</section>
+<section><h2 id="lab">Compare one preparation with the worst-case envelope</h2>
+<p>The experiment evaluates the exact triangular evolution and the largest singular value at each time. Change the coupling first, then rotate the unit initial input. At zero coupling both state components decay. At \(K=12\) with initial excitation only in the second coordinate the output norm exceeds three before decaying. Explain why the envelope can exceed every single displayed preparation at different times and why changing the input does not alter either eigenvalue.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/01-nonnormal-growth-and-resolvents/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-nonnormal"></div>
+</section>
+<section><h2 id="sensor">How a detector can miss the strongest transient</h2>
+<p>The apparatus often measures a scalar trace \(y=c^Tx\). With preparation \(x(0)=(0,1)^T\) and a detector aligned with the first coordinate, \(y=K(e^{-t}-e^{-2t})\). A detector aligned with the second coordinate instead records \(e^{-2t}\), whose graph decreases immediately. Rotating the detector leaves the evolution untouched. At \(t=\ln 2\) and \(K=12\), two orthogonal recordings therefore give \(3\) and \(0.25\). Their sum of squares recovers \(9.0625\), so their joint norm reproduces the transient concealed in the second recording alone.</p>
+<p>Given an input direction \(b\) and a detector \(c\), the measurable input-to-output amplitude is \(c^Te^{tA}b\). The optimal detector for that input is parallel to \(e^{tA}b\) by Cauchy–Schwarz. Maximising also over the preparation recovers the singular-value experiment above. Thus a discrepancy between a large theoretical bound and a small experimental trace can arise from either the excitation or the readout. An experiment that rotates only one of them cannot by itself test the unrestricted bound.</p></section>
+<section><h2 id="tutorial">Tutorial · verify three distinct amplification diagnostics</h2>
+<h3>Find the exact growth at one time</h3><p>With \(K=8\), compare the driven component for input \((0,1)\) and the maximum Euclidean gain at \(t=\ln2\).</p><details><summary>Work through the solution</summary>
+<p>The matrix entries are \(a=0.5,b=2,d=0.25\). The specified input gives norm \(\sqrt{4.0625}=2.016\); the driven component itself is 2. The optimum follows from \(s=4.3125\) and \(a^2d^2=0.015625\), giving gain about 2.076. Selecting the unit right singular vector of the larger eigenvalue attains it. A direct check is to rotate a unit input around the circle and find the maximum by sampling increasingly fine angles.</p>
+</details>
+<h3>Construct a structured perturbation placing an eigenvalue at zero</h3><p>Keep both diagonal entries fixed and alter only \(A_{21}\) by \(\delta\). Determine the value needed for a zero eigenvalue and compare it with changing only a diagonal entry.</p><details><summary>Work through the solution</summary>
+<p>The determinant becomes \(2-K\delta\). Thus \(\delta=2/K\), or \(1/6\) for \(K=12\). Changing only the first diagonal entry would require a shift of one, and changing only the second a shift of two. The smaller lower-left change closes a positive feedback loop. It need not be the smallest unrestricted spectral-norm perturbation, which is obtained from the singular value of \(-A\), but it explicitly demonstrates which physical feedback is implicated.</p>
+</details>
+<h3>Decide which conclusion survives nondimensionalisation</h3><p>Replace the coordinates by \(y=(x_1/10,x_2)\). How do the eigenvalues, coupling and interpretation of a Euclidean gain change?</p><details><summary>Work through the solution</summary>
+<p>The similar matrix \(DAD^{-1}\), with \(D=\operatorname{diag}(0.1,1)\), has diagonal entries \(-1,-2\) and off-diagonal \(K/10\). The dynamics represent the same trajectories in different units; the eigenvalues agree. The bare Euclidean norm in \(y\) now downweights the original first component, so it can show much less gain. To recover the original norm use \(y^T D^{-T}D^{-1}y\). A statement about growth must name the norm and scales, especially when assessing whether a stable numerical model can amplify perturbations beyond a physical tolerance.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://people.maths.ox.ac.uk/trefethen/publication/PDF/1997_72.pdf">Oxford · Trefethen, Pseudospectra of linear operators</a></li><li><a href="/fundamentals/numerics/linear-algebra/chapters/10-arnoldi/">Course investigation · Arnoldi and eigenvalue residuals</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/volumes/linear-algebra-methods/02-randomised-range-finding/">How a random sketch finds a dominant subspace</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

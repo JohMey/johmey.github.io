@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recover a free-energy difference from a distribution of work · OneSimulation</title>
+<meta name="description" content="A two-state system starts in equilibrium, then a control jumps its energy gap. Individual work readings differ although every run uses the same control protocol. Use the elementary model to derive an exponential work identity, compare it with the average work and estimate how many runs it takes to see the events that dominate the estimate.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/03-work-histograms/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Recover a free-energy difference from a distribution of work · OneSimulation">
+<meta property="og:description" content="A two-state system starts in equilibrium, then a control jumps its energy gap. Individual work readings differ although every run uses the same control protocol. Use the elementary model to derive an exponential work identity, compare it with the average work and estimate how many runs it takes to see the events that dominate the estimate.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/03-work-histograms/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/">Counting, correlations and thermal measurements</a></p><h1>Recover a free-energy difference from a distribution of work</h1><p class="lead">A two-state system starts in equilibrium, then a control jumps its energy gap. Individual work readings differ although every run uses the same control protocol. Use the elementary model to derive an exponential work identity, compare it with the average work and estimate how many runs it takes to see the events that dominate the estimate.</p><p class="byline">Unit 3 of 6</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#specify-how-work-is-measured">Specify how work is measured</a><a href="#compare-the-two-averages">Compare the two averages</a><a href="#ask-what-a-finite-dataset-can-support">Ask what a finite dataset can support</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="specify-how-work-is-measured">Specify how work is measured</h2>
+<p>Set the lower energy to zero and the upper energy initially to \(\epsilon_i\). Prepare a canonical ensemble at inverse temperature \(\beta\), isolate it and suddenly change the gap to \(\epsilon_f\) without changing the energy eigenvectors. A run that started low stays low and requires zero work. A run that started high stays high and requires work \(\epsilon_f-\epsilon_i\), positive if the external control gives energy to the sample. No heat flows during the jump. Returning the system to equilibrium afterwards can exchange heat, but it is a separate part of the protocol.</p>
+<p>The initial high-state probability is \(p_i=e^{-\beta\epsilon_i}/(1+e^{-\beta\epsilon_i})\). Therefore</p>
+<div class="math display">\[\langle e^{-\beta W}\rangle=(1-p_i)+p_i e^{-\beta(\epsilon_f-\epsilon_i)}=\frac{1+e^{-\beta\epsilon_f}}{1+e^{-\beta\epsilon_i}}=\frac{Z_f}{Z_i}.\]</div>
+<p>Taking a negative logarithm and multiplying by \(1/\beta\) gives the equilibrium free-energy difference of two ensembles at the same temperature. The actual final population after the jump is still \(p_i\), which generally differs from the final equilibrium occupation. This distinction explains why an equilibrium state function can be recovered from a nonequilibrium final distribution.</p>
+</section>
+<section>
+<h2 id="compare-the-two-averages">Compare the two averages</h2>
+<p>The mean work is \(p_i(\epsilon_f-\epsilon_i)\). Convexity of the exponential gives \(\langle W\rangle\ge\Delta F\). In units of \(k_BT\), take an initial gap of 4 and a final gap of 0. The high state occurs with probability 0.01799 and gives work −4 when it occurs. Mean work is about −0.07194, yet \(\Delta F=-\ln[2/(1+e^{-4})]\simeq-0.6750\). Both numbers are negative. The greater number is the one closer to zero. Checking only the sign of average work would not reveal the large difference.</p>
+<p>Each rare upper-state event contributes \(e^4\) to the exponential average. Its probability times its weight is nearly one, comparable to the entire contribution of the common lower state. This is why replacing an average of exponentials by an exponential of an average loses essential information. Repeating the same protocol more slowly with contact to a bath would describe a different path through state space.</p>
+</section>
+<section>
+<h2 id="ask-what-a-finite-dataset-can-support">Ask what a finite dataset can support</h2>
+<p>For \(N\) independent preparations, the probability of seeing no initial upper state is \((1-p_i)^N\). With 20 runs in the example this is about 0.696. In such a dataset every measured work is zero and the empirical free-energy difference is zero. This is fully compatible with the model. To have at least a 95 percent chance of seeing even one upper-state event requires \(N\ge\ln(0.05)/\ln(1-p_i)\), or about 166 runs. Seeing only one such event still gives a noisy estimate of its frequency.</p>
+<p>The graph holds the final gap at zero. Change the initial gap and ensemble size. It shows the probability of missing the rare branch at each sample size, together with the five-percent level. The reported exact free energy and mean work use all initial states. These predictions can be checked by explicitly enumerating a two-outcome histogram, without drawing a random sample and silently treating its fluctuations as a new law.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/03-work-histograms/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="physics-lab-work-histograms"></div>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>For an initial gap zero and a final gap \(2k_BT\), calculate \(\langle W\rangle\) and \(\Delta F\).</p>
+<details><summary>Work through the solution</summary><p>Initially \(p_i=1/2\). The average work is \(k_BT\). The free-energy difference is \(k_BT\ln[2/(1+e^{-2})]\simeq0.5662 k_BT\). Some energy supplied by the control is unavailable as recoverable equilibrium free energy at this temperature.</p></details>
+<p>A preparation procedure always starts the sample in its lower state independent of the specified initial gap. Can the same equality be used by changing only the sample count?</p>
+<details><summary>Work through the solution</summary><p>No. The canonical initial probabilities were used algebraically to turn the weighted sum into \(Z_f/Z_i\). With deterministic preparation the exponential average is one in this protocol. Repeated measurements approach that different expectation.</p></details>
+<p>At fixed initial and final gaps, what does reducing temperature do to the number of runs required to see an initial excitation?</p>
+<details><summary>Work through the solution</summary><p>The excitation probability is approximately \(e^{-\beta\epsilon_i}\) for a large positive reduced gap. Required sample count grows approximately as \(1/p_i\) for any fixed detection probability. Controlling preparation and understanding tails become more important as temperature falls.</p></details>
+<p>Connect this model to the <a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/05-partition-functions/">partition function</a> and to the role of free energy in a reversible isothermal process.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/02-finite-solids/">Measure the heat capacity of a reservoir from the width of an energy histogram</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/04-effusive-flight/">Why a molecular beam and its source have different measured speeds</a></span></nav><script defer src="/assets/practical-physics-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

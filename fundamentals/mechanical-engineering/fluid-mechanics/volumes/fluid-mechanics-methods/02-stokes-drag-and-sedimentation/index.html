@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settling spheres, Stokes drag and a wall correction · OneSimulation</title>
+<meta name="description" content="A falling-sphere viscometer infers viscosity from terminal speed. Derive the drag on a no-slip sphere, distinguish creeping flow from merely steady motion and use radius, vessel width and orientation checks to decide what the speed experiment actually measures.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/02-stokes-drag-and-sedimentation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Settling spheres, Stokes drag and a wall correction · OneSimulation">
+<meta property="og:description" content="A falling-sphere viscometer infers viscosity from terminal speed. Derive the drag on a no-slip sphere, distinguish creeping flow from merely steady motion and use radius, vessel width and orientation checks to decide what the speed experiment actually measures.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/02-stokes-drag-and-sedimentation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/">Momentum, motion and transport in fluids</a></p><h1>Settling spheres, Stokes drag and a wall correction</h1><p class="lead">A falling-sphere viscometer infers viscosity from terminal speed. Derive the drag on a no-slip sphere, distinguish creeping flow from merely steady motion and use radius, vessel width and orientation checks to decide what the speed experiment actually measures.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/06-similarity/">Background · Dynamic similarity, boundary layers and model tests</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#creeping">Balance pressure and viscosity around a sphere</a><a href="#gravity">Balance buoyancy and find the terminal motion scale</a><a href="#wall">A slow particle can still strongly interact with the container</a><a href="#particle-tracking">Measure terminal speed from a recorded trajectory</a><a href="#tutorial-one">Tutorial · Estimate viscosity and its radius uncertainty</a><a href="#tutorial-two">Tutorial · Could a speed mismatch be wall drag?</a><a href="#tutorial-three">Tutorial · Brownian jitter or sustained background flow?</a></nav></aside><article class="prose reference"><section><h2 id="creeping">Balance pressure and viscosity around a sphere</h2>
+<p>Let a rigid sphere of radius \(a\) move with small relative speed \(U\) in a Newtonian fluid. In the sphere frame impose a uniform far flow \(U\mathbf e_z\), no slip at its surface and incompressibility. If particle Reynolds number \(\rho U(2a)/\mu\) is small, drop convective inertia, obtaining \(-\nabla p+\mu\nabla^2\mathbf u=0\). Dimensional reasoning predicts a drag proportional to \(\mu aU\) but cannot determine its prefactor. That prefactor depends on the no-slip surface and three-dimensional geometry.</p>
+<p>The axisymmetric Stokes solution has \(u_r=U\cos\theta[1-3a/(2r)+a^3/(2r^3)]\), \(u_\theta=-U\sin\theta[1-3a/(4r)-a^3/(4r^3)]\), and \(p-p_\infty=-3\mu Ua\cos\theta/(2r^2)\). Substitution verifies zero surface velocity and the uniform far limit. The pressure contribution in the streamwise direction integrates as the surface integral of \(-(p-p_\infty)\cos\theta\), giving \(2\pi\mu aU\). Tangential viscous traction supplies \(4\pi\mu aU\). Their sum gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[F_D=6\pi\mu aU,\]</div><div class="equation-step">\[C_D=\frac{24}{Re_D},\]</div><div class="equation-step">\[Re_D=\frac{2\rho aU}{\mu}.\]</div></div>
+<p>A seemingly simpler potential-flow solution satisfying only impermeability misses the viscous traction and cannot reproduce the drag. Conversely a calculation that integrates just wall shear misses one third of this drag even at negligible inertia. The signs depend on whether one computes force of fluid on sphere or sphere on fluid; the magnitude above resists relative motion.</p>
+</section>
+<section><h2 id="gravity">Balance buoyancy and find the terminal motion scale</h2>
+<p>A sphere of density \(\rho_s&gt;\rho\) has buoyancy-corrected weight \((4\pi a^3/3)(\rho_s-\rho)g\). Equating drag and this weight yields \(U_t=2a^2(\rho_s-\rho)g/(9\mu)\). Take \(a=0.50\) mm, density difference 1200 kg/m³ and viscosity 0.50 Pa s. The unbounded terminal speed is 1.31 mm/s. For fluid density 1000 kg/m³, \(Re_D=0.00262\), supporting a steady creeping-flow approximation. A 30 mm timed distance then takes about 22.9 s.</p>
+<p>A coarse transient model uses sphere inertia alone, \(m_s\dot U+6\pi\mu a U=W_{\rm eff}\), predicting relaxation time \(m_s/(6\pi\mu a)\). Actual transient hydrodynamics also contains added mass and a viscous-history contribution. Measuring a steady late portion is much safer than fitting the initial release with the simple exponential when extracting viscosity. Measure speed over successive equal intervals and check that it has become constant, away from both the release and vessel bottom.</p>
+<p><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/13-oscillating-wall/#try-it">Compare the viscous penetration time with the oscillating-wall experiment</a></p>
+</section>
+<section><h2 id="wall">A slow particle can still strongly interact with the container</h2>
+<p>A stationary no-slip cylindrical vessel increases drag on a sphere translating along its centreline. For small size ratio \(\lambda=a/R_{\rm tube}\), the standard leading mobility correction is \(U_{\rm tube}/U_\infty\simeq1-2.1044\lambda+\cdots\). At \(\lambda=0.05\) the measured speed is already roughly ten percent smaller. Inserting that diminished speed into an unbounded drag law biases inferred viscosity upward. A small Reynolds number does not make walls irrelevant; it only addresses inertia relative to viscosity.</p>
+</section>
+<section><h2 id="particle-tracking">Measure terminal speed from a recorded trajectory</h2>
+<p>Choose a transparent column wide enough that the sphere remains many radii from its wall in the analysed window. Convert pixel distances to physical length using a scale in the same plane as the particle centre. Refraction through a curved vessel can otherwise give different apparent distances at the wall and centre. Fit position against time over several windows beginning after release. A stable slope with changing window length supports the terminal-speed interpretation; a trend in that slope can indicate acceleration, a fluid current or proximity to the bottom.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/02-stokes-drag-and-sedimentation/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-sedimentation"></div>
+<p>The plot overlays the selected viscosity with a run at twice that viscosity. At fixed particle size their ideal terminal speeds differ by a factor of two. The horizontal axis invites a different comparison: the same settling speed in the more viscous fluid requires a radius larger by a factor of the square root of two. Use the numerical Reynolds number in the readout as a validity test. Increasing particle size tenfold raises terminal speed a hundredfold but diameter Reynolds number a thousandfold, so the apparent ease of tracking a larger particle has a fluid-mechanical cost.</p>
+<p>A density inference can be especially fragile near neutral buoyancy. For example, if particle and liquid densities are 1020 and 1000 kilograms per cubic metre, an absolute uncertainty of two kilograms per cubic metre in each input is small relative to either density yet large relative to their difference. If independent it gives a standard uncertainty about 2.8 kilograms per cubic metre in the excess, or fourteen percent. Compare with the microscope radius calibration before attributing observed variation to the viscosity. Vertical temperature gradients can drive background circulation whose speed is comparable with a very slowly settling particle.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Estimate viscosity and its radius uncertainty</h2>
+<p>A sphere of radius 0.40 mm and density contrast 1000 kg/m³ falls at 0.80 mm/s far from walls. Infer viscosity and propagate an independent two-percent radius uncertainty, neglecting other errors.</p>
+<details><summary>Invert the terminal balance</summary>
+<p>The inferred viscosity is \(2(0.00040)^2(1000)(9.81)/[9(0.00080)]=0.436\) Pa s. Its radius contribution to relative uncertainty is approximately four percent because radius is squared. If density contrast is estimated by subtracting two similar measured densities, its relative uncertainty can be much larger than either density's relative error. Repeat with a sufficiently well-characterised reference sphere and measure liquid temperature since viscosity can vary markedly with it.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Could a speed mismatch be wall drag?</h2>
+<p>For a 0.50 mm radius sphere and a 10 mm radius tube, the measured terminal speed is 1.17 mm/s rather than the 1.31 mm/s unbounded prediction. Check the leading wall correction and propose a test that does not assume the listed viscosity is exact.</p>
+<details><summary>Compare a vessel-size sequence</summary>
+<p>The radius ratio is 0.050, so the leading correction predicts a factor 0.895 and speed 1.17 mm/s. Repeat in two or more wider tubes at unchanged temperature and fit speed against inverse tube radius. Extrapolation toward zero inverse radius estimates unbounded mobility without requiring the listed viscosity for the extrapolation. Off-axis migration, wall roughness, bottom confinement and finite-size higher terms must still be checked. One match to a leading coefficient does not prove perfect centring.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Brownian jitter or sustained background flow?</h2>
+<p>A much smaller tracer shows fluctuations in falling displacement and an unexpected common horizontal drift. How would you estimate its settling speed without attributing every displacement increment to gravity?</p>
+<details><summary>Separate first and second displacement moments</summary>
+<p>Brownian motion adds variance increasing with lag in a diffusive interval but no mean drift in a homogeneous quiescent bath. Background flow adds a mean vector common to passive tracers. Measure many trajectories, estimate the fluid's mean velocity with a nearly neutrally buoyant marker and subtract it before fitting mean vertical drift. Fit the residual displacement variance separately to estimate diffusion and compare with the Einstein–Stokes prediction. A static temperature gradient can generate convection or thermophoresis, so repeat at several positions or orientations before assigning a gravity-only terminal balance.</p>
+</details>
+<p><a href="https://web.mit.edu/fluids-modules/www/low_speed_flows/2-5Stokes.pdf">MIT Advanced Environmental Fluid Mechanics · Stokes flow past a sphere</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/01-gravity-capillarity-and-interfacial-instability/">Gravity, capillarity and instability at a moving interface</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/03-taylor-aris-dispersion-in-a-tube/">Why shear disperses a tracer faster than molecular diffusion</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

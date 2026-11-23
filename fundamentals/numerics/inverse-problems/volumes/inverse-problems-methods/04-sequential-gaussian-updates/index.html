@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What each new sensor reading changes in a Gaussian inverse problem · OneSimulation</title>
+<meta name="description" content="Start with an uncertain vector, condition on one noisy linear observation, and reconstruct the posterior mean and covariance without repeating a batch inversion. Check shared calibration errors before treating repeated measurements as independent evidence.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/04-sequential-gaussian-updates/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What each new sensor reading changes in a Gaussian inverse problem · OneSimulation">
+<meta property="og:description" content="Start with an uncertain vector, condition on one noisy linear observation, and reconstruct the posterior mean and covariance without repeating a batch inversion. Check shared calibration errors before treating repeated measurements as independent evidence.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/04-sequential-gaussian-updates/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a> / <a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/">Inferring parameters and fields from observations</a></p><h1>What each new sensor reading changes in a Gaussian inverse problem</h1><p class="lead">Start with an uncertain vector, condition on one noisy linear observation, and reconstruct the posterior mean and covariance without repeating a batch inversion. Check shared calibration errors before treating repeated measurements as independent evidence.</p><p class="byline">Unit 4 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/inverse-problems/chapters/07-bayesian-inversion/">Background · Bayesian inversion and the information supplied by a prior</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#condition">Condition a joint Gaussian by eliminating a correlated component</a><a href="#geometry">A correlated prior transfers information to an unmeasured coordinate</a><a href="#stability">Maintain a valid covariance over many updates</a><a href="#numerical-investigation">One hundred readings with one shared calibration</a><a href="#tutorial">Tutorial · separate new information from repeated calibration</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="condition">Condition a joint Gaussian by eliminating a correlated component</h2>
+<p>Let \(x\) have a Gaussian prior with mean \(m\) and positive definite covariance \(P\). A scalar instrument returns \(y=h^Tx+\epsilon\), with zero-mean Gaussian noise independent of \(x\) of variance \(r&gt;0\). The predicted observation mean is \(h^Tm\); the innovation \(d=y-h^Tm\) has variance \(S=h^TPh+r\), and cross covariance of \(x\) with this innovation is \(Ph\). Seek a corrected error \((x-m)-Kd\) uncorrelated with \(d\). Its covariance with \(d\) vanishes when \(K=Ph/S\). Because the joint distribution is Gaussian, uncorrelated then implies independent, so conditioning on the observed \(d\) gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[m^+=m+K d,\]</div><div class="equation-step">\[P^+=P-\frac{Phh^TP}{S}.\]</div></div>
+<p>The covariance correction is rank one and positive semidefinite when subtracted. It depends on geometry and declared noise, not the particular measurement value. The new mean can move strongly when a large innovation occurs even if the predicted covariance reduction was modest. A very unlikely innovation is reason to check the physical model and reported uncertainty before proceeding as though the calibration were known. Recomputing an ad hoc smaller measurement variance after seeing the data would change the probabilistic assumptions.</p>
+<p>An equivalent route minimises \((x-m)^TP^{-1}(x-m)+(y-h^Tx)^2/r\), yielding posterior precision \(P^{-1}+hh^T/r\). Multiplying by the proposed covariance above verifies its inverse directly, a one-row Woodbury identity. For several independent readings, applying rank-one updates sequentially produces the same posterior as one batch solve in exact arithmetic. If the instrument errors are correlated, either whiten the full observation model or explicitly include shared error components in the state before applying independent updates. The matrix identity is exact only for the covariance actually specified in the statistical model.</p>
+</section>
+<section><h2 id="geometry">A correlated prior transfers information to an unmeasured coordinate</h2>
+<p>Set \(m=(0,0)^T\), \(P=\left(\begin{smallmatrix}4&amp;1\\1&amp;1\end{smallmatrix}\right)\). Measure only the first coordinate with \(h=(1,0)^T,\ r=1,\ y=3\). The innovation variance is 5 and the gain is \((0.8,0.2)^T\). Hence \(m^+=(2.4,0.6)\) and \(P^+=\left(\begin{smallmatrix}0.8&amp;0.2\\0.2&amp;0.8\end{smallmatrix}\right)\). The second coordinate moved even though the instrument does not directly sense it. That inference uses prior correlation. If prior off-diagonal covariance were zero, its posterior mean and variance would remain unchanged. A conclusion about an unobserved material parameter should therefore report whether sensitivity comes from data or from that imposed correlation structure.</p>
+<p>The innovation itself is \(3/\sqrt5=1.34\) predicted standard deviations, plausible under the original model. Conditioned residual at the same reading becomes \(3-2.4=0.6\), much smaller because that observation helped fit the estimate. A model check should use the pre-update innovation or an independent held-out observation. In a sequence of independent conditionally generated data, correctly normalised innovations provide a useful diagnostic for error scale and neglected correlation. An extremely small training residual after every assimilation can simply reflect a model that overweights its own observations.</p>
+</section>
+<section><h2 id="stability">Maintain a valid covariance over many updates</h2>
+<p>In exact arithmetic \(P^+=P-Kh^TP\). In finite precision subtracting two nearly equal matrices can erode symmetry or produce a small negative eigenvalue in a direction known very precisely. The equivalent Joseph form \(P^+=(I-Kh^T)P(I-Kh^T)^T+KrK^T\) expresses the result as a sum of positive semidefinite pieces. It also derives directly from the prior state error and independent measurement noise entering the update. A square-root covariance or information factor can improve numerical robustness over repeated strongly informative observations. Simply setting negative diagonal entries to zero after a bad update may still leave an indefinite correlated matrix.</p>
+<p>If the state evolves between observations with \(x_{\rm next}=Fx+w\), independent process noise covariance \(Q\) gives predicted mean \(Fm^+\) and covariance \(FP^+F^T+Q\). Choosing \(Q=0\) asserts exact dynamics; it is not a harmless way to remove an implementation parameter. Repeated observations can then drive covariance toward zero in a falsely rigid physical model. Conversely arbitrarily increasing process noise to make any data appear plausible sacrifices the predictive test. Estimate or validate process variability independently when deciding whether a sequential inverse problem represents one stationary parameter or an evolving hidden state.</p>
+</section>
+<section><h2 id="numerical-investigation">One hundred readings with one shared calibration</h2>
+<p>Two parameters have unit prior variance and adjustable correlation. Observe the first parameter repeatedly. Each reading has independent Gaussian noise of standard deviation 0.4 plus the same Gaussian calibration offset, drawn independently of the parameters and the individual noise. First set the calibration uncertainty to zero. Restore it and compare the limiting widths. Finally set the prior correlation to zero and decide which reading could possibly update the second parameter.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/04-sequential-gaussian-updates/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="math-lab-repeated-readings"></div></section>
+<section><h2 id="tutorial">Tutorial · separate new information from repeated calibration</h2>
+<h3>Assimilate an independent second measurement</h3><p>Continue from the two-coordinate example and measure the second coordinate with \(h=(0,1)^T,\ r=0.2,\ y=1.1\). Compute the updated mean and covariance.</p><details><summary>Work through the solution</summary>
+<p>The predicted reading is 0.6, innovation 0.5 and \(S=0.8+0.2=1\). The gain is \((0.2,0.8)^T\), giving mean \((2.5,1.0)\). Subtract \(\left(\begin{smallmatrix}0.04&amp;0.16\\0.16&amp;0.64\end{smallmatrix}\right)\) from the preceding covariance, giving \(\left(\begin{smallmatrix}0.76&amp;0.04\\0.04&amp;0.16\end{smallmatrix}\right)\). Its determinant is 0.12 and both diagonal entries are positive, consistent with a positive definite remaining uncertainty.</p>
+</details>
+<h3>Quantify a shared calibration floor</h3><p>A scalar prior has variance 4. Two or more readings each have independent noise variance 1 and share the same unknown additive calibration bias of variance 0.25. Find posterior variance of the scalar from \(n\) readings and its limit.</p><details><summary>Work through the solution</summary>
+<p>The sample mean measures the scalar plus shared bias with variance \(0.25+1/n\); independent deviations of readings from their mean contain no information about the scalar in this Gaussian model. Thus posterior variance is \([1/4+1/(0.25+1/n)]^{-1}\), tending to \(1/4.25=0.2353\). Incorrectly assigning all errors independent would make the posterior variance vanish. An independent reference sensitive to the calibration bias can lower this floor.</p>
+</details>
+<h3>Choose a sensor for a requested derived quantity</h3><p>Two candidate sensors of the same noise cost are available. Derive the covariance reduction in \(q^Tx\) and evaluate for \(q=(0,1)\), the original \(P\), \(r=1\) and direct measurements of either coordinate.</p><details><summary>Work through the solution</summary>
+<p>The variance reduction is \((q^TPh)^2/(h^TPh+r)\). Measuring coordinate 1 lowers the desired variance by \(1/5=0.2\); measuring coordinate 2 lowers it by \(1/2=0.5\). The larger variance of coordinate 1 could make it an attractive sensor target under a different design criterion, yet the specified prediction favours direct measurement of coordinate 2. State the scientific quantity whose uncertainty the design should reduce.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://cs.yale.edu/homes/yry/readings/general/Kalman1960.pdf">Kalman · A New Approach to Linear Filtering and Prediction Problems</a></li><li><a href="/fundamentals/numerics/inverse-problems/chapters/07-bayesian-inversion/">Course investigation · Gaussian priors and posterior uncertainty</a></li><li><a href="/fundamentals/numerics/inverse-problems/#experiment">Test which parameters a temperature series identifies</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/03-sparse-inversion-and-shrinkage/">Recovering sparse coefficients without hiding amplitude bias</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/">Volume contents</a></span></nav><script defer src="/assets/practical-mathematical-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

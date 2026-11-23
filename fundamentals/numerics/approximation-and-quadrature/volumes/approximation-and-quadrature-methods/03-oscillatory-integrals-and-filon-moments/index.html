@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integrate the oscillations analytically and sample the envelope · OneSimulation</title>
+<meta name="description" content="A sensor model asks for many Fourier integrals of a slowly changing envelope. Direct trapezoids can return a full-scale signal where the true integral nearly cancels. Derive a Filon rule from exact oscillatory moments and find where it needs a different local model.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/03-oscillatory-integrals-and-filon-moments/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Integrate the oscillations analytically and sample the envelope · OneSimulation">
+<meta property="og:description" content="A sensor model asks for many Fourier integrals of a slowly changing envelope. Direct trapezoids can return a full-scale signal where the true integral nearly cancels. Derive a Filon rule from exact oscillatory moments and find where it needs a different local model.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/03-oscillatory-integrals-and-filon-moments/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>Integrate the oscillations analytically and sample the envelope</h1><p class="lead">A sensor model asks for many Fourier integrals of a slowly changing envelope. Direct trapezoids can return a full-scale signal where the true integral nearly cancels. Derive a Filon rule from exact oscillatory moments and find where it needs a different local model.</p><p class="byline">Unit 3 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/04-composite-quadrature/">Background · Composite quadrature and cancellation</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#cancellation">Estimate an oscillatory integral before choosing a grid</a><a href="#moments">Derive a two-node Filon panel about its midpoint</a><a href="#error">Separate envelope approximation from phase modelling</a><a href="#numerical-investigation">Make a fast carrier invisible to the sampling grid</a><a href="#tutorial">Tutorial · check the carrier convention and asymptotic scale</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="cancellation">Estimate an oscillatory integral before choosing a grid</h2>
+<p>Consider \(I(\omega)=\int_a^b f(x)e^{i\omega x}dx\) with smooth envelope \(f\) and known constant phase slope. The complex result contains cosine and sine transforms as real and imaginary parts. Direct quadrature can work if the grid resolves both envelope and oscillation. But a uniform grid with spacing \(h=2\pi/\omega\) samples the same complex phase at every point and can report a large entirely spurious response. A calculation accurate for the slow envelope alone need not be accurate for its product with the carrier. The explicit oscillating factor contains information we can integrate analytically rather than sampling it repeatedly.</p>
+<p>Integration by parts gives \(I=[f(x)e^{i\omega x}/(i\omega)]_a^b-(1/(i\omega))\int_a^bf'(x)e^{i\omega x}dx\). For bounded derivatives the integral is typically \(O(1/\omega)\) at high frequency, and endpoint cancellations or endpoint vanishing can improve the decay. A result as large as \(\int |f|dx\) at a very high frequency is therefore suspicious unless the phase has a stationary point, rapid structure exists in the envelope or a special physical resonance changes the setup. Absolute error is a better validation measure near an exact transform zero than relative error, which divides by a possibly vanishing number.</p>
+</section>
+<section><h2 id="moments">Derive a two-node Filon panel about its midpoint</h2>
+<p>On a panel \(x=c+s,\ -h\le s\le h\), approximate the envelope by \(A+Bs\) through its endpoints, with \(A=[f(c+h)+f(c-h)]/2\) and \(B=[f(c+h)-f(c-h)]/(2h)\). Retain the carrier exactly. Define \(z=\omega h\). Its zeroth moment is \(M_0=\int_{-h}^h e^{i\omega s}ds=2h\sin z/z\). Differentiating with respect to \(\omega\) gives \(\partial_\omega M_0=i M_1\), so</p>
+<div class="math display equation-chain"><div class="equation-step">\[M_1=\int_{-h}^h s e^{i\omega s}ds=2ih^2\frac{\sin z-z\cos z}{z^2},\]</div><div class="equation-step">\[Q_{\rm panel}=e^{i\omega c}(A M_0+B M_1).\]</div></div>
+<p>\(M_0\) is real and even in frequency and \(M_1\) imaginary and odd, as symmetry requires. The rule is exact for every linear envelope at every frequency, regardless of the number of oscillations in the panel. At \(\omega=0\) it returns the trapezoidal integral of the linear interpolant. Directly subtracting \(\sin z-z\cos z\) for tiny \(z\) loses precision. Instead use its series \(z^3/3-z^5/30+\cdots\), and evaluate \(\sin z/z\) by a stable sinc routine or a short series near zero.</p>
+<p>For \(f(x)=1+x,\ x\in[0,1]\) and \(\omega=20\pi\), the constant contribution vanishes over ten cycles. Integration by parts on \(x\) gives \(I=1/(i\omega)=-i/(20\pi)\). One linear Filon panel gives the exact \(-0.0159155i\). A composite trapezoid with ten subintervals samples \(e^{i\omega x}=1\) at every node, returning 1.5 real. Both methods evaluated the same envelope but represented the carrier quite differently. Refining blindly by factors that preserve a frequency coincidence can produce misleading error estimates on the first few grids.</p>
+</section>
+<section><h2 id="error">Separate envelope approximation from phase modelling</h2>
+<p>Since the carrier has magnitude one for real phase, \(|I-Q|\le\int|f-p|dx\). A piecewise-linear interpolation error bound on a panel of width \(H\) is \(\max|f''|H^2/8\), giving a global absolute bound \((b-a)\max|f''|H^2/8\) independent of \(\omega\). Oscillatory cancellation can make the actual error much smaller, but this bound already identifies a sensible grid criterion based on envelope curvature. Higher-order Filon methods integrate more polynomial moments or use derivatives at endpoints. Stable moment recurrences and consistent treatment near \(\omega=0\) matter as much as theoretical order.</p>
+<p>For a nonlinear phase \(e^{i\omega g(x)}\), changing variable to \(u=g(x)\) can reduce to a linear phase on a monotone interval, with transformed envelope \(f(x(u))/g'(x(u))\). At a stationary point \(g'=0\) this substitution becomes singular. In that case oscillations slow locally and the contribution can decay as \(\omega^{-1/2}\) for a simple quadratic stationary point, often larger than endpoint terms. Splitting the domain and using a local quadratic-phase or stationary-phase treatment is more informative than declaring the original linear-phase rule universally efficient. Identify the physical phase law before attributing a numerical discrepancy to envelope smoothness.</p>
+</section>
+<section><h2 id="numerical-investigation">Make a fast carrier invisible to the sampling grid</h2>
+<p>The envelope is exp(x) on the unit interval. Keep six integration panels and select six carrier cycles. Every direct trapezoidal sample sees a cosine of one. Over each full cycle both a constant and a linear envelope have zero cosine integral here. Why does the curved exponential still give 0.0012082? Change to seven panels at the same frequency and compare absolute errors. Finally set the frequency to zero: both methods integrate the same piecewise-linear envelope, so their common value can still differ from the exact integral.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/03-oscillatory-integrals-and-filon-moments/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="math-lab-filon-carrier"></div></section>
+<section><h2 id="tutorial">Tutorial · check the carrier convention and asymptotic scale</h2>
+<h3>Integrate a symmetric odd envelope</h3><p>For \(f(x)=x\) on \([-1,1]\) and \(\omega=\pi\), compute \(I\) from the first moment. Which part vanishes?</p><details><summary>Work through the solution</summary>
+<p>Use \(h=1,c=0,A=0,B=1\). Since \(\sin\pi=0,\cos\pi=-1\), \(I=2i/\pi\). The cosine part vanishes by parity and \(x\sin(\pi x)\) is nonnegative on both sides, confirming the positive imaginary sign. Using a Fourier convention \(e^{-i\omega x}\) instead would conjugate the result. A test on this odd envelope detects a sign error that any even real envelope would miss.</p>
+</details>
+<h3>Give a sufficient interpolation-based error budget</h3><p>On a unit interval a calibrated envelope obeys \(|f''|\le6\). How many equal panels suffice for absolute error \(10^{-4}\) using the elementary bound? Does doubling frequency change the stated count?</p><details><summary>Work through the solution</summary>
+<p>The bound is \(6/(8N^2)\). Requiring it at most \(10^{-4}\) gives \(N\ge\sqrt{7500}\), so 87 panels suffice. The bound makes no frequency assumption beyond a known real linear phase and does not require more panels merely because frequency doubles. Floating-point phase reduction for extremely large arguments and uncertainty in the physical frequency are separate sources of error not included in the envelope bound.</p>
+</details>
+<h3>Estimate sensitivity to a miscalibrated frequency</h3><p>Show that a frequency error \(\delta\omega\) can perturb the integral by at most \(|\delta\omega|\int|x f(x)|dx\). Evaluate for the previous \(f=1+x\) on \([0,1]\) and \(|\delta\omega|=0.01\).</p><details><summary>Work through the solution</summary>
+<p>Differentiate under the integral to obtain \(I'(\omega)=i\int x f(x)e^{i\omega x}dx\), then bound its norm and integrate over the frequency error. Here \(\int_0^1x(1+x)dx=5/6\), giving an absolute perturbation at most 0.00833. Relative to the small exact response at \(20\pi\), this can be substantial. An exactly integrated carrier on the wrong frequency is therefore not a high-accuracy physical prediction merely because the quadrature test is exact.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://people.math.ethz.ch/~hiptmair/Seminars/OSCINT/ISE04.pdf">Iserles · numerical quadrature of highly oscillating Fourier integrals, full paper</a></li><li><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/06-adaptive-integration/">Course investigation · refinement and quadrature verification</a></li><li><a href="/fundamentals/numerics/approximation-and-quadrature/#experiment">Investigate interpolation error in a heat integral</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/02-clenshaw-curtis-and-aliasing/">Integrating cosine interpolants on nested grids</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/04-variance-reduction-and-budgeting/">Spend random samples where they reduce uncertainty</a></span></nav><script defer src="/assets/practical-mathematical-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

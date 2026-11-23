@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recover a transition frequency from two separated pulses · OneSimulation</title>
+<meta name="description" content="A two-level system is driven by two short pulses with a free evolution interval between them. Determine why a population measurement carries phase information. Use a scan at several delays to separate a constant detuning, intrinsic coherence loss and trial-to-trial frequency variation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/volumes/quantum-laboratory/03-ramsey-contrast/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Recover a transition frequency from two separated pulses · OneSimulation">
+<meta property="og:description" content="A two-level system is driven by two short pulses with a free evolution interval between them. Determine why a population measurement carries phase information. Use a scan at several delays to separate a constant detuning, intrinsic coherence loss and trial-to-trial frequency variation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/volumes/quantum-laboratory/03-ramsey-contrast/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a> / <a href="/fundamentals/physics/quantum-mechanics/volumes/quantum-laboratory/">Computational quantum experiments</a></p><h1>Recover a transition frequency from two separated pulses</h1><p class="lead">A two-level system is driven by two short pulses with a free evolution interval between them. Determine why a population measurement carries phase information. Use a scan at several delays to separate a constant detuning, intrinsic coherence loss and trial-to-trial frequency variation.</p><p class="byline">Unit 3 of 5</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#follow-the-amplitudes-through-both-pulses">Follow the amplitudes through both pulses</a><a href="#derive-two-envelopes-with-different-origins">Derive two envelopes with different origins</a><a href="#infer-parameters-from-quadratures-and-a-frequency-scan">Infer parameters from quadratures and a frequency scan</a><a href="#explore-two-mechanisms">Explore two mechanisms</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="follow-the-amplitudes-through-both-pulses">Follow the amplitudes through both pulses</h2>
+<p>Use basis \(|g\rangle,|e\rangle\). Let the first pulse prepare \((|g\rangle+|e\rangle)/\sqrt2\) in the frame of the applied oscillator. A detuning \(\Delta\) in radians per second accumulates a relative phase \(\Delta\tau\) in free time \(\tau\). Immediately before the second pulse each state has population one half; measuring population here cannot reveal detuning. Choose a second pulse equivalent to projecting onto \((|g\rangle+e^{-i\phi}|e\rangle)/\sqrt2\). Then one output population is</p>
+<div class="math display">\[P(\tau,\phi)=\tfrac12[1+\cos(\Delta\tau-\phi)].\]</div>
+<p>The sign of the phase follows our definitions of detuning and the reference pulse. Shifting the reference phase makes it possible to check that sign. A measurement using only \(\phi=0\) cannot distinguish \(\Delta\) from \(-\Delta\). Coherence is the off-diagonal density-matrix element that the second pulse converts into an observable population difference.</p>
+</section>
+<section>
+<h2 id="derive-two-envelopes-with-different-origins">Derive two envelopes with different origins</h2>
+<p>A homogeneous decay time \(T_2\) multiplies the off-diagonal element by \(e^{-\tau/T_2}\). If instead the detuning of each experimental shot is constant during that shot and drawn from a Gaussian distribution of mean \(\bar\Delta\) and standard deviation \(\sigma_\Delta\), average the complex phase, not its absolute value. Completing the square in the Gaussian integral gives \(\langle e^{i\Delta\tau}\rangle=e^{i\bar\Delta\tau}e^{-\sigma_\Delta^2\tau^2/2}\). With both independent mechanisms the measured contrast is \(C(\tau)=\exp[-\tau/T_2-\sigma_\Delta^2\tau^2/2]\). One mechanism gives an initial logarithmic slope, the other adds curvature. A single low contrast measured at just one delay cannot establish which one caused it.</p>
+</section>
+<section>
+<h2 id="infer-parameters-from-quadratures-and-a-frequency-scan">Infer parameters from quadratures and a frequency scan</h2>
+<p>Record the \(\phi=0,\pi/2\) outputs, then form \(X=2P_0-1=C\cos(\bar\Delta\tau)\) and \(Y=2P_{\pi/2}-1=C\sin(\bar\Delta\tau)\). Their length estimates contrast and their angle estimates accumulated phase modulo \(2\pi\). Suppose at \(0.50\,\mathrm{ms}\) the readings are 0.500 and 0.850. Then \(X=0,\ Y=0.700\), and the phase is \(\pi/2\) modulo \(2\pi\). With an independent bound \(|\bar\Delta/2\pi|&lt;1\,\mathrm{kHz}\), the implied cyclic detuning is \(+500\,\mathrm{Hz}\). Longer delays resolve fine frequency differences at the cost of phase ambiguity and declining contrast. Use a shorter-delay record to unwrap a longer one.</p>
+<p>At a contrast of 0.700 the relation \(-\ln(0.700)=\tau/T_2+\sigma_\Delta^2\tau^2/2\) supplies one equation for two unknowns. Several delays, with independent error bars, are needed to identify the linear and quadratic terms. At very low signal the length \(\sqrt{X^2+Y^2}\) has a positive noise bias. Fitting the two directly measured quadratures can be preferable to fitting the length.</p>
+</section>
+<section>
+<h2 id="explore-two-mechanisms">Explore two mechanisms</h2>
+<p>The graph holds the homogeneous \(T_2\) at 2 ms. It lets you set signed cyclic detuning and shot-to-shot cyclic frequency spread. Compare both quadrature populations with the upper contrast envelope. First reverse the sign of the detuning, then increase the spread without changing the mean. Which effect interchanges peaks of one quadrature and which damps both?</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/volumes/quantum-laboratory/03-ramsey-contrast/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="physics-lab-ramsey-contrast"></div>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>What is the fringe spacing in a scan of cyclic detuning at fixed delay of 0.80 ms?</p>
+<details><summary>Work through the solution</summary><p>One full phase cycle needs \(\delta f\,\tau=1\). The spacing is \(1/0.00080=1250\,\mathrm{Hz}\). The angular-frequency spacing is \(2\pi\) times larger.</p></details>
+<p>A fixed delay gives \(P_0=P_{\pi/2}=0.5\). Does that show a phase of 45 degrees?</p>
+<details><summary>Work through the solution</summary><p>Both centred quadratures are zero, so the contrast is unresolved and the angle is undefined. A phase of 45 degrees with finite contrast gives equal, nonzero centred quadratures.</p></details>
+<p>Explain how a refocusing pulse halfway through the evolution helps identify quasistatic detuning noise.</p>
+<details><summary>Work through the solution</summary><p>The pulse exchanges the phase-accumulating states, reversing phase winding for a detuning that stays constant through both halves. Random variations during the interval need not cancel. Recovering contrast in the refocused sequence supports a slowly varying contribution to the original envelope.</p></details>
+<p>Compare a continuous drive in the <a href="/fundamentals/physics/quantum-mechanics/chapters/09-driven-transitions/">transition chapter</a> with the role of the second pulse here.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/quantum-mechanics/volumes/quantum-laboratory/02-bell-visibility/">Which part of a Bell correlation survives imperfect state preparation?</a></span><span>Next<br><a href="/fundamentals/physics/quantum-mechanics/volumes/quantum-laboratory/04-spin-tomography/">When three perfectly legal spin measurements imply an impossible state</a></span></nav><script defer src="/assets/practical-physics-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

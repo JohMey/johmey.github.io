@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why stiff stability does not guarantee the expected order · OneSimulation</title>
+<meta name="description" content="A differential equation is constructed to have a smooth, known solution and a rapidly damped error mode. Use it to distinguish stability of the homogeneous equation, tracking of a moving target and the effect of off-grid stage forcing.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/04-stiff-forcing-and-order-reduction/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why stiff stability does not guarantee the expected order · OneSimulation">
+<meta property="og:description" content="A differential equation is constructed to have a smooth, known solution and a rapidly damped error mode. Use it to distinguish stability of the homogeneous equation, tracking of a moving target and the effect of off-grid stage forcing.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/04-stiff-forcing-and-order-reduction/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/">Dynamics and numerical time integration</a></p><h1>Why stiff stability does not guarantee the expected order</h1><p class="lead">A differential equation is constructed to have a smooth, known solution and a rapidly damped error mode. Use it to distinguish stability of the homogeneous equation, tracking of a moving target and the effect of off-grid stage forcing.</p><p class="byline">Unit 4 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/03-stiffness/">Background · Absolute stability and stiffness</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#manufactured">Choose an exact solution before increasing stiffness</a><a href="#equations">Calculate the error recurrence of backward Euler and the trapezoidal rule</a><a href="#midpoint">A midpoint constraint can force endpoint drift</a><a href="#experiment">Separate injected forcing error from a starting mismatch</a><a href="#tutorial">Tutorial · compare error mechanisms at fixed work</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="manufactured">Choose an exact solution before increasing stiffness</h2>
+<p>Let \(\lambda&lt;0\), let \(\phi(t)\) be a smooth specified function, and solve the Prothero–Robinson model \(y'=\lambda[y-\phi(t)]+\phi'(t)\), \(y(0)=\phi(0)\). The exact solution is \(y(t)=\phi(t)\) for every \(\lambda\). For an initial mismatch \(e_0\), the error evolves \(e(t)=e_0e^{\lambda t}\). Thus the observed slow solution and fast relaxation timescale can be varied independently. This makes the model an incisive verification case for a stiff integrator: changing \(\lambda\) leaves the exact waveform fixed while altering how errors created by discrete stages are damped.</p>
+<p>A stability function \(R(h\lambda)\) describes propagation of errors for the homogeneous test \(y'=\lambda y\). A-stability constrains \(|R(z)|\le1\) over the left half-plane. L-stability additionally requires \(R(z)\to0\) as \(|z|\to\infty\) in the stable stiff limit. Neither definition alone describes how a method evaluates a time-dependent forcing at its internal stages. Stage order and stiff accuracy can matter when those stage errors are multiplied by large \(|\lambda|\). Observing bounded output on a homogeneous damping test does not establish a method's full formal order on a forced stiff problem.</p>
+</section>
+<section><h2 id="equations">Calculate the error recurrence of backward Euler and the trapezoidal rule</h2>
+<p>Write \(e_n=y_n-\phi_n,\ z=h\lambda\). Backward Euler evaluates the whole right side at \(t_{n+1}\). Collect terms after subtracting the exact target:</p>
+<div class="math display">\[(1-z)e_{n+1}=e_n+\phi_n-\phi_{n+1}+h\phi'_{n+1}.\]</div>
+<p>The forcing defect begins at \(h^2\phi''_{n+1}/2\). Its effect on the next error is divided by \(1-z\). The rapidly decaying homogeneous mode is also divided by that factor. This can make backward Euler track a particular smooth imposed target surprisingly well in the very stiff regime even though its classical nonstiff order is one. Its behaviour should be assessed in the desired observables and step–stiffness range, rather than ranked solely by the formal method label.</p>
+<p>For the trapezoidal rule the corresponding equation is</p>
+<div class="math display">\[(1-z/2)e_{n+1}=(1+z/2)e_n+\phi_n-\phi_{n+1}+\tfrac h2(\phi_n'+\phi_{n+1}').\]</div>
+<p>The defect is the trapezoidal quadrature error in the derivative and begins at order \(h^3\). However, its homogeneous factor tends to \(-1\) when \(z\to-\infty\), so a pre-existing fast error can survive as a sign-alternating numerical component for many steps. With \(z=-100\) the factors are \(1/101=0.00990\) for backward Euler and \(-49/51=-0.96078\) for trapezoid. Both schemes are A-stable. Only the first immediately damps this unresolved mode. Event resets, inconsistent initial preparation or changing external loads can seed it.</p>
+</section>
+<section><h2 id="midpoint">A midpoint constraint can force endpoint drift</h2>
+<p>Implicit midpoint uses \(y_{n+1}-y_n=h[\lambda((y_n+y_{n+1})/2-\phi_m)+\phi'_m]\). For fixed \(h\) and large negative \(\lambda\), finite numerical states require the stage average to approach \(\phi_m\). Thus \(y_{n+1}\simeq2\phi_m-y_n\). The endpoints inferred from this interior constraint need not land on \(\phi_{n+1}\). Compare with trapezoid, which shares exactly the same scalar homogeneous stability function but evaluates two different times and states for nonlinear or time-dependent forcing.</p>
+<p>With \(y_n=\phi_n\) and \(\phi(t)=t^2\), the limiting endpoint error is \(2\phi(t_n+h/2)-\phi_n-\phi_{n+1}=-h^2/2\). The exact finite-\(z\) midpoint error starting from the target is \(zh^2/[4(1-z/2)]\). The trapezoidal derivative quadrature, in contrast, is exact for this quadratic target and keeps \(e_n=0\) at every step started exactly on it. Their common stability function did not predict their different forced response. In the midpoint example an alternating error can cancel at some output times, so inspecting only the final point at an even number of steps may obscure the largest per-step error. Compare all sampled times and separate propagated from newly injected defects.</p>
+</section>
+<section><h2 id="experiment">Separate injected forcing error from a starting mismatch</h2>
+<p>This experiment uses the target t squared with step 0.1 s. It propagates the exact error recurrences of backward Euler, trapezoid and midpoint rather than estimating the difference by subtracting two large trajectories. The reference also includes the exponentially decaying initial mismatch. Move the stiffness control until a time step contains a hundred fast relaxation times. With a nonzero initial error, trapezoid and midpoint preserve a visible alternating component even though the exact mismatch essentially disappears after one step.</p>
+<p>Set the initial mismatch to zero to isolate what an initially accurate trajectory gains from stage forcing. For this one quadratic target the trapezoidal derivative quadrature is exact and introduces no error, while midpoint still misses the endpoint because it constrains the value at the middle of the interval. Try a less stiff value and compare the peak and endpoint errors over all times. The demonstration is deliberately a manufactured exact target; substituting a cubic target would remove trapezoid’s special cancellation while keeping the same homogeneous stability function.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/04-stiff-forcing-and-order-reduction/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-stiff-forcing"></div>
+</section>
+<section><h2 id="tutorial">Tutorial · compare error mechanisms at fixed work</h2>
+<h3>Compute a forced stiff step exactly</h3><p>Set \(h=0.10,\lambda=-1000,\phi=t^2,\ y_0=0\). Compute errors after the first step for backward Euler, trapezoid and midpoint.</p><details><summary>Work through the solution</summary>
+<p>Here \(z=-100\), \(\phi(h)=0.01\). Backward Euler defect is \(h^2\), giving \(e_1=0.01/101=9.90\times10^{-5}\). Trapezoid yields zero error on this target. Midpoint gives \(z h^2/[4(1-z/2)]=-0.004902\), so its predicted \(y_1\) is only 0.005098. The exact target is smooth in all three experiments; the fast stiffness multiplies the way its curvature is sampled within the step.</p>
+</details>
+<h3>Check an unresolved initial-layer perturbation</h3><p>Keep \(z=-100\) and introduce an initial error of 0.01. How large is the propagated part after two steps, excluding new forcing defects?</p><details><summary>Work through the solution</summary>
+<p>The exact propagated part is \(0.01e^{-200}\), negligible here. Backward Euler gives \(0.01/101^2=9.80\times10^{-7}\). Both trapezoid and implicit midpoint give \(0.01(49/51)^2=0.00923\) with restored positive sign after the second step. Negative sign at alternate steps can be invisible if the code saves every second state. Monitoring stage and consecutive-step output helps identify this persistence.</p>
+</details>
+<h3>Design a refinement that distinguishes ordinary order from stiff forcing error</h3><p>Why are a study at fixed \(\lambda\) with \(h\to0\) and one at fixed \(h\lambda=-100\) different experiments? What should be plotted?</p><details><summary>Work through the solution</summary>
+<p>At fixed \(\lambda\), sufficiently small \(h\) eventually resolves the fast timescale and standard smooth-solution order can reappear. Holding \(h\lambda=-100\) changes the differential equation's error-relaxation scale at every refinement, deliberately keeping that fast mode unresolved while the exact target stays fixed. Plot maximum error over all physical sample times, the homogeneous amplification and representative stage defects for both sequences. Report the exact initial mismatch as well as \(\phi\). Otherwise a measured order can conflate target tracking, unremoved fast transients and cancellation at one favourable output time.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://people.math.ethz.ch/~grsam/NumMeth/NumCSE_Lecture_Document.pdf">ETH Zürich · numerical methods for CSE, time integrators and stability</a></li><li><a href="https://doi.org/10.1090/S0025-5718-1974-0331793-2">Prothero and Robinson · stability and accuracy of one-step methods for stiff systems</a></li><li><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/03-stiffness/">Course investigation · stiff numerical stability</a></li><li><a href="/fundamentals/numerics/ordinary-differential-equations/#experiment">Compare time-step error with conservation</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/03-collocation-for-boundary-values/">Solving a two-point boundary problem without guessing the start slope</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/">Volume contents</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

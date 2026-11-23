@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing a derivative step in a nonlinear solve · OneSimulation</title>
+<meta name="description" content="A smaller finite-difference step eventually makes Newton iterations worse. Derive truncation and evaluation errors, compare a complex perturbation and a directional derivative, and test which numerical derivative is meaningful for the actual residual implementation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Choosing a derivative step in a nonlinear solve · OneSimulation">
+<meta property="og:description" content="A smaller finite-difference step eventually makes Newton iterations worse. Derive truncation and evaluation errors, compare a complex perturbation and a directional derivative, and test which numerical derivative is meaningful for the actual residual implementation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Nonlinear systems and iterative methods</a></p><h1>Choosing a derivative step in a nonlinear solve</h1><p class="lead">A smaller finite-difference step eventually makes Newton iterations worse. Derive truncation and evaluation errors, compare a complex perturbation and a directional derivative, and test which numerical derivative is meaningful for the actual residual implementation.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/nonlinear-equations/chapters/03-tangent-and-secant/">Background · Newton and secant updates</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#difference">Derive competing contributions to error</a><a href="#complex">Obtain the slope from an imaginary perturbation</a><a href="#direction">Audit a Jacobian action before assembling a matrix</a><a href="#experiment">Find the useful step before a Newton update</a><a href="#stable-form">Change the evaluation before changing the step</a><a href="#tutorial">Tutorial · design tests for smoothness and implementation errors</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="difference">Derive competing contributions to error</h2>
+<p>Suppose \(f\) is smooth and you need its slope at \(x\) to form a Newton correction. A forward difference \(D_h=[f(x+h)-f(x)]/h\) has Taylor expansion \(f'(x)+hf''(x)/2+O(h^2)\). A centred difference \([f(x+h)-f(x-h)]/(2h)\) instead cancels the even terms, leaving \(f'(x)+h^2 f'''(x)/6+O(h^4)\). Both limits are exact in real arithmetic as \(h\to0\). The program, however, returns approximate residual values, and a subtraction of nearby values can lose significant digits. If each absolute evaluation error is at most \(\delta\), the derivative error from those perturbations is at most \(2\delta/h\) for forward difference and \(\delta/h\) for the centred one.</p>
+<p>Thus an illustrative forward error bound has shape \(a h+b/h\); minimisation gives \(h_*=\sqrt{b/a}\). The centred bound \(a h^2+b/h\) has minimiser \(h_*=(b/(2a))^{1/3}\). Floating-point roundoff acting on \(O(1)\) residual values often gives the familiar square-root and cube-root machine-precision scales, but the physical units of \(x\), the scale of the derivative and noise from the residual solver must be included. A nonlinear function evaluated by an iterative PDE solve can have a much larger \(\delta\) than roundoff. Repeating the inner solve with tighter tolerance can shift the optimal step considerably.</p>
+<p>For \(f(x)=e^x\) at zero, the forward leading error is \(h/2\), centred error \(h^2/6\). If \(\delta=10^{-10}\) as an absolute per-value uncertainty, a forward worst-case bound gives optimal \(h=2\times10^{-5}\), while the centred model gives \(h=(3\times10^{-10})^{1/3}=6.69\times10^{-4}\). The centred step can be much larger yet retain lower truncation error. This is a scale estimate using worst-case errors, not a guarantee about the phase or stochastic correlation of actual errors. If queries share common random numbers or a warm-started solver, errors can partly cancel or acquire a systematic derivative bias.</p>
+</section>
+<section><h2 id="complex">Obtain the slope from an imaginary perturbation</h2>
+<p>For a real-valued function with an analytic complex extension near the real argument, expand \(f(x+ih)=f(x)+ihf'(x)-h^2f''(x)/2-ih^3f'''(x)/6+\cdots\). Taking its imaginary part and dividing by \(h\) gives second-order accuracy with no explicit subtraction of two nearly equal real numbers. For \(e^x\) at zero, the result is \(\sin h/h\). At very small representable \(h\) the imaginary signal is itself proportional to \(h\) and may still be carried accurately by analytic elementary operations. This advantage disappears if the computation discards imaginary parts, uses nonanalytic absolute values, branches on the perturbation, or applies a black-box routine using complex arithmetic for unrelated purposes. Automatic differentiation supplies another route through differentiable implemented operations, but it too needs the program's mathematical definition to match the derivative being requested.</p>
+</section>
+<section><h2 id="direction">Audit a Jacobian action before assembling a matrix</h2>
+<p>For \(F:\mathbb R^n\to\mathbb R^m\), pick direction \(v\) and examine \(R(h)=\|F(x+hv)-F(x)-hJv\|\). If a proposed Jacobian action is correct and \(F\) is twice differentiable, \(R(h)\) initially scales like \(h^2\). A wrong first derivative generally produces a leading \(O(h)\) term. The test checks orientation, units, signs and chain rules without constructing a dense finite-difference matrix. Test several directions and scales; a wrong matrix can annihilate the one chosen direction. At very small \(h\) a roundoff or inner-solver floor eventually hides both ideal slopes. When working with constraints use perturbations remaining inside the physical domain or give derivatives in a local feasible parametrisation.</p>
+</section>
+<section><h2 id="experiment">Find the useful step before a Newton update</h2>
+<p>The experiment evaluates the forward, centred and complex-step slopes of a smooth elementary residual in floating-point arithmetic. It plots absolute errors on logarithmic scales and compares them with the exact derivative. Move the evaluation point and note that occasional accidental zeros are rounded at the plotting floor. Their exact location is not a robust guarantee for a different residual. Compare the range of steps with a reproducible error trend before interpreting one apparently perfect result.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/01-derivatives-at-machine-precision/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-derivative-step"></div>
+</section>
+<section><h2 id="stable-form">Change the evaluation before changing the step</h2>
+<p>For the exponential the forward numerator has an exact factorisation \(e^{x+h}-e^x=e^x(e^h-1)\). A numerical library's <code>expm1(h)</code> evaluates the last factor accurately even for very small \(h\), using a local series or a reduced-argument algorithm. Form the quotient as \(e^x\,\mathrm{expm1}(h)/h\). Its mathematical truncation error is still \(e^xh/2+O(h^2)\). Its rounding behaviour differs because the two terms near \(e^x\) are never computed separately. At \(x=1\) and \(h=10^{-18}\), adding \(h\) to a binary64 value of one rounds back to one. The direct forward quotient then returns zero. The factored evaluation gives the derivative \(e\) to working precision.</p>
+<p>This experiment diagnoses the source of an error curve. If the algebraic form is inaccessible, a finite-difference checker sees black-box function values and cannot apply the factorisation. If the entire residual is available, stable elementary functions can change the derivative accuracy of a Newton step without changing its formal order.</p></section>
+<section><h2 id="tutorial">Tutorial · design tests for smoothness and implementation errors</h2>
+<h3>Diagnose a forward-difference Newton iteration</h3><p>For \(f(x)=x^2-2\) at \(x=1.4\), obtain the exact dependence of a forward derivative estimate on \(h\). Compare one Newton step using \(h=0.1\) with the exact Jacobian.</p><details><summary>Work through the solution</summary>
+<p>The difference quotient is \(2x+h=2.8+h\). The residual is \(-0.04\). The exact step gives \(x_{\rm new}=1.4+0.04/2.8=1.414286\); using 0.1 gives \(1.413793\). Centred differences evaluate this polynomial's derivative exactly in real arithmetic for every nonzero \(h\), but roundoff can spoil very small steps. The discrepancy at large \(h\) is a calculable systematic truncation, so merely tightening the outer Newton stopping tolerance cannot remove it.</p>
+</details>
+<h3>Catch a direction missed by one test</h3><p>A proposed Jacobian differs from the correct one by \(E=\left(\begin{smallmatrix}1&amp;-1\\0&amp;0\end{smallmatrix}\right)\). Compare tests along \((1,1)\) and \((1,0)\) and show which observed slope would be misleading.</p><details><summary>Work through the solution</summary>
+<p>The first direction lies in the nullspace of \(E\), so its Taylor remainder can show the expected \(h^2\) slope despite an incorrect Jacobian. The second has \(Ev=(1,0)\), producing an \(O(h)\) defect. Random directions augment a set of unit- or physics-informed probes, particularly when an error affects a single column or constraint block. One successful slope does not establish correctness of an entire matrix.</p>
+</details>
+<h3>Determine whether complex step applies to a norm</h3><p>A residual returns \(f(x)=|x|\) using a complex modulus routine. At \(x=1\), what does a complex-step call produce? Is this evidence that the real function has zero derivative there?</p><details><summary>Work through the solution</summary>
+<p>The routine computes \(|1+ih|=\sqrt{1+h^2}\), purely real, so the reported complex-step slope is zero. The real derivative at \(x=1\) equals one. The implementation used a nonanalytic map of a complex variable. At a known positive branch the analytic local extension \(f(z)=z\) gives the correct derivative, while the real function at the kink \(x=0\) has no classical derivative. Check both the real regularity and what complex arithmetic actually executes before applying this technique.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://mdolab.engin.umich.edu/bibliography/Martins2003a">Martins, Sturdza and Alonso · complex-step derivative approximation and implementation</a></li><li><a href="https://people.math.ethz.ch/~grsam/NumMeth/NumCSE_Lecture_Document.pdf">ETH Zürich · numerical methods for CSE, chapter 8 on nonlinear equations</a></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/10-inexact-newton/">Course investigation · inexact Newton updates</a></li><li><a href="/fundamentals/numerics/nonlinear-equations/#experiment">Solve an implicit cooling step with a changing residual</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/02-mixing-fixed-point-iterates/">Accelerating fixed points with differences of residuals</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find a crossing between accepted time steps · OneSimulation</title>
+<meta name="description" content="An integrator can approximate a trajectory accurately yet report a poor switch time. Construct a continuous interpolant, relate a state error to an event-time error and inspect what happens when a trajectory merely touches a threshold.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/01-dense-output-and-event-times/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Find a crossing between accepted time steps · OneSimulation">
+<meta property="og:description" content="An integrator can approximate a trajectory accurately yet report a poor switch time. Construct a continuous interpolant, relate a state error to an event-time error and inspect what happens when a trajectory merely touches a threshold.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/01-dense-output-and-event-times/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/">Dynamics and numerical time integration</a></p><h1>Find a crossing between accepted time steps</h1><p class="lead">An integrator can approximate a trajectory accurately yet report a poor switch time. Construct a continuous interpolant, relate a state error to an event-time error and inspect what happens when a trajectory merely touches a threshold.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/01-global-error/">Background · Initial values and propagated error</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#events">An event is a root of a composite function</a><a href="#interpolation">Construct a state and slope interpolant on one accepted interval</a><a href="#algorithm">Bracket on the physical trajectory and restart after a transition</a><a href="#experiment">Compare interpolation errors independently of the propagation error</a><a href="#threshold">Distinguish uncertainty in the threshold from time discretisation</a><a href="#tutorial">Tutorial · assess a reported event time</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="events">An event is a root of a composite function</h2>
+<p>Let \(y'=f(t,y)\) and let a sensor or change of dynamics be described by \(g(t,y)=0\). Along an exact trajectory the scalar event function is \(h(t)=g(t,y(t))\). A simple event at \(t_*\) satisfies \(\dot h_*=g_t+g_yf\ne0\). If approximate trajectory or sensor evaluation introduces error \(\delta h\), linearisation around the crossing gives \(\delta t\simeq-\delta h/\dot h_*\). A small state error can therefore imply a much larger time error if the crossing is nearly tangential. Reporting an event timestamp to machine precision after bisecting a low-order interpolant is not equivalent to knowing the physical crossing time that accurately.</p>
+<p>Consider a dimensionless unit-frequency oscillator with \(y=\cos t,\ y'=-\sin t\) during the first half cycle. Its first falling crossing of threshold \(a\in(0,1)\) occurs at \(t_*=\arccos a\), with slope \(-\sqrt{1-a^2}\). At \(a=0.5\), a positive vertical interpolation error \(10^{-3}\) can delay the crossing by about \(0.00115\) time units. At \(a=0.9999\) the same linear estimate is about 0.0707, comparable with or larger than the event time itself; the simple linear local approximation then also fails. At precisely \(a=1\) the surface is tangent at the maximum and sign-change tests can miss it altogether.</p>
+</section>
+<section><h2 id="interpolation">Construct a state and slope interpolant on one accepted interval</h2>
+<p>Suppose samples of state and derivative are available at \(t_n,t_{n+1}=t_n+h\). Write \(s=(t-t_n)/h\) and choose a cubic \(p(s)\) matching \(p(0)=y_n,p(1)=y_{n+1},p_s(0)=hf_n,p_s(1)=hf_{n+1}\). Solving these four linear conditions gives</p>
+<div class="math display">\[p=(2s^3-3s^2+1)y_n+(s^3-2s^2+s)hf_n+(-2s^3+3s^2)y_{n+1}+(s^3-s^2)hf_{n+1}.\]</div>
+<p>For an exact scalar trajectory sufficiently smooth in time, the Hermite error is \(y(t)-p(t)=y^{(4)}(\xi)(t-t_n)^2(t-t_{n+1})^2/4!\), bounded by \(h^4\max|y^{(4)}|/384\). Linear interpolation instead has error bounded by \(h^2\max|y''|/8\). Combine either bound with a known lower bound on \(|\dot h|\) in a bracket to bound event-time error. In an actual ODE solve, \(y_n,f_n\) are numerical, so interpolation and integrated state errors both contribute. A high-order interpolant cannot repair incorrect endpoint data or sample a discontinuity assumed smooth.</p>
+</section>
+<section><h2 id="algorithm">Bracket on the physical trajectory and restart after a transition</h2>
+<p>At each accepted interval compare event values at both ends. For a simple crossing of the requested direction, solve \(g(t,p(t))=0\) inside that interval using a bracketed root finder. The bracket controls the algebraic root-finding error; independent time-step refinement measures trajectory error. If the dynamics change at the event, truncate the old step there, apply any specified reset \(y^+=R(t_*,y^-)\) and restart the integrator under the new right side. Propagating the old smooth interpolant through a change of dynamics can corrupt both state and subsequent event ordering.</p>
+<p>If a surface stays exactly active over a finite interval, repeated detection at the same time can stall the integration. A model of contact, hysteresis or directional rearming may be physically appropriate, depending on what the event means. Merely nudging the time forward by an arbitrary tolerance can skip a nearby second event. Similarly two opposite crossings within one large accepted interval may yield equal endpoint signs. A maximum step guided by known physical timescales, supplementary extrema detection or an analytically enclosed event function can be needed. Accuracy control on the smooth state alone does not guarantee detection of every specified surface crossing.</p>
+</section>
+<section><h2 id="experiment">Compare interpolation errors independently of the propagation error</h2>
+<p>The calculator uses exact cosine endpoint samples and their derivatives, then locates the first falling crossing on a uniform time grid by linear or cubic Hermite interpolation. The curves show error against step spacing on a logarithmic vertical scale. Their irregular minima occur when a grid point happens to coincide with the event. Look for the error envelope over several spacings. At threshold 0.5 the exact result is 1.047198 s. Moving the threshold changes both the crossing slope and its position relative to the sampled grid.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/01-dense-output-and-event-times/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-event-location"></div>
+</section>
+<section><h2 id="threshold">Distinguish uncertainty in the threshold from time discretisation</h2>
+<p>Two clocks can agree on an event and still report a poorly determined arrival time if the physical threshold is uncertain. For a calibrated level \(a\) the falling crossing solves \(\cos t_*=a\), so implicit differentiation gives \(dt_*/da=-1/\sqrt{1-a^2}\). A level error of \(0.002\) near \(a=0.5\) produces a timing uncertainty of about \(0.00231\) s for the unit-frequency benchmark. At \(a=0.9\) the same device gives \(0.00459\) s. Close to the turning point the trace is almost horizontal. Reducing the root finder's tolerance cannot remove that physical loss in sensitivity.</p>
+<p>If the numerical trajectory also has a known absolute state error bound \(\eta\), divide that bound by a lower bound on the crossing speed in the bracket. The result is a deterministic timing allowance. An independent random threshold error has a standard deviation and calls for a statistical interpretation. Adding those numbers in quadrature would need a probability model for both. Reporting the two separately preserves what the measurement and the solver actually established.</p></section>
+<section><h2 id="tutorial">Tutorial · assess a reported event time</h2>
+<h3>Get a crossing from just two samples</h3><p>Use \(y=\cos t,\ a=0.5\) with samples at \(t=0.8,1.2\). Compute the linearly interpolated time and its error. Why does its sign follow from curvature?</p><details><summary>Work through the solution</summary>
+<p>The endpoint values are 0.696707 and 0.362358; the fractional position is \((0.696707-0.5)/(0.696707-0.362358)=0.5883\), giving \(t_L\simeq1.0353\). It is about 0.0119 s early. Over this interval \(\cos t&gt;0\), so \(y''=-\cos t&lt;0\). A straight chord lies below the concave curve; the falling chord reaches the threshold before the true trajectory.</p>
+</details>
+<h3>Bound a Hermite crossing-time error</h3><p>On the same interval use \(|y^{(4)}|\le1,\ |\dot y|\ge\sin0.8\). Give a simple guaranteed bound assuming exact endpoints and exact solution of the interpolating cubic root.</p><details><summary>Work through the solution</summary>
+<p>The state interpolation bound is \(0.4^4/384=6.67\times10^{-5}\). Dividing by \(\sin0.8=0.7174\) gives \(9.29\times10^{-5}\) s. This uses monotonicity of the exact trajectory to convert a vertical defect at the computed root into a horizontal difference. It does not assume the cubic derivative equals the true derivative. Numerical endpoint error would need to be added in state units first.</p>
+</details>
+<h3>Distinguish a tangency from a missed sign change</h3><p>A gap sensor follows \(h(t)=(t-1)^2-\delta\). Compare event detection at \(\delta=0,10^{-4},-10^{-4}\) over the interval \([0.9,1.1]\).</p><details><summary>Work through the solution</summary>
+<p>Both endpoints are positive in all three cases. At zero there is a repeated touching event. At positive \(\delta\) there are two true crossings at 0.99 and 1.01 with opposite directions. At negative \(\delta\) there is no root. Locating and evaluating the internal minimum distinguishes the cases when the uncertainty is below \(|\delta|\). A sign test at just the endpoints cannot determine any of these distinctions, however accurately it evaluates those endpoints.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://people.math.ethz.ch/~grsam/NumMeth/NumCSE_Lecture_Document.pdf">ETH Zürich · numerical methods for CSE, chapter 11 on numerical time integration</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html">SciPy solve_ivp · continuous output and sign-change event detection</a></li><li><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/05-adaptive-steps/">Course investigation · adaptive time stepping</a></li><li><a href="/fundamentals/numerics/ordinary-differential-equations/#experiment">Compare time-step error with conservation</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/volumes/ordinary-differential-equations-methods/02-delay-equations-by-history/">A delayed feedback model needs a history, not one starting value</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

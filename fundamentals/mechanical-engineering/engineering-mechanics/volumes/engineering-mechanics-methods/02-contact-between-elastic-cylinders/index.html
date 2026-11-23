@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact pressure between elastic cylinders · OneSimulation</title>
+<meta name="description" content="Two polished cylindrical rollers touch along a narrow strip. Dividing load by a nominal full face area gives little indication of the actual pressure. Use the local shape of the gap and elastic half-space compliance to obtain the pressure distribution, and decide whether a measured contact width can determine material stiffness.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/02-contact-between-elastic-cylinders/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Contact pressure between elastic cylinders · OneSimulation">
+<meta property="og:description" content="Two polished cylindrical rollers touch along a narrow strip. Dividing load by a nominal full face area gives little indication of the actual pressure. Use the local shape of the gap and elastic half-space compliance to obtain the pressure distribution, and decide whether a measured contact width can determine material stiffness.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/02-contact-between-elastic-cylinders/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/">Stress, deformation and structural measurement</a></p><h1>Contact pressure between elastic cylinders</h1><p class="lead">Two polished cylindrical rollers touch along a narrow strip. Dividing load by a nominal full face area gives little indication of the actual pressure. Use the local shape of the gap and elastic half-space compliance to obtain the pressure distribution, and decide whether a measured contact width can determine material stiffness.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/05-combined-stress/">Background · Stress transformation and combined loading</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#geometry">Replace the undeformed outlines by their local curvatures</a><a href="#solution">Why the square-root distribution fits the quadratic gap</a><a href="#measurement">Use a width series and check its scaling</a><a href="#pressure-profile">Compare a resolved pressure trace with total applied force</a><a href="#tutorial-one">Tutorial · Infer a modulus and estimate its systematic sensitivity</a><a href="#tutorial-two">Tutorial · Change the engaged roller length</a><a href="#tutorial-three">Tutorial · Can width identify both material moduli?</a></nav></aside><article class="prose reference"><section><h2 id="geometry">Replace the undeformed outlines by their local curvatures</h2>
+<p>Take two long parallel cylinders pressed together by total force \(F\) uniformly per engaged length \(L\). Ignore tangential traction, adhesion, end effects and plastic deformation. In a cross-section perpendicular to the axes the local undeformed gap grows as \(x^2/(2R^*)\), with \(1/R^*=1/R_1+1/R_2\) for two externally convex cylinders. A flat counterpart corresponds to infinite radius. For an internal conforming surface the signed curvature changes, but nearly conformal contact can violate the small-patch assumptions used here.</p>
+<p>Normal deformations of both elastic bodies add. For isotropic half-spaces in line contact their combined modulus obeys \(1/E^*=(1-\nu_1^2)/E_1+(1-\nu_2^2)/E_2\). Replacing this by one body's modulus overestimates stiffness whenever the partner also deforms significantly. For two identical steels with \(E=210\) GPa and \(\nu=0.30\), \(E^*=115.4\) GPa. An elastically rigid counterpart would give roughly twice that value for the same first body.</p>
+</section>
+<section><h2 id="solution">Why the square-root distribution fits the quadratic gap</h2>
+<p>In two-dimensional half-space elasticity a line element of pressure produces a logarithmic normal surface displacement up to an arbitrary reference. Differentiating the displacement removes that reference and gives a singular kernel proportional to the inverse horizontal separation. In contact the two deformed faces conform, so the derivative of their combined displacement has magnitude \(x/R^*\). Using a consistent compressive sign convention, the elastic equation for \(|x|&lt;a\) is</p>
+<div class="math display">\[\frac{x}{R^*}=\frac{2}{\pi E^*}\operatorname{PV}\int_{-a}^{a}\frac{p(s)}{x-s}\,ds .\]</div>
+<p>The trial shape \(p(s)=p_0\sqrt{1-s^2/a^2}\) gives a linear principal-value integral \(\pi p_0 x/a\), exactly matching the gap slope. Normal force per unit length \(W=F/L\) is the integral of this pressure, the area of a semiellipse: \(W=\pi ap_0/2\). Combining the two conditions determines both quantities,</p>
+<div class="math display equation-chain"><div class="equation-step">\[a=\sqrt{\frac{4WR^*}{\pi E^*}},\]</div><div class="equation-step">\[p_0=\frac{2W}{\pi a}.\]</div></div>
+<p>The full width is \(2a\). Central pressure exceeds the average over the strip by \(4/\pi\). The normal approach of ideal infinite cylinders has a logarithmic outer-length dependence, so absolute displacement from a frame is less cleanly predicted by this local half-space construction than pressure or width. Include whole-body and fixture compliance before using crosshead displacement to infer a local contact modulus.</p>
+</section>
+<section><h2 id="measurement">Use a width series and check its scaling</h2>
+<p>For \(R^*=10\) mm, \(E^*=115\) GPa and \(W=20{,}000\) N/m the predicted half-width is 47.1 micrometres and peak pressure about 271 MPa. Doubling force at constant length increases both width and pressure by a factor of \(\sqrt2\). A nominal area built from the full millimetre-scale roller width would understate this pressure dramatically. Conversely, comparing peak hydrostatic or normal pressure directly with uniaxial yield stress is not a rigorous yield condition: evaluate the multiaxial subsurface stress and actual material strength for that separate question.</p>
+<p>A pressure-sensitive film or optical contact image has finite resolution and can broaden the visible strip. Fit the square of measured half-width against \(W\). A nonzero intercept, load-dependent slope or hysteresis on unloading can reveal optical threshold bias, initial crowning or irreversible deformation. Surface roughness can produce sparse microcontacts inside a broader nominal strip. Compare several axial positions to detect end loading or misalignment before interpreting the width as uniform line contact.</p>
+<p><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/15-annular-elasticity/#try-it">Compare another geometry-dependent elastic stress distribution in the thick-cylinder experiment</a></p>
+</section>
+<section><h2 id="pressure-profile">Compare a resolved pressure trace with total applied force</h2>
+<p>The pressure texture of a two-dimensional Hertz contact gives more information than one width measurement. Predict the integrated line load by integrating the measured pressure over transverse position and compare it with a load cell divided by contact length. The model semiellipse has mean pressure across its width equal to one quarter of pi times its peak. A sensor with limited spatial resolution tends to round the central peak and move the apparent edges. If its response kernel has unit area and the full footprint is recorded, however, convolution preserves the integrated force. Disagreement in area suggests gain error, incomplete coverage or a departure from uniform loading along the roller length.</p>
+<p>Try the selected loading and then double it while keeping radius and modulus fixed. The recorded footprint broadens, so rescale the transverse axis by each run's own calculated half-width. Also divide pressure by its own peak. The two normalised shapes should collapse. That collapse tests shape and linear elasticity, while the scale factors separately test the force and length calibration. Repeating with the load applied closer to an end changes the axial uniformity assumption; a contact trace at the middle may then give a different inferred load from a trace close to the end.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/02-contact-between-elastic-cylinders/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-hertz-line"></div>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Infer a modulus and estimate its systematic sensitivity</h2>
+<p>A roll pair with \(R^*=12.0\) mm is loaded at 15.0 kN/m. A camera gives a full width of 96.0 micrometres. Infer \(E^*\). If optical blur makes the true full width five percent smaller than the reported value, by what factor does the inferred modulus change?</p>
+<details><summary>Convert full width before inverting</summary>
+<p>Using \(a=48.0\) micrometres gives \(E^*=4WR^*/(\pi a^2)=99.5\) GPa. Replacing \(a\) by \(0.95a\) raises the inferred modulus by \(1/0.95^2=1.108\), about eleven percent. Treating the quoted full width as \(a\) would instead underestimate modulus fourfold. Independent optical calibration and known line load both matter to a meaningful inverse measurement.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Change the engaged roller length</h2>
+<p>A fixed total force is spread uniformly over twice the original length. Predict changes in central pressure, half-width and total nominal contact area. Which change would reveal a failure of uniform load sharing?</p>
+<details><summary>Track load per length and the physical area</summary>
+<p>The line load halves, so width and pressure each fall to \(1/\sqrt2\) of their initial values. Total nominal area \(2aL\) rises by \(\sqrt2\), preserving total force after integrating pressure. If measured width at the centre remains nearly fixed while a large near-end maximum develops, the assumption that \(F/L\) is spatially uniform is suspect. Roller bending, tapered clearance or imposed misalignment can redistribute line load even at unchanged total force.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Can width identify both material moduli?</h2>
+<p>A laboratory wants to estimate \(E_1\) and \(E_2\) using the same pair at several loads. Is this possible from ideal widths alone if both Poisson ratios are known? Design a measurement that supplies additional information.</p>
+<details><summary>Identify the one combination present in the forward equation</summary>
+<p>Every load yields the same effective reciprocal modulus combination. A load sweep tests the square-root law and improves precision but does not separate the two material moduli. Pair one unknown with a reference body of independently measured modulus and known curvature, then solve for the first unknown. A second arrangement constrains the other. Use multiple loads to verify elasticity and repeatability in each arrangement; a permanent flat left after unloading invalidates the reversible Hertzian inversion.</p>
+</details>
+<p><a href="https://ocw.mit.edu/courses/2-002-mechanics-and-materials-ii-spring-2004/ada113f8904250a71dee71f0fdd8c20b_lab_1.pdf">MIT Mechanics and Materials II · elastic deformation and Hertzian contact measurements</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/01-torsion-in-multicell-sections/">Torsion in a thin-walled two-cell section</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/volumes/engineering-mechanics-methods/03-plastic-bending-and-springback/">Springback and residual stress after plastic bending</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

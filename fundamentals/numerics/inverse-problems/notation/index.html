@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inverse problems and least squares · Notation and assumptions · OneSimulation</title>
+<meta name="description" content="Read each defining equation with its assumptions and units, then follow the link to the argument that gives the equation its meaning.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/notation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Inverse problems and least squares · Notation and assumptions · OneSimulation">
+<meta property="og:description" content="Read each defining equation with its assumptions and units, then follow the link to the argument that gives the equation its meaning.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/notation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Inverse problems and least squares · Notation and assumptions</h1><p class="lead">Read each defining equation with its assumptions and units, then follow the link to the argument that gives the equation its meaning.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#adjoint-sensitivity">Adjoint sensitivity</a><a href="#forward-operator">Forward operator</a><a href="#posterior-predictive">Posterior predictive</a><a href="#resolution-matrix">Resolution matrix</a><a href="#tikhonov-estimate">Tikhonov estimate</a><a href="#whitened-residual">Whitened residual</a></nav></aside><article class="prose reference"><section><h2 id="adjoint-sensitivity">Adjoint sensitivity</h2><div class="math display">\[J^\mathsf T r\]</div><p>This operation maps a data-space vector back to parameter space. For a discretised physical model the chosen inner products determine the correct adjoint.</p><p><a href="/fundamentals/numerics/inverse-problems/chapters/09-adjoint-gradients/#first-principles">Derivation · Adjoint gradients through a forward solver</a></p></section><section><h2 id="forward-operator">Forward operator</h2><div class="math display">\[y=G(m)+\eta\]</div><p>The operator maps parameters to predicted observations. The noise and discrepancy model must use the same physical units as the readout.</p><p><a href="/fundamentals/numerics/inverse-problems/chapters/01-forward-maps/#first-principles">Derivation · Forward maps, information and identifiability</a></p></section><section><h2 id="posterior-predictive">Posterior predictive</h2><div class="math display">\[p(y_*|y)=\int p(y_*|m)p(m|y)\,dm\]</div><p>A distribution over parameters induces uncertainty in a new observation. Measurement noise and uncertainty of the prediction mean are distinct contributions.</p><p><a href="/fundamentals/numerics/inverse-problems/chapters/17-posterior-prediction/#one-model-supplies-many-possible-targets">Derivation · Predicting a new measurement when the fitted parameters are correlated</a></p></section><section><h2 id="resolution-matrix">Resolution matrix</h2><div class="math display">\[R=G^\dagger_{\rm reg}G\]</div><p>For a linear regularised inverse, a row describes how the estimated parameter mixes the actual components. A sharp-looking result may still have broad resolution kernels.</p><p><a href="/fundamentals/numerics/inverse-problems/chapters/12-resolution-audit/#first-principles">Derivation · A reconstruction audit from observations to a defensible claim</a></p></section><section><h2 id="tikhonov-estimate">Tikhonov estimate</h2><div class="math display">\[\arg\min_m\{\|Gm-y\|^2+\alpha\|Lm\|^2\}\]</div><p>The regularisation operator selects which departures are costly. Compare values of alpha only after fixing how both terms are scaled.</p><p><a href="/fundamentals/numerics/inverse-problems/chapters/04-regularisation/#first-principles">Derivation · Regularisation, resolution and the price of stability</a></p></section><section><h2 id="whitened-residual">Whitened residual</h2><div class="math display">\[r=\Sigma^{-1/2}(y-G(m))\]</div><p>For a known positive covariance this expresses mismatch in noise units and removes the modelled correlations between measurements.</p><p><a href="/fundamentals/numerics/inverse-problems/chapters/02-whitened-least-squares/#first-principles">Derivation · Weighted least squares and residual diagnostics</a></p></section></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

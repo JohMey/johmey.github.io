@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radiative exchange in a grey enclosure · OneSimulation</title>
+<meta name="description" content="A thin radiation shield does not need to absorb all incoming radiation to reduce heat transfer. Multiple reflections connect every surface to every other visible surface. Build the radiosity equations, recover the two-plate result and infer what can be learned from a measured shield temperature.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/03-radiation-shields-and-enclosures/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Radiative exchange in a grey enclosure · OneSimulation">
+<meta property="og:description" content="A thin radiation shield does not need to absorb all incoming radiation to reduce heat transfer. Multiple reflections connect every surface to every other visible surface. Build the radiosity equations, recover the two-plate result and infer what can be learned from a measured shield temperature.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/03-radiation-shields-and-enclosures/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/">Thermal processes and transport in engineering</a></p><h1>Radiative exchange in a grey enclosure</h1><p class="lead">A thin radiation shield does not need to absorb all incoming radiation to reduce heat transfer. Multiple reflections connect every surface to every other visible surface. Build the radiosity equations, recover the two-plate result and infer what can be learned from a measured shield temperature.</p><p class="byline">Unit 3 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/12-radiation/">Background · Thermal radiation and enclosure exchange</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#radiosity">Separate emission, reflection and net heat flux</a><a href="#two-plates">Eliminate the unknown reflected fields</a><a href="#shield">Determine its temperature from the steady flux</a><a href="#shielding">Use a floating shield as a two-sided calorimeter</a><a href="#tutorial-one">Tutorial · Can two identical black plates benefit from a black shield?</a><a href="#tutorial-two">Tutorial · Test a view-factor proposal by reciprocity</a><a href="#tutorial-three">Tutorial · Infer an omitted conductive heat leak</a></nav></aside><article class="prose reference"><section><h2 id="radiosity">Separate emission, reflection and net heat flux</h2>
+<p>For opaque diffuse-grey isothermal surface \(i\), let \(G_i\) be irradiation arriving from the enclosure and \(J_i\) be all radiative power leaving per unit area. The outgoing consists of thermal emission plus reflected irradiation. With emissivity \(\epsilon_i\), reflectivity \(1-\epsilon_i\) and blackbody emissive power \(E_{bi}=\sigma T_i^4\), one obtains \(J_i=\epsilon_i E_{bi}+(1-\epsilon_i)G_i\). Net outward heat is \(Q_i=A_i(J_i-G_i)\).</p>
+<p>Geometry enters through view factors: \(G_i=\sum_jF_{ij}J_j\) for a closed nonparticipating enclosure of diffuse surfaces, provided reciprocity \(A_iF_{ij}=A_jF_{ji}\) has been used consistently. Each closed-enclosure row sums to one, and summing \(Q_i\) over all surfaces gives zero. A concave surface can see itself, so setting every diagonal view factor to zero would break some real enclosure models. For an opening to surroundings include an explicit environmental surface or known irradiance source.</p>
+</section>
+<section><h2 id="two-plates">Eliminate the unknown reflected fields</h2>
+<p>Two large parallel plates of equal area see only one another. Thus \(G_1=J_2,G_2=J_1\). Eliminate both radiosities, or add a surface resistance for each plate and a unit space resistance in the diffuse network. Net flux from hot to cold becomes</p>
+<div class="math display">\[q''=\frac{\sigma(T_1^4-T_2^4)}{1/\epsilon_1+1/\epsilon_2-1}.\]</div>
+<p>The denominator is not simply the reciprocal of the product of emissivities because photons can reflect repeatedly before absorption. In the black limit both emissivities are one and the cold plate's own emission remains in the numerator. At equal temperature flux vanishes even when emissivities differ. Measuring only outgoing hot-side radiance without reflected incoming light cannot determine heat loss.</p>
+<p>For \(T_1=500\) K, \(T_2=300\) K and emissivities 0.80 and 0.60, the blackbody power difference is 3085 W/m² and the denominator 1.9167, giving about 1609 W/m². Place an opaque thermally floating shield between the plates, with both faces of emissivity 0.10 and negligible conduction to its supports. The same steady flux crosses both gaps. The two gap resistances add in series, with total dimensionless denominator \(1/\epsilon_1+2/\epsilon_s+1/\epsilon_2-2=20.9167\), leaving about 147.5 W/m².</p>
+<p><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/12-radiation/">Check the underlying blackbody emission and view-factor balances in the radiation chapter</a></p>
+</section>
+<section><h2 id="shield">Determine its temperature from the steady flux</h2>
+<p>For the above example the first gap denominator is \(1/0.80+1/0.10-1=10.25\) and the second \(10.6667\). Write \(E_{bs}=E_{b1}-q''D_1\) or \(E_{bs}=E_{b2}+q''D_2\). The shield temperature is about 435 K. It is a weighted average of fourth powers, not the arithmetic average of temperatures. A measured shield temperature without net heat flux generally constrains resistance ratios, while the flux supplies their sum.</p>
+</section>
+<section><h2 id="shielding">Use a floating shield as a two-sided calorimeter</h2>
+<p>Insert an opaque isothermal sheet between the two parallel walls. At steady state its net accumulation vanishes, so energy transferred across the hot gap equals energy leaving the cold gap. For identical external surface emissivities and identical shield-face emissivities, the two radiative resistances of the gaps are the same. Equality of the fourth-power temperature drops then places the shield temperature at the fourth-power mean of the two plate temperatures. It is generally above their arithmetic mean. Lower shield emissivity changes the size of the common heat flow while leaving the intermediate temperature fixed in this symmetric problem.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/03-radiation-shields-and-enclosures/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-radiation-shield"></div>
+<p>Make a paired test using a matte shield and a polished shield of the same dimensions. A heat-flux transducer should respond strongly, while an ideal shield-temperature measurement would indicate the same equilibrium value. That contrast provides a cleaner test than relying on a single fitted emissivity. A thermocouple lead can conduct heat away from the shield and change its temperature, particularly for the polished sheet when radiative conductance is small. A radiation thermometer aimed at that sheet can receive reflected hot-wall radiation. Use a conducting contact sensor with estimated lead loss and a separately characterised radiance measurement to investigate discrepancies.</p>
+<p>If the shield faces have different coatings, reverse it without changing either plate. The series resistance and net heat flow stay the same under the simple diffuse-grey model because the two face resistances enter as a sum. The equilibrium shield temperature changes, however, because the allocation of resistance to the hot and cold gaps changes. This distinguishes an orientation-dependent temperature from an orientation-dependent heat flux.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Can two identical black plates benefit from a black shield?</h2>
+<p>Keep the same temperatures but make both plates and both shield faces black. Calculate flux with and without one floating shield. Would replacing one shield by two double the benefit again?</p>
+<details><summary>Count separate spaces and solve their fluxes</summary>
+<p>Without a shield the net flux is about 3085 W/m². With one black shield two identical gap resistances divide it in half, about 1542 W/m². With two black shields there are three equal resistances and flux is one third of the unshielded value, about 1028 W/m². Each plate emits and absorbs on its own faces even when black. Equal changes in the count of shields add equal resistances in this ideal case rather than multiplying the previous flux by one half each time.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Test a view-factor proposal by reciprocity</h2>
+<p>Two surfaces have areas 0.020 and 0.050 square metres. A ray calculation gives \(F_{12}=0.70\). What should \(F_{21}\) be and why cannot the uncovered row sum automatically be assigned to the same neighbouring surface?</p>
+<details><summary>Use the area-weighted symmetry</summary>
+<p>Reciprocity gives \(F_{21}=0.020(0.70)/0.050=0.28\). Row remainders are respectively 0.30 and 0.72. They can describe additional walls, an opening or a surface's self-view if geometry permits. Two convex finite unequal plates alone do not form a closed enclosure with unit rows. Give their surrounding environment a temperature and surface properties or prescribe incoming irradiation before computing the net powers.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Infer an omitted conductive heat leak</h2>
+<p>An instrument with the example shield and plate area 0.10 square metres reports net heat input of 19 W at the hot wall after other losses are removed. Assume the ideal radiation estimate holds. Estimate the parallel conductance directly connecting hot and cold walls and propose a second test.</p>
+<details><summary>Compare absolute powers and their different temperature scaling</summary>
+<p>Predicted radiation is about 14.75 W, leaving 4.25 W not explained. At a 200 K temperature difference a direct linear bypass would require \(0.0213\) W/K. This could represent support conduction but is not unique: emissivity errors, finite plate-edge view to surroundings or residual gas conduction can also contribute. Repeat at a different mean absolute temperature while holding the same wall-temperature difference. Linear solid conduction with weak property variation remains similar, whereas radiative transfer grows strongly with mean temperature. Monitor the floating shield temperature too; direct bypass need not heat it, whereas a support attached to the shield changes its equilibrium.</p>
+</details>
+<p><a href="https://bpb-us-e1.wpmucdn.com/sites.mit.edu/dist/6/1810/files/2024/04/AHTTv600.pdf">Lienhard and Lienhard · A Heat Transfer Textbook, radiation exchange in enclosures</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/02-laminar-film-condensation/">How a gravity-drained condensate film limits heat transfer</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/04-periodic-thermal-penetration/">Periodic heating as a measurement of thermal diffusivity</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approximation and quadrature · Notation and assumptions · OneSimulation</title>
+<meta name="description" content="Read each defining equation with its assumptions and units, then follow the link to the argument that gives the equation its meaning.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/notation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Approximation and quadrature · Notation and assumptions · OneSimulation">
+<meta property="og:description" content="Read each defining equation with its assumptions and units, then follow the link to the argument that gives the equation its meaning.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/notation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Approximation and quadrature · Notation and assumptions</h1><p class="lead">Read each defining equation with its assumptions and units, then follow the link to the argument that gives the equation its meaning.</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#barycentric-weight">Barycentric weight</a><a href="#fourier-alias">Fourier alias</a><a href="#interpolation-condition">Interpolation condition</a><a href="#monte-carlo-standard-error">Monte Carlo standard error</a><a href="#quadrature-degree">Quadrature degree</a><a href="#richardson-extrapolation">Richardson extrapolation</a></nav></aside><article class="prose reference"><section><h2 id="barycentric-weight">Barycentric weight</h2><div class="math display">\[w_j=\prod_{i\ne j}(x_j-x_i)^{-1}\]</div><p>Only relative weights enter the rational expression for the interpolating polynomial. At a node return the recorded value directly.</p><p><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/13-barycentric-weights/#one-product-shared-by-all-the-basis-functions">Derivation · Evaluating an interpolant without rebuilding its polynomial</a></p></section><section><h2 id="fourier-alias">Fourier alias</h2><div class="math display">\[e^{2\pi i(k+n)j/n}=e^{2\pi ikj/n}\]</div><p>On n equally spaced periodic samples two distinct continuum frequencies can yield precisely the same observations. Interpolation cannot disambiguate them without more information.</p><p><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/14-periodic-aliasing/#summing-one-fourier-mode">Derivation · When a trapezoidal sum counts the wrong frequency perfectly</a></p></section><section><h2 id="interpolation-condition">Interpolation condition</h2><div class="math display">\[p(x_i)=f_i\]</div><p>The polynomial matches the tabulated values at distinct nodes. Small nodal discrepancies do not guarantee a small error between nodes.</p><p><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/02-polynomial-nodes/#first-principles">Derivation · Polynomial interpolation and node placement</a></p></section><section><h2 id="monte-carlo-standard-error">Monte Carlo standard error</h2><div class="math display">\[\mathrm{SE}(\bar f)=\sigma_f/\sqrt{N}\]</div><p>Independent samples with finite variance give this ideal error scale. Importance weights and correlations can substantially alter the variance of the actual estimator.</p><p><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/17-importance-sampling/#change-the-experiment-while-preserving-its-mean">Derivation · Where should a random quadrature spend its samples?</a></p></section><section><h2 id="quadrature-degree">Quadrature degree</h2><div class="math display">\[Q[x^j]=\int_a^b x^j\,dx\quad(0\le j\le d)\]</div><p>Exactness through degree d is an algebraic property. For a nonsmooth or poorly sampled integrand the observed rate can be much lower.</p><p><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/05-gaussian-rules/#first-principles">Derivation · Gaussian quadrature and exactness</a></p></section><section><h2 id="richardson-extrapolation">Richardson extrapolation</h2><div class="math display">\[I\approx I_{h/2}+(I_{h/2}-I_h)/(2^p-1)\]</div><p>This cancels an assumed leading error proportional to h to power p. Several refinements can test whether that asymptotic regime is present.</p><p><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/15-richardson-tableau/#cancelling-a-nuisance-coefficient">Derivation · Deriving Romberg integration and recognising a broken error model</a></p></section></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

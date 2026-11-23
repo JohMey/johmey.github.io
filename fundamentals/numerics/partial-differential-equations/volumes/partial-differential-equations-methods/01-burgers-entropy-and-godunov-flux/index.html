@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose the physically admissible wave in a conservative update · OneSimulation</title>
+<meta name="description" content="A discontinuous scalar flow can satisfy integral conservation in more than one way. Derive the shock speed, use a convex entropy to distinguish a compression from an expansion and build a finite-volume flux from the resulting local solution.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/01-burgers-entropy-and-godunov-flux/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Choose the physically admissible wave in a conservative update · OneSimulation">
+<meta property="og:description" content="A discontinuous scalar flow can satisfy integral conservation in more than one way. Derive the shock speed, use a convex entropy to distinguish a compression from an expansion and build a finite-volume flux from the resulting local solution.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/01-burgers-entropy-and-godunov-flux/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a> / <a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/">Spatial discretisation and field equations</a></p><h1>Choose the physically admissible wave in a conservative update</h1><p class="lead">A discontinuous scalar flow can satisfy integral conservation in more than one way. Derive the shock speed, use a convex entropy to distinguish a compression from an expansion and build a finite-volume flux from the resulting local solution.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/partial-differential-equations/chapters/01-flux-differences/">Background · Flux differences for an elliptic balance</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#jump">Integrate across a moving discontinuity</a><a href="#fan">Construct the rarefaction from its self-similar coordinate</a><a href="#resolution">Distinguish shock location from smoothness and numerical thickness</a><a href="#experiment">Switch between a shock and a transonic fan</a><a href="#area">Infer shock position from an integral measurement</a><a href="#tutorial">Tutorial · compare conservation and entropy</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="jump">Integrate across a moving discontinuity</h2>
+<p>Consider inviscid Burgers' equation \(u_t+(u^2/2)_x=0\). Where \(u\) is smooth its characteristics move at speed \(u\). For left state \(u_L&gt;u_R\), faster left characteristics catch slower right ones and the profile steepens. If discontinuity position is \(x=st\), integrate the conservation law across a narrow moving control volume. The storage change from the moving boundary gives \(s(u_R-u_L)=f(u_R)-f(u_L)\), so for unequal states \(s=(u_L+u_R)/2\). The value is a conservation-law jump speed; applying the pointwise product \(u\,u_x\) across a discontinuity without defining it could predict another speed.</p>
+<p>The same jump calculation formally allows \(u_L&lt;u_R\), although a smooth monotone connection then spreads. To identify the physical weak solution, add a small positive viscosity \(\nu u_{xx}\) and consider its limiting dissipation. For convex entropy \(\eta=u^2/2\) with entropy flux \(q=u^3/3\), multiplication of the viscous equation by \(u\) gives \(\eta_t+q_x=\nu\eta_{xx}-\nu u_x^2\). As viscosity vanishes the entropy production is nonpositive in distributions. Across a sharp jump the coefficient is \([q]-s[\eta]=(u_R-u_L)^3/12\), where brackets mean right minus left. It is negative for a compression shock and positive for an expansion shock. Thus the latter satisfies mass conservation but violates this entropy criterion.</p>
+</section>
+<section><h2 id="fan">Construct the rarefaction from its self-similar coordinate</h2>
+<p>For a left-to-right increase seek \(u(x,t)=U(\xi)\) with \(\xi=x/t\). Substituting into the smooth equation gives \((U-\xi)U'=0\), so each region is constant or \(U=\xi\). Matching both states yields \(u_L\) for \(\xi&lt;u_L\), \(\xi\) for \(u_L\le\xi\le u_R\), and \(u_R\) beyond. This continuous fan is the physically selected expansion. With \(u_L=-1,u_R=1\), the origin lies inside the fan and \(u(0,t)=0\). A stationary expansion jump would misleadingly carry flux \(1/2\) across that interface rather than the physical zero.</p>
+<p>In a finite-volume scheme cell averages are updated by shared interface fluxes: \(\bar u_i^{n+1}=\bar u_i^n-(\Delta t/\Delta x)(F_{i+1/2}-F_{i-1/2})\). Solve the local Riemann problem between the piecewise-constant left and right cell states and take \(F=f(U(0))\). For a compression use the left state if \(s&gt;0\) and the right if \(s&lt;0\); either flux agrees for a stationary shock. For an expansion reaching across zero take zero; if the expansion moves wholly right use its left state, and if wholly left use its right. These cases give the scalar Godunov flux. The update telescopes internally because both neighbouring cells use exactly the same physical interface flux.</p>
+</section>
+<section><h2 id="resolution">Distinguish shock location from smoothness and numerical thickness</h2>
+<p>A first-order Godunov discretisation under its CFL restriction is monotone and avoids spurious oscillations, but a moving discontinuity generally spreads over several cells. A centred pointwise difference may look sharper for smooth data while producing oscillations or the wrong propagation under discontinuous data. Test shock speeds from integrated cell mass or a consistent location reconstruction, compare fan areas and measure \(L^1\) error under refinement. The pointwise maximum error right at a jump can remain large even as the location and integral error converge. A visually thin front is not by itself an accuracy certificate.</p>
+<p>For data \(u_L=1,u_R=-0.5\) the shock moves right at 0.25. At \(t=0.25\) it lies at \(x=0.0625\). In the interval \([-1,1]\) with unchanged boundary states, the total mass begins at 0.5 and grows by \([f(1)-f(-0.5)]t=(0.5-0.125)0.25=0.09375\), so the exact integral is 0.59375. A conservative numerical calculation can achieve this integral essentially to roundoff while retaining a visibly smeared shock. Conservation, entropy selection and resolved spatial profile are three independent questions.</p>
+</section>
+<section><h2 id="experiment">Switch between a shock and a transonic fan</h2>
+<p>The experiment solves the finite-volume update on \([-1,1]\) with constant exterior states, a time step chosen for maximum CFL 0.8 and output time 0.25. Compare the conservative cell averages with the exact self-similar profile. Reverse both initial states to turn a compression into an expansion, then put the fan across zero. Increasing cell count changes numerical thickness, while the mass should follow the boundary flux difference at every resolution. Equal left and right states are a separate constant-preservation test.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/01-burgers-entropy-and-godunov-flux/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-burgers-flux"></div>
+</section>
+<section><h2 id="area">Infer shock position from an integral measurement</h2>
+<p>A blurred profile does not require an arbitrary definition of its centre. Suppose the plateau values on \([-L,L]\) are measured reliably and a single discontinuity lies at \(X\). Its integrated state is \(M=(L+X)u_L+(L-X)u_R\). The equivalent sharp-interface position is therefore \(X=[M-L(u_L+u_R)]/(u_L-u_R)\). With \(L=1,\ u_L=1,\ u_R=-1/2\), a cell-sum reading \(M=0.59375\) gives \(X=0.0625\). A mass uncertainty of \(0.003\) gives a position uncertainty of \(0.002\) in the same coordinates. The inference becomes ill-conditioned as the plateau contrast tends to zero.</p>
+<p>This provides a mesh-independent diagnostic when numerical viscosity smears the jump. Track both an area-based position and a measure of thickness, for example the distance between the two intermediate levels one-quarter and three-quarters across the jump. A conservative solver may retain a highly accurate area-based position while thickness changes strongly under refinement. In a rarefaction the same scalar area exists, but two real moving edges delimit a resolved fan. Replacing the fan by one jump would throw away precisely the information the entropy condition supplied.</p></section>
+<section><h2 id="tutorial">Tutorial · compare conservation and entropy</h2>
+<h3>Calculate one update next to a moving shock</h3><p>With states 1 and \(-0.5\), take \(\Delta t/\Delta x=0.5\). Find the interfacial flux and the new values in the two cells adjacent to the discontinuity, assuming homogeneous neighbours farther out.</p><details><summary>Work through the solution</summary>
+<p>The shock speed is positive, so Godunov flux at the jump is \(f(1)=0.5\). The adjacent left cell sees equal incoming and outgoing fluxes and stays 1. The adjacent right cell sees incoming 0.5 and outgoing 0.125, so becomes \(-0.5+0.5(0.375)=-0.3125\). This is exactly the average associated with movement of the shock through one eighth of that right cell: \(0.125(1)+0.875(-0.5)=-0.3125\).</p>
+</details>
+<h3>Check a conservative expansion jump</h3><p>For \(-1\to1\), show that a stationary discontinuity satisfies mass conservation but give its entropy violation. Which profile should occupy \(x=0.10\) at \(t=0.25\)?</p><details><summary>Work through the solution</summary>
+<p>Both end fluxes equal 0.5, so the formal discontinuity speed is zero. Its entropy coefficient is \((1-(-1))^3/12=2/3&gt;0\), contradicting dissipation. The rarefaction has \(\xi=x/t=0.4\) inside its fan, hence \(u=0.4\) there. A scheme retaining a stationary sharp expansion jump can pass a mass check and still fail this physical verification.</p>
+</details>
+<h3>Set a stable step and predict a conserved integral</h3><p>On 100 uniform cells in \([-1,1]\) take \(u_L=-0.25,u_R=0.75\). What step gives maximum CFL 0.75? What mass is expected at time 0.20?</p><details><summary>Work through the solution</summary>
+<p>Here \(\Delta x=0.02\) and maximum speed is 0.75, giving \(\Delta t=0.020\). Initial mass is \(0.5\). Boundary flux difference is \(0.03125-0.28125=-0.25\); over time 0.20 the mass falls to 0.45. Both fan edges are still far from the domain ends. For longer runs boundary data and outgoing-wave treatment would alter this budget.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://faculty.washington.edu/rjl/book2/sample.pdf">LeVeque · finite-volume methods for hyperbolic problems</a></li><li><a href="https://www.clawpack.org/riemann_book/html/Burgers.html">Clawpack Riemann book · Burgers shocks, rarefactions and entropy</a></li><li><a href="/fundamentals/numerics/partial-differential-equations/chapters/03-conservation/">Course investigation · conservative flux updates</a></li><li><a href="/fundamentals/numerics/partial-differential-equations/#experiment">Measure spatial convergence against an exact field</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/02-equilibrated-flux-error-bounds/">Bound diffusion error by balancing a reconstructed flux</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

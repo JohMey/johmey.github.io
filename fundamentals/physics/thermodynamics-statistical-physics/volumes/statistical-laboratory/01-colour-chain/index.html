@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How many lattice sites remember the colour of a neighbour? · OneSimulation</title>
+<meta name="description" content="A chain of three-state spins gains energy when adjacent colours agree. A weak field favours one colour over the other two. Use a transfer matrix to calculate both free energy and the distance over which correlations survive. Recover the same numbers from OneSimulation eigenvalues without relying on symmetry reduction.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/01-colour-chain/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How many lattice sites remember the colour of a neighbour? · OneSimulation">
+<meta property="og:description" content="A chain of three-state spins gains energy when adjacent colours agree. A weak field favours one colour over the other two. Use a transfer matrix to calculate both free energy and the distance over which correlations survive. Recover the same numbers from OneSimulation eigenvalues without relying on symmetry reduction.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/01-colour-chain/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/">Counting, correlations and thermal measurements</a></p><h1>How many lattice sites remember the colour of a neighbour?</h1><p class="lead">A chain of three-state spins gains energy when adjacent colours agree. A weak field favours one colour over the other two. Use a transfer matrix to calculate both free energy and the distance over which correlations survive. Recover the same numbers from OneSimulation eigenvalues without relying on symmetry reduction.</p><p class="byline">Unit 1 of 6</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#find-a-local-weight-whose-product-counts-each-energy-once">Find a local weight whose product counts each energy once</a><a href="#compare-the-leading-eigenvalue-with-the-next-one">Compare the leading eigenvalue with the next one</a><a href="#keep-track-of-a-mode-that-a-chosen-detector-cannot-see">Keep track of a mode that a chosen detector cannot see</a><a href="#change-temperature-and-examine-the-spectral-gap">Change temperature and examine the spectral gap</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="find-a-local-weight-whose-product-counts-each-energy-once">Find a local weight whose product counts each energy once</h2>
+<p>Each site has colour \(a=0,1,2\). A matching pair contributes energy \(-J\), with \(J>0\), and a site of colour zero earns an additional \(-H\). In a periodic ring each site belongs to two adjacent bonds. Give each of those bonds half the local field energy so the product of their weights counts each field term exactly once. Define \(K=J/(k_BT)\) and \(h=H/J\).</p>
+<div class="math display equation-chain"><div class="equation-step">\[M_{ab}=\exp\!\left[K\left(\delta_{ab}+\frac h2(\delta_{a0}+\delta_{b0})\right)\right],\]</div><div class="equation-step">\[Z_N=\operatorname{tr}(M^N).\]</div></div>
+<p>To see the trace, write the partition function as a sum over \(a_1,\dots,a_N\) of the product \(M_{a_1a_2}\cdots M_{a_Na_1}\). Summing an intermediate index is matrix multiplication; closing the initial and final index is the trace. This is exact even for a short periodic chain defined by that bond count. The transfer matrix contains no time step: multiplying it advances spatial position.</p>
+</section>
+<section>
+<h2 id="compare-the-leading-eigenvalue-with-the-next-one">Compare the leading eigenvalue with the next one</h2>
+<p>Without bias the matrix has diagonal \(e^K\) and all other entries one. The uniform vector has eigenvalue \(e^K+2\). Every vector with components summing to zero has eigenvalue \(e^K-1\), twice degenerate. Thus \(Z_N=(e^K+2)^N+2(e^K-1)^N\). The thermodynamic free energy per site is \(-k_BT\ln(e^K+2)\). To measure a connected spatial correlation, insert a diagonal colour observable at sites separated by \(r\) transfer operations. The uniform contribution cancels from the connected part; each nonuniform mode contributes a factor \((\lambda_j/\lambda_1)^r\) when its overlap is nonzero. The longest correlation length in sites is</p>
+<div class="math display">\[\xi^{-1}=\ln(\lambda_1/|\lambda_2|).\]</div>
+<p>At \(k_BT=J\) and zero bias, \(\lambda_1=4.71828,\ \lambda_2=1.71828\) and \(\xi=0.9900\) sites. At low temperature \(e^K\) is large and \(\xi\simeq e^K/3\). A finite chain can then appear ordered simply because it is shorter than its correlation length. There is no finite positive temperature at which these two one-dimensional eigenvalues cross.</p>
+</section>
+<section>
+<h2 id="keep-track-of-a-mode-that-a-chosen-detector-cannot-see">Keep track of a mode that a chosen detector cannot see</h2>
+<p>At \(h\ne0\), colours one and two remain interchangeable. Their difference vector is an eigenmode of eigenvalue \(e^K-1\). In the orthonormal basis comprising colour zero and the sum of one and two, the remaining block is</p>
+<div class="math display">\[\begin{pmatrix}e^{K(1+h)}&\sqrt2 e^{Kh/2}\\\sqrt2 e^{Kh/2}&e^K+1\end{pmatrix}.\]</div>
+<p>Its eigenvalues follow from the trace and the square root of the squared diagonal difference plus four times the squared off-diagonal element. Sort all three eigenvalues. A detector sensitive only to whether the spin is zero is invariant under interchange of colours one and two. It has no overlap with their odd difference mode, even if that mode sets the mathematically longest length. A resolved measurement of colours one and two can see it. Quoting a correlation length from eigenvalues requires specifying which observation can actually couple to that eigenvector.</p>
+</section>
+<section>
+<h2 id="change-temperature-and-examine-the-spectral-gap">Change temperature and examine the spectral gap</h2>
+<p>Vary reduced temperature and reduced field \(H/J\) independently. The plot compares the longest colour-correlation length to the exact zero-field result. At a chosen point the downloadable model constructs the full three-by-three matrix and computes its modes using OneSimulation's contour eigensolver. It reports free energy per site and all three eigenvalues. In this small system the direct reduction above is available as an independent check. The same matrix construction generalises to more states even when no colour symmetry reduces the size.</p>
+<p>Compare two chains at the same temperature. <a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/01-colour-chain/?study=physics-lab-colour-chain&amp;values=1,0#try-it">Set the colour bias to zero</a> and <a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/01-colour-chain/?study=physics-lab-colour-chain&amp;values=1,0.30#try-it">apply a positive bias of 0.30 J</a>. Use the transfer-matrix eigenvalue ratio to explain the change in the longest correlation length.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/01-colour-chain/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="physics-lab-colour-chain"></div>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>At \(k_BT=J,\ h=0\) what fraction of the asymptotic leading contribution to a connected correlation survives after three lattice sites?</p>
+<details><summary>Work through the solution</summary><p>The factor is \((1.71828/4.71828)^3\simeq0.0483\). The correlation observable sets its initial amplitude; the eigenvalue ratio sets this fraction.</p></details>
+<p>Why does squaring a single bond weight to represent the effect of two bonds give the wrong two-step transition amplitude?</p>
+<details><summary>Work through the solution</summary><p>Two steps can pass through any of the three intermediate colours. Matrix multiplication sums all possibilities \(M_{ab}M_{bc}\) over \(b\). Squaring the single number \(M_{ac}\) loses those intermediate configurations.</p></details>
+<p>Suppose only the leading eigenvalue is reliably resolved. Which thermodynamic-limit prediction is possible and which remains undetermined?</p>
+<details><summary>Work through the solution</summary><p>One can obtain free energy per site, and with its parameter dependence the derivatives giving energy or magnetisation. A connected spatial length requires a subleading eigenvalue and overlap of the chosen observable. A precise leading free energy alone cannot give that numerical length.</p></details>
+<p>Compare this transfer calculation with the <a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/17-ising-chain-correlations/#try-it">two-state Ising chain experiment</a>.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/">Volume contents</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/02-finite-solids/">Measure the heat capacity of a reservoir from the width of an energy histogram</a></span></nav><script defer src="/assets/practical-physics-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

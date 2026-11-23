@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimate wall drag by integrating a boundary-layer profile · OneSimulation</title>
+<meta name="description" content="A velocity probe can resolve the momentum missing from a boundary layer more easily than the wall shear itself. Derive an integral momentum relation, estimate drag using a polynomial profile and determine when a pressure gradient or a measurement too far from the wall changes the answer.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/04-momentum-integral-boundary-layers/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Estimate wall drag by integrating a boundary-layer profile · OneSimulation">
+<meta property="og:description" content="A velocity probe can resolve the momentum missing from a boundary layer more easily than the wall shear itself. Derive an integral momentum relation, estimate drag using a polynomial profile and determine when a pressure gradient or a measurement too far from the wall changes the answer.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/04-momentum-integral-boundary-layers/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/">Momentum, motion and transport in fluids</a></p><h1>Estimate wall drag by integrating a boundary-layer profile</h1><p class="lead">A velocity probe can resolve the momentum missing from a boundary layer more easily than the wall shear itself. Derive an integral momentum relation, estimate drag using a polynomial profile and determine when a pressure gradient or a measurement too far from the wall changes the answer.</p><p class="byline">Unit 4 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/08-boundary-layers/">Background · Boundary layers and momentum thickness</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#deficit">Define displacement and momentum thickness separately</a><a href="#closure">Derive an approximate flat-plate law</a><a href="#profile-traverse">Use a probe traverse to measure a momentum deficit</a><a href="#tutorial-one">Tutorial · Infer drag from two traverse stations</a><a href="#tutorial-two">Tutorial · Check an apparent separation claim</a><a href="#tutorial-three">Tutorial · Detect a probe that misses the outer deficit</a></nav></aside><article class="prose reference"><section><h2 id="deficit">Define displacement and momentum thickness separately</h2>
+<p>For steady incompressible two-dimensional flow over a smooth wall, let \(U_e(x)\) denote the local speed just outside a thin attached boundary layer and \(u(x,y)\) the tangential speed inside it. Displacement thickness \(\delta^*=\int_0^\infty(1-u/U_e)dy\) measures missing volume flow per unit outer speed. Momentum thickness \(\theta=\int_0^\infty (u/U_e)(1-u/U_e)dy\) measures a different deficit. Both have dimensions of length, while their ratio \(H=\delta^*/\theta\) characterises profile shape. Neither thickness is defined by a particular percentage edge speed.</p>
+<p>Integrating the streamwise boundary-layer momentum equation and using continuity to eliminate the edge-normal flux yields</p>
+<div class="math display">\[\frac{\tau_w}{\rho U_e^2}=\frac{d\theta}{dx}+(2+H)\frac{\theta}{U_e}\frac{dU_e}{dx}.\]</div>
+<p>The edge pressure gradient follows outer inviscid flow through \(dp_e/dx=-\rho U_e\,dU_e/dx\). Under uniform outer speed the equation reduces to \(d\theta/dx=C_f/2\), \(C_f=\tau_w/(\rho U_e^2/2)\). With an adverse pressure gradient the second term is negative, and an increasingly thickening layer can still have very small or negative wall shear. Applying the uniform-speed relation outside its conditions would overestimate shear near separation.</p>
+</section>
+<section><h2 id="closure">Derive an approximate flat-plate law</h2>
+<p>Assume a laminar zero-pressure-gradient layer with \(u/U=2\eta-\eta^2\) for \(0&lt;\eta=y/\delta&lt;1\) and outer speed beyond. The profile satisfies no slip at the wall, reaches the edge speed and has zero first derivative at its nominal outer edge. Integrating gives \(\delta^*=\delta/3\), \(\theta=2\delta/15\), while the wall gradient gives \(\tau_w=2\mu U/\delta\). Substitute into the momentum integral and integrate from the leading edge:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\delta=\sqrt{\frac{30\nu x}{U}},\]</div><div class="equation-step">\[C_{f,x}=\frac{4}{\sqrt{30Re_x}},\]</div><div class="equation-step">\[Re_x=\frac{Ux}{\nu}.\]</div></div>
+<p>The coefficient 0.730 from this approximate profile differs from the exact Blasius laminar result 0.664 while reproducing the square-root scaling. Profile choice closes an otherwise exact integrated balance and creates a measurable modelling error. It also treats the local leading-edge region outside its proper thin-layer asymptotics. Refining numerical integration of the same polynomial cannot eliminate the profile approximation.</p>
+<p>For air with \(U=5.0\) m/s, \(\nu=1.5\times10^{-5}\) square metres per second, \(x=0.20\) m and \(\rho=1.2\) kg/m³, \(Re_x=6.67\times10^4\) and predicted \(\delta=4.24\) mm. The approximate local \(C_f=0.00283\) gives \(\tau_w=0.0424\) Pa. If a pressure-gradient or transition changes the profile appreciably, measure the actual shape and its \(x\) variation rather than applying this laminar estimate.</p>
+<p><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/08-boundary-layers/">Compare the local velocity profile and wall stress with the boundary-layer chapter</a></p>
+</section>
+<section><h2 id="profile-traverse">Use a probe traverse to measure a momentum deficit</h2>
+<p>A small velocity probe is moved away from a smooth plate in increments of known height. Calibrate zero height and measure outer velocity independently. Convert the measured values to ratios with the outer velocity, integrate the displacement and momentum kernels using the same station coordinates, and repeat downstream. Even if the probe misses the point where the speed first reaches 99 percent of the outer value, the two integrals can remain informative. A contaminated outer-velocity estimate, however, leaves a persistent offset in the integrands across the entire outer part of the traverse.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/04-momentum-integral-boundary-layers/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-momentum-layer"></div>
+<p>The model overlays a profile at a selected station and at twice that station distance. In a zero-pressure-gradient laminar layer both curves collapse if wall-normal position is divided by its own thickness. The outer velocity is the same in both plots and the wall slopes differ by a factor of the square root of two. This shows why a constant free-stream speed does not imply constant wall shear. Wall shear depends on the gradient normal to the wall, and diffusion spreads the velocity change over a progressively thicker layer.</p>
+<p>For an independent check take a measured momentum thickness of 0.55 mm at a station and 0.66 mm at a station 60 mm downstream. Their finite difference gives a slope of 0.00183 and hence a mean skin-friction coefficient of 0.00367 under uniform outer speed. A measurement error of 0.02 mm at each station, treated as independent, corresponds to roughly one quarter of the measured difference. Improving one individual profile is not enough if the station separation is too small to resolve a change. Increasing separation improves signal but averages over more streamwise development. Repeating over several separation distances exposes that tradeoff and can reveal transition within the interval.</p>
+<p>If the same probe is used at both stations, a common calibration gain can cancel in the normalised velocity ratios. An error in the zero wall distance affects the inner region differently. Repeat the integration after deliberately shifting the nominal wall location by its measured positioning uncertainty.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Infer drag from two traverse stations</h2>
+<p>A constant-speed incompressible layer has momentum thickness 0.30 mm at one station and 0.50 mm 0.15 m farther downstream. With \(U=5.0\) m/s and \(\rho=1.2\), estimate mean wall shear over the interval and total drag on a strip of width 0.20 m.</p>
+<details><summary>Integrate the momentum relation</summary>
+<p>Mean shear is \(\rho U^2\Delta\theta/\Delta x=1.2(25)(0.00020)/0.15=0.040\) Pa. The area is 0.030 square metres, so drag is 1.20 mN. This estimate uses the complete momentum deficit and does not require differentiating a noisy near-wall velocity. It does require both profiles to cover the entire defect region and share a calibrated outer speed.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Check an apparent separation claim</h2>
+<p>At one location \(H=2.5,\theta=1.0\) mm, \(U_e=4.0\) m/s, \(dU_e/dx=-8.0\) per second and \(d\theta/dx=0.010\). Infer wall shear sign. Would the same momentum-thickness growth guarantee that sign in zero pressure gradient?</p>
+<details><summary>Retain the pressure-gradient term</summary>
+<p>The dimensionless right side is \(0.010+4.5(0.001/4)(-8)=0.0010\), still positive but only one tenth of the zero-gradient estimate. In this example both cases have positive shear, yet a slightly stronger adverse gradient would reverse the indicated sign. Near zero the differences among several measured terms magnify relative uncertainty. A near-wall direction measurement or oil-film shear indicator can help distinguish a true sign reversal from fitted profile noise.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Detect a probe that misses the outer deficit</h2>
+<p>A traverse stops at the first point where measured speed reaches 97 percent of the apparent outer value. How might this bias displacement and momentum thickness, and how would you design a convergence check?</p>
+<details><summary>Integrate the remaining positive tail</summary>
+<p>For an attached monotone profile both integrands are positive below the true outer speed, so prematurely truncating usually underestimates both thicknesses. Near the edge their integrands become similar because \(u/U_e\simeq1\); even a small speed defect over a broad tail can contribute appreciable area. Extend the traverse and compare integrals as the cutoff rises. Independently estimate true undisturbed \(U_e\): a slight bias in that denominator can create a false nonzero tail over the entire outer integration region. Repeat at finer near-wall spacing too, separately testing quadrature and physical domain coverage.</p>
+</details>
+<p><a href="https://ocw.mit.edu/courses/16-13-aerodynamics-of-viscous-fluids-fall-2003/pages/lecture-notes/">MIT Aerodynamics of Viscous Fluids · boundary layers and momentum-integral methods</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/03-taylor-aris-dispersion-in-a-tube/">Why shear disperses a tracer faster than molecular diffusion</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/">Volume contents</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

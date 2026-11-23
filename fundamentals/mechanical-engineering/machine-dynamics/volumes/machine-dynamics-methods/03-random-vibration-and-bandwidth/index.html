@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random base motion, spectral density and rms response · OneSimulation</title>
+<meta name="description" content="A support vibration is described by a power spectral density rather than a single sine-wave amplitude. Derive the relative-motion filter for a mounted instrument, calculate mean-square motion from a measured spectrum and distinguish a stationary rms prediction from a peak displacement guarantee.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/03-random-vibration-and-bandwidth/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Random base motion, spectral density and rms response · OneSimulation">
+<meta property="og:description" content="A support vibration is described by a power spectral density rather than a single sine-wave amplitude. Derive the relative-motion filter for a mounted instrument, calculate mean-square motion from a measured spectrum and distinguish a stationary rms prediction from a peak displacement guarantee.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/03-random-vibration-and-bandwidth/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/">Vibration and identification in machinery</a></p><h1>Random base motion, spectral density and rms response</h1><p class="lead">A support vibration is described by a power spectral density rather than a single sine-wave amplitude. Derive the relative-motion filter for a mounted instrument, calculate mean-square motion from a measured spectrum and distinguish a stationary rms prediction from a peak displacement guarantee.</p><p class="byline">Unit 3 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/03-harmonic-forcing/">Background · Harmonic forcing, phase and dissipated power</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#model">Start from moving-base force balance</a><a href="#spectrum">A variance is an area over a stated frequency convention</a><a href="#cumulative-band">Integrate the spectrum before reporting a single motion amplitude</a><a href="#tutorial-one">Tutorial · Verify a finite-band low-frequency calculation</a><a href="#tutorial-two">Tutorial · Distinguish rms from a time-dependent peak</a><a href="#tutorial-three">Tutorial · Identify insufficient frequency resolution</a></nav></aside><article class="prose reference"><section><h2 id="model">Start from moving-base force balance</h2>
+<p>Let \(y(t)\) be base displacement, \(x(t)\) the instrument's absolute displacement and \(z=x-y\) relative travel inside its mount. Newton's law for the mass is \(m\ddot x=-c(\dot x-\dot y)-k(x-y)\). Therefore \(\ddot z+2\zeta\omega_n\dot z+\omega_n^2z=-\ddot y\). In the frequency domain the transfer magnitude squared from measured base acceleration to relative travel is</p>
+<div class="math display">\[|H_{za}(\omega)|^2=\frac1{(\omega_n^2-\omega^2)^2+(2\zeta\omega_n\omega)^2}.\]</div>
+<p>A base accelerometer's physical units are metres per second squared. If it reports in multiples of \(g\), convert amplitude by 9.81 and spectral density by \(9.81^2\). A displacement spectrum is not obtained simply by treating base acceleration as an applied displacement; the numerator and units differ. At sufficiently low frequency a constant base acceleration produces a quasi-static relative deflection \(-a/\omega_n^2\), which checks the zero-frequency transfer.</p>
+</section>
+<section><h2 id="spectrum">A variance is an area over a stated frequency convention</h2>
+<p>For a stationary linear response and one-sided base acceleration spectrum \(S_a(f)\) per hertz, the relative mean-square motion is \(\int_0^\infty|H_{za}(2\pi f)|^2S_a(f)\,df\). The integral treats distinct frequency components as uncorrelated under stationarity. If a two-sided density per radian per second is used instead, both frequency integration and normalisation must change consistently. The integral of an input spectrum over its own stated axis must reproduce the independently measured acceleration variance.</p>
+<p>A convenient benchmark assumes a constant one-sided spectrum \(S_0\) across all frequencies relevant to the mode. Integrating the squared response gives</p>
+<div class="math display">\[\langle z^2\rangle=\frac{S_0}{8\zeta\omega_n^3}.\]</div>
+<p>With \(\omega_n=100\) rad/s, \(\zeta=0.05\) and \(S_0=0.040\ ({\rm m/s^2})^2/{\rm Hz}\), rms relative motion is \(0.316\) mm. A real finite passband and nonwhite input should be integrated from its measured spectrum; extending a nominal constant outside its measured range is defensible only if the omitted contribution is small. An ideal white acceleration input over all frequencies has infinite acceleration variance, yet this relative displacement filter yields a finite response variance. It serves as a response benchmark, not a physically realisable unlimited-band source.</p>
+<p><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/05-vibration-isolation/">Compare relative mount travel with the harmonic isolation and transmissibility chapter</a></p>
+</section>
+<section><h2 id="cumulative-band">Integrate the spectrum before reporting a single motion amplitude</h2>
+<p>The experiment accumulates output variance from zero frequency up to a movable upper bandwidth. Most of the increase occurs close to the mode when damping is small. Below that region the support acceleration can contain measurable energy but the relative mount travel stays small; far above resonance the displacement response to acceleration drops quickly. Read the asymptote as a numerical integration check. A response moving toward the predicted limit does not imply that a real excitation spectrum remains flat beyond the accelerometer bandwidth.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/03-random-vibration-and-bandwidth/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-random-response"></div>
+<p>With a natural frequency near sixteen hertz and damping ratio 0.05, the modal half-power width is roughly 1.6 hertz. A one-second record gives frequency spacing around one hertz, leaving very few independent locations across the resonance. A longer record improves frequency resolution. Dividing the record into many shorter segments and averaging their estimates reduces scatter while broadening the resolvable features. State both record duration and segment length and inspect how changing them affects the estimated cumulative variance.</p>
+<p>A narrow deterministic tone superposed on random acceleration requires care. Its line energy is distributed across nearby bins according to the window; a density value at the tallest bin changes with resolution even when the physical tone amplitude does not. Integrate the line over its full width or fit a sinusoid in the time domain. Then combine its mean-square output with the background variance if the two contributions have zero cross correlation. For example, a statistically independent 0.20 mm rms line and 0.30 mm rms broadband contribution produce about 0.361 mm rms total. Adding the two rms amplitudes would yield 0.50 mm, corresponding to a very different assumption about phase and dependence.</p>
+<p>A final consistency check uses a short time-domain record with an independently measured travel sensor. Remove a known static offset, compute its root mean square and compare with the integral over the sensor's actual bandwidth. Compare the same frequency interval in both records before attributing a discrepancy to modal damping.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Verify a finite-band low-frequency calculation</h2>
+<p>A base spectrum is flat at 0.020 acceleration-squared per hertz between 0 and 2 Hz, negligible elsewhere. For a mount with \(\omega_n=200\) rad/s, estimate base rms acceleration and relative displacement rms. Why does the white-through-resonance formula fail here?</p>
+<details><summary>Apply the low-frequency transfer over the measured band</summary>
+<p>Base variance is \(0.020(2)=0.040\), giving rms 0.20 m/s². All excited frequencies are well below the mount resonance near 31.8 Hz, so rms relative travel is approximately \(0.20/200^2=5.0\) micrometres. The broadband result would assume input energy near the resonant amplification peak that this spectrum explicitly lacks. Direct numerical quadrature with the exact transfer checks the small low-frequency approximation.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Distinguish rms from a time-dependent peak</h2>
+<p>A zero-mean Gaussian displacement record has the 0.316 mm rms value of the broadband example. What does a three-rms clearance mean at a single time, and why does it not provide that same probability of never touching the stop over a long run?</p>
+<details><summary>Include time correlation and observation duration</summary>
+<p>At a random stationary time a Gaussian value lies outside plus or minus three standard deviations with probability about 0.0027. Over many samples or many correlation times there are repeated opportunities for an excursion. Independent observations would give probability \(1-(1-0.0027)^N\) of at least one exceedance, whereas actual filtered vibration has correlated values. Peak predictions need the observation duration and a model of frequency content or crossings. Mechanical stops introduce nonlinearity after contact and invalidate the original Gaussian linear response thereafter.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Identify insufficient frequency resolution</h2>
+<p>A lightly damped resonance at 20 Hz has damping ratio 0.01. A measured transfer and input spectrum are tabulated every 1 Hz. Estimate its half-power bandwidth and design a quadrature and measurement check.</p>
+<details><summary>Resolve the resonance before integrating its area</summary>
+<p>For a lightly damped isolated mode the full bandwidth is approximately \(2\zeta f_n=0.40\) Hz. A one-hertz grid can miss most of the peak or place a single anomalously high bin at its centre. Use a much finer frequency step or fit a justified complex modal response, then integrate the product with the measured input spectrum. Increase acquisition duration to obtain true frequency resolution; interpolating sparse measured bins alone cannot reveal an unmeasured narrow input line. Compare predicted rms with a time-domain record and account for window leakage and accelerometer noise.</p>
+</details>
+<p><a href="https://archive.nptel.ac.in/content/syllabus_pdf/101102090.pdf">NPTEL Elements of Mechanical Vibration · random vibration, spectral density and system response</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/02-parametric-resonance-and-damping/">Parametric resonance under periodic stiffness modulation</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/04-local-damping-and-complex-modes/">Why a local damper couples otherwise separate modes</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

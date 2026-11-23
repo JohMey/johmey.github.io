@@ -10,6 +10,7 @@
   const fmt = x => Number(x.toPrecision(5)).toString();
 
   studies["semester-quantum-mechanics"] = {
+    localModel:{file:"spectra-and-orbits.py",args:([g,r])=>"pair --coupling "+g+" --separation "+r},
     controls: [["Dipole coupling at the reference separation", .05, .9, .01, .4], ["Separation to inspect (R₀)", 1, 2.5, .02, 1.4]],
     xLabel: "Separation R/R₀", yLabel: "Energy change in units of ℏω₀",
     calculate([strength, radius]) {
@@ -26,6 +27,7 @@
     }
   };
   studies["semester-classical-mechanics"] = {
+    localModel:{file:"spectra-and-orbits.py",args:([spin,seed])=>"rotor --spin "+spin+" --seed "+seed},
     controls: [["Nominal middle-axis speed (rad/s)", 4, 16, .2, 12], ["Initial transverse speed (rad/s)", .02, .5, .01, .1]],
     xLabel: "Time (s)", yLabel: "First angular velocity component (rad/s)",
     calculate([spin, seed]) {

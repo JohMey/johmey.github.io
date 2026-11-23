@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose a regularisation scale by predicting omitted data · OneSimulation</title>
+<meta name="description" content="Regularised least squares can fit each observation partly with itself. Derive leave-one-out residuals from a single factorisation, approximate them by a trace and identify when a generalised cross-validation score misses a highly influential sensor.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/02-leverage-and-generalised-cross-validation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Choose a regularisation scale by predicting omitted data · OneSimulation">
+<meta property="og:description" content="Regularised least squares can fit each observation partly with itself. Derive leave-one-out residuals from a single factorisation, approximate them by a trace and identify when a generalised cross-validation score misses a highly influential sensor.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/02-leverage-and-generalised-cross-validation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a> / <a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/">Inferring parameters and fields from observations</a></p><h1>Choose a regularisation scale by predicting omitted data</h1><p class="lead">Regularised least squares can fit each observation partly with itself. Derive leave-one-out residuals from a single factorisation, approximate them by a trace and identify when a generalised cross-validation score misses a highly influential sensor.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/inverse-problems/chapters/02-whitened-least-squares/">Background · Weighted least squares and residual diagnostics</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#smoother">Express a regularised fit as a map on measured data</a><a href="#scores">Replace individual influences by their average only once</a><a href="#leverage">See how one sensitive observation can dominate a fit</a><a href="#numerical-investigation">When does using the average leverage change the answer?</a><a href="#tutorial">Tutorial · recover two kinds of influence from one factorisation</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="smoother">Express a regularised fit as a map on measured data</h2>
+<p>Let whitened observations \(y\in\mathbb R^n\) be modelled by \(Ax\), and for \(\lambda&gt;0\) minimise \(\|Ax-y\|^2+\lambda\|x\|^2\). The minimiser satisfies \((A^TA+\lambda I)x=A^Ty\). Predicted data are \(\hat y=H_\lambda y\), where \(H_\lambda=A(A^TA+\lambda I)^{-1}A^T\). This “hat” matrix maps the observations to their own fitted values. If \(A=U\Sigma V^T\), its nonzero eigenvalues are \(h_j=\sigma_j^2/(\sigma_j^2+\lambda)\). Their sum \(d(\lambda)=\operatorname{tr}H_\lambda\) is an effective degrees-of-freedom count. A weakly determined direction with small singular value can contribute a fraction of an independently fitted parameter.</p>
+<p>The norm of the training residual decreases or stays constant as the penalty weakens. For a square full-rank model it tends to zero as the penalty tends to zero, even with noisy data. Individual residuals can change in either direction. It does not measure out-of-sample error. Instead ask how well the fitted model predicts each observation when it was left out. Repeating the full solve \(n\) times conceptually works but wastes structure. An exact deletion identity gives each left-out residual \(r_i^{(-i)}=(y_i-\hat y_i)/(1-H_{ii})\), where \(H_{ii}\) is the observation's leverage. To derive the formula, remove row \(a_i^T\), subtracting \(a_i a_i^T\) from the penalised normal matrix. Multiplying its inverse update by the original residual along \(a_i\) gives the factor \(1/(1-a_i^TG^{-1}a_i)\), with \(G=A^TA+\lambda I\). This derivation assumes the same penalty strength in the objective for the held-out and full fits.</p>
+</section>
+<section><h2 id="scores">Replace individual influences by their average only once</h2>
+<p>The leave-one-out score is the mean of \([r_i/(1-H_{ii})]^2\). Generalised cross-validation replaces the individual diagonal elements by the common mean \(d/n\), giving</p>
+<div class="math display">\[{\rm GCV}(\lambda)=\frac{\|y-\hat y\|^2/n}{(1-d(\lambda)/n)^2}.\]</div>
+<p>When every leverage is equal, this approximation reproduces leave-one-out exactly. Its expression is invariant to orthogonal transformations of the whitened data space because both trace and residual norm are invariant. Exact leave-one-observation-out instead depends on which physical observations are removed, which matters for a particular instrument arrangement. GCV is useful when a rotationally averaged prediction criterion is appropriate; it is not a universal interpretation of removing an actual sensor or predicting an unmeasured parameter direction.</p>
+<p>Consider \(A=(1,1,1)^T\) fitting a scalar common signal, \(y=(1.1,0.9,1.0)\), and \(\lambda=1\). The fit is \(\hat x=3/4=0.75\), so residuals are \(0.35,0.15,0.25\). All leverages are \(1/4\). Exact prediction errors on deleting each datum are residuals divided by 0.75. For example removing 1.1 leaves \((0.9+1.0)/(2+1)=0.6333\), giving 0.4667 error, equal to \(0.35/0.75\). GCV equals exact leave-one-out here. Clear agreement in this symmetric scalar case should be a first numerical verification before interpreting a higher-dimensional score whose influences vary.</p>
+</section>
+<section><h2 id="leverage">See how one sensitive observation can dominate a fit</h2>
+<p>For another scalar design \(A=(1,1,4)^T\) with \(\lambda=2\), \(G=20\) and \(H_{ii}=(0.05,0.05,0.80)\). A residual on the third sensor is multiplied by five in a true deletion while the first two are amplified only slightly. GCV uses the same factor \(1/(1-0.9/3)=1.429\) for all. If the model discrepancy is concentrated in that high-leverage reading, trace averaging can underestimate the consequence of losing it. Conversely if errors fall only on low-leverage sensors it can overstate their delete-one loss. Inspecting the leverage distribution is inexpensive compared with attributing precision to a single scalar tuning criterion.</p>
+<p>Whitening rotates and rescales observations when errors are correlated. Leaving out one row after a dense whitening transformation is generally not the same experiment as removing one physical sensor before whitening. A time-correlated series may demand holding out an entire time block so training data cannot predict a held-out noise realisation through short-range correlation. Predictive selection should specify whether the intended prediction concerns a new repeat at known conditions, a missing detector or a new range of the physical parameters. A penalty that works well for a data prediction need not minimise reconstruction error in a weakly observable component of \(x\).</p>
+</section>
+<section><h2 id="numerical-investigation">When does using the average leverage change the answer?</h2>
+<p>Four sensors have sensitivity one. Their readings are 1.10, 0.90, 1.05 and 0.95. The fifth reading equals its sensitivity plus an adjustable offset. First give all five equal sensitivity. The two scores coincide even with a nonzero offset. Now set the fifth sensitivity to 5 and its offset to 0.8. At λ = 1, compare the fifth leverage with the mean leverage. Predict the fifth reading from the other four, then use this single omitted-sensor error to check which score can reach 0.66.</p>
+<p>The OneSimulation model refits five separate reduced data sets for every penalty. The first CSV score therefore measures actual omitted-sensor predictions. Compare it point by point with the faster identity used in the browser.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/02-leverage-and-generalised-cross-validation/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="math-lab-validation-leverage"></div></section>
+<section><h2 id="tutorial">Tutorial · recover two kinds of influence from one factorisation</h2>
+<h3>Compute the symmetric-case score</h3><p>Using the common-signal example, evaluate GCV and verify it by explicit deletion of all three observations.</p><details><summary>Work through the solution</summary>
+<p>The residual squared sum is \(0.35^2+0.15^2+0.25^2=0.2075\). Its mean divided by \(0.75^2\) gives 0.12296. The three exact predictive residuals are \(0.4667,0.2000,0.3333\); squaring and averaging reproduces 0.12296. The unit of this score is squared whitened observation units. Taking its square root gives an rms predicted datum error, not a standard deviation of the fitted underlying parameter.</p>
+</details>
+<h3>Recover effective dimension from singular values</h3><p>A whitened model has singular values \(4,1,0.1\) and six readings. For \(\lambda=1\), calculate \(d\) and the GCV multiplier applied to mean square residual.</p><details><summary>Work through the solution</summary>
+<p>The gains are \(16/17=0.9412,\ 1/2,\ 0.01/1.01=0.00990\). Their sum is 1.4511 and \(1/[1-d/6]^2\simeq1.740\). The weak singular direction barely enters the prediction even though the algebraic rank is three. With vanishing penalty all three nonzero gains tend to one; with very large penalty they approach zero. This continuous change is why a count of nonzero columns cannot replace the trace in the score.</p>
+</details>
+<h3>Diagnose misleading use of the diagonal basis</h3><p>For \(A=I\) of size \(n\) and the same ridge penalty, compute GCV for every positive \(\lambda\). Can these data identify a preferred penalty from that score?</p><details><summary>Work through the solution</summary>
+<p>Here \(H=I/(1+\lambda)\), \(r=\lambda y/(1+\lambda)\) and \(1-d/n=\lambda/(1+\lambda)\). Cancellation gives \({\rm GCV}=\|y\|^2/n\), independent of \(\lambda\). Leaving one coordinate out leaves no data at all about that independent parameter, so the prediction by the penalised system for that coordinate is always zero. A numerical minimum created by roundoff does not select a meaningful smoothing strength. Structural correlations, replication, a noise model or external validation are needed to decide how much shrinkage helps the intended task.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://pages.stat.wisc.edu/~wahba/stat860/pdf1/golub.heath.wahba.pdf">Golub, Heath and Wahba · the original generalised cross-validation derivation</a></li><li><a href="/fundamentals/numerics/inverse-problems/chapters/04-regularisation/">Course investigation · regularisation with singular data</a></li><li><a href="/fundamentals/numerics/inverse-problems/#experiment">Test which parameters a temperature series identifies</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/01-variable-projection-for-relaxation-data/">Eliminate linear nuisance parameters before fitting a decay</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/03-sparse-inversion-and-shrinkage/">Recovering sparse coefficients without hiding amplitude bias</a></span></nav><script defer src="/assets/practical-mathematical-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

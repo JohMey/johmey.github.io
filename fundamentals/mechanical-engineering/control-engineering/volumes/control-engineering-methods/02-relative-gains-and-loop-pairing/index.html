@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relative gains, loop pairing and nearly singular process measurements · OneSimulation</title>
+<meta name="description" content="Two heaters act on two temperature sensors. With the second heater fixed, a test of the first gives a well-determined positive response. Closing a loop around the other temperature can change both the size and sign of that apparent gain. Derive the relative gain array from the experiment one actually performs.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/02-relative-gains-and-loop-pairing/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Relative gains, loop pairing and nearly singular process measurements · OneSimulation">
+<meta property="og:description" content="Two heaters act on two temperature sensors. With the second heater fixed, a test of the first gives a well-determined positive response. Closing a loop around the other temperature can change both the size and sign of that apparent gain. Derive the relative gain array from the experiment one actually performs.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/02-relative-gains-and-loop-pairing/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/">System dynamics, feedback and estimation</a></p><h1>Relative gains, loop pairing and nearly singular process measurements</h1><p class="lead">Two heaters act on two temperature sensors. With the second heater fixed, a test of the first gives a well-determined positive response. Closing a loop around the other temperature can change both the size and sign of that apparent gain. Derive the relative gain array from the experiment one actually performs.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/11-multivariable-loops/">Background · Interacting actuators, pairing and decoupling</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#eliminate">Compare two physically different partial derivatives</a><a href="#scaling">Show which numerical conclusions depend on chosen units</a><a href="#identify">A test programme distinguishes cancellation from sensor drift</a><a href="#constrained-gain">Make the nearly invisible constrained response visible</a><a href="#tutorial-one">Tutorial · Infer the hidden actuator motion</a><a href="#tutorial-two">Tutorial · Quantify a near-singular inference</a><a href="#tutorial-three">Tutorial · Test a proposed decoupling command</a></nav></aside><article class="prose reference"><section><h2 id="eliminate">Compare two physically different partial derivatives</h2>
+<p>Linearise a two-input, two-output process about an equilibrium, using deviations from the original input and output settings. Write its steady gain matrix as \(K\), with entry \(k_{ij}=\partial y_i/\partial u_j\) with the other input held fixed. If instead the second output is held fixed by feedback, the other input must move too. Eliminate it from the second row:</p>
+<div class="math display equation-chain"><div class="equation-step">\[0=k_{21}\,du_1+k_{22}\,du_2,\]</div><div class="equation-step">\[\left.\frac{dy_1}{du_1}\right|_{y_2}=k_{11}-\frac{k_{12}k_{21}}{k_{22}}=\frac{\det K}{k_{22}}.\]</div></div>
+<p>The relative gain for this pairing is the open-other-input gain divided by the gain with the other output held constant. Inverting the gain matrix gives the general expression \(\Lambda_{ij}=k_{ij}(K^{-1})_{ji}\), an element-by-element product with the transposed inverse. It requires a nonsingular square matrix; the alternative ratio interpretation requires that the selected constrained experiment also be well defined. Each row and column sums to one. A quick check uses the diagonal of \(KK^{-1}=I\). A negative element signals a gain reversal between the two experiments. A very large element indicates considerable cancellation in the constrained response.</p>
+<p>For matrices \(K=\left(\begin{smallmatrix}2&amp;1\\1&amp;2\end{smallmatrix}\right)\), the diagonal relative gains are 4/3 and the off-diagonal entries are minus one third. A unit increase of the first input holding the second output fixed requires reducing the second input by one half. The first output then rises by 1.5, compared with 2 when the other input is held fixed. Off-diagonal pairing would confront a reversal when the other loop closes. A static array can guide selection, but faster dynamics, delays, actuator bounds and output priorities still matter.</p>
+</section>
+<section><h2 id="scaling">Show which numerical conclusions depend on chosen units</h2>
+<p>Let individual output units be rescaled by a diagonal matrix \(D_y\) and input units by \(D_u\). The new gain matrix is \(D_y K D_u^{-1}\) and its inverse transforms in the opposite order. The scale factors cancel separately in each product defining a relative gain. Reporting a temperature deviation in millikelvin instead of kelvin does not change the array. Singular values, by contrast, do depend on units; meaningful comparisons require physical normalisation such as allowed input ranges and tolerated output deviations.</p>
+<p>For \(K=\left(\begin{smallmatrix}1&amp;0.9\\1.1&amp;1\end{smallmatrix}\right)\) the determinant is 0.01. The diagonal entries of the array reach 100 and the off-diagonal entries minus 99. Nominally holding the second output constant requires \(du_2=-1.1du_1\), leaving only 0.01 output units per unit of first input. A requested unit output therefore asks for input changes of 100 and minus 110 in this local model. Saturation or departure from the linear neighbourhood would usually intervene first. A nearly singular response indicates that the two actuators push in almost the same output direction.</p>
+</section>
+<section><h2 id="identify">A test programme distinguishes cancellation from sensor drift</h2>
+<p>Perturb each input on both sides of the reference point with the other held fixed, allow slow transients to settle, and fit slopes including an offset for drift. Repeat with both inputs coordinated to hold one output near its initial value. The small difference of large responses may have uncertainty as large as its point estimate. Record confidence intervals for the matrix elements and propagate them through the determinant before prescribing a controller pairing. Independent tests on a second operating point reveal whether the conclusion survives gain changes. A temperature sensor substituted into both output channels can accidentally make an otherwise invertible plant look rank deficient.</p>
+<p><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/17-inverse-response/#try-it">Compare the time-domain inverse-response study with a steady relative gain. A right-half-plane zero can constrain a pairing that looks attractive at zero frequency.</a></p>
+</section>
+<section><h2 id="constrained-gain">Make the nearly invisible constrained response visible</h2>
+<p>The first curve holds the second input constant; the second holds the second output constant. Both pass through the reference point because the model uses deviations about a common equilibrium. With the nominal gains the latter slope is only one hundredth of the former. Change the lower-right coefficient from one to 0.99 and then to 0.98. The constrained slope passes through zero and reverses sign. At the singular value a finite relative gain is undefined, while the physical experiment remains perfectly interpretable: the coordinated input direction makes no output change.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/02-relative-gains-and-loop-pairing/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-rga"></div>
+<p>A change of less than the uncertainty of a single gain measurement can thus reverse the preferred feedback direction. If the second actuator reaches a limit during the constrained test, the measured slope shifts back toward the first curve because the supposedly fixed second output can no longer be maintained. Record both actuator trajectories and the residual at the constrained output before claiming to have measured a relative gain.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Infer the hidden actuator motion</h2>
+<p>A two-zone stage has gain matrix with rows (3, 1) and (2, 2), in consistent scaled units. Increase the first actuator by one unit while regulating the second output exactly. Find the first output and relative gain.</p>
+<details><summary>Write the constrained row first</summary>
+<p>The second row requires \(du_2=-1\). The first output changes by \(3-1=2\). With the second input fixed it would have changed by three, so the first relative gain is 1.5. The complementary entries are minus one half, since row and column sums must equal one. For a slowly regulating second loop the early transient can resemble the fixed-input experiment while the settled change follows the constrained one. Compare time scales before using the settled gain in a fast-loop tuning rule.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Quantify a near-singular inference</h2>
+<p>Suppose only the lower-right coefficient of the nearly singular example is uncertain by plus or minus 0.02. Can the sign of the diagonal relative gain be inferred from the nominal values?</p>
+<details><summary>Bound the determinant before taking the ratio</summary>
+<p>At the endpoints the determinant becomes minus 0.01 and plus 0.03. At 0.99 for that coefficient the matrix is exactly singular, so the interval crosses a pole of the calculation. The sign is not identified. A covariance estimate or repeated constrained tests may narrow the uncertainty. Taking an arithmetic average of very large positive and negative sampled gains around a singularity is especially misleading; the two sides correspond to qualitatively different controller directions.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Test a proposed decoupling command</h2>
+<p>For the first symmetric matrix, request changes (1, minus 1) in the two temperatures. Compare the required inputs with those for (1, 1). Why is the independent-channel approximation misleading?</p>
+<details><summary>Invert the matrix along its two physical directions</summary>
+<p>The equal direction has gain three and needs input changes (one third, one third). The differential direction has gain one and needs (1, minus 1). Treating both diagonal gains as two would predict changes of magnitude one half for either case. A common-mode validation therefore overstates ability to control a gradient. Test both common and differential directions at suitable amplitudes before reporting usable output ranges, especially with bounded actuators.</p>
+</details>
+<p><a href="https://people.ee.ethz.ch/~rsmith/class_cs2.html">ETH Zürich · Control Systems II, multivariable systems and control design</a></p>
+<p><a href="https://ethz.ch/content/dam/ethz/special-interest/mavt/dynamic-systems-n-control/idsc-dam/Lectures/Control-Systems-2/lecture_slides/2019-03-29-ETHZ-CS2-6-mimo-intro.pdf">ETH Zürich · MIMO directionality, singular values and relative gain</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/01-observers-and-noisy-position-measurements/">Estimating velocity from position with a model-based observer</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/03-predicting-a-delayed-process/">Predicting a delayed process and testing a Smith controller</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

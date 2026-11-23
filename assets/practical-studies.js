@@ -68,14 +68,47 @@
     });
   }
 
+  function initialSettings(panel, controls) {
+    const defaults = controls.map(spec => spec[4]);
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("study") !== panel.dataset.study || url.hash !== "#" + panel.id) return defaults;
+    const parts = url.searchParams.get("values")?.split(",");
+    if (!parts || parts.length !== controls.length || parts.some(part => !part.trim())) return defaults;
+    const values = parts.map(Number);
+    const valid = values.every((value, index) => {
+      const [,min,max,step] = controls[index];
+      const ticks = (value-min)/step;
+      return Number.isFinite(value) && value >= min && value <= max && Math.abs(ticks-Math.round(ticks)) < 1e-7;
+    });
+    return valid ? values : defaults;
+  }
+
+  function downloadCurves(key, model, curves) {
+    const rows = [["Curve", model.xLabel, model.yLabel]];
+    for (const series of curves) {
+      for (const [x,y] of series.points) {
+        if (Number.isFinite(x) && Number.isFinite(y)) rows.push([series.name, x, y]);
+      }
+    }
+    const quote = cell => '"' + String(cell).replaceAll('"', '""') + '"';
+    const csv = rows.map(row => row.map(quote).join(",")).join("\r\n") + "\r\n";
+    const url = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8"}));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = key + ".csv";
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
   function initialise(panel) {
     const model = window.fundamentalStudies?.[panel.dataset.study];
     if (!model) return;
     const form = element("fieldset",panel);
     element("legend",form,"Try the calculation");
     const controls = element("div",form); controls.className = "live-inputs";
-    const values = model.controls.map(([, , , ,initial]) => initial);
-    const inputs = model.controls.map(([name,min,max,step,initial], i) => {
+    const values = initialSettings(panel, model.controls);
+    const inputs = model.controls.map(([name,min,max,step], i) => {
+      const initial = values[i];
       const label = element("label",controls);
       const head = element("span",label,name + " ");
       const value = element("b",head,format(initial));
@@ -101,6 +134,12 @@
     }
     const actions = element("div",form); actions.className = "live-actions";
     const reset = element("button",actions,"Reset inputs"); reset.type = "button";
+    const csv = element("button",actions,"Download plotted values (CSV)"); csv.type = "button";
+    const share = element("a",actions,"Link to these settings");
+    const online = panel.previousElementSibling?.matches(".print-experiment") && panel.previousElementSibling.querySelector("a");
+    const target = new URL(online ? online.pathname : window.location.pathname, window.location.origin);
+    target.hash = (online && online.hash) || panel.id;
+    target.searchParams.set("study", panel.dataset.study);
     const dataView = element("details",form); dataView.className="live-data";
     element("summary",dataView,"Read numerical values");
     const tableWrap = element("div",dataView); tableWrap.className="table-wrap";
@@ -125,6 +164,8 @@
     function update() {
       data = model.calculate(values.slice());
       result.textContent = data.result;
+      target.searchParams.set("values", values.join(","));
+      share.href = target.href;
       if (command) command.textContent = "python " + model.localModel.file + " " + model.localModel.args(values);
       legend.replaceChildren();
       data.curves.forEach((s,i) => {
@@ -136,6 +177,7 @@
     reset.addEventListener("click",()=> {
       model.controls.forEach((spec,i)=>{values[i]=spec[4];inputs[i].input.value=spec[4];inputs[i].value.textContent=format(spec[4]);}); update();
     });
+    csv.addEventListener("click", () => downloadCurves(panel.dataset.study, model, data.curves));
     dataView.addEventListener("toggle",showTable);
     const observer = new ResizeObserver(entries=>{if(entries[0].contentRect.width !== canvas.lastPlotWidth){canvas.lastPlotWidth=entries[0].contentRect.width;plot();}});
     observer.observe(figure);

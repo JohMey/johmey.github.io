@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distinguish a physical precession from numerical drift · OneSimulation</title>
+<meta name="description" content="A bound orbit circulates many times about its centre. A small change in the angle of successive closest approaches could be physical or could be accumulated phase error. Construct an exactly solvable family of precessing orbits that lets the two effects be compared without assuming a reference trajectory from another code.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/03-orbit-precession/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Distinguish a physical precession from numerical drift · OneSimulation">
+<meta property="og:description" content="A bound orbit circulates many times about its centre. A small change in the angle of successive closest approaches could be physical or could be accumulated phase error. Construct an exactly solvable family of precessing orbits that lets the two effects be compared without assuming a reference trajectory from another code.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/03-orbit-precession/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a> / <a href="/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/">Mechanics in the laboratory</a></p><h1>Distinguish a physical precession from numerical drift</h1><p class="lead">A bound orbit circulates many times about its centre. A small change in the angle of successive closest approaches could be physical or could be accumulated phase error. Construct an exactly solvable family of precessing orbits that lets the two effects be compared without assuming a reference trajectory from another code.</p><p class="byline">Unit 3 of 5</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#replace-time-by-the-measured-polar-angle">Replace time by the measured polar angle</a><a href="#read-apses-from-a-harmonic-equation">Read apses from a harmonic equation</a><a href="#compute-the-bias-of-a-discrete-orbit-exactly">Compute the bias of a discrete orbit exactly</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="replace-time-by-the-measured-polar-angle">Replace time by the measured polar angle</h2>
+<p>A particle of mass \(m\) moves in a static central potential \(V(r)=-k/r+\alpha/(2r^2)\) with \(k>0\). The radial force is \(-k/r^2+\alpha/r^3\). Angular momentum \(L=mr^2\dot\phi\) is constant. Put \(u=1/r\) and differentiate with respect to \(\phi\), denoting this derivative by a prime. The identities \(\dot r=-(L/m)u'\) and \(\ddot r=-(L^2/m^2)u^2u''\) follow by the chain rule. Subtracting the centripetal term \(r\dot\phi^2=(L^2/m^2)u^3\) from radial acceleration gives Binet's equation.</p>
+<div class="math display equation-chain"><div class="equation-step">\[u''+(1+\delta)u=\frac{mk}{L^2},\]</div><div class="equation-step">\[\delta=\frac{m\alpha}{L^2}.\]</div></div>
+<p>The sign of the perturbation matters. Positive \(\alpha\) gives a repulsive short-range correction, increasing radial frequency per unit angle. A mildly negative correction decreases it. This family is a test potential; a measured nonzero advance in nature need not have this particular cause.</p>
+</section>
+<section>
+<h2 id="read-apses-from-a-harmonic-equation">Read apses from a harmonic equation</h2>
+<p>For \(1+\delta>0\), write \(\nu=\sqrt{1+\delta}\), \(u_c=mk/[L^2(1+\delta)]\) and impose \(u(0)=u_c(1+e)\), \(u'(0)=0\) with \(0&lt;e&lt;1\). Then \(u=u_c[1+e\cos(\nu\phi)]\). The radial minimum corresponds to a maximum of \(u\). Its next occurrence is at angle \(2\pi/\nu\), so the change of line of apsides per radial period is</p>
+<div class="math display">\[\Delta\omega=2\pi\left(\frac{1}{\sqrt{1+\delta}}-1\right).\]</div>
+<p>For \(\delta=0.04\), successive pericentres rotate backwards by approximately 7.0 degrees. At \(\delta=0\) the Kepler ellipse closes. For a strictly circular orbit the algebraic radial frequency has a well-defined small-oscillation limit, but the direction of pericentre of the observed circle has no unique value. A nearly circular orbit therefore has a genuine experimental difficulty even when the integration is accurate.</p>
+</section>
+<section>
+<h2 id="compute-the-bias-of-a-discrete-orbit-exactly">Compute the bias of a discrete orbit exactly</h2>
+<p>Shift \(v=u-u_c\). On a uniform angular grid of spacing \(h\), the centred second difference gives \(v_{j+1}=2v_j-v_{j-1}-(h\nu)^2v_j\). Insert the trial \(v_j=e^{ij\psi}\) and simplify:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\cos\psi=1-\tfrac12(h\nu)^2,\]</div><div class="equation-step">\[\nu_h=\frac{2}{h}\arcsin(h\nu/2).\]</div></div>
+<p>The numerical mode oscillates if \(h\nu&lt;2\). Inside that range it is too fast, since the arcsine exceeds its argument. A bounded orbit can thus accumulate a negative apsidal error. For an unperturbed Kepler case and a 30-degree grid, the numerical angular frequency is roughly 1.012. Treating this as a physical result would infer a retrograde precession of roughly four degrees per revolution. Refining \(h\) halves the angular step and quarters the leading error, because \(\nu_h=\nu+\nu^3h^2/24+\cdots\).</p>
+<p>The experiment plots radial phase after multiple nominal revolutions and reports the implied apsidal angles. Vary the perturbation at fixed step first, then halve the step at fixed perturbation. Distinguish the discrepancy that persists in the continuum from the discrepancy that can be extrapolated away. Starting all curves at pericentre makes the phase convention identical.</p>
+<p>Hold the force exactly Newtonian. Compare the accumulated numerical phase on a <a href="/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/03-orbit-precession/?study=physics-lab-orbit-precession&amp;values=0,30#try-it">30° grid</a> and <a href="/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/03-orbit-precession/?study=physics-lab-orbit-precession&amp;values=0,6#try-it">6° grid</a>. The exact radial phase stays at zero in both runs. Use the exported values to estimate how the phase error scales when the angular step is divided by five.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/03-orbit-precession/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="physics-lab-orbit-precession"></div>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>A measured radial period is 364 degrees of azimuthal advance. In this family, which sign of \(\alpha\) is indicated and what is \(\delta\)?</p>
+<details><summary>Work through the solution</summary><p>The radial cycle takes more than 360 degrees, so the radial frequency per unit angle is below one. The inferred correction is attractive, \(\delta=(360/364)^2-1\simeq-0.02186\).</p></details>
+<p>A simulation reports advances of −1.20, −0.60 and −0.45 degrees at successive halvings of the angular step. What leading continuum estimate follows?</p>
+<details><summary>Work through the solution</summary><p>With second-order phase bias, the final difference 0.15 equals three times the remaining magnitude of that bias. Adding 0.05 to −0.45 gives −0.40 degrees. The earlier pair gives the same estimate. An additional refinement tests the assumed scaling.</p></details>
+<p>Can a long observation of a closed numerically integrated orbit rule out a time-step error in the orbital period?</p>
+<details><summary>Work through the solution</summary><p>No. Closure depends on a ratio of radial to azimuthal phase advances. Both may be biased in the same proportion. Independently time successive crossings and compare with an analytic period or a finer integration. Different observables can hide different errors.</p></details>
+<p>The <a href="/fundamentals/numerics/ordinary-differential-equations/chapters/13-symmetric-midpoint/#try-it">midpoint experiment</a> shows the converse sign of phase error for another bounded integrator.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/02-reversible-pendulum/">Measure inertia and gravity with two suspension axes</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/volumes/mechanics-laboratory/04-fastest-descent/">Which track reaches a lower point first?</a></span></nav><script defer src="/assets/practical-physics-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

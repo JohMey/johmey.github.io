@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finding another equilibrium after one root is known · OneSimulation</title>
+<meta name="description" content="Newton iteration repeatedly finds the same structural equilibrium. Derive how deflation changes its basins while preserving other solutions, use a rank-one Jacobian update, and distinguish a list of discovered equilibria from a completeness certificate.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/03-deflating-known-solutions/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Finding another equilibrium after one root is known · OneSimulation">
+<meta property="og:description" content="Newton iteration repeatedly finds the same structural equilibrium. Derive how deflation changes its basins while preserving other solutions, use a rank-one Jacobian update, and distinguish a list of discovered equilibria from a completeness certificate.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/03-deflating-known-solutions/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Nonlinear systems and iterative methods</a></p><h1>Finding another equilibrium after one root is known</h1><p class="lead">Newton iteration repeatedly finds the same structural equilibrium. Derive how deflation changes its basins while preserving other solutions, use a rank-one Jacobian update, and distinguish a list of discovered equilibria from a completeness certificate.</p><p class="byline">Unit 3 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/nonlinear-equations/chapters/06-continuation/">Background · Continuation and folds</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#root">Prevent a known simple zero from attracting another iteration</a><a href="#update">Reuse a Newton correction with a rank-one change</a><a href="#example">See the change of basin in an analytical scalar model</a><a href="#experiment">Change the Newton basin by dividing out a known root</a><a href="#tutorial">Tutorial · separate discovery, verification and completeness</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="root">Prevent a known simple zero from attracting another iteration</h2>
+<p>Suppose a differentiable \(F:\mathbb R^n\to\mathbb R^n\) has a known zero \(r\), with nonsingular Jacobian \(J(r)\). Near \(r\), \(F(r+h)=J(r)h+O(\|h\|^2)\), so its norm is bounded below by a positive constant times \(\|h\|\) in a sufficiently small neighbourhood. Multiplying by a nonvanishing scalar multiplier away from \(r\) preserves all other zeros. Taking \(M(x)=\|x-r\|^{-p}+\alpha\), \(\alpha&gt;0\), yields deflated residual \(G(x)=M(x)F(x)\) on \(x\ne r\). Its norm behaves at least as a constant times \(\|x-r\|^{1-p}\) near the simple root. For \(p=1\) it need not have a directional limit but cannot approach zero there; for \(p&gt;1\) it diverges. The scalar shift \(\alpha\) prevents the multiplier from vanishing at large distances.</p>
+<p>If the root has multiplicity \(m\) in a scalar problem, \(|F|\) can vanish like distance to the power \(m\). An exponent \(p&lt;m\) can leave the deflated norm tending to zero, invalidating the reasoning for simple roots. In systems with singular Jacobians different directions can have different leading powers or a whole manifold of solutions can pass through \(r\). One should identify symmetries and solve a properly constrained problem before treating every coordinate representation of a continuum of roots as a new equilibrium. Deflation changes a nonlinear solver's route; it does not make a singular physical problem isolated by decree.</p>
+</section>
+<section><h2 id="update">Reuse a Newton correction with a rank-one change</h2>
+<p>Differentiate the scalar product to obtain \(J_G=MJ_F+F(\nabla M)^T\). When \(J_F\) is invertible, let \(d=-J_F^{-1}F\) be the ordinary Newton correction. Look for a deflated step \(s=\beta d\). Applying \(J_G\) gives \(\beta[-MF+F(\nabla M)^Td]\). Equating this to \(-MF\) yields</p>
+<div class="math display">\[s=\frac{d}{1-(\nabla\log M)^Td}.\]</div>
+<p>This is a convenient exact relation for a scalar deflation multiplier away from a vanishing denominator. The Jacobian of the modified problem can become singular at points where the original Newton step is perfectly well-defined. A denominator near zero can create an enormous proposed state change. A line search or trust region should verify the candidate against the chosen objective and the physically admissible variables. Once a different candidate root is located, evaluate the original \(F\), its Jacobian conditioning and any invariant constraints independently.</p>
+</section>
+<section><h2 id="example">See the change of basin in an analytical scalar model</h2>
+<p>Take \(F(x)=x(x-1)(x+2)\) with roots \(0,1,-2\), and let \(r=0\) have already been found. On the positive half-line choose \(M=1/x\) for a transparent algebraic comparison, giving \(G=(x-1)(x+2)\). This unshifted local example works on this domain; a global implementation often uses the positive shifted norm expression instead. From \(x=0.2\), \(F=-0.352,\ F'=3x^2+2x-2=-1.48\). Original Newton gives approximately \(-0.0378\), entering the basin of the known zero. Deflated Newton has \(G=-1.76,\ G'=1.4\) and gives approximately \(1.4571\), entering a region directed toward the other positive root. Neither update used knowledge of the other roots to choose that direction.</p>
+<p>For a polynomial with known exact factor, explicit algebraic division may be available. A numerical residual from a mechanics or fluid solver need not be a polynomial and generally offers no such division. Numerical deflation uses the known state and a norm to remove its attraction while continuing to evaluate the same physical governing equations. Use physical scaling in that norm. The distance between two states measured in metres and kelvins is arbitrary until component scales are chosen; an apparently huge separation in the deflation metric can represent tiny physical changes. If roots are known only approximately, multiplying a near-singular factor around a slightly wrong centre can leave the true nearby root or create severe numerical conditioning. Refine and verify each original root before including it in a list of deflation centres.</p>
+</section>
+<section><h2 id="experiment">Change the Newton basin by dividing out a known root</h2>
+<p>Here the original residual is the cubic in the worked example. Its known zero at the origin is algebraically divided out, leaving a quadratic on the full line. This exact-factor experiment isolates the change in Newton geometry without introducing a singular numerical evaluation of an inverse distance. For both residuals, the calculator starts at the same chosen positive point and applies the same damping factor. At the default 0.20 the first ordinary step goes slightly negative and approaches zero; the deflated step passes one and converges back to it. The readout verifies the second candidate in the original cubic.</p>
+<p>Try a smaller damping factor and compare the number of iterations needed before the two candidate sequences settle. Damping moderates each proposed correction but does not restore the removed root of the quadratic. A finite iteration count with heavy damping may end with a visible original residual; a current candidate is not an exact equilibrium merely because its curve has begun to flatten. This illustration relies on an exact polynomial factor, while deflation around a numerically inferred state requires an explicit centre tolerance and original-model verification.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/03-deflating-known-solutions/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-deflated-roots"></div>
+</section>
+<section><h2 id="tutorial">Tutorial · separate discovery, verification and completeness</h2>
+<h3>Work through a simple shifted multiplier</h3><p>For \(F=x(x-1)\), \(x&gt;0\), use \(M=1+1/x\) to deflate zero. Find the new residual, its value as \(x\to0^+\), and the deflated Newton step from \(x=0.5\).</p><details><summary>Work through the solution</summary>
+<p>Here \(G=(x+1)(x-1)=x^2-1\), tending to \(-1\) at the excluded zero. From \(x=0.5\), \(G=-0.75,\ G'=1\), giving \(x_{\rm next}=1.25\). The original derivative \(2x-1\) vanishes exactly at the starting point even though the deflated derivative does not. The shortcut requiring \(J_F^{-1}\) is unavailable there; directly differentiating and solving for \(G\) remains valid. This example shows why a formula derived for nonsingular \(J_F\) should not become a universal implementation assumption.</p>
+</details>
+<h3>Choose a multiplier for a double root</h3><p>For \(F(x)=(x-1)^2(x+1)\) deflate \(r=1\) with \(M=|x-1|^{-p}+1\). Compare \(p=1\) and \(p=2\). What limits a near-root termination test?</p><details><summary>Work through the solution</summary>
+<p>Near \(1\), \(|F|\sim2|x-1|^2\). With \(p=1\), \(|G|\sim2|x-1|\) still tends to zero; with \(p=2\), it tends to two. A test accepting just a small deflated residual can therefore return very close to the old double root when using the inappropriate exponent. A small original residual also occurs over a relatively wide neighbourhood of a multiple root. Report a root-separation test and independent bounds or refinement where multiplicity affects the required state tolerance.</p>
+</details>
+<h3>Construct a genuine completeness argument in one dimension</h3><p>Several initial guesses and deflations recover the three roots of \(x^3+x^2-2x\). What additional reasoning certifies that the list is complete, and what can be reported if only a black-box smooth system is available?</p><details><summary>Work through the solution</summary>
+<p>The polynomial is nonzero of degree three, so it has at most three distinct complex roots. Substitution verifies three distinct real ones and proves completeness in this case. Multiple Newton solves by themselves would not establish that count. For a smooth black-box scalar problem over a compact interval one can partition it, enclose the function and its derivative, exclude root-free pieces and isolate all retained candidates when the bounds allow. In a higher-dimensional problem a list found by starts and deflation should be reported as verified discovered roots unless an independent argument covers the entire specified domain.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://arxiv.org/abs/1410.5620">Farrell, Birkisson and Funke · deflation for distinct nonlinear solutions</a></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/06-continuation/">Course investigation · continuing an equilibrium branch</a></li><li><a href="/fundamentals/numerics/nonlinear-equations/#experiment">Solve an implicit cooling step with a changing residual</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/02-mixing-fixed-point-iterates/">Accelerating fixed points with differences of residuals</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/04-identifying-multiple-complex-roots/">Count enclosed zeros with a contour before locating them</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

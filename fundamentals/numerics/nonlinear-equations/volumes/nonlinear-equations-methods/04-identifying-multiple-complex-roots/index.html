@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count enclosed zeros with a contour before locating them · OneSimulation</title>
+<meta name="description" content="A complex residual may have several nearby zeros whose Newton basins are hard to distinguish. Use the argument principle to count them, contour moments to estimate their locations and an independent perturbation test to certify a root cluster.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/04-identifying-multiple-complex-roots/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Count enclosed zeros with a contour before locating them · OneSimulation">
+<meta property="og:description" content="A complex residual may have several nearby zeros whose Newton basins are hard to distinguish. Use the argument principle to count them, contour moments to estimate their locations and an independent perturbation test to certify a root cluster.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/04-identifying-multiple-complex-roots/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a> / <a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Nonlinear systems and iterative methods</a></p><h1>Count enclosed zeros with a contour before locating them</h1><p class="lead">A complex residual may have several nearby zeros whose Newton basins are hard to distinguish. Use the argument principle to count them, contour moments to estimate their locations and an independent perturbation test to certify a root cluster.</p><p class="byline">Unit 4 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/nonlinear-equations/chapters/07-polynomial-roots/">Background · Polynomial roots and coefficient sensitivity</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#argument">Turn winding of a residual into a root count</a><a href="#moments">Locate small groups after counting them</a><a href="#robust">Use a boundary inequality to protect a count under perturbation</a><a href="#experiment">Count one movable complex zero by discrete contour integration</a><a href="#tutorial">Tutorial · audit a contour computation</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="argument">Turn winding of a residual into a root count</h2>
+<p>Let \(f\) be analytic inside and on a positively oriented simple closed contour \(\Gamma\), with no zeros on it. Suppose \(z_j\) is an enclosed zero of multiplicity \(m_j\). Locally \(f(z)=(z-z_j)^{m_j}g(z)\) with \(g(z_j)\ne0\), so \(f'/f=m_j/(z-z_j)+g'/g\). Cauchy's residue theorem gives</p>
+<div class="math display">\[N=\frac1{2\pi i}\oint_\Gamma\frac{f'(z)}{f(z)}\,dz=\sum_jm_j.\]</div>
+<p>A meromorphic \(f\) instead gives number of zeros minus poles, counted with multiplicity. On the image curve \(f(\Gamma)\) the same integral equals its change of complex argument divided by \(2\pi\). This provides an alternative if only complex function evaluations are available. Both versions require that the contour avoid zeros and poles. Moving the contour through one changes its integer count discontinuously; a point extremely close to the boundary demands finer sampling or a different contour.</p>
+<p>For a circle \(z=c+Re^{i\theta}\), periodic trapezoidal quadrature evaluates the integral as the mean of \((z-c)f'(z)/f(z)\). The smoothness and distance to nearby singularities govern convergence. Simply rounding the result to the nearest integer can disguise severe undersampling. Compare independent contour radii and doubled angular grids, inspect the minimum \(|f|\) on the boundary, and examine unwrapped phase increments. A grid with only endpoint samples of a rapidly rotating image can miss entire turns even when successive complex values look nearly identical. An upper bound on phase speed or adaptive interval enclosure is needed for a rigorous count from discrete samples.</p>
+</section>
+<section><h2 id="moments">Locate small groups after counting them</h2>
+<p>Multiply the integrand by \(z^k\). Its residues become \(m_j z_j^k\), giving power sums \(s_k=(2\pi i)^{-1}\oint z^k f'/f\,dz\). For exactly one simple enclosed root, \(s_1\) is its location. For two simple roots \(z_1,z_2\), obtain their sum \(s_1\), and their product \((s_1^2-s_2)/2\) from the identity \((z_1+z_2)^2=z_1^2+z_2^2+2z_1z_2\). Solve the resulting quadratic for initial guesses, then polish on the original residual and recheck the contour count. For large clusters reconstructing a high-degree polynomial from power sums can be ill-conditioned; recursively subdivide or use a contour method designed for stable extraction.</p>
+<p>Take \(f(z)=(z-0.2)(z+0.4)(z-2)\) on the unit circle. Its count is two; its moments are \(s_1=-0.2,\ s_2=0.20\). The reconstructed product is \((0.04-0.20)/2=-0.08\), giving \(z^2+0.2z-0.08=0\) and roots \(0.2,-0.4\). The exterior factor changes the residual values and Newton basins but contributes no interior pole of \(f'/f\), hence no moment. A contour enclosing all three instead changes the power sums. Severe cancellation can occur when several large root powers sum to a small number. Shift and scale coordinates about the contour centre before evaluating high-order moments.</p>
+</section>
+<section><h2 id="robust">Use a boundary inequality to protect a count under perturbation</h2>
+<p>If an analytically tractable \(g\) and target \(f=g+h\) satisfy \(|h(z)|&lt;|g(z)|\) on \(\Gamma\), then the continuous homotopy \(g+th,\ 0\le t\le1\), has no boundary zero. Its winding number around zero cannot change continuously between distinct integers, so \(f\) and \(g\) enclose the same number of zeros. This is Rouché's theorem, useful when a perturbation is small on the boundary even if it strongly splits individual roots inside. The strict bound must cover the entire curve. Observations at a handful of sample points without a bound between them are numerical evidence, not a theorem.</p>
+<p>For \(f(z)=(z-1)^2+\epsilon z,\ |\epsilon|=0.001\), use a circle of radius 0.1 about one. Its unperturbed modulus is 0.01 and the perturbation has magnitude at most 0.0011. Both zeros stay inside this circle. Their individual shifts can be of order \(\sqrt{|\epsilon|}\) because the reference zero is double. A small coefficient perturbation can therefore leave a reliably countable cluster while making its individual members comparatively sensitive. This distinction between a cluster as a whole and a single ill-conditioned root is important when a model residual depends on uncertain fitted coefficients.</p>
+</section>
+<section><h2 id="experiment">Count one movable complex zero by discrete contour integration</h2>
+<p>The experiment integrates the logarithmic derivative of a polynomial with one zero strictly inside the unit circle. Its exact count is therefore one everywhere in the slider range. The real and imaginary parts of the quadrature estimate are plotted separately against the number of uniformly spaced angular samples. At radius 0.9 on the positive real axis, eight samples give about 1.756; rounding the real part would report two zeros. Moving the root farther from the contour makes convergence faster without changing the true count.</p>
+<p>Rotate the root slightly while keeping its radius fixed. The absolute distance from the contour is unchanged, but its phase relative to the sampling nodes changes. A nonzero imaginary estimate and oscillatory errors may appear even though the exact winding number is real. The finite-grid formula for a root at complex a is one divided by one minus a raised to the number of samples. Use it to predict locations of large errors before reading the graph. An apparent agreement for one particular sample count can be accidental; compare successive refinements and the complex error.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/04-identifying-multiple-complex-roots/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-contour-count"></div>
+</section>
+<section><h2 id="tutorial">Tutorial · audit a contour computation</h2>
+<h3>Calculate the exact aliasing of a one-root count</h3><p>For \(f(z)=z-a\) on the unit circle with \(|a|&lt;1\), use \(M\) equally spaced points. Derive the trapezoidal estimate of \(N\) and evaluate it for real \(a=0.9,M=8\).</p><details><summary>Work through the solution</summary>
+<p>At each point \(zf'/f=1/(1-a/z)=\sum_{k\ge0}a^kz^{-k}\). Averaging roots of unity cancels all terms except powers divisible by \(M\), giving \(N_M=1/(1-a^M)\). At \(M=8\) it is about 1.756, which would round to the wrong integer two. Increasing to \(M=64\) gives about 1.00118. This explicit example illustrates why apparent smoothness of the original analytic function does not ensure adequate sampling of its logarithmic derivative.</p>
+</details>
+<h3>Recover a repeated root from moments</h3><p>A contour yields \(N=2,s_1=1.2,s_2=0.72\) to high numerical accuracy. Infer the candidate roots and explain the sensitivity to a small error in \(s_2\).</p><details><summary>Work through the solution</summary>
+<p>The product is \((1.44-0.72)/2=0.36\); the polynomial \(z^2-1.2z+0.36\) has double root 0.6. A change \(\delta\) in \(s_2\) changes the product by \(-\delta/2\), giving inferred splitting \(\pm\sqrt{\delta/2}\) relative to 0.6. Tiny moment noise can therefore mimic two distinct roots. Verify a multiplicity claim against derivative information on the original function and clarify whether distinct roots can actually be resolved.</p>
+</details>
+<h3>Explain a zero net winding that hides a zero</h3><p>A rational residual has a simple zero at 0.1 and a simple pole at -0.2 inside the unit circle. What would the count report and how could one recover the desired zero count?</p><details><summary>Work through the solution</summary>
+<p>The logarithmic derivative has residues plus one and minus one, so net winding is zero even though a zero exists. If the pole and its order are known, add the pole count to the measured winding or multiply by a known denominator that removes it and then check the resulting analytic function. A near pole–zero cancellation can be difficult to resolve numerically. Treating a rational or discretely singular residual as a globally analytic polynomial would make the count's interpretation incorrect.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://people.math.ethz.ch/~grsam/NumMeth/NumCSE_Lecture_Document.pdf">ETH Zürich · numerical methods for CSE, polynomial roots and nonlinear systems</a></li><li><a href="https://dlmf.nist.gov/1.10">NIST Digital Library of Mathematical Functions · contour integration, residues and zeros</a></li><li><a href="/fundamentals/numerics/nonlinear-equations/chapters/07-polynomial-roots/">Course investigation · polynomial roots and conditioning</a></li><li><a href="/fundamentals/numerics/nonlinear-equations/#experiment">Solve an implicit cooling step with a changing residual</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/03-deflating-known-solutions/">Finding another equilibrium after one root is known</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/volumes/nonlinear-equations-methods/">Volume contents</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

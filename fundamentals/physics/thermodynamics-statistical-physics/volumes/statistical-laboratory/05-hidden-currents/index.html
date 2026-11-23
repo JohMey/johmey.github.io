@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detect irreversible steady motion from transition counts · OneSimulation</title>
+<meta name="description" content="A three-state system appears equally likely to occupy each state. Is it at thermal equilibrium? Build two different stationary processes with identical populations, then determine what a time-resolved instrument must count to distinguish them.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/05-hidden-currents/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Detect irreversible steady motion from transition counts · OneSimulation">
+<meta property="og:description" content="A three-state system appears equally likely to occupy each state. Is it at thermal equilibrium? Build two different stationary processes with identical populations, then determine what a time-resolved instrument must count to distinguish them.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/05-hidden-currents/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/">Counting, correlations and thermal measurements</a></p><h1>Detect irreversible steady motion from transition counts</h1><p class="lead">A three-state system appears equally likely to occupy each state. Is it at thermal equilibrium? Build two different stationary processes with identical populations, then determine what a time-resolved instrument must count to distinguish them.</p><p class="byline">Unit 5 of 6</p><nav class="study-links" aria-label="Study this unit"><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#construct-a-stationary-distribution-without-assuming-equilibrium">Construct a stationary distribution without assuming equilibrium</a><a href="#read-the-direction-of-time-from-a-trajectory">Read the direction of time from a trajectory</a><a href="#resolve-what-a-slow-camera-misses">Resolve what a slow camera misses</a><a href="#try-equal-stationary-histograms-with-different-histories">Try equal stationary histograms with different histories</a><a href="#tutorial">Tutorial</a></nav></aside><article class="prose reference"><section>
+<h2 id="construct-a-stationary-distribution-without-assuming-equilibrium">Construct a stationary distribution without assuming equilibrium</h2>
+<p>Arrange states \(0,1,2\) on a directed ring. From each state the clockwise rate is \(k_+\), the anticlockwise rate is \(k_-\), both positive. For example \(\dot p_0=k_+p_2+k_-p_1-(k_++k_-)p_0\), with the other equations obtained by cycling the indices. Uniform \(p_i=1/3\) makes every derivative vanish for any values of the two rates. The normalised stationary populations contain no information on their ratio.</p>
+<p>Detailed balance would require \(p_i k_{i\to j}=p_j k_{j\to i}\) across each individual edge. Here the stationary net clockwise current on each edge is \(J=(k_+-k_-)/3\). Summing over all edges gives mean signed jump count per time \(k_+-k_-\). One complete rotation contains three net clockwise jumps. A stationary histogram does not determine whether those currents exist because a divergence-free current leaves each state's population unchanged.</p>
+</section>
+<section>
+<h2 id="read-the-direction-of-time-from-a-trajectory">Read the direction of time from a trajectory</h2>
+<p>At stationarity compare the probability of one clockwise jump across an edge with its reverse. Their logarithmic ratio is \(\ln(k_+/k_-)\). Multiplying this increment by \(k_B\) and the net flux, then summing the three oriented edges, gives the irreversible entropy-production rate for the observed Markov model.</p>
+<div class="math display">\[\frac{\dot S_{\rm prod}}{k_B}=(k_+-k_-)\ln(k_+/k_-)\ge0.\]</div>
+<p>Both factors change sign together if the circulation is reversed. There is no \(1/2\) here because each undirected edge was included once with its chosen orientation. Counting all ordered pairs instead would require compensating for double counting. An interpretation in terms of actual heat delivered to a reservoir requires thermodynamic information such as local detailed balance. The transition record alone measures time-reversal asymmetry of this model.</p>
+<p>At \(k_+=6\,\mathrm{s^{-1}}, k_-=2\,\mathrm{s^{-1}}\), each edge carries \(4/3\) net jumps per second. The entropy-production rate is \(4\ln3=4.394\,k_B/\mathrm s\). An unbiased process with \(k_+=k_-=4\,\mathrm{s^{-1}}\) has the same uniform occupations and the same total jump rate of eight per second, yet zero net current and zero entropy production. Counting only total events is insufficient too.</p>
+</section>
+<section>
+<h2 id="resolve-what-a-slow-camera-misses">Resolve what a slow camera misses</h2>
+<p>Because every state has the same outgoing rates, the number of clockwise and anticlockwise jumps in duration \(t\) can be constructed from independent Poisson processes of means \(k_+t,k_-t\). Their difference has mean \((k_+-k_-)t\) and variance \((k_++k_-)t\). At the example rates a 10 s record has expected signed count 40 and standard deviation \(\sqrt{80}\simeq8.94\). If the electronics wraps angles modulo three, a sequence of three consecutive clockwise jumps between frames looks like zero displacement. High temporal resolution and a sufficiently long record solve different experimental problems.</p>
+<p>Parameterise the rates by total activity \(r=k_++k_-\) and bias \(b=(k_+-k_-)/r\). Then \(\dot S_{\rm prod}/k_B=rb\ln[(1+b)/(1-b)]\). Close to equilibrium this grows as \(2rb^2\), while current grows linearly in \(b\). A weak current may be detectable in a signed record when estimates of an entropy-production rate remain noisy. The logarithmic estimate from raw counts is particularly unstable if a short record has no detected backward jumps.</p>
+</section>
+<section>
+<h2 id="try-equal-stationary-histograms-with-different-histories">Try equal stationary histograms with different histories</h2>
+<p>Change the bias and total transition rate. The graph gives the expected unwrapped signed count and one-standard-deviation band. The predicted occupation of each state stays fixed at one third. Reverse the bias and compare the mean drift, fluctuation width and entropy production. This experiment plots analytical ensemble statistics, so repeated changes of the controls give reproducible values.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/05-hidden-currents/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="physics-lab-hidden-currents"></div>
+</section>
+<section>
+<h2 id="tutorial">Tutorial</h2>
+<p>A stationary 100 s record contains 480 clockwise and 320 anticlockwise jumps across all edges. Estimate the two rates and the entropy production under the stated homogeneous model.</p>
+<details><summary>Work through the solution</summary><p>The rate estimates are 4.8 and 3.2 per second. The inferred rate divided by \(k_B\) is \(1.6\ln(1.5)=0.649\,\mathrm{s^{-1}}\). Estimating separate edge rates for an inhomogeneous ring would also require time spent in each source state.</p></details>
+<p>Can an observed two-state continuous-time chain sustain a nonzero stationary edge current with one reversible edge?</p>
+<details><summary>Work through the solution</summary><p>Stationarity for either state directly sets the net edge current to zero. Hidden states or multiple unresolved transition channels can still dissipate. Absence of a current in a coarse record does not determine every microscopic flux.</p></details>
+<p>How long must the idealised process with rates 6 and 2 per second be observed for the expected drift to be five times its standard deviation?</p>
+<details><summary>Work through the solution</summary><p>Solve \(4t=5\sqrt{8t}\), giving \(t=12.5\) s. This signal-to-noise criterion compares an ensemble mean to its spread and does not guarantee a particular outcome in one record.</p></details>
+<p>Relate this inference to equilibrium reversibility in the <a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-mechanics/07-detailed-balance-and-master-equations/">master-equation chapter</a>.</p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/04-effusive-flight/">Why a molecular beam and its source have different measured speeds</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/volumes/statistical-laboratory/06-fluctuations-and-the-central-limit/">Why macroscopic measurements become reproducible</a></span></nav><script defer src="/assets/practical-physics-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

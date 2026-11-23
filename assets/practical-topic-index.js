@@ -1,8 +1,12 @@
 (() => {
   "use strict";
 
+  const greek = {α:"alpha",β:"beta",γ:"gamma",δ:"delta",ε:"epsilon",ζ:"zeta",η:"eta",θ:"theta",
+    ι:"iota",κ:"kappa",λ:"lambda",μ:"mu",ν:"nu",ξ:"xi",ο:"omicron",π:"pi",ρ:"rho",σ:"sigma",
+    τ:"tau",υ:"upsilon",φ:"phi",χ:"chi",ψ:"psi",ω:"omega",ς:"sigma"};
   function normalise(s) {
-    return s.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    return s.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+      .replace(/[α-ω]/g, char => " " + greek[char] + " ").replace(/[^a-z0-9]+/g, " ").trim();
   }
 
   const pageSize = 10;
@@ -12,7 +16,7 @@
     for (const [group, url, chapter, introduction, sections] of entries) {
       topics.push({url, label: chapter, context: group, heading: normalise(chapter), description: normalise(introduction)});
       for (const [id, title] of sections) {
-        topics.push({url: url + "#" + id, label: title, context: chapter, heading: normalise(title), description: normalise(chapter)});
+        topics.push({url: url + "#" + id, label: title, context: chapter, heading: normalise(title), description: normalise(chapter), section:true});
       }
     }
     const input = panel.querySelector('input[type="search"]');
@@ -52,7 +56,7 @@
       for (const t of topics) {
         const inHeading = terms.filter(term => t.heading.includes(term)).length;
         if (!terms.every(term => t.heading.includes(term) || t.description.includes(term))) continue;
-        if (!inHeading && t.url.includes("#")) continue;
+        if (!inHeading && t.section) continue;
         const score = inHeading + (t.heading.includes(phrase) ? 3 : 0) + (t.heading === phrase ? 5 : 0);
         matches.push({...t, score});
       }

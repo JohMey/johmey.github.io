@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimating velocity from position with a model-based observer · OneSimulation</title>
+<meta name="description" content="An optical encoder returns position and the actuator drive supplies a commanded acceleration. Reconstruct an unmeasured velocity without differentiating successive noisy samples. Derive the observer, explain what a pair of chosen poles guarantees, and predict the tradeoff visible when the encoder carries periodic interference.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/01-observers-and-noisy-position-measurements/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Estimating velocity from position with a model-based observer · OneSimulation">
+<meta property="og:description" content="An optical encoder returns position and the actuator drive supplies a commanded acceleration. Reconstruct an unmeasured velocity without differentiating successive noisy samples. Derive the observer, explain what a pair of chosen poles guarantees, and predict the tradeoff visible when the encoder carries periodic interference.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/01-observers-and-noisy-position-measurements/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/">System dynamics, feedback and estimation</a></p><h1>Estimating velocity from position with a model-based observer</h1><p class="lead">An optical encoder returns position and the actuator drive supplies a commanded acceleration. Reconstruct an unmeasured velocity without differentiating successive noisy samples. Derive the observer, explain what a pair of chosen poles guarantees, and predict the tradeoff visible when the encoder carries periodic interference.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/01-modelling-and-identification/">Background · From a balance law to a measured plant</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#reconstruction">Find out which initial conditions are distinguishable</a><a href="#spectrum">Follow one sensor tone all the way to the velocity estimate</a><a href="#model-errors">Use the innovation as a diagnostic signal</a><a href="#timing">Check whether an apparent velocity ripple aliases from above the sampling band</a><a href="#tutorial-one">Tutorial · Identify a constant offset and an acceleration mismatch</a><a href="#tutorial-two">Tutorial · Compare with numerical differentiation</a><a href="#tutorial-three">Tutorial · Check discrete implementation before increasing gain</a></nav></aside><article class="prose reference"><section><h2 id="reconstruction">Find out which initial conditions are distinguishable</h2>
+<p>Model a translating stage over its usable travel by \(\dot x_1=x_2,\ \dot x_2=u\), with measured output \(y=x_1+n\). Here the input is an acceleration in the chosen position and time units. With zero noise and known input, two different initial positions give different initial readings. Two different initial velocities with the same position yield traces whose initial slopes differ. Formally the observability matrix stacks \(C=(1,0)\) above \(CA=(0,1)\), giving rank two. If only velocity were measured, a constant offset of initial position would remain invisible, whatever the command. Observability belongs to the chosen model and output together.</p>
+<p>Run a copy of the plant and drive it with both the known command and a correction proportional to innovation \(y-\hat x_1\):</p>
+<div class="math display equation-chain"><div class="equation-step">\[\dot{\hat x}_1=\hat x_2+l_1(y-\hat x_1),\]</div><div class="equation-step">\[\dot{\hat x}_2=u+l_2(y-\hat x_1).\]</div></div>
+<p>Define error as true minus estimated state. For a perfect model and noise-free measurement the error matrix has rows \((-l_1,1)\) and \((-l_2,0)\). Expanding the determinant of \(sI-(A-LC)\) gives \(s^2+l_1s+l_2\). Matching the standard oscillator denominator sets \(l_1=2\zeta\omega_o\) and \(l_2=\omega_o^2\). The units are inverse seconds and inverse seconds squared. A constant position innovation can therefore request corrections to both estimated velocity and acceleration. Stable poles guarantee decay of initial error for the ideal model. They do not specify how large the measurement error becomes when injected continually.</p>
+</section>
+<section><h2 id="spectrum">Follow one sensor tone all the way to the velocity estimate</h2>
+<p>Set the true state and command to zero and solve the two linear equations in the Laplace domain with zero initial condition. Eliminating estimated position gives the transfer of position noise to estimated velocity:</p>
+<div class="math display">\[\frac{\hat V(s)}{N(s)}=\frac{l_2s}{s^2+l_1s+l_2}.\]</div>
+<p>For slow variation it behaves like a differentiator, so a constant position offset ultimately produces zero spurious velocity. At high frequency the gain falls as \(l_2/\omega\), whereas differentiating raw data multiplies its amplitude by frequency. Noise near the observer bandwidth can nevertheless be strongly visible. With observer frequency 2 Hz, damping ratio 0.75 and a 10 Hz sensor oscillation of amplitude 0.03 mm, the predicted velocity ripple is about 0.075 mm/s. The stage moves at 0.40 mm/s in the example. Compare the late-time difference between clean and noisy traces with the predicted peak ripple. The initial position estimate is deliberately displaced to reveal transient convergence.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/01-observers-and-noisy-position-measurements/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-observer"></div>
+</section>
+<section><h2 id="model-errors">Use the innovation as a diagnostic signal</h2>
+<p>If the true acceleration exceeds the commanded value by constant \(d\), the steady error equations yield \(e_1=d/l_2\) and \(e_2=l_1d/l_2\). Raising the observer frequency reduces these model-error terms while passing more encoder noise at a fixed sufficiently high frequency. Adding a slowly evolving bias state is another modelling choice; its observability and process-noise assumptions need to be checked again. A near-zero innovation in a high-gain observer alone is weak evidence of correct velocity, since the algorithm was designed to force estimated position toward the sensor.</p>
+<p>On the bench, estimate the encoder noise spectrum with the stage held stationary and the illumination and sampling electronics operating normally. During motion, compare estimated speed with an independently timed travel between two reference marks. An encoder fitted only by its own residual offers no independent absolute scale. If a motion command changes numerically from metres to millimetres, transform acceleration, position and initial estimates together. Pole locations have units of inverse time and do not depend on this uniform length conversion.</p>
+</section>
+<section><h2 id="timing">Check whether an apparent velocity ripple aliases from above the sampling band</h2>
+<p>Suppose the encoder is sampled at 100 Hz and its electronics pick up a 90 Hz sinusoid. At those sampling instants the measured sequence is indistinguishable from a ten-hertz sinusoid with suitable phase. A downstream digital observer cannot determine which analogue frequency generated the samples. Repeating with a different acquisition clock moves an alias while leaving a genuine ten-hertz process feature at its physical frequency. An analogue anti-alias filter can attenuate the high-frequency signal before sampling.</p>
+<p>Compare this experiment with the frequency knob in the displayed model. The browser directly synthesises a known tone at the integration rate and therefore tests the observer frequency response in isolation. A measured disagreement on a real sampled encoder can reveal an upstream acquisition effect even when the observer discretisation is accurate.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Identify a constant offset and an acceleration mismatch</h2>
+<p>An encoder reads 0.20 mm high at rest. Separately, an unmodelled 0.20 mm/s squared acceleration acts on an otherwise perfect stage. Find steady errors for the two cases at the default observer setting.</p>
+<details><summary>Solve the steady error equations for each input</summary>
+<p>A sensor offset eventually places estimated position 0.20 mm above truth while the estimated velocity returns to zero. For the acceleration mismatch, \(l_2=157.91\) and \(l_1=18.85\) in the appropriate second-based units. The true position exceeds the estimate by 0.00127 mm and true velocity exceeds its estimate by 0.0239 mm/s. The persistent residual in the second case is tiny despite a clear velocity bias. Repeat the test while changing bandwidth to distinguish a bias in the sensor from a mismatch in acceleration.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Compare with numerical differentiation</h2>
+<p>With 1 ms sample separation, independent position errors have standard deviation 0.01 mm per reading. What standard deviation does a backward difference produce for velocity? Explain how this differs from the deterministic 10 Hz test.</p>
+<details><summary>Propagate the variance of the difference</summary>
+<p>Subtracting independent zero-mean errors adds their variances. Divide the resulting standard deviation by the time step to obtain \(\sqrt2(0.01)/0.001=14.14\) mm/s. A 10 Hz interference tone has correlated neighbouring samples and a fixed phase evolution. Its output is predicted from sinusoidal frequency response, not from independence. Averaging a longer interval reduces random position-difference noise but measures a longer-time mean speed and responds more slowly to acceleration.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Check discrete implementation before increasing gain</h2>
+<p>A software observer updates by explicit Euler every 10 ms. If the continuous error poles are both minus 300 per second, what happens to an initial error? How could the implementation preserve the intended decay?</p>
+<details><summary>Map a continuous pole through the actual update</summary>
+<p>The scalar Euler factor is \(1+h\lambda=1-3=-2\); its magnitude exceeds one, so errors grow while changing sign. Exact discretisation would map the pole to \(e^{-3}=0.0498\). A suitably faster sample interval, a correctly discretised observer, or a discrete observer designed directly for the sampled measurement can restore stability. These choices still depend on the actual measurement rate. Interpolating old encoder samples at a faster software clock does not create independent new position information.</p>
+</details>
+<p><a href="https://www.cds.caltech.edu/~murray/FBS/Output_Feedback.html">Caltech · Åström and Murray, Output Feedback, observability and state estimation</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/02-relative-gains-and-loop-pairing/">Relative gains, loop pairing and nearly singular process measurements</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

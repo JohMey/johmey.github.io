@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a local damper couples otherwise separate modes · OneSimulation</title>
+<meta name="description" content="Undamped mode shapes diagonalise a symmetric mass and stiffness model. Adding a damper at one attachment does not generally leave modal equations separate. Derive the resulting coupling, test its magnitude and learn when a diagonal modal-damping approximation can hide an observable phase error.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/04-local-damping-and-complex-modes/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why a local damper couples otherwise separate modes · OneSimulation">
+<meta property="og:description" content="Undamped mode shapes diagonalise a symmetric mass and stiffness model. Adding a damper at one attachment does not generally leave modal equations separate. Derive the resulting coupling, test its magnitude and learn when a diagonal modal-damping approximation can hide an observable phase error.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/04-local-damping-and-complex-modes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/">Vibration and identification in machinery</a></p><h1>Why a local damper couples otherwise separate modes</h1><p class="lead">Undamped mode shapes diagonalise a symmetric mass and stiffness model. Adding a damper at one attachment does not generally leave modal equations separate. Derive the resulting coupling, test its magnitude and learn when a diagonal modal-damping approximation can hide an observable phase error.</p><p class="byline">Unit 4 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/04-coupled-modes/">Background · Coupled oscillators and normal coordinates</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#transform">Transform the entire equation, including the damper</a><a href="#example">Compute a forced response in both modal coordinates</a><a href="#energy">Check passivity independently of fitted modal damping ratios</a><a href="#cross-response">Interpret the second modal coordinate in an experiment</a><a href="#tutorial-one">Tutorial · Find a damping placement that restores modal separation</a><a href="#tutorial-two">Tutorial · Reconstruct both modes from two physical probes</a><a href="#tutorial-three">Tutorial · Determine the true damped poles</a></nav></aside><article class="prose reference"><section><h2 id="transform">Transform the entire equation, including the damper</h2>
+<p>For two degrees of freedom write \(M\ddot x+C\dot x+Kx=f\), with symmetric positive definite \(M,K\) and passive nonnegative \(C\). Choose real undamped eigenvectors as columns of \(\Phi\), mass normalised so \(\Phi^{\mathsf T}M\Phi=I\) and \(\Phi^{\mathsf T}K\Phi=\operatorname{diag}(\omega_1^2,\omega_2^2)\). Setting \(x=\Phi q\) gives transformed damping \(C_m=\Phi^{\mathsf T}C\Phi\). This matrix is generally full. Orthogonality established for mass and stiffness is not automatically orthogonality for an independently located dissipative element.</p>
+<p>A Rayleigh model \(C=aM+bK\) is a sufficient condition for diagonal modal damping, with coefficients \(a+b\omega_j^2\). It is not necessary in every multimode setting, nor does fitting two measured damping ratios prove the actual physical damping follows this law across other modes. An isolated dashpot to ground at coordinate one produces \(C=c e_1 e_1^{\mathsf T}\), hence \((C_m)_{jk}=c\phi_{1j}\phi_{1k}\). If both modes move appreciably at that attachment, off-diagonal damping is unavoidable.</p>
+</section>
+<section><h2 id="example">Compute a forced response in both modal coordinates</h2>
+<p>Let \(M=I\) kg and let symmetric and antisymmetric mass-normalised vectors \((1,1)/\sqrt2\), \((1,-1)/\sqrt2\) have natural frequencies 10 and 14 rad/s. A dashpot of 4 N s/m on coordinate one gives modal damping matrix with every entry 2 per second. At forcing frequency \(\omega\), the complex dynamic stiffness has diagonal entries \(\omega_j^2-\omega^2+2i\omega\) and off-diagonal entries \(2i\omega\). Apply a modal force only in the first coordinate. The second equation now requires</p>
+<div class="math display">\[\frac{Q_2}{Q_1}=-\frac{2i\omega}{\omega_2^2-\omega^2+2i\omega}.\]</div>
+<p>At \(\omega=10\) rad/s its magnitude is \(20/\sqrt{96^2+20^2}=0.204\). A diagonal modal-damping approximation would predict exactly zero second modal response. Both models dissipate energy and can give similar-width first-mode peaks, yet their reconstructed physical coordinates differ in phase and amplitude. At larger mode spacing or lower damping the off-diagonal transfer becomes smaller, supplying a quantitative rather than categorical justification for ignoring it.</p>
+<p><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/01-critical-speed-and-synchronous-whirl/#try-it">Compare a single circular harmonic response with an instrument observing two coupled modal coordinates</a></p>
+</section>
+<section><h2 id="energy">Check passivity independently of fitted modal damping ratios</h2>
+<p>With external force zero the mechanical energy derivative is \(-\dot x^{\mathsf T}C\dot x\). For the single grounded dashpot this is \(-4\dot x_1^2\le0\). In modal coordinates it is \(-2(\dot q_1+\dot q_2)^2\), including a cross term. Dropping that term assigns different instantaneous dissipation to particular velocity combinations. When \(\dot q_1=-\dot q_2\), the physical damped coordinate is momentarily stationary and true instantaneous loss is zero; a diagonal approximation incorrectly predicts positive loss. Subsequent forces can move that coordinate, so a lossless instant does not imply an undamped eigenmode.</p>
+</section>
+<section><h2 id="cross-response">Interpret the second modal coordinate in an experiment</h2>
+<p>A laboratory cannot normally measure the modal coordinates directly. For the symmetric two-mass example, mount matched accelerometers on the two masses and compute sum and difference using a common clock. For steady harmonic response both measured accelerations share the factor of minus frequency squared relative to their displacements. The ratio of the difference channel to the sum channel therefore recovers the same modal displacement ratio, provided the sensors use the same sign convention and gain. A unit gain error or a cable polarity reversal changes the inferred cross-response even if the physical system is stationary.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/04-local-damping-and-complex-modes/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-modal-dashpot"></div>
+<p>Apply equal-phase forces to the two masses using a known load-sharing beam. That forcing is purely symmetric in the ideal model. An independently measured small antisymmetric force contaminates the nominally unforced modal coordinate. Shift the local damper to the opposite mass and repeat at the same frequency. The off-diagonal terms of the modal damping matrix reverse sign while the diagonal terms do not. The induced antisymmetric response should reverse phase relative to the symmetric one; an unchanged spurious force is less likely to reproduce that reversal. The sign information is absent from the displayed ratio magnitude and must be preserved in the experimental phase records.</p>
+<p>A useful limiting case sets the forcing frequency equal to the undamped second natural frequency. Its real diagonal stiffness then vanishes and the local-damping term directly balances the coupling from the first modal coordinate. In this example their ratio has unit magnitude. A large ratio can occur even when the applied modal force has no second component. This observation follows from the coupled equations at that frequency and does not imply a universal mode shape or a one-to-one transfer of energy between modes.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Find a damping placement that restores modal separation</h2>
+<p>Keep the same grounded dashpot on coordinate one and add another identical dashpot on coordinate two. Compute the new modal matrix and dissipation. What happens if the added dashpot is only half as large?</p>
+<details><summary>Add physical contributions before transforming</summary>
+<p>Equal grounded dampers give \(C=4I\), so \(C_m=4I\). Each mode then has amplitude damping rate two per second and no damping coupling. If the second is only 2 N s/m, \(C_m\) has diagonal entries three and off-diagonal entries one. Common and differential combinations have different physical loss. Symmetric placement removes the off-diagonal term because the two undamped shapes have opposite relative signs on the second coordinate.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Reconstruct both modes from two physical probes</h2>
+<p>At one frequency the calibrated complex sensor readings are \(X_1=1.0\) mm and \(X_2=0.8+0.2i\) mm. Determine \(Q_1,Q_2\) and assess whether a second mode is detectable even though no second peak has been observed.</p>
+<details><summary>Transform complex amplitudes without discarding phase</summary>
+<p>In this normalisation \(Q_1=(X_1+X_2)/\sqrt2=(1.8+0.2i)/\sqrt2\) and \(Q_2=(X_1-X_2)/\sqrt2=(0.2-0.2i)/\sqrt2\) mm in the corresponding modal coordinate units. The magnitude ratio is approximately 0.156. A single-magnitude sensor cannot perform this separation, and two magnitude-only readings lose the relative phase. Compare this ratio with a noise and gain-mismatch estimate before declaring it physical. A weakly present mode need not appear as a visually isolated peak at the measured driving frequency.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Determine the true damped poles</h2>
+<p>How should the complete free-decay problem be solved when modal damping is non-diagonal? Give a diagnostic distinguishing a fitted damping error from an incorrectly specified mass or stiffness.</p>
+<details><summary>Use a state-space or quadratic eigenproblem</summary>
+<p>Seek \(x=v e^{st}\), obtaining \((s^2M+sC+K)v=0\). Solve the quadratic eigenproblem or convert it to first-order state space with displacement and velocity. Damped eigenvectors can be complex even though all physical matrices are real, and complex poles occur in conjugate pairs. Compare both measured phases and decay rates at multiple sensors, then repeat after altering the dashpot while leaving masses and elastic supports unchanged. Frequency shifts or mode-shape changes present already with the damper removed suggest an underlying mass or stiffness error. A fit to one resonance width alone cannot identify the full matrix.</p>
+</details>
+<p><a href="https://userweb.eng.gla.ac.uk/sondipon.adhikari/fulltext/journal/ft19.pdf">Adhikari · Optimal complex modes and an index of damping non-proportionality, Cambridge research paper</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/03-random-vibration-and-bandwidth/">Random base motion, spectral density and rms response</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/">Volume contents</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

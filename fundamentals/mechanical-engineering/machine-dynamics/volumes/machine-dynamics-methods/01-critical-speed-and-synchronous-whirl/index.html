@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Critical speed, synchronous whirl and two different rotor centres · OneSimulation</title>
+<meta name="description" content="A stationary probe observes motion of a rotating shaft surface, while a balance calculation follows an eccentric mass centre. Derive both trajectories from one flexible-rotor model. Their difference explains the apparent recentring of a rotor at high speed and why a single vibration amplitude cannot identify unbalance and damping.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/01-critical-speed-and-synchronous-whirl/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Critical speed, synchronous whirl and two different rotor centres · OneSimulation">
+<meta property="og:description" content="A stationary probe observes motion of a rotating shaft surface, while a balance calculation follows an eccentric mass centre. Derive both trajectories from one flexible-rotor model. Their difference explains the apparent recentring of a rotor at high speed and why a single vibration amplitude cannot identify unbalance and damping.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/01-critical-speed-and-synchronous-whirl/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/">Vibration and identification in machinery</a></p><h1>Critical speed, synchronous whirl and two different rotor centres</h1><p class="lead">A stationary probe observes motion of a rotating shaft surface, while a balance calculation follows an eccentric mass centre. Derive both trajectories from one flexible-rotor model. Their difference explains the apparent recentring of a rotor at high speed and why a single vibration amplitude cannot identify unbalance and damping.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/09-rotor-balance/">Background · Static and couple balance of rotors</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#model">Choose the observed coordinate before writing a force</a><a href="#sweep">Measure amplitude and phase with a once-per-revolution reference</a><a href="#vector-calibration">Recover a complex influence coefficient from a trial mass</a><a href="#tutorial-one">Tutorial · Infer damping and eccentricity separately</a><a href="#tutorial-two">Tutorial · Interpret orbit shape from two probes</a><a href="#tutorial-three">Tutorial · Locate a second peak without calling every peak critical speed</a></nav></aside><article class="prose reference"><section><h2 id="model">Choose the observed coordinate before writing a force</h2>
+<p>A symmetric disk of mass \(m\) sits at the centre of a massless flexible shaft with equal lateral stiffness \(k\) in two directions and viscous damping \(c_d\) acting on its geometric centre. Its mass centre lies a distance \(e\) from that point. Assume constant spin \(\Omega\), small lateral deflections, simple supports and negligible gyroscopic tilt. Write the complex displacement of the shaft centre as \(z=x+iy\). The mass centre has displacement \(z+e e^{i\Omega t}\). Its acceleration enters Newton's law while bearing restoring and damping forces depend on the shaft-centre motion:</p>
+<div class="math display">\[m\ddot z+c_d\dot z+kz=m e\Omega^2e^{i\Omega t}.\]</div>
+<p>Gravity merely shifts the static position for a horizontal isotropic linear shaft and can be subtracted before fitting the synchronous response. Set \(\omega_n=\sqrt{k/m}\), \(\zeta=c_d/(2m\omega_n)\) and \(r=\Omega/\omega_n\). The steady response divided by eccentricity is</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{Z}{e}=\frac{r^2}{1-r^2+2i\zeta r},\]</div><div class="equation-step">\[\frac{Z_{\rm mass}}e=1+\frac Ze=\frac{1+2i\zeta r}{1-r^2+2i\zeta r}.\]</div></div>
+<p>At small \(r\) the shaft hardly moves while the mass centre describes its geometric eccentricity. Near resonance the shaft amplitude rises and lags the unbalance reference by about a quarter turn. At large \(r\) shaft motion approaches amplitude \(e\) in opposite phase to the eccentricity, leaving the mass centre comparatively close to the bearing line. A shaft probe does not then read zero merely because the mass centre recentres.</p>
+</section>
+<section><h2 id="sweep">Measure amplitude and phase with a once-per-revolution reference</h2>
+<p>For \(m=2.0\) kg and \(k=80\) kN/m the undamped frequency is 200 rad/s or 1910 rpm. At \(\zeta=0.05,e=20\) micrometres the shaft-centre orbit radius at \(r=1\) is 200 micrometres. A peak-to-peak probe reading across one axis would be 400 micrometres for a perfectly circular orbit, while an rms sinusoidal axis reading is 141 micrometres. State which amplitude is reported before comparing test and theory.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/01-critical-speed-and-synchronous-whirl/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-whirl"></div>
+<p>The amplitude peak of a force proportional to speed squared occurs at \(r=1/\sqrt{1-2\zeta^2}\) when damping is sufficiently small, slightly above the undamped frequency. A constant-force resonance has its displacement peak slightly below. Near a fast run-up the steady expression need not apply because the rotor crosses the resonance faster than the transient can settle. Compare speed sweeps in both directions and hold the drive at representative speeds to distinguish sweep-rate memory from speed-dependent material stiffness.</p>
+</section>
+<section><h2 id="vector-calibration">Recover a complex influence coefficient from a trial mass</h2>
+<p>At a fixed operating speed write the measured synchronous probe response as a complex number relative to the once-per-turn mark. In linear operation a small calibrated trial unbalance adds a second complex response proportional to its mass-radius product. Subtract the baseline response as a vector; subtracting its magnitude would discard the phase information needed to identify the influence coefficient. The shaft centre model predicts a different phase as the test speed passes through resonance, so the coefficient belongs to the specific spin speed and instrument reference.</p>
+<p>For an illustrative optical test the baseline response is 30 micrometres at zero reference phase. With the trial contribution present the response is 30 plus 20 imaginary micrometres in the same coordinates. Its displayed magnitude is 36.1 micrometres. The change of displayed magnitude is only 6.1 micrometres, while the actual trial response is 20 micrometres in quadrature. An estimate based on the two magnitudes would understate the response by more than a factor of three and lose its orientation. A convenient test of linearity is to repeat with the same trial pattern rotated through half a turn. To first order the complex change should reverse sign while the unchanged baseline remains.</p>
+<p>When a probe sees a small geometric eccentricity of the actual shaft surface, its synchronous electrical reading includes this runout even at a very low speed where dynamic shaft bending is small. A slow-roll measurement recorded with the same phase mark provides an estimate of that vector. Subtract it in complex coordinates and test whether the resulting low-speed bending tends towards the square-of-speed prediction.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Infer damping and eccentricity separately</h2>
+<p>An isotropic test has known critical frequency. At exactly that speed the measured shaft radius is 150 micrometres; at high speed the radius tends to 15 micrometres. Estimate eccentricity and damping ratio. Why would one measurement at resonance be insufficient?</p>
+<details><summary>Use the two distinct asymptotes</summary>
+<p>The high-speed magnitude tends to \(e\), giving 15 micrometres if geometric surface runout has been removed. At \(r=1\), \(Z/e=1/(2\zeta)\); hence \(\zeta=15/(2\cdot150)=0.050\). A resonance amplitude alone determines only the ratio \(e/\zeta\). High-speed data from a second bending mode or a noncircular shaft surface can violate the asymptote. An independently measured free-decay damping provides another way to separate the parameters without relying on a high-speed plateau.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Interpret orbit shape from two probes</h2>
+<p>Two calibrated orthogonal probes have synchronous amplitudes 100 and 60 micrometres with phase difference ninety degrees. What is the orbit and is that consistent with the simple isotropic response to one rotating unbalance?</p>
+<details><summary>Reconstruct the signed two-dimensional motion</summary>
+<p>The trajectory is an ellipse with semiaxes 100 and 60 micrometres if those are peak amplitudes. Ideal isotropic stiffness and damping driven by a circular rotating imbalance give a circular synchronous orbit, so investigate support anisotropy, probe gains, cross-coupled bearings or another directional forcing. Swapping electronics and rotating probe orientation can separate an instrument gain difference from a physical ellipse. The sign of phase difference relative to the keyphasor determines whirl sense and cannot be recovered from the two amplitudes alone.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Locate a second peak without calling every peak critical speed</h2>
+<p>A run-up shows one feature at a fixed shaft speed and a second one whenever a twice-per-turn component crosses the same structural frequency. How would an order–frequency map distinguish them and which terms are missing from the derived model?</p>
+<details><summary>Track spectral order and physical frequency</summary>
+<p>The basic run-up forcing follows the one-per-turn line \(f=\Omega/(2\pi)\); the second harmonic follows \(2f\). If both excite the same fixed structural frequency at different speeds, their crossings align horizontally in physical-frequency coordinates but at separate shaft speeds. Noncircular runout, misalignment or other periodic effects can create higher shaft orders. The one-eccentric-disk equation contains only the synchronous term, so it cannot independently generate the second harmonic. Measure the forcing reference, examine phase and repeat after a calibrated trial mass. A changed one-per-turn response with a nearly unchanged twice-per-turn line helps distinguish the sources.</p>
+</details>
+<p><a href="https://archive.nptel.ac.in/content/storage2/courses/112103024/module2/lec1/1.html">NPTEL Rotor Dynamics · Jeffcott rotor model and synchronous response</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/volumes/machine-dynamics-methods/02-parametric-resonance-and-damping/">Parametric resonance under periodic stiffness modulation</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

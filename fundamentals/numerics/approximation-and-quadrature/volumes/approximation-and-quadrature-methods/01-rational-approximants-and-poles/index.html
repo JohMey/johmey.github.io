@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approximating a resonance with a rational function · OneSimulation</title>
+<meta name="description" content="A smooth response on a measured interval can be governed by a nearby pole. Derive a low-order Padé fit, construct a barycentric rational approximant from samples and check whether a predicted pole survives independent data.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Approximating a resonance with a rational function · OneSimulation">
+<meta property="og:description" content="A smooth response on a measured interval can be governed by a nearby pole. Derive a low-order Padé fit, construct a barycentric rational approximant from samples and check whether a predicted pole survives independent data.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>Approximating a resonance with a rational function</h1><p class="lead">A smooth response on a measured interval can be governed by a nearby pole. Derive a low-order Padé fit, construct a barycentric rational approximant from samples and check whether a predicted pole survives independent data.</p><p class="byline">Unit 1 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/01-local-interpolation/">Background · Piecewise interpolation and error bounds</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#series">Match series coefficients without requiring a polynomial model</a><a href="#barycentric">Interpolate at selected support points while fitting other samples</a><a href="#model">Compare local and global descriptions on a known response</a><a href="#experiment">Compare a Taylor and a rational continuation</a><a href="#held-out">Test the assumed response law on an unused reading</a><a href="#tutorial">Tutorial · separate a useful fit from a physical pole</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="series">Match series coefficients without requiring a polynomial model</h2>
+<p>Let \(f(x)=c_0+c_1x+c_2x^2+\cdots\) near zero. A polynomial Taylor approximation fixes coefficients but cannot represent a finite pole. A type \([m/n]\) Padé approximant \(P_m(x)/Q_n(x)\) uses polynomials of degree at most \(m,n\), and fixes the arbitrary common scaling by \(Q_n(0)=1\) where possible. Require \(Q_n f-P_m=O(x^{m+n+1})\). For powers above \(m\) the unknown numerator cannot contribute; they give linear equations \(\sum_{j=0}^n q_jc_{k-j}=0,\ k=m+1,\ldots,m+n\) for the denominator, with missing negative-index coefficients taken zero. Lower coefficients then give \(p_k=\sum_{j=0}^{\min(k,n)}q_jc_{k-j}\). Although the desired quotient is nonlinear in its coefficients, series matching has reduced the construction to linear algebra.</p>
+<p>For \(f=e^{-x}\), matching \(1-x+x^2/2\) gives \([1/1]=(1-x/2)/(1+x/2)\). Its expansion agrees through second degree; at \(x=1\) it gives \(1/3\), compared with \(e^{-1}=0.3679\) and Taylor degree two \(0.5\). But the rational has a pole at \(-2\) even though the exponential is entire, and becomes negative for \(x&gt;2\). A good local approximation does not establish that every pole corresponds to physical resonance or every extrapolated value respects a known constraint such as positivity. The model's domain and validation data determine the legitimate interpretation.</p>
+</section>
+<section><h2 id="barycentric">Interpolate at selected support points while fitting other samples</h2>
+<p>When samples, rather than derivatives at one origin, are available, a barycentric form is convenient:</p>
+<div class="math display">\[r(z)=\frac{\sum_{j=1}^m w_jf_j/(z-z_j)}{\sum_{j=1}^m w_j/(z-z_j)} .\]</div>
+<p>At a support node use the exact stored \(f_j\), interpreting the apparent singularity by its limit when \(w_j\ne0\). Common rescaling of all weights leaves \(r\) unchanged. For another data pair \((z_i,f_i)\), a small cross-multiplied discrepancy requires \(\sum_jw_j(f_i-f_j)/(z_i-z_j)\approx0\). With several unsampled points this is a homogeneous least-squares problem for the weights; impose unit norm and take the right singular vector belonging to the smallest singular value. The adaptive AAA algorithm selects an additional support point where current error is large and rebuilds this fit until a stopping criterion is met.</p>
+<p>The cross-multiplied error and true value error differ by the rational denominator. A very small denominator can amplify a small algebraic residual, so validate the fitted quotient directly on independent points and check for poles in the intended domain. Closely paired numerator and denominator roots can almost cancel. Such a weak-residue pole–zero pair can encode numerical noise rather than a well-resolved physical mode. Testing another grid, another noise realisation and the residue is more informative than printing every computed root with equal confidence.</p>
+</section>
+<section><h2 id="model">Compare local and global descriptions on a known response</h2>
+<p>Take \(f(x)=1/(1+\beta x^2)\) for \(\beta&gt;0\). Its poles are at \(x=\pm i/\sqrt\beta\), outside the real line but at a finite distance from the origin. The even Taylor series is geometric in \(-\beta x^2\). Through power \(x^{2m}\) the relative error magnitude is \((\beta x^2)^{m+1}\). It converges for \(|x|&lt;1/\sqrt\beta\), fails to converge outside that radius and can show oscillatory partial values across a perfectly smooth real measurement interval. Its type \([0/2]\) rational reconstruction from \(c_0=1,c_1=0,c_2=-\beta\) is exact in noiseless arithmetic. That success rewards a model family matching the analytic structure; it does not imply unknown response functions must have just this pair of poles.</p>
+</section>
+<section><h2 id="experiment">Compare a Taylor and a rational continuation</h2>
+<p>The plot holds the rational response above as known truth. Vary the pole distance through \(\beta\), then change the polynomial truncation. Watch where increasing the expansion order improves agreement and where it worsens it. A noisy curvature estimate changes the fitted rational pole locations; use the readout to compare the pole error with the predicted local change. The experiment intentionally exposes the truth, which is unavailable for a real instrument and must be replaced by out-of-sample checks.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="numerical-methods-rational"></div>
+</section>
+<section><h2 id="held-out">Test the assumed response law on an unused reading</h2>
+<p>A value away from the centre tests curvature without differentiating noisy samples. Under the assumed normalisation \(f(0)=1\), solving \(y=(1+\beta x^2)^{-1}\) gives \(\beta=(1/y-1)/x^2\). At \(x=1/2\), a reading \(y=10/13\) yields \(\beta=1.2\). Before including any other reading, predict \(f(1)=5/11\). A measured value of \(0.50\) differs by about \(0.0455\). More Taylor coefficients of the fitted rational function all inherit the same discrepancy. They cannot establish an independent agreement.</p>
+<p>The derivative of the inferred parameter with respect to a measured value is \(-1/(x^2y^2)\). At the calibration point its magnitude is \(6.76\). An absolute measurement uncertainty of \(0.005\) propagates to about \(0.034\) in \(\beta\), and then about \(0.0070\) in the predicted reading at one. A disagreement of \(0.0455\) would warrant examining calibration of the unused reading, the assumed normalisation and the model itself. Comparing two computed continuations built from the same reading would miss this test.</p></section>
+<section><h2 id="tutorial">Tutorial · separate a useful fit from a physical pole</h2>
+<h3>Infer a relaxation constant from two Taylor coefficients</h3><p>A response starts \(f(s)=4-6s+9s^2+\cdots\). Construct a type \([0/1]\) fit and test the next coefficient rather than using it to determine the parameter.</p><details><summary>Work through the solution</summary>
+<p>The constant numerator is 4 and \(4/(1+qs)=4-4qs+4q^2s^2+\cdots\). Matching slope gives \(q=1.5\) and predicted quadratic coefficient 9, consistent with the extra observation. The pole is \(-2/3\) in the units of \(s\). A further measured coefficient or a separate frequency interval can test the single-pole model. Agreement of three coefficients alone does not preclude additional weak modes.</p>
+</details>
+<h3>Calculate a pole from two barycentric nodes</h3><p>Use nodes \(z_1=0,z_2=1\), samples \(1,1/2\) and weights \(1,-2\). Simplify the quotient and locate its pole. What happens at the support nodes?</p><details><summary>Work through the solution</summary>
+<p>Multiplying numerator and denominator by \(z(z-1)\) gives numerator \((z-1)-z=-1\) and denominator \((z-1)-2z=-z-1\). Hence \(r=1/(1+z)\), with pole at \(-1\). The original sums are singular separately at 0 and 1, but their limits give exactly 1 and \(1/2\). Direct numerical evaluation should return stored values at support nodes rather than form infinity divided by infinity.</p>
+</details>
+<h3>Estimate the sensitivity of an inferred pole distance</h3><p>The sampled response yields curvature coefficient \(-\beta=-4.0\pm0.4\). Infer the distance of the conjugate poles and its linearised relative uncertainty. Would this prove the real system has that exact physical singularity?</p><details><summary>Work through the solution</summary>
+<p>The fitted distance is \(\beta^{-1/2}=0.50\), with relative uncertainty approximately \(\tfrac12(0.4/4.0)=5\%\), or absolute 0.025. A systematic error in the assumed response shape can dominate this local parameter uncertainty. Test independently sampled values farther from zero, compare alternative rational orders, and examine whether pole positions and residues persist. Noise estimates conditional on one chosen model are not a proof of analytic structure.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://people.maths.ox.ac.uk/trefethen/AAAfinal.pdf">Nakatsukasa, Sète and Trefethen · the original AAA rational approximation algorithm</a></li><li><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/08-minimax/">Course investigation · approximation error across an interval</a></li><li><a href="/fundamentals/numerics/approximation-and-quadrature/#experiment">Investigate interpolation error in a heat integral</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Volume contents</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/02-clenshaw-curtis-and-aliasing/">Integrating cosine interpolants on nested grids</a></span></nav><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

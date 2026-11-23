@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sensitivity, bandwidth and the integral price of disturbance rejection · OneSimulation</title>
+<meta name="description" content="A regulator attenuates a slowly varying output load yet amplifies another disturbance at a higher frequency. Separate the paths by which reference, measurement noise and physical disturbance reach the recorded variable, then derive an integral identity that explains why a stable loop can redistribute sensitivity across frequency.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/04-sensitivity-and-bandwidth-tradeoffs/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sensitivity, bandwidth and the integral price of disturbance rejection · OneSimulation">
+<meta property="og:description" content="A regulator attenuates a slowly varying output load yet amplifies another disturbance at a higher frequency. Separate the paths by which reference, measurement noise and physical disturbance reach the recorded variable, then derive an integral identity that explains why a stable loop can redistribute sensitivity across frequency.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/04-sensitivity-and-bandwidth-tradeoffs/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/">System dynamics, feedback and estimation</a></p><h1>Sensitivity, bandwidth and the integral price of disturbance rejection</h1><p class="lead">A regulator attenuates a slowly varying output load yet amplifies another disturbance at a higher frequency. Separate the paths by which reference, measurement noise and physical disturbance reach the recorded variable, then derive an integral identity that explains why a stable loop can redistribute sensitivity across frequency.</p><p class="byline">Unit 4 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/04-frequency-response/">Background · Frequency response, disturbance rejection and robustness</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#paths">Solve the loop once for three independent inputs</a><a href="#integral">Derive the stable rational case from its pole and zero distances</a><a href="#uncertainty">Connect the complementary sensitivity to model error</a><a href="#magnitude-curves">Locate the sensitivity peak and test vector addition</a><a href="#tutorial-one">Tutorial · Test an apparent counterexample</a><a href="#tutorial-two">Tutorial · Use two independent sensors</a><a href="#tutorial-three">Tutorial · Bound uncertainty at a measured spectral line</a></nav></aside><article class="prose reference"><section><h2 id="paths">Solve the loop once for three independent inputs</h2>
+<p>Let the actual output be \(y=Pu+d\), the measured output be \(y+n\), and the command be \(u=C(r-y-n)\). Here \(d\) is an additive load at the output and \(n\) is sensor error. Division by \(1+PC\) gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[S=\frac1{1+L},\]</div><div class="equation-step">\[T=\frac L{1+L},\]</div><div class="equation-step">\[L=PC,\]</div><div class="equation-step">\[y=Tr+Sd-Tn,\]</div><div class="equation-step">\[u=CS(r-d-n).\]</div></div>
+<p>Thus \(S+T=1\) as a complex identity. Magnitudes generally do not add to one. Strong rejection of a slow physical load requires small sensitivity at that frequency; the measured noise can then appear almost unchanged, with opposite sign, in the actual output. A readout of the same sensor used by the controller can hide this motion. A second independent sensor can reveal it. An input load inserted before the plant would instead have transfer \(PS\), so always identify the disturbance injection point in a reported test.</p>
+<p>For \(L=4/[(s+1)(s+2)]\), both the open and closed loops are stable. The zero-frequency sensitivity is one third. At three radians per second the numerator is \(-7+9i\) and denominator is \(-3+9i\), giving magnitude \(\sqrt{130/90}=1.202\). A 0.10-unit output disturbance at that frequency produces a 0.120-unit actual output oscillation. A time plot of reference following alone would miss this amplification. The sensitivity peak also measures proximity of the Nyquist curve to minus one, since \(1/|S|=|1+L|\).</p>
+</section>
+<section><h2 id="integral">Derive the stable rational case from its pole and zero distances</h2>
+<p>For a closed-loop stable rational sensitivity tending to one at high frequency, write its numerator and denominator as monic products of roots. For a real negative root at minus \(a\), a factor contributes \(\frac12\log(\omega^2+a^2)\). The difference for two such factors integrates by differentiating under the integral in parameter \(a\). The derivative \(a/(\omega^2+a^2)\) has integral \(\pi/2\) over the positive frequency axis. Integration back gives \(\pi(a-b)/2\). For complex conjugate roots the same result follows by pairing both signs of frequency and shifting the full-axis integration variable by the imaginary part. The area contribution depends on the absolute real part.</p>
+<p>The sensitivity zeros are the open-loop poles and its poles are the closed-loop poles in a minimal description. For relative degree at least two the coefficient of the next-to-highest power in the open- and closed-loop characteristic polynomials is unchanged; their signed root sums therefore coincide. If every open-loop pole lies in the left half-plane, the absolute-real-part sums also coincide and the integral vanishes. An open-loop pole in the right half-plane reverses its absolute-real-part contribution and leaves the general result</p>
+<div class="math display">\[\int_0^\infty\log|S(i\omega)|\,d\omega=\pi\sum_{p\in{\rm RHP}}\operatorname{Re}p.\]</div>
+<p>This statement assumes internal closed-loop stability, suitable high-frequency roll-off and no imaginary-axis poles in the elementary derivation. It is an area on a linear angular-frequency axis with natural logarithm. Estimating it as signed visual area on a conventional log-frequency Bode plot weights the frequencies differently. A stable low-pass system can reduce sensitivity over a wide low-frequency interval by allowing higher sensitivity elsewhere. The identity does not fix an individual peak without bandwidth or shape constraints.</p>
+</section>
+<section><h2 id="uncertainty">Connect the complementary sensitivity to model error</h2>
+<p>For multiplicative plant uncertainty \(P_{\rm actual}=P(1+W\Delta)\), factor the return difference as \((1+L)(1+TW\Delta)\). If nominal interconnection is internally stable, the uncertainty and weighting are stable, and \(\|TW\|_\infty&lt;1\), the small-gain theorem ensures stability for all such perturbations with \(\|\Delta\|_\infty\le1\). A failure of this sufficient check invites closer analysis of the particular physical uncertainty. A poorly known resonance above bandwidth can matter even after a nominal step trace has settled smoothly. State the frequency range on which input-output identification actually constrains the model.</p>
+<p><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/18-phase-lead/#try-it">Change a lead network and compare crossover with measured sensitivity near a resonance.</a></p>
+</section>
+<section><h2 id="magnitude-curves">Locate the sensitivity peak and test vector addition</h2>
+<p>Sweep the gain numerator at fixed pole locations. At zero gain the load sees essentially no correction. Increasing gain initially improves low-frequency load rejection but can create a distinct sensitivity maximum between the pole scales and the high-frequency range. Find the frequency where the sensitivity curve crosses one. At that point the distance of the loop phasor from minus one equals one. The complementary-sensitivity magnitude there need not vanish; the sum identity concerns complex values with their phases retained.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/04-sensitivity-and-bandwidth-tradeoffs/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-sensitivity"></div>
+<p>To check the curves on a real apparatus, inject small reference tones to estimate complementary sensitivity and separate, calibrated output loads to estimate sensitivity. Record coherent amplitude and phase at matching frequencies with the same time origin. Sum the two complex estimates and compare against unity. Delay in the reference measurement chain alone can spoil that check, even if both measured magnitudes seem plausible. The test is most informative where both responses have appreciable amplitude.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Test an apparent counterexample</h2>
+<p>For \(L=K/(s+a)\) with positive \(K,a\), sensitivity is below one at all finite frequencies. Evaluate the logarithmic area and locate the failed assumption.</p>
+<details><summary>Integrate the log-distance difference directly</summary>
+<p>The sensitivity equals \((s+a)/(s+a+K)\). The real-root identity gives \(\pi[a-(a+K)]/2=-\pi K/2\). This loop has relative degree one. Its numerator and denominator root sums differ by \(K\), invalidating the high-frequency cancellation used for the zero-area result. Adding a finite fast actuator pole restores relative degree two and can move the compensating sensitivity region far beyond the frequencies first plotted. Check both the analytical degree and measurement bandwidth before diagnosing a contradiction.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Use two independent sensors</h2>
+<p>At a low frequency the loop has real positive gain 19. A calibrated sinusoid of amplitude 0.20 mm is electronically added to the feedback sensor with no physical load. Predict the actual motion and its indicated motion at that sensor.</p>
+<details><summary>Follow the noise to two separate outputs</summary>
+<p>Sensitivity is 0.05 and complementary sensitivity 0.95. The actual stage moves with amplitude 0.19 mm opposite the injected signal. Its indicated position at the corrupted sensor has amplitude 0.01 mm in phase with the injection. An independent reference encoder sees the much larger actual motion. Increasing gain further would make the feedback readout look quieter while causing more physical motion in this particular test.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Bound uncertainty at a measured spectral line</h2>
+<p>At one frequency the nominal measured complementary sensitivity is 1.25 and the magnitude bound on multiplicative uncertainty is 0.60. At a second frequency the values are 1.05 and 1.10. Interpret both products.</p>
+<details><summary>Apply the pointwise ingredient of the small-gain check</summary>
+<p>The products are 0.75 and 1.155. The first frequency meets the sufficient magnitude bound there. The second exceeds it, so a claim based on that global criterion is unavailable. A tighter phase-aware model or structured uncertainty can refine the conclusion. Checking two isolated frequencies cannot establish a supremum bound, since resonant features may occur between samples. Estimate frequency resolution from the narrowest expected damping bandwidth and verify both sides of each measured peak.</p>
+</details>
+<p><a href="https://fbswiki.org/wiki/index.php/FBS">Åström and Murray · Feedback Systems, chapters on sensitivity functions and Bode&#x27;s integral formula</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/03-predicting-a-delayed-process/">Predicting a delayed process and testing a Smith controller</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/volumes/control-engineering-methods/">Volume contents</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

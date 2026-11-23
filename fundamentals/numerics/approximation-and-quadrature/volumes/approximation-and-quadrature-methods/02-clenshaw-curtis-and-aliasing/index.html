@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integrating cosine interpolants on nested grids · OneSimulation</title>
+<meta name="description" content="Chebyshev points turn polynomial interpolation into a cosine series. Derive the exact moments of each basis polynomial, explain aliasing and find a case where two consecutive quadrature grids confidently agree on the wrong answer.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/02-clenshaw-curtis-and-aliasing/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Integrating cosine interpolants on nested grids · OneSimulation">
+<meta property="og:description" content="Chebyshev points turn polynomial interpolation into a cosine series. Derive the exact moments of each basis polynomial, explain aliasing and find a case where two consecutive quadrature grids confidently agree on the wrong answer.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/02-clenshaw-curtis-and-aliasing/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/">Function approximation and numerical integration</a></p><h1>Integrating cosine interpolants on nested grids</h1><p class="lead">Chebyshev points turn polynomial interpolation into a cosine series. Derive the exact moments of each basis polynomial, explain aliasing and find a case where two consecutive quadrature grids confidently agree on the wrong answer.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/02-polynomial-nodes/">Background · Polynomial interpolation and node placement</a><a href="#try-it">Try the calculation</a><a href="#tutorial">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#cosine">Use a change of coordinate to simplify both the grid and the basis</a><a href="#alias">Explain why unsampled higher modes can imitate low modes</a><a href="#nesting">Reuse data under refinement while looking for unresolved structure</a><a href="#numerical-investigation">Make two nested rules agree on a false integral</a><a href="#tutorial">Tutorial · inspect coefficients and stopping signals</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="cosine">Use a change of coordinate to simplify both the grid and the basis</h2>
+<p>The Chebyshev polynomial \(T_k(x)\) is defined by \(T_k(\cos\theta)=\cos(k\theta)\). For \(N+1\) nodes \(x_j=\cos(j\pi/N)\), sampling a degree-\(N\) polynomial in Chebyshev coordinates becomes sampling a finite cosine series at equally spaced angles. A discrete cosine transform computes the unique interpolant's coefficients without a Vandermonde solve. Clenshaw–Curtis quadrature integrates that interpolant over \([-1,1]\). The integral is unweighted \(dx\), so in angle coordinates there is a \(\sin\theta\) Jacobian; it is not merely the trapezoidal average of the sampled values over angle.</p>
+<p>Let \(I_k=\int_{-1}^1T_k(x)dx=\int_0^\pi\cos(k\theta)\sin\theta\,d\theta\). Odd \(k\) gives zero by parity. Using a product-to-sum identity for even \(k\) gives \(I_k=2/(1-k^2)\), including \(I_0=2\). With coefficients in the convention \(p_N=\sum_{k=0}^N a_kT_k\), the quadrature is simply \(Q_N=\sum a_k I_k\). Some DCT implementations store doubled endpoint coefficients. Convert to the polynomial convention before using these moments; otherwise even the constant function can integrate to four instead of two. A quick audit is exact integration of \(1,x,x^2\) where the grid supports those degrees.</p>
+</section>
+<section><h2 id="alias">Explain why unsampled higher modes can imitate low modes</h2>
+<p>At sampling angles \(\theta_j=j\pi/N\), \(\cos[(2N-k)\theta_j]=\cos(k\theta_j)\) for integer \(j\). Frequencies folded about multiples of \(2N\) are indistinguishable on this grid. A single basis function \(T_{2N-k}\) consequently yields the same interpolant and quadrature as \(T_k\), even though the exact integrals differ. At \(N=8\), \(T_{14}\) aliases to \(T_2\), so \(Q_8=-2/3\) while the exact integral is \(-2/195\simeq-0.01026\). At \(N=16\) the polynomial is fully resolved and integrated exactly. Many practical smooth integrands have rapidly decaying high-mode coefficients, limiting this effect; smoothness without a quantitative resolution check is insufficient.</p>
+<p>The error for a convergent Chebyshev expansion can be analysed as a sum of high-mode coefficients times differences between true and aliased moments. The even moments decay roughly as \(k^{-2}\), so exact integration of many high modes contributes little, but a high mode folding to \(T_0\) can cause a large erroneous contribution. This helps explain how a rule exact for degree only \(N\) can often perform competitively with Gaussian quadrature while still suffering carefully designed aliasing failures. Number of exact polynomial moments and actual performance on an analytic function are different comparisons.</p>
+</section>
+<section><h2 id="nesting">Reuse data under refinement while looking for unresolved structure</h2>
+<p>Doubling the number of intervals gives \(x_{2j}^{(2N)}=x_j^{(N)}\), so all previous samples can be reused. This is valuable when evaluating one function call involves a time-dependent model or laboratory observation. For a general interval \([a,b]\), map \(x\) affinely and multiply every integral by \((b-a)/2\). Compare successive \(Q_N\), decay of the latter Chebyshev coefficients and an independent nonnested or local check. If the integrand has an unresolved local spike or frequency intentionally locked to the grid, two nested results can agree spuriously.</p>
+<p>For a diagnostic let \(f=T_{4N}\). Both the \(N\)- and \(2N\)-interval grids sample the constant value one, so both return 2 despite the exact integral \(2/(1-16N^2)\) being small and negative. Once the \(4N\)-interval grid resolves the highest polynomial the answer changes dramatically. This does not imply nested algorithms should always quadruple a mesh unquestioningly. When physical bounds on derivatives, a known bandwidth or local event locations are available, use them to select an initial resolution and targeted check. Without such information no deterministic finite sampling can certify arbitrary unknown integrands.</p>
+</section>
+<section><h2 id="numerical-investigation">Make two nested rules agree on a false integral</h2>
+<p>Take eight coarse intervals and choose degree 32. Read the two interpolated moments and derive the correct integral analytically. At degree 31 both rules also agree. Explain why they are now exact. At degree 16 determine which grid returns 2 and which resolves the true moment. What evidence distinguishes symmetry from a spurious agreement due to aliasing?</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/02-clenshaw-curtis-and-aliasing/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="math-lab-nested-cosines"></div></section>
+<section><h2 id="tutorial">Tutorial · inspect coefficients and stopping signals</h2>
+<h3>Build a three-point rule from moments</h3><p>With \(N=2\) the nodes are \(1,0,-1\). Use symmetry and moments of \(1,x^2\) to obtain the weights. Integrate \(x^4\) and explain the error.</p><details><summary>Work through the solution</summary>
+<p>Symmetry gives endpoint weights \(w\) and centre weight \(v\). Exactness of the constant requires \(2w+v=2\); for \(x^2\) it gives \(2w=2/3\), hence \(w=1/3,v=4/3\). The estimate for \(x^4\) is \(2/3\) whereas the exact integral is \(2/5\), an error of \(4/15\). Although the rule integrates odd cubics by symmetry, polynomial degree four is not guaranteed. Expanded in Chebyshev modes, its unresolved \(T_4\) aliases to the constant.</p>
+</details>
+<h3>Derive the error caused by one small high-frequency contaminant</h3><p>At \(N=8\) a signal is \(1+0.01T_{16}\). Compare the sampled integral with the exact one and inspect a second grid with 16 intervals.</p><details><summary>Work through the solution</summary>
+<p>Every coarse node samples 1.01, yielding 2.02. The exact integral is \(2+0.01[2/(1-256)]=1.9999216\). The error around 0.0201 is large relative to the true high-mode integral because its samples look constant. At 16 intervals the true mode is represented, giving the exact value up to roundoff. A small-amplitude frequency component can contribute disproportionately to a coarse low-mode estimate when it aliases.</p>
+</details>
+<h3>Determine whether an adaptive error diagnostic has a rigorous guarantee</h3><p>Two nested rules agree to \(10^{-10}\) and all computed high coefficients are small. Does that certify the integral for an otherwise unconstrained analytic function? Construct an explicit counterexample.</p><details><summary>Work through the solution</summary>
+<p>At any fixed finite \(N\), the polynomial \(T_{4N}\) above is analytic and all coarse coefficients except the constant vanish on both grids. Adding a multiple of \(T_{4N}-1\) to an arbitrary candidate leaves both sampled grids unchanged but shifts its exact integral by nearly minus twice that multiple. Thus agreement is evidence conditional on a smoothness or scale model, not an unconditional bound over every analytic function. A genuine analytic error theorem also needs quantitative information such as a bound on an analytic continuation region and its magnitude.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://people.maths.ox.ac.uk/trefethen/publication/PDF/2008_127.pdf">Trefethen · Is Gauss Quadrature Better than Clenshaw–Curtis?</a></li><li><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/09-fourier/">Course investigation · Fourier coefficients, sampling and aliasing</a></li><li><a href="/fundamentals/numerics/approximation-and-quadrature/#experiment">Investigate interpolation error in a heat integral</a></li></ul></section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/01-rational-approximants-and-poles/">Approximating a resonance with a rational function</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/volumes/approximation-and-quadrature-methods/03-oscillatory-integrals-and-filon-moments/">Integrate the oscillations analytically and sample the envelope</a></span></nav><script defer src="/assets/practical-mathematical-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a gravity-drained condensate film limits heat transfer · OneSimulation</title>
+<meta name="description" content="Saturated vapour condenses on a cool vertical plate. A liquid film thickens as it drains, adding thermal resistance toward the bottom. Derive the local heat-transfer coefficient from coupled momentum and energy balances, then determine which observations would invalidate the smooth-film model.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/02-laminar-film-condensation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a gravity-drained condensate film limits heat transfer · OneSimulation">
+<meta property="og:description" content="Saturated vapour condenses on a cool vertical plate. A liquid film thickens as it drains, adding thermal resistance toward the bottom. Derive the local heat-transfer coefficient from coupled momentum and energy balances, then determine which observations would invalidate the smooth-film model.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/02-laminar-film-condensation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/">Thermal processes and transport in engineering</a></p><h1>How a gravity-drained condensate film limits heat transfer</h1><p class="lead">Saturated vapour condenses on a cool vertical plate. A liquid film thickens as it drains, adding thermal resistance toward the bottom. Derive the local heat-transfer coefficient from coupled momentum and energy balances, then determine which observations would invalidate the smooth-film model.</p><p class="byline">Unit 2 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/05-thermal-resistance/">Background · Steady conduction, thermal resistance and insulation</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#film">Find the liquid flow for a specified film thickness</a><a href="#heat">A growing mass flow changes the conductive resistance</a><a href="#measuring-film">Test the quarter-power prediction at several stations</a><a href="#tutorial-one">Tutorial · Reconstruct a heat balance from collected mass</a><a href="#tutorial-two">Tutorial · Compare two uses of the same plate area</a><a href="#tutorial-three">Tutorial · Diagnose a vapour-side resistance</a></nav></aside><article class="prose reference"><section><h2 id="film">Find the liquid flow for a specified film thickness</h2>
+<p>Let \(x\) increase downward along a vertical isothermal wall, \(y\) normal to it, and \(\delta(x)\) be the liquid thickness. Assume a steady laminar film with negligible inertia, constant liquid properties, negligible interfacial shear from slow vapour, saturation temperature at the interface, and a wall uniformly below saturation. Neglect sensible cooling of the condensate relative to latent heat and heat conduction along the plate. The common vapour pressure gradient is approximately hydrostatic, so net downward liquid driving per unit volume is \((\rho_l-\rho_v)g\).</p>
+<p>Solve \(\mu_lu_{yy}=-(\rho_l-\rho_v)g\) with no slip at \(y=0\) and zero shear at \(y=\delta\). The velocity is a downward parabola \(u=(\rho_l-\rho_v)g(\delta y-y^2/2)/\mu_l\). Integrating gives mass flow per unit width \(\Gamma=\rho_l(\rho_l-\rho_v)g\delta^3/(3\mu_l)\). The velocity increases from the wall to its interface maximum; assigning the interface a second no-slip condition would substantially underpredict gravity drainage.</p>
+</section>
+<section><h2 id="heat">A growing mass flow changes the conductive resistance</h2>
+<p>If transverse heat conduction dominates, approximately linear temperature through the film gives wall heat flux \(q''=k_l(T_{\rm sat}-T_w)/\delta\). New condensate produced per unit wall length adds \(d\Gamma/dx=q''/h_{fg}\). Substitute the cubic film-flow relation and integrate from an ideal leading edge of zero film thickness:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\delta(x)=\left[\frac{4\mu_lk_l\Delta T\,x}{\rho_l(\rho_l-\rho_v)g h_{fg}}\right]^{1/4},\]</div><div class="equation-step">\[h_x=\frac{k_l}{\delta(x)},\]</div><div class="equation-step">\[\bar h_L=\frac43h_L.\]</div></div>
+<p>The leading coefficient diverges at \(x=0\) in this idealisation, but its integral is finite. A real leading edge, substrate conduction and contact-angle effects regularise the immediate entrance. The factor \(4/3\) comes from integrating \(x^{-1/4}\), not averaging endpoint values. A plate made twice as long gains heat transfer area but increases film resistance downstream; total heat per unit width rises only as \(L^{3/4}\).</p>
+<p>As an illustrative water-like fluid take \(\rho_l=960,\rho_v=0.6\) kg/m³, \(k_l=0.68\) W/(m K), \(\mu_l=2.9\times10^{-4}\) Pa s, \(h_{fg}=2.26\) MJ/kg, \(\Delta T=5.0\) K and \(L=0.20\) m. The outlet film is roughly 79 micrometres and the outlet coefficient about 8.6 kW per square metre kelvin. The average coefficient is about 11.5 kW per square metre kelvin; a 0.10 m wide plate removes about 1.15 kW and yields roughly 0.51 g/s condensate. Calculate film Reynolds number with the specified convention before accepting the assumed smooth regime.</p>
+<p><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/01-staged-compression-and-intercooling/#try-it">Return to the compressor and intercooler calculation to compare this thermal coefficient with an actual heat duty</a></p>
+</section>
+<section><h2 id="measuring-film">Test the quarter-power prediction at several stations</h2>
+<p>A film-thickness measurement is easiest away from the leading edge. There the ideal formula predicts a thin film and formally unbounded heat transfer coefficient. Real entrance geometry, surface condition, contact-line physics and measurement resolution take over. In the study the curves begin at a small positive fraction of plate length. This preserves the finite integral of the singular ideal heat flux yet avoids assigning a physical measured value at the mathematical edge.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/02-laminar-film-condensation/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-condensate-film"></div>
+<p>For an independent test place two thermal sensors along the downstream wall and estimate local heat flux by conduction across a thin backing of known thickness and conductivity. At two stations whose distances differ by a factor sixteen, the ideal prediction halves the local coefficient. A common wall heat loss can distort this ratio much more at the downstream station, where the useful heat flux is smaller. Repeat with vapour absent to estimate the backing loss and use an unheated reference section to check temperature gradients in the support.</p>
+<p>The liquid mass collected at the bottom integrates all upstream condensation. Doubling plate length increases total condensation by a factor of two raised to three quarters under fixed conditions, even as the mean coefficient falls. If the collector instead finds exactly twice the condensate and local sensors show small axial variation, test for liquid dripping onto the plate from above, a nonuniform vapour temperature or turbulent mixing. Keep track of condensate retained on the surface when using short timed collection intervals; intermittent release into the collector can dominate the apparent uncertainty.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Reconstruct a heat balance from collected mass</h2>
+<p>A plate of the stated size produces 0.48 g/s of condensate in a steady timed collection. Estimate latent heat removal and inferred mean coefficient. Does disagreement with the wall-coolant calorimeter necessarily imply an incorrect latent heat?</p>
+<details><summary>Convert the collected mass into a rate of thermal energy</summary>
+<p>Latent duty is \(0.00048(2.26\times10^6)=1085\) W. The effective mean coefficient is \(1085/(0.020\cdot5)=10.85\) kW per square metre kelvin. Disagreement with a coolant energy balance can arise from heat leaks, condensate subcooling, liquid holdup or drainage that the collection misses. Weigh over a sufficiently long stationary interval and measure condensate outlet temperature. A transient wetting front stores liquid and invalidates equating instantaneous formation and collection.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Compare two uses of the same plate area</h2>
+<p>Two plates can be placed vertically in series so liquid feeds from the upper into the lower, or arranged side by side with independently drained leading edges. Each plate has length \(L\) and width \(b\). Estimate the ideal heat-duty ratio at fixed temperatures.</p>
+<details><summary>Compare fresh versus pre-existing films</summary>
+<p>Side-by-side total duty is \(2Q(L)\). A continuous vertically stacked film behaves like one length \(2L\), giving \(Q(2L)=2^{3/4}Q(L)\). Independently drained plates therefore give a factor \(2^{1/4}=1.189\) more ideal duty for the same area. Additional vapour routing, wall conduction and edge drainage can change real performance. The advantage arises from repeatedly beginning with a thin film, not from more total geometric area.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Diagnose a vapour-side resistance</h2>
+<p>A nominally identical plate shows dramatically smaller heat flux after a small amount of noncondensable gas enters the vapour volume, while liquid film thickness measurements barely change. Why can changing only liquid conductivity in a fit give a misleading result?</p>
+<details><summary>Identify a missing interface boundary condition</summary>
+<p>The model assumed saturated pure vapour at an interface of known temperature. A noncondensable component can accumulate at the interface and require vapour diffusion through a gas layer. Local vapour partial pressure and interface saturation temperature can differ from estimates based on total chamber pressure. Heat and species transport on the vapour side then add resistance. Measure composition and partial pressure, sweep the vapour flow or purge the noncondensable fraction and compare flux with an independent film profile. Fitting a different liquid conductivity can mimic the overall flux but would generally predict the wrong response to those controls.</p>
+</details>
+<p><a href="https://bpb-us-e1.wpmucdn.com/sites.mit.edu/dist/6/1810/files/2024/04/AHTTv600.pdf">Lienhard and Lienhard · A Heat Transfer Textbook, film condensation and phase change</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/01-staged-compression-and-intercooling/">Staged compression with an imperfect intercooler</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/03-radiation-shields-and-enclosures/">Radiative exchange in a grey enclosure</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

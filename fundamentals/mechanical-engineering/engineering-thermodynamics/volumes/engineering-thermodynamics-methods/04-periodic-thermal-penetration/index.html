@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Periodic heating as a measurement of thermal diffusivity · OneSimulation</title>
+<meta name="description" content="Two buried thermometers see the same applied surface temperature oscillation with different amplitudes and phases. Derive how a solid filters that oscillation, recover diffusivity independently from both observations and identify when a rear boundary or a poor sensor contact changes the inference.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/04-periodic-thermal-penetration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Periodic heating as a measurement of thermal diffusivity · OneSimulation">
+<meta property="og:description" content="Two buried thermometers see the same applied surface temperature oscillation with different amplitudes and phases. Derive how a solid filters that oscillation, recover diffusivity independently from both observations and identify when a rear boundary or a poor sensor contact changes the inference.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/04-periodic-thermal-penetration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/">Thermal processes and transport in engineering</a></p><h1>Periodic heating as a measurement of thermal diffusivity</h1><p class="lead">Two buried thermometers see the same applied surface temperature oscillation with different amplitudes and phases. Derive how a solid filters that oscillation, recover diffusivity independently from both observations and identify when a rear boundary or a poor sensor contact changes the inference.</p><p class="byline">Unit 4 of 4</p><nav class="study-links" aria-label="Study this unit"><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/06-transient-conduction/">Background · Thermal diffusion and transient surface cooling</a><a href="#try-it">Try the calculation</a><a href="#tutorial-one">Work the problems</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#diffusion">Choose the decaying branch of a complex thermal wave</a><a href="#measurement">Extract a complex slope from two thermometer depths</a><a href="#limitation">A finite slab creates a returning thermal disturbance</a><a href="#sensor-test">Use the time traces to separate a material delay from a sensor delay</a><a href="#tutorial-one">Tutorial · Check two independent diffusivity estimates</a><a href="#tutorial-two">Tutorial · Separate conductivity and volumetric heat capacity</a><a href="#tutorial-three">Tutorial · Design a frequency window for a finite coupon</a></nav></aside><article class="prose reference"><section><h2 id="diffusion">Choose the decaying branch of a complex thermal wave</h2>
+<p>A homogeneous solid fills \(x&gt;0\) and has constant conductivity \(k\), density \(\rho\) and heat capacity \(c_p\). For small one-dimensional disturbances its temperature excess obeys \(\partial_t\theta=\alpha\partial_x^2\theta\), \(\alpha=k/(\rho c_p)\). Impose sinusoidal surface temperature with amplitude \(A\) and angular frequency \(\omega\), and wait until the initial transient has decayed. With a positive-exponential time convention look for \(\theta=\operatorname{Re}[Ae^{-sx+i\omega t}]\). Then \(s^2=i\omega/\alpha\), and boundedness far from the wall selects</p>
+<div class="math display equation-chain"><div class="equation-step">\[s=(1+i)/\delta,\]</div><div class="equation-step">\[\delta=\sqrt{2\alpha/\omega},\]</div><div class="equation-step">\[\theta(x,t)=Ae^{-x/\delta}\cos(\omega t-x/\delta).\]</div></div>
+<p>One penetration depth produces both an amplitude factor \(e^{-1}\) and a phase lag of one radian. This is diffusive propagation: it is not an undamped travelling wave and its phase velocity depends on frequency. Temperature is continuous at the surface condition, while required input heat flux has complex amplitude \(k s A\). Its magnitude is \(kA\sqrt{\omega/\alpha}\) and its phase leads surface temperature by 45 degrees. A known heat flux and surface amplitude can therefore supply information about thermal effusivity \(\sqrt{k\rho c_p}\), distinct from diffusivity.</p>
+</section>
+<section><h2 id="measurement">Extract a complex slope from two thermometer depths</h2>
+<p>For two sensors separated by known \(\Delta x\), the amplitude ratio gives \(\log(A_1/A_2)=\Delta x/\delta\) and unwrapped phase difference gives \(\Delta\phi=\Delta x/\delta\). Either yields \(\alpha=\omega(\Delta x)^2/(2\Delta\phi^2)\) when amplitude log is substituted for phase if desired. A common unknown drive amplitude and common timing phase cancel. Different sensor gains or unequal sensor time constants do not cancel automatically.</p>
+<p>For a solid with \(\alpha=1.0\times10^{-5}\) square metres per second heated at 0.10 Hz, \(\delta=5.64\) mm. Sensors 3.0 mm apart should display amplitude ratio \(A_2/A_1=0.588\) and lag 0.532 rad, about 30.5 degrees and 0.847 s. Increasing frequency by a factor four halves penetration depth and doubles the phase lag at the same separation. The signal at depth falls more strongly and may eventually become noise-dominated although the theoretical phase difference grows.</p>
+<p><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/01-staged-compression-and-intercooling/#try-it">Compare time-dependent wall-temperature inference with a steady-stage energy balance</a></p>
+</section>
+<section><h2 id="limitation">A finite slab creates a returning thermal disturbance</h2>
+<p>The half-space solution is valid only if the far boundary is several penetration depths beyond the region of interest and if lateral heat losses or heat spreading remain small. In a slab of thickness \(L\) with its back face held at zero temperature excess, an exact periodic solution satisfying both faces is proportional to \(\sinh[s(L-x)]/\sinh(sL)\). An insulating back instead gives \(\cosh[s(L-x)]/\cosh(sL)\). Both reduce to the decaying exponential far from the back at sufficiently high frequency. Fitting the half-space law at very low frequency in a thin specimen can bias diffusivity even with perfect temperature readings.</p>
+</section>
+<section><h2 id="sensor-test">Use the time traces to separate a material delay from a sensor delay</h2>
+<p>In the experiment the two displayed signals share a clock and a known drive amplitude. Read off the time difference between successive maxima, multiply it by angular frequency, and compare with the logarithm of the two amplitudes. Both dimensionless readings estimate depth divided by penetration depth. Increase drive frequency while keeping all geometry fixed. Thermal propagation predicts the same square-root frequency scaling for both quantities. An electronic timing offset instead contributes a phase proportional to frequency and leaves amplitude unchanged.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/04-periodic-thermal-penetration/#try-it">Open the live experiment</a></p><div id="try-it" class="interactive-study" data-study="engineering-methods-thermal-penetration"></div>
+<p>A thermistor embedded in a drilled hole may exchange heat with adhesive and its own leads. A simple first-order sensor with time constant one second has gain magnitude about 0.847 and phase lag about 32 degrees at one tenth hertz. That is already comparable with the nominal three-millimetre material phase in the example. Exchange the two sensors at the same holes after a baseline run. A phase shift which follows the sensor points to unequal time response; one that stays attached to the location is more consistent with diffusion or a location-dependent contact layer.</p>
+<p>To compare a finite solid with the semi-infinite model, estimate the reflected thermal contribution from the far boundary. A disturbance travelling a distance equal to five penetration depths decays in amplitude by a factor near 0.0067. A boundary much nearer than that may noticeably alter phase and attenuation, particularly for a low drive frequency. The relevant distance for a reflected disturbance includes both the outward and return journey. Repeating the measurement at two thicknesses can reveal this effect while preserving material properties and sensor spacing.</p>
+</section>
+<section><h2 id="tutorial-one">Tutorial · Check two independent diffusivity estimates</h2>
+<p>A run at 0.20 Hz with 2.0 mm separation gives amplitude ratio 0.600 and lag 0.500 rad. Infer diffusivity separately from the two measurements and decide whether a simple phase-wrap error is likely.</p>
+<details><summary>Invert the attenuation and lag laws</summary>
+<p>The amplitude logarithm is 0.5108. Its estimate is \(\alpha=2\pi(0.20)(0.002)^2/[2(0.5108)^2]=9.63\times10^{-6}\) square metres per second. The phase estimate is \(1.01\times10^{-5}\) in the same units. The small difference is plausible with roughly percent-scale amplitude or phase uncertainty. A full missed wrap would add \(2\pi\) and change the inferred diffusivity dramatically. Repeat at adjacent frequencies to establish a continuous unwrapped phase rather than selecting a branch from a single fit.</p>
+</details>
+</section>
+<section><h2 id="tutorial-two">Tutorial · Separate conductivity and volumetric heat capacity</h2>
+<p>A second measurement of imposed surface heat-flux amplitude and temperature identifies effusivity \(e=1.50\times10^4\) in SI units. Diffusivity is \(1.0\times10^{-5}\) square metres per second. Recover conductivity and volumetric heat capacity.</p>
+<details><summary>Combine the product and ratio of material properties</summary>
+<p>Write \(e=\sqrt{kC}\), \(\alpha=k/C\), where \(C=\rho c_p\). Then \(k=e\sqrt{\alpha}=47.4\) W/(m K) and \(C=e/\sqrt{\alpha}=4.74\times10^6\) J/(m³ K). Neither a temperature attenuation nor a phase slope alone identifies both quantities. Surface convection, heater thermal mass and contact resistance can distort the inferred heat actually entering the specimen, so an electrical heater input must be corrected before assigning the effusivity.</p>
+</details>
+</section>
+<section><h2 id="tutorial-three">Tutorial · Design a frequency window for a finite coupon</h2>
+<p>A 20 mm specimen has its second sensor at depth 5 mm. A designer wants at least three penetration depths from that sensor to the back wall and a sensor-depth amplitude exceeding one tenth of the surface amplitude. Find an approximate interval of allowable penetration depths, then convert it to frequencies for the example diffusivity.</p>
+<details><summary>Satisfy attenuation and boundary constraints simultaneously</summary>
+<p>The back-wall criterion gives \(\delta\le(20-5)/3=5.0\) mm. The signal criterion gives \(e^{-5{\rm mm}/\delta}&gt;0.10\), or \(\delta&gt;2.17\) mm. Since \(f=\alpha/(\pi\delta^2)\), the interval is approximately 0.127 to 0.675 Hz. These are design heuristics for the stated geometry and signal requirement, not universal boundaries of diffusion theory. A finite-slab calculation at both endpoints can quantify actual back-boundary error before committing to the measurement.</p>
+</details>
+<p><a href="https://bpb-us-e1.wpmucdn.com/sites.mit.edu/dist/6/1810/files/2024/04/AHTTv600.pdf">Lienhard and Lienhard · A Heat Transfer Textbook, transient conduction and penetration depth</a></p>
+</section><nav class="chapter-pager" aria-label="Volume sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/03-radiation-shields-and-enclosures/">Radiative exchange in a grey enclosure</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/volumes/engineering-thermodynamics-methods/">Volume contents</a></span></nav><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
