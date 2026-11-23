@@ -6,21 +6,21 @@
 <title>Numerical partial differential equations · Complete course · OneSimulation</title>
 <meta name="description" content="The complete numerical partial differential equations chapters, problem sheets and applied study in reading order.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/full-notes/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/full-notes/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Numerical partial differential equations · Complete course · OneSimulation">
 <meta property="og:description" content="The complete numerical partial differential equations chapters, problem sheets and applied study in reading order.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/full-notes/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/full-notes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Numerical partial differential equations · Complete course">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Numerical partial differential equations · Complete course", "description": "The complete numerical partial differential equations chapters, problem sheets and applied study in reading order.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/full-notes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Numerical partial differential equations · Complete course", "item": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/full-notes/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Numerical partial differential equations · Complete course", "description": "The complete numerical partial differential equations chapters, problem sheets and applied study in reading order.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/full-notes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Numerical partial differential equations · Complete course", "item": "https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/full-notes/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 <script defer src="/assets/plot-values.js"></script>
 <script defer src="/assets/experiment-runs.js"></script>
@@ -30,7 +30,7 @@
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
 <a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_partial_differential_equations_full_notes">Pricing</a>
@@ -1542,6 +1542,11 @@ fig.savefig("partial-differential-equations.png", dpi=160)</code></pre>
 <details class="study-aside" id="volume-partial-differential-equations-methods-6-try-it"><summary>OneSimulation experiment · Propagate one heat mode in two directions</summary>
 <p>Double the spatial resolution while holding the final time fixed. Keep the grid-dependent reference in the comparison.</p>
 <p><a href="/downloads/fundamentals/examples/numerics-adi-heat.ipynb" download>Download the executable notebook</a> · <a href="/downloads/fundamentals/examples/numerics-adi-heat.py" download>Python source</a></p>
+<p><strong>Adjust the heat field and rotate its surface.</strong> Take initial data \(\sin(\pi x)\sin(q\pi y)\) on the unit square with zero wall values and \(\kappa=1\). Its directional grid eigenvalues are \(\lambda_x=-4\sin^2(\pi\Delta x/2)/\Delta x^2\) and \(\lambda_y=-4\sin^2(q\pi\Delta x/2)/\Delta x^2\). Each time step multiplies its amplitude by</p>
+<div class="math display">\[G=\frac{1+h\lambda_x/2}{1-h\lambda_x/2}\frac{1+h\lambda_y/2}{1-h\lambda_y/2}.\]</div>
+<p>The browser evaluates \(G^N\), exactly the mode reduction of the two matrix solves in the OneSimulation notebook. The rotatable surface shows the numerical field; its vertical coordinate is temperature, so this remains a two-dimensional spatial problem. The plot compares an antinode slice with both \(e^{(\lambda_x+\lambda_y)t}\) and the continuum amplitude \(e^{-\pi^2(1+q^2)t}\). First double the number of time steps on one fixed mesh, then refine the mesh. Choose a higher vertical mode and very few steps to see stable but inaccurate damping, sometimes with a reversed sign. A vertical reference from −1 to +1 keeps amplitude loss visible as the field cools.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/06-two-directional-heat-solves-and-splitting-errors/#explore-adi-heat">Open the live experiment</a></p>
+<div id="volume-partial-differential-equations-methods-6-explore-adi-heat" class="interactive-study" data-study="explore-numerics-adi-heat"></div>
 <pre><code>&quot;&quot;&quot;Measure the temporal order of an ADI heat step against an exact grid mode.&quot;&quot;&quot;
 import matplotlib.pyplot as plt
 import numpy as np
@@ -2047,8 +2052,90 @@ fig.savefig(&quot;numerics-adi-heat.png&quot;, dpi=170)</code></pre>
 <p>Set \(g=0.5\). Record the centre voltage, the quarter-point voltage difference, the largest nodal error and the relative algebraic residual for \(n=8,16,32\). Use even grids divisible by four if reading exact quarter points. Estimate an order from two successive maximum errors using \(p=\log(E_n/E_{2n})/\log2\). For this smooth problem the leading difference between \(\sin^2 z\) and \(z^2\) is proportional to \(z^4\), giving a second-order spatial error at fixed physical modes. If \(g\) or the physical source profile changes during refinement, the ratio no longer tests that claim.</p>
 <p>An experiment that quotes only the centre voltage has poor sensitivity to \(g\). An experiment quoting only the algebraic residual may perfectly solve the wrong mesh problem. An experiment that compares each plot to itself after smoothing lacks an independent reference. The three diagnostics above address these difficulties with quantities small enough to check by hand.</p>
 </section>
+<section><h3 id="shared-numerical-laboratory-1-extend-to-three-dimensions">Extend the verification to a genuinely three-dimensional field</h3>
+<p>Ground all six faces of a cube with side length L=1 m. A potential that varies in every coordinate is</p>
+<div class="math display equation-chain"><div class="equation-step">\[V_*(x,y,z)=A\sin(\pi x/L)\sin(\pi y/L)\sin(\pi z/L),\]</div><div class="equation-step">\[\rho=3\epsilon(\pi/L)^2 V_*.\]</div></div>
+<p>Each second derivative contributes −(π/L)² times the potential. Adding the three derivatives gives the source above; every boundary vanishes because one sine is zero. This is a manufactured source for checking a numerical method. In the supplied calculation ε=1 F/m and A=1 V; scaling both charge and permittivity together leaves the voltage unchanged.</p>
+<p>On a uniform nodal grid, the seven-point negative Laplacian has centre coefficient 6/h² and six neighbour coefficients −1/h². The same sine addition identity used in two dimensions gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[\lambda_h={12\over h^2}\sin^2\!\left({\pi h\over2L}\right),\]</div><div class="equation-step">\[V_h={3(\pi/L)^2\over\lambda_h}V_* .\]</div></div>
+<p>The browser evaluates this discrete eigenmode directly. The spatial view places a coloured slice inside the cube; its height is the physical z coordinate. Moving that slice reveals the interior field while the companion line plot compares the grid values with the exact three-dimensional solution. The numerical potential is slightly too large because λh is smaller than its continuum limit.</p>
+<details class="study-aside"><summary>Try it · Rotate a 3D field, move its slice and refine its mesh</summary>
+<p>Move the plane from the centre to a grounded face and predict the change. Then compare 8 and 16 cells per direction: the maximum nodal error should decrease by approximately four. Doubling A doubles the absolute error while leaving the relative error almost unchanged. Rotation changes the viewpoint only.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/volumes/numerical-laboratory/01-two-mode-verification/#try-cube">Open the live 3D experiment</a></p>
+<div id="shared-numerical-laboratory-1-try-cube" class="interactive-study" data-study="explore-spatial-poisson-cube"></div>
+<p><a href="/downloads/fundamentals/examples/poisson-cube-3d.ipynb" download>Download the 3D OneSimulation notebook</a> · <a href="/downloads/fundamentals/examples/poisson-cube-3d.py" download>Download Python script</a></p>
+<p>The notebook assembles and solves the full 3D OneSimulation finite-difference model. It reports an RMS error at cell centres; the browser reports a maximum error at nodes for its stated seven-point operator. These are different diagnostics. Compare each against its own continuous reference and repeat with a finer mesh.</p>
+<pre><code>&quot;&quot;&quot;Solve a grounded three-dimensional cube with OneSimulation and verify the field.&quot;&quot;&quot;
+import argparse
+from dataclasses import dataclass
+import numpy as np
+import matplotlib.pyplot as plt
+from onesim.cad.d3 import Box
+from onesim.meshing import StructuredHexahedralMesher
+from onesim.numerics import Numerics
+from onesim.numerics.linear import SparseDirect
+from onesim.numerics.fdm import FiniteDifference, CentralDifference, CentralLaplacian
+from onesim.physics.electrostatics import FixedPotential, PoissonEquation
+from onesim.simulation import Problem, Simulation
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument(&#x27;--cells&#x27;, type=int, default=16)
+parser.add_argument(&#x27;--amplitude&#x27;, type=float, default=1.0, help=&#x27;Reference potential amplitude in V&#x27;)
+parser.add_argument(&#x27;--slice&#x27;, type=float, default=50, help=&#x27;Depth as a percentage of the cube&#x27;)
+args = parser.parse_args()
+if not 8 &lt;= args.cells &lt;= 24 or not np.isfinite(args.amplitude) or args.amplitude &lt;= 0 or not 0 &lt;= args.slice &lt;= 100:
+    parser.error(&#x27;Use 8–24 cells, a finite positive amplitude, and a slice between 0 and 100 percent&#x27;)
+
+@dataclass(frozen=True)
+class Permittivity:
+    unit = &#x27;F/m&#x27;
+    def evaluate(self, **state):
+        return 1.0
+
+cube = Box(length=1, width=1, height=1)
+exact = lambda x, y, z: args.amplitude * np.sin(np.pi*x) * np.sin(np.pi*y) * np.sin(np.pi*z)
+field = PoissonEquation(domain=cube.volume, permittivity=Permittivity(),
+                        charge_density=lambda x, y, z: 3*np.pi**2*exact(x,y,z))
+problem = Problem(name=&#x27;Three-dimensional manufactured potential&#x27;, geometry=cube, physics=(field,),
+                  boundary_conditions=(FixedPotential(physics=field, boundary=cube.boundaries.all, value=0.0),))
+mesh = StructuredHexahedralMesher(cells=(args.cells,)*3).generate(cube)
+simulation = Simulation(problem=problem, mesh=mesh, numerics=Numerics(
+    spatial=FiniteDifference(gradient=CentralDifference(), diffusion=CentralLaplacian()),
+    linear_solver=SparseDirect()))
+simulation.validate().require_valid()
+result = simulation.solve_stationary()
+potential = result.field(field.potential)
+centres = mesh.coordinates[mesh.cells].mean(axis=1)
+computed = potential.evaluate(centres)
+reference = exact(*centres.T)
+error = np.sqrt(np.mean((computed-reference)**2))
+z = round(args.cells*args.slice/100)/args.cells
+print(f&#x27;{args.cells}³ cells; source amplitude {args.amplitude:g} V; slice z={z:.3f} m&#x27;)
+print(f&#x27;Cell-centre RMS error against the exact 3D solution: {error:.6e} V&#x27;)
+
+x = np.linspace(0,1,41)
+X,Y = np.meshgrid(x,x)
+points = np.column_stack([X.ravel(),Y.ravel(),np.full(X.size,z)])
+V = potential.evaluate(points).reshape(X.shape)
+line = np.column_stack([x,np.full_like(x,.5),np.full_like(x,z)])
+fig = plt.figure(figsize=(10,4),layout=&#x27;constrained&#x27;)
+ax = fig.add_subplot(121,projection=&#x27;3d&#x27;)
+surface = ax.plot_surface(X,Y,V,cmap=&#x27;viridis&#x27;,linewidth=0)
+ax.set(xlabel=&#x27;x (m)&#x27;,ylabel=&#x27;y (m)&#x27;,zlabel=&#x27;Potential (V)&#x27;,title=f&#x27;Computed slice at z={z:g} m&#x27;)
+ax = fig.add_subplot(122)
+ax.plot(x,potential.evaluate(line),&#x27;o&#x27;,markevery=2,label=&#x27;OneSimulation FDM&#x27;)
+ax.plot(x,exact(x,.5,z),&#x27;--&#x27;,label=&#x27;Exact 3D solution&#x27;)
+ax.set(xlabel=&#x27;x at y=0.5 m (m)&#x27;,ylabel=&#x27;Potential (V)&#x27;)
+ax.grid(alpha=.2); ax.legend()
+fig.savefig(&#x27;poisson-cube-3d.png&#x27;,dpi=170)
+assert np.isfinite(error) and error/args.amplitude &lt; .02
+</code></pre><p>Measured output at the default settings:</p><pre><code>16³ cells; source amplitude 1 V; slice z=0.500 m
+Cell-centre RMS error against the exact 3D solution: 1.138076e-03 V
+</code></pre>
+<figure><img src="/assets/fundamentals-expansion/poisson-cube-3d.png" alt="OneSimulation potential on the midplane of a grounded three-dimensional cube, with a centreline comparison to the exact solution" loading="eager"><figcaption>Actual OneSimulation output. Here the left panel plots potential as height above the selected x–y plane; the right panel compares the same field along y=0.5 m.</figcaption></figure>
+</details></section>
 <section>
-<h3 id="shared-numerical-laboratory-1-tutorial">Get Started</h3>
+<h3 id="shared-numerical-laboratory-1-tutorial">Tutorial</h3>
 <p>A colleague sets \(g=-0.4\) and reports quarter-point voltages 1.107 V and 0.307 V on a very fine grid. Which change in the recorded setup would explain the observation?</p>
 <details><summary>Work through the solution</summary><p>For the stated sign, the expected pair in increasing \(x\) is 0.3071 V then 1.1071 V. Reversing the \(x\) axis interchanges the pair while preserving the centre and the symmetric mode. Reversing the sign of the second source mode produces the same pair. A field measurement with a labelled coordinate direction distinguishes these possibilities.</p></details>
 <p>You prescribe the discrete eigenvalue as the source amplitude during every refinement. The returned solution agrees with your analytic curve at all nodes to machine precision. Which part of the verification has disappeared?</p>
@@ -2088,7 +2175,7 @@ fig.savefig(&quot;numerics-adi-heat.png&quot;, dpi=170)</code></pre>
 <p>Now estimate the left electric field from the first-cell drop and from the analytical derivative at \(x=0\). The first-cell drop divided by \(h\) is an average across that cell, representing its midpoint to second order for a smooth field. Interpreting it as a value exactly at the wall introduces an \(O(h)\) offset. Label sample positions when comparing a derivative against an analytic curve. The grid solution can converge quadratically in voltage while a carelessly placed flux diagnostic appears first order.</p>
 </section>
 <section>
-<h3 id="shared-numerical-laboratory-2-tutorial">Get Started</h3>
+<h3 id="shared-numerical-laboratory-2-tutorial">Tutorial</h3>
 <p>The gradient is reversed so \(\epsilon_r=1+g(1-x/L)\), but the plates remain at the same voltages. Which earlier observations change?</p>
 <details><summary>Work through the solution</summary><p>The integral of inverse permittivity is invariant under \(x\mapsto L-x\), so the capacitance and stored energy stay the same. The new potential obeys \(V_{\rm rev}(x)=\Delta V-V(L-x)\). The largest field is now at the right wall, and the midpoint voltage at \(g=3\) falls from about 0.661 to 0.339 V.</p></details>
 <p>A sensor measures an apparently linear voltage profile and \(C/A\) greater than the vacuum value. Is the inferred dielectric necessarily uniform?</p>
@@ -2130,7 +2217,7 @@ fig.savefig(&quot;numerics-adi-heat.png&quot;, dpi=170)</code></pre>
 <p>For two nearby positive voltages use the difference of their logarithms divided by probe separation. As \(V\) approaches the instrument floor, small absolute noise has a large effect on this ratio. At the grounded right wall the logarithm does not exist. Exclude that point and justify the usable region using both boundary physics and noise. Refining the field mesh cannot improve a voltage measurement below its resolution.</p>
 </section>
 <section>
-<h3 id="shared-numerical-laboratory-3-tutorial">Get Started</h3>
+<h3 id="shared-numerical-laboratory-3-tutorial">Tutorial</h3>
 <p>A grid has 16 cells and \(g=16\). Predict the fractional error in the effective decay rate, using the exact discrete expression rather than only the expansion.</p>
 <details><summary>Work through the solution</summary><p>Here \(gh=1\), so</p>
 <div class="math display">\[\gamma_h/g=2\operatorname{asinh}(0.5)\simeq0.9624.\]</div>
@@ -2167,7 +2254,7 @@ fig.savefig(&quot;numerics-adi-heat.png&quot;, dpi=170)</code></pre>
 <p>A second check concerns energy. For a true point charge the field-energy integral near the origin scales as \(\int_0 r^2(r^{-2})^2dr\), which diverges. For a body of radius \(a\) this short-distance contribution typically scales like \(1/a\). Comparing two source regularisations through their total self-energy without specifying a physical charge radius is therefore an ill-defined validation exercise. Interaction energy with a smooth distant field, in contrast, can have a well-defined point-particle limit.</p>
 </section>
 <section>
-<h3 id="shared-numerical-laboratory-4-tutorial">Get Started</h3>
+<h3 id="shared-numerical-laboratory-4-tutorial">Tutorial</h3>
 <p>How far from this smooth charge should a flux probe be placed to enclose 99%?</p>
 <details><summary>Work through the solution</summary><p>Solve \([1+(a/r)^2]^{-3/2}=0.99\). This gives</p>
 <div class="math display">\[r/a=[0.99^{-2/3}-1]^{-1/2}\simeq12.2.\]</div>
@@ -2571,7 +2658,7 @@ fig.savefig(&quot;numerics-adi-heat.png&quot;, dpi=170)</code></pre>
 <p>As an independent benchmark, set \(C=1\). Then \(\Omega=\theta\) for \(0\le\theta\le\pi\), and the right-going recurrence translates the samples exactly by one grid cell at each time step. The lab should align both curves even on a surprisingly coarse grid for this particular smooth periodic mode. This checks the sign and indexing of propagation without implying exact accuracy for arbitrary geometry and material interfaces.</p>
 </section>
 <section>
-<h3 id="shared-numerical-laboratory-5-tutorial">Get Started</h3>
+<h3 id="shared-numerical-laboratory-5-tutorial">Tutorial</h3>
 <p>A signal must accumulate less than 1 degree of phase error over ten periods. Estimate a required points-per-wavelength count for \(C=0.5\) using the leading error.</p>
 <details><summary>Work through the solution</summary><p>The total continuum phase advance is \(20\pi\) rad. Requiring \(20\pi(1-C^2)(2\pi/N)^2/24&lt;\pi/180\) gives \(N^2>450\pi^2\), or \(N\gtrsim67\). Evaluate the exact dispersion relation to check the chosen integer.</p></details>
 <p>Why is measuring only the field at its crest a poor detector of small phase lag?</p>
@@ -2917,7 +3004,7 @@ python partial-differential-equations.py --cells 48 --mode 2</code></pre>
 <tr><th scope="row">48, 2</th><td>2,209</td><td>1.41546 × 10⁻³</td><td>8.89 × 10⁻¹¹</td></tr>
 </tbody></table><figure class="paper-figure lab-chart"><img src="/assets/fundamentals-labs/partial-differential-equations.png" alt="The first three runs approximately quarter the nodal error with each grid refinement. Changing the wavelength on the same 48-cell grid increases the error even at a small algebraic residual." width="1107" height="418" loading="eager"><figcaption>The first three runs approximately quarter the nodal error with each grid refinement. Changing the wavelength on the same 48-cell grid increases the error even at a small algebraic residual.</figcaption></figure>
 <p>At mode one the error falls by factors close to four while the number of interior unknowns roughly quadruples. On the same 48-cell mesh, mode two has half as many intervals per wavelength and a larger error. Both modes have small algebraic residuals. Mesh convergence is a property of the resolved field and its discretisation.</p>
-<p>Problem sheet 3 · <a href="#sheet-3-laboratory-problem">Predict the error before making a finer grid</a></p></section></section><section class="book-part" id="notation"><h2>Notation and assumptions</h2><p>Read each defining equation with its assumptions and units, then follow the link to the argument that gives the equation its meaning.</p><section><h3 id="notation-compatibility-condition">Compatibility condition</h3><div class="math display">\[\int_\Omega f\,dV=-\int_{\partial\Omega}\partial_nu\,dA\]</div><p>For minus the Laplacian of u equal to f with pure Neumann data, this integral condition is required. A constant still has to be fixed separately.</p><p><a href="#chapter-13-flux">Derivation · Pure flux boundaries, compatibility and the missing constant</a></p></section><section><h3 id="notation-conservative-face-flux">Conservative face flux</h3><div class="math display">\[|C_i|\dot u_i+\sum_{f\subset\partial C_i}F_{if}=|C_i|s_i\]</div><p>Use the same face flux with opposite orientations in neighbouring cells. Interior contributions then cancel in the global balance.</p><p><a href="#chapter-1-first-principles">Derivation · Flux differences for an elliptic balance</a></p></section><section><h3 id="notation-courant-number">Courant number</h3><div class="math display">\[C=|a|\Delta t/\Delta x\]</div><p>For scalar advection this compares a transported distance with a cell width. An admissible range depends on the spatial method and time integrator jointly.</p><p><a href="#chapter-3-first-principles">Derivation · Finite volumes and moving fronts</a></p></section><section><h3 id="notation-numerical-dispersion">Numerical dispersion</h3><div class="math display">\[c_{\rm ph,h}=\omega_h(k)/k\]</div><p>A discretised wave can retain its amplitude and still propagate at the wrong speed. Compare phase and group errors over the actual resolved wavelengths.</p><p><a href="#chapter-16-from-a-continuum-wave-to-nodal-masses">Derivation · Why two finite-element wave solvers propagate the same mode at different speeds</a></p></section><section><h3 id="notation-observed-convergence-order">Observed convergence order</h3><div class="math display">\[p_{\rm obs}=\log(e_h/e_{h/2})/\log 2\]</div><p>Errors must refer to the same observable and norm. Cancellation, singular boundaries and a reference solution of insufficient accuracy can distort the result.</p><p><a href="#chapter-6-first-principles">Derivation · Verification, refinement and local error</a></p></section><section><h3 id="notation-weak-form">Weak form</h3><div class="math display">\[\int k\nabla u\cdot\nabla v\,dV=\int fv\,dV+\text{boundary terms}\]</div><p>Integration by parts lowers the derivative requirement. Essential and natural boundary data enter the discrete system differently.</p><p><a href="#chapter-2-first-principles">Derivation · Weak forms and finite elements</a></p></section></section><section class="book-part" id="further-reading"><h2>Further reading</h2><ul><li><p>Compare stability and consistency for diffusion and advection using the same mesh. Use the accompanying examples to identify which discretisations preserve qualitative features of a solution. <a href="https://faculty.washington.edu/rjl/fdmbook/index.html">Randall J. LeVeque · Finite Difference Methods for Ordinary and Partial Differential Equations</a></p></li><li><p>Chapters 11–13 develop diffusion, advection and two-dimensional problems. Compare the largest operator eigenvalues before choosing an explicit time step. <a href="https://fncbook.com/python/">Driscoll and Braun · Fundamentals of Numerical Computation</a></p></li></ul><p><a href="/fundamentals/university-sources/#partial-differential-equations">Compare specific topics with the university sources</a></p></section></article></div><script src="/assets/lecture-book.js" defer></script><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-num-pde.js"></script><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-physics-laboratory.js"></script><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-discretisation.js"></script><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script>
+<p>Problem sheet 3 · <a href="#sheet-3-laboratory-problem">Predict the error before making a finer grid</a></p></section></section><section class="book-part" id="notation"><h2>Notation and assumptions</h2><p>Read each defining equation with its assumptions and units, then follow the link to the argument that gives the equation its meaning.</p><section><h3 id="notation-compatibility-condition">Compatibility condition</h3><div class="math display">\[\int_\Omega f\,dV=-\int_{\partial\Omega}\partial_nu\,dA\]</div><p>For minus the Laplacian of u equal to f with pure Neumann data, this integral condition is required. A constant still has to be fixed separately.</p><p><a href="#chapter-13-flux">Derivation · Pure flux boundaries, compatibility and the missing constant</a></p></section><section><h3 id="notation-conservative-face-flux">Conservative face flux</h3><div class="math display">\[|C_i|\dot u_i+\sum_{f\subset\partial C_i}F_{if}=|C_i|s_i\]</div><p>Use the same face flux with opposite orientations in neighbouring cells. Interior contributions then cancel in the global balance.</p><p><a href="#chapter-1-first-principles">Derivation · Flux differences for an elliptic balance</a></p></section><section><h3 id="notation-courant-number">Courant number</h3><div class="math display">\[C=|a|\Delta t/\Delta x\]</div><p>For scalar advection this compares a transported distance with a cell width. An admissible range depends on the spatial method and time integrator jointly.</p><p><a href="#chapter-3-first-principles">Derivation · Finite volumes and moving fronts</a></p></section><section><h3 id="notation-numerical-dispersion">Numerical dispersion</h3><div class="math display">\[c_{\rm ph,h}=\omega_h(k)/k\]</div><p>A discretised wave can retain its amplitude and still propagate at the wrong speed. Compare phase and group errors over the actual resolved wavelengths.</p><p><a href="#chapter-16-from-a-continuum-wave-to-nodal-masses">Derivation · Why two finite-element wave solvers propagate the same mode at different speeds</a></p></section><section><h3 id="notation-observed-convergence-order">Observed convergence order</h3><div class="math display">\[p_{\rm obs}=\log(e_h/e_{h/2})/\log 2\]</div><p>Errors must refer to the same observable and norm. Cancellation, singular boundaries and a reference solution of insufficient accuracy can distort the result.</p><p><a href="#chapter-6-first-principles">Derivation · Verification, refinement and local error</a></p></section><section><h3 id="notation-weak-form">Weak form</h3><div class="math display">\[\int k\nabla u\cdot\nabla v\,dV=\int fv\,dV+\text{boundary terms}\]</div><p>Integration by parts lowers the derivative requirement. Essential and natural boundary data enter the discrete system differently.</p><p><a href="#chapter-2-first-principles">Derivation · Weak forms and finite elements</a></p></section></section><section class="book-part" id="further-reading"><h2>Further reading</h2><ul><li><p>Compare stability and consistency for diffusion and advection using the same mesh. Use the accompanying examples to identify which discretisations preserve qualitative features of a solution. <a href="https://faculty.washington.edu/rjl/fdmbook/index.html">Randall J. LeVeque · Finite Difference Methods for Ordinary and Partial Differential Equations</a></p></li><li><p>Chapters 11–13 develop diffusion, advection and two-dimensional problems. Compare the largest operator eigenvalues before choosing an explicit time step. <a href="https://fncbook.com/python/">Driscoll and Braun · Fundamentals of Numerical Computation</a></p></li></ul><p><a href="/fundamentals/university-sources/#partial-differential-equations">Compare specific topics with the university sources</a></p></section></article></div><script src="/assets/lecture-book.js" defer></script><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-num-pde.js"></script><script defer src="/assets/practical-field-laboratory.js"></script><script defer src="/assets/practical-physics-laboratory.js"></script><script defer src="/assets/practical-semester.js"></script><script defer src="/assets/practical-semester-discretisation.js"></script><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-explore-numerics.js"></script><script defer src="/assets/practical-explore-spatial.js"></script><script defer src="/assets/practical-spatial-view.js"></script><script defer src="/assets/practical-studies.js"></script>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

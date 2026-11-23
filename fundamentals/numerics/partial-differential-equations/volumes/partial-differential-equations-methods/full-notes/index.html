@@ -6,28 +6,28 @@
 <title>Spatial discretisation and field equations · Complete volume · OneSimulation</title>
 <meta name="description" content="Derive a discrete field problem from a continuous equation, choose appropriate boundary data and test the convergence of quantities a measurement could resolve.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/full-notes/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/full-notes/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spatial discretisation and field equations · Complete volume · OneSimulation">
 <meta property="og:description" content="Derive a discrete field problem from a continuous equation, choose appropriate boundary data and test the convergence of quantities a measurement could resolve.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/full-notes/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/full-notes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Spatial discretisation and field equations · Complete volume">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Spatial discretisation and field equations · Complete volume", "description": "Derive a discrete field problem from a continuous equation, choose appropriate boundary data and test the convergence of quantities a measurement could resolve.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/full-notes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Spatial discretisation and field equations · Complete volume", "item": "https://onesimulation.pages.dev/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/full-notes/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Spatial discretisation and field equations · Complete volume", "description": "Derive a discrete field problem from a continuous equation, choose appropriate boundary data and test the convergence of quantities a measurement could resolve.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/full-notes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Spatial discretisation and field equations · Complete volume", "item": "https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/full-notes/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
 <a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_partial_differential_equations_volumes_partial_differential_equations_methods_full_notes">Pricing</a>
@@ -204,6 +204,11 @@
 <details class="study-aside" id="volume-partial-differential-equations-methods-6-try-it"><summary>OneSimulation experiment · Propagate one heat mode in two directions</summary>
 <p>Double the spatial resolution while holding the final time fixed. Keep the grid-dependent reference in the comparison.</p>
 <p><a href="/downloads/fundamentals/examples/numerics-adi-heat.ipynb" download>Download the executable notebook</a> · <a href="/downloads/fundamentals/examples/numerics-adi-heat.py" download>Python source</a></p>
+<p><strong>Adjust the heat field and rotate its surface.</strong> Take initial data \(\sin(\pi x)\sin(q\pi y)\) on the unit square with zero wall values and \(\kappa=1\). Its directional grid eigenvalues are \(\lambda_x=-4\sin^2(\pi\Delta x/2)/\Delta x^2\) and \(\lambda_y=-4\sin^2(q\pi\Delta x/2)/\Delta x^2\). Each time step multiplies its amplitude by</p>
+<div class="math display">\[G=\frac{1+h\lambda_x/2}{1-h\lambda_x/2}\frac{1+h\lambda_y/2}{1-h\lambda_y/2}.\]</div>
+<p>The browser evaluates \(G^N\), exactly the mode reduction of the two matrix solves in the OneSimulation notebook. The rotatable surface shows the numerical field; its vertical coordinate is temperature, so this remains a two-dimensional spatial problem. The plot compares an antinode slice with both \(e^{(\lambda_x+\lambda_y)t}\) and the continuum amplitude \(e^{-\pi^2(1+q^2)t}\). First double the number of time steps on one fixed mesh, then refine the mesh. Choose a higher vertical mode and very few steps to see stable but inaccurate damping, sometimes with a reversed sign. A vertical reference from −1 to +1 keeps amplitude loss visible as the field cools.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/volumes/partial-differential-equations-methods/06-two-directional-heat-solves-and-splitting-errors/#explore-adi-heat">Open the live experiment</a></p>
+<div id="volume-partial-differential-equations-methods-6-explore-adi-heat" class="interactive-study" data-study="explore-numerics-adi-heat"></div>
 <pre><code>&quot;&quot;&quot;Measure the temporal order of an ADI heat step against an exact grid mode.&quot;&quot;&quot;
 import matplotlib.pyplot as plt
 import numpy as np
@@ -289,7 +294,7 @@ fig.savefig(&quot;numerics-adi-heat.png&quot;, dpi=170)</code></pre>
 <h4>Calculate one update next to a marked step</h4><details><summary>Work through the solution</summary><p>Take \(\nu=1/2\) and \(u_{j-1}=u_j=0,\ u_{j+1}=1\). Upwind gives zero, Lax–Friedrichs gives \(1/4\), Lax–Wendroff gives \(-1/8\). The exact right-going step has not reached this upstream cell centre.</p></details>
 <h4>Infer the reflected wave from a non-ideal termination</h4><details><summary>Work through the solution</summary><p>At the right boundary impose \(p=Zv\). Substituting the characteristic pair gives \(w_-=(Z-\rho c)w_+/(Z+\rho c)\). A matched termination \(Z=\rho c\) transmits the wave with zero reflection. Verify the rigid and pressure-release limits before using this relation in ghost cells.</p></details>
 <p><a href="https://staff.washington.edu/rjl/fdmbook/">LeVeque · advection equations and hyperbolic systems</a></p>
-</section></section></article></div><script src="/assets/lecture-book.js" defer></script><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-studies.js"></script>
+</section></section></article></div><script src="/assets/lecture-book.js" defer></script><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-explore-numerics.js"></script><script defer src="/assets/practical-spatial-view.js"></script><script defer src="/assets/practical-studies.js"></script>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

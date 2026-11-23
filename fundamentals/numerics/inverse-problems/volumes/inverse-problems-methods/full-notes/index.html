@@ -6,28 +6,28 @@
 <title>Inferring parameters and fields from observations · Complete volume · OneSimulation</title>
 <meta name="description" content="Follow information from a forward model back to its unknowns. Evaluate identifiability, numerical sensitivity and how an additional observation changes the inference.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/full-notes/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/full-notes/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Inferring parameters and fields from observations · Complete volume · OneSimulation">
 <meta property="og:description" content="Follow information from a forward model back to its unknowns. Evaluate identifiability, numerical sensitivity and how an additional observation changes the inference.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/full-notes/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/full-notes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Inferring parameters and fields from observations · Complete volume">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Inferring parameters and fields from observations · Complete volume", "description": "Follow information from a forward model back to its unknowns. Evaluate identifiability, numerical sensitivity and how an additional observation changes the inference.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/full-notes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Inferring parameters and fields from observations · Complete volume", "item": "https://onesimulation.pages.dev/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/full-notes/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Inferring parameters and fields from observations · Complete volume", "description": "Follow information from a forward model back to its unknowns. Evaluate identifiability, numerical sensitivity and how an additional observation changes the inference.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/full-notes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Inferring parameters and fields from observations · Complete volume", "item": "https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/full-notes/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
 <a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_numerics_inverse_problems_volumes_inverse_problems_methods_full_notes">Pricing</a>
@@ -207,6 +207,9 @@
 <details class="study-aside" id="volume-inverse-problems-methods-6-try-it"><summary>OneSimulation experiment · Reconstruct data from an independently discretised instrument</summary>
 <p>Vary the true blur width or noise seed. Decide which feature persists across plausible instruments.</p>
 <p><a href="/downloads/fundamentals/examples/numerics-inverse-blur.ipynb" download>Download the executable notebook</a> · <a href="/downloads/fundamentals/examples/numerics-inverse-blur.py" download>Python source</a></p>
+<p><strong>Adjust the experiment in the browser.</strong> Start with matching blur widths and zero noise. Increase the noise, then vary \(\mu\) to trade oscillatory reconstruction against loss of the small-scale signal. Finally change only the true width. A small data residual can now coexist with a biased reconstruction. Every adjustment regenerates the data on 1024 source cells and solves the 32-variable regularised normal system by Cholesky factorisation. The browser keeps one reproducible noise pattern so a slider movement isolates a parameter change. The downloadable OneSimulation model below makes the same distinction between data and inversion grids and adds spectral diagnostics; its random generator produces a different noise sample.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/volumes/inverse-problems-methods/06-discretising-an-instrument-and-testing-its-resolution/#explore-inverse-blur">Open the live experiment</a></p>
+<div id="volume-inverse-problems-methods-6-explore-inverse-blur" class="interactive-study" data-study="explore-numerics-inverse-blur"></div>
 <pre><code>&quot;&quot;&quot;Observe model error in a periodic deblurring experiment on different grids.&quot;&quot;&quot;
 import matplotlib.pyplot as plt
 import numpy as np
@@ -284,7 +287,7 @@ True width 0.065: minimum grid RMS error 0.18949</samp></pre>
 <h4>Interpret a first-difference penalty in a two-cell experiment</h4><details><summary>Work through the solution</summary><p>With \(A=I,\ L=(1,-1)\), normalised sum and difference are Euclidean eigenvectors. Their fitted gains are \(1\) and \(1/(1+2\mu^2)\). Increasing \(\mu\) enforces nearly equal cells while retaining their experimentally measured mean.</p></details>
 <h4>Choose a fair comparison between LSQR and CGLS</h4><details><summary>Work through the solution</summary><p>Start both at zero, use identical operators and noisy data, count one forward and one transpose product per iteration, and plot reconstruction error and independent prediction error alongside the training residual. Equal iteration counts isolate finite-precision effects. Equal stopping rules test what an investigator actually reports.</p></details>
 <p><a href="https://www2.imm.dtu.dk/~pcha/DIPbook.html">Hansen · iterative and general-form regularisation</a></p>
-</section></section></article></div><script src="/assets/lecture-book.js" defer></script><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-mathematical-laboratory.js"></script><script defer src="/assets/practical-studies.js"></script>
+</section></section></article></div><script src="/assets/lecture-book.js" defer></script><script defer src="/assets/practical-numerical-methods.js"></script><script defer src="/assets/practical-mathematical-laboratory.js"></script><script defer src="/assets/practical-explore-numerics.js"></script><script defer src="/assets/practical-spatial-view.js"></script><script defer src="/assets/practical-studies.js"></script>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

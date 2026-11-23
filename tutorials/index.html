@@ -3,38 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Get Started · OneSimulation</title>
+<title>Getting Started · OneSimulation</title>
 <meta name="description" content="Install OneSimulation, run and verify your first calculation, then build a spatial simulation.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/tutorials/">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Get Started · OneSimulation">
+<meta property="og:title" content="Getting Started · OneSimulation">
 <meta property="og:description" content="Install OneSimulation, run and verify your first calculation, then build a spatial simulation.">
-<meta property="og:url" content="https://onesimulation.pages.dev/tutorials/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/step-result.png">
-<meta property="og:image:alt" content="Get Started">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/step-result.png">
+<meta property="og:image:alt" content="Getting Started">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.pages.dev/tutorials/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}]}]}</script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="page">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="page">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
 <a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials">Pricing</a>
 </nav>
 </div></header>
 <main id="content">
-<header class="article-header shell"><h1>Get Started</h1>
+<header class="article-header shell"><h1>Getting Started</h1>
 <p class="lead">Install OneSimulation, build a complete physical model, inspect its output and check whether the result is accurate enough for your question.</p></header>
 <div class="shell article-layout"><aside class="article-nav"><nav aria-label="Getting started"><a href="#install">Install and check Python</a><a href="#question">Choose a first physical question</a><a href="#model">Build the model</a><a href="#run">Run the complete example</a><a href="#verify">Verify and change the result</a><a href="#spatial">Move to spatial fields</a><a href="#diagnose">Diagnose a calculation</a><a href="#continue">Continue with your subject</a></nav></aside>
 <article class="prose reference">
@@ -52,13 +52,13 @@
 <p>Choose k=0.8 s⁻¹ and CA0=1 mol/m³. The characteristic time is 1/k=1.25 s. After five characteristic times, CA is about 0.006738 mol/m³. The sum of concentrations should stay one throughout. These are two independent questions for the calculation, time-history accuracy and conservation.</p>
 <details class="study-aside"><summary>Background · Why this first model has no spatial mesh</summary><p>Well mixed means the model assumes one concentration for the entire reactor at each time. A lumped mesh represents that state. If diffusion is slow compared with reaction, the same physical vessel can develop concentration gradients and require a spatial model. A successful lumped calculation verifies the computation under its mixing assumption. It does not establish that every real vessel is well mixed.</p></details></section>
 <section><h2 id="model">Connect each part of the physical description to the model</h2>
-<table><thead><tr><th>Object in the example</th><th>Physical or numerical role</th></tr></thead><tbody>
+<div class="table-wrap"><table class="model-map"><thead><tr><th>Object in the example</th><th>Physical or numerical role</th></tr></thead><tbody>
 <tr><td><code>ReactionNetworkIR</code></td><td>Names the two species and declares A → B with its rate. Equal composition and particle mass make the reaction balance check meaningful.</td></tr>
 <tr><td><code>LumpedDomain</code> and <code>ReactionKinetics</code></td><td>Define the spatially uniform reactor and its concentration variables.</td></tr>
 <tr><td><code>Problem</code> and <code>InitialValue</code></td><td>Collect the physics and the state at time zero. The initial concentration belongs to the physical problem.</td></tr>
 <tr><td><code>Numerics</code></td><td>Selects lumped spatial representation and fourth-order Runge–Kutta time integration. The time step belongs to the numerical approximation.</td></tr>
 <tr><td><code>Simulation</code></td><td>Combines the model and method, validates their compatibility and advances the state.</td></tr>
-<tr><td><code>result.field(...).time_series()</code></td><td>Retrieves times and concentration values for an explicit reference comparison.</td></tr></tbody></table>
+<tr><td><code>result.field(...).time_series()</code></td><td>Retrieves times and concentration values for an explicit reference comparison.</td></tr></tbody></table></div>
 <p>Keeping the initial condition and the time step in their respective roles makes subsequent experiments easier to interpret. Changing k asks another physical question. Reducing the time step asks whether the same physical question has been computed more accurately.</p></section>
 <section><h2 id="run">Run the complete OneSimulation example</h2>
 <p><a href="/downloads/get-started-reaction.py" download>Download Python script</a> · <a href="/downloads/get-started-reaction.ipynb" download>Download Jupyter notebook</a></p>
@@ -79,13 +79,23 @@ from onesim.physics.chemistry import (
 from onesim.simulation import Problem, Simulation
 from onesim.simulation.initial_conditions import InitialValue
 import matplotlib.pyplot as plt
+import argparse
 
-k = 0.8
-C_A0 = 1.0
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument(&quot;--rate&quot;, type=float, default=0.8, help=&quot;Rate in 1/s&quot;)
+parser.add_argument(&quot;--initial&quot;, type=float, default=1.0, help=&quot;Initial A in mol/m³&quot;)
+parser.add_argument(&quot;--step&quot;, type=float, help=&quot;Time step in seconds (default: 0.05/rate)&quot;)
+parser.add_argument(&quot;--end&quot;, type=float, help=&quot;Duration in seconds (default: 5/rate)&quot;)
+args = parser.parse_args()
+for value in (args.rate, args.initial, args.step, args.end):
+    if value is not None and (not np.isfinite(value) or value &lt;= 0):
+        parser.error(&quot;Rate, initial concentration, step and duration must be finite and positive&quot;)
+k = args.rate
+C_A0 = args.initial
 C_B0 = 0.0
 tau = 1.0 / k
-end_time = 5.0 * tau
-time_step = 0.05 * tau
+end_time = args.end if args.end is not None else 5.0 * tau
+time_step = args.step if args.step is not None else 0.05 * tau
 print(
     f&quot;k = {k:.3f} 1/s,  characteristic time 1/k = {tau:.2f} s,  end time = {end_time:.2f} s&quot;
 )
@@ -126,7 +136,13 @@ simulation = Simulation(
     ),
 )
 simulation.validate().require_valid()
-result = simulation.run(start_time=0.0, end_time=end_time, time_step=time_step)
+try:
+    result = simulation.run(start_time=0.0, end_time=end_time, time_step=time_step)
+except ValueError as error:
+    if &quot;negative concentrations&quot; not in str(error):
+        raise
+    raise SystemExit(&quot;OneSimulation rejected a negative concentration. Reduce --step; &quot;
+                     &quot;the browser&#x27;s raw RK4 preview shows why this large step fails.&quot;) from None
 
 times, num_A = result.field(C_A).time_series()
 _, num_B = result.field(C_B).time_series()
@@ -154,8 +170,9 @@ ax.set(xlabel=&quot;Time (s)&quot;, ylabel=&quot;Concentration (mol/m³)&quot;)
 ax.grid(alpha=0.2)
 ax.legend()
 fig.savefig(&quot;get-started-reaction.png&quot;, dpi=170)
-assert max(err_A, err_B) &lt; 3e-8
-assert mass_error &lt; 1e-12
+if k == 0.8 and C_A0 == 1.0 and end_time == 6.25 and time_step == 0.0625:
+    assert max(err_A, err_B) &lt; 3e-8
+    assert mass_error &lt; 1e-12
 </code></pre>
 <p>Output from the supplied model</p><pre><code>k = 0.800 1/s,  characteristic time 1/k = 1.25 s,  end time = 6.25 s
 Maximum absolute error against the exponential: 1.998e-08 mol/m^3  (0.0000 % of C_A0)
@@ -163,6 +180,12 @@ Maximum mass-balance error C_A+C_B-C_A0: 4.441e-16 mol/m^3
 </code></pre>
 <figure><img src="/assets/fundamentals-expansion/get-started-reaction.png" alt="Computed A and B concentrations over 6.25 seconds compared with their analytical exponential curves" loading="lazy"><figcaption>A disappears at the same rate that B appears. Markers show computed values and dashed lines show the analytical solution. A nearly exact total concentration alone would not establish that the conversion occurred at the correct rate.</figcaption></figure></details>
 <p>For this run the maximum error against the exact concentration is approximately 2.0×10⁻⁸ mol/m³. The concentration-sum error is approximately 4.4×10⁻¹⁶ mol/m³. Final digits can depend on platform and numerical backend.</p></section>
+<details class="study-aside"><summary>Try it · Change the reaction and the numerical time step</summary>
+<p>The browser evaluates the same two concentration equations with classical fourth-order Runge–Kutta. Change the physical rate and initial concentration, then change the numerical step independently. The final time stays at 6.25 s so the curves are directly comparable. The linked OneSimulation script accepts exactly these inputs.</p>
+<p>First double k and predict the half-life. Next halve the step and compare the maximum error. Finally choose k=3 s⁻¹ and a 1.25 s step: check whether conservation alone detects the failed decay. The exact curves remain the reference throughout. This browser preview displays raw RK4 values even when they become unphysical. The full OneSimulation reaction model checks concentration admissibility and rejects such a step; reduce the time step before continuing the local simulation.</p>
+<div class="interactive-study" id="reaction-experiment" data-study="getting-started-reaction"></div>
+<p><a href="/downloads/get-started-reaction.ipynb" download>Open the same model in a Jupyter notebook</a>. Edit the parameters in its first code cell; the stored output shows the default run.</p>
+</details>
 <section><h2 id="verify">Make three changes and predict their effects first</h2>
 <p><strong>Change the rate.</strong> Double k to 1.6 s⁻¹. The half-life should halve from ln2/0.8≈0.8664 s to about 0.4332 s. The script defines duration and step as multiples of 1/k, so the dimensionless conversion curve against kt stays the same. To compare the two reactions over the same elapsed seconds, prescribe a fixed end time.</p>
 <p><strong>Refine the time step.</strong> Keep k and the end time fixed and halve the time step. In the resolved regime a fourth-order method should reduce its leading global error by approximately 16. Repeat once more. Compare error at the same physical times, or compare the maximum error against the exact solution sampled on each grid. Near floating-point roundoff the reduction will eventually level off.</p>
@@ -180,6 +203,9 @@ Maximum mass-balance error C_A+C_B-C_A0: 4.441e-16 mol/m^3
 <section><h2 id="continue">Continue with the question you want to answer</h2>
 <ul><li>Use the <a href="/blog/">Application Library</a> for an existing model with geometry, inputs, plots, reference checks and a downloadable notebook.</li><li>Use <a href="/fundamentals/">Fundamentals</a> for derivations, prerequisites and exercises in physics, mechanical engineering and numerical mathematics.</li><li>Use the <a href="/tutorials/discretization/">discretisation guide</a> and <a href="/tutorials/custom-equation/">custom-equation guide</a> when your governing equation or numerical method needs a different formulation.</li><li>Work through the <a href="/tutorials/numerical-lab/">numerical methods lab</a> and its <a href="/tutorials/numerical-lab/exercises/">computational exercises</a> to practise comparing methods on controlled problems.</li></ul>
 </section></article></div>
+
+<script defer src="/assets/practical-getting-started.js"></script>
+<script defer src="/assets/practical-studies.js"></script>
 
 </main>
 <footer class="site-footer"><div class="shell footer-row">

@@ -14,13 +14,23 @@ from onesim.physics.chemistry import (
 from onesim.simulation import Problem, Simulation
 from onesim.simulation.initial_conditions import InitialValue
 import matplotlib.pyplot as plt
+import argparse
 
-k = 0.8
-C_A0 = 1.0
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--rate", type=float, default=0.8, help="Rate in 1/s")
+parser.add_argument("--initial", type=float, default=1.0, help="Initial A in mol/m³")
+parser.add_argument("--step", type=float, help="Time step in seconds (default: 0.05/rate)")
+parser.add_argument("--end", type=float, help="Duration in seconds (default: 5/rate)")
+args = parser.parse_args()
+for value in (args.rate, args.initial, args.step, args.end):
+    if value is not None and (not np.isfinite(value) or value <= 0):
+        parser.error("Rate, initial concentration, step and duration must be finite and positive")
+k = args.rate
+C_A0 = args.initial
 C_B0 = 0.0
 tau = 1.0 / k
-end_time = 5.0 * tau
-time_step = 0.05 * tau
+end_time = args.end if args.end is not None else 5.0 * tau
+time_step = args.step if args.step is not None else 0.05 * tau
 print(
     f"k = {k:.3f} 1/s,  characteristic time 1/k = {tau:.2f} s,  end time = {end_time:.2f} s"
 )
@@ -61,7 +71,13 @@ simulation = Simulation(
     ),
 )
 simulation.validate().require_valid()
-result = simulation.run(start_time=0.0, end_time=end_time, time_step=time_step)
+try:
+    result = simulation.run(start_time=0.0, end_time=end_time, time_step=time_step)
+except ValueError as error:
+    if "negative concentrations" not in str(error):
+        raise
+    raise SystemExit("OneSimulation rejected a negative concentration. Reduce --step; "
+                     "the browser's raw RK4 preview shows why this large step fails.") from None
 
 times, num_A = result.field(C_A).time_series()
 _, num_B = result.field(C_B).time_series()
@@ -89,5 +105,6 @@ ax.set(xlabel="Time (s)", ylabel="Concentration (mol/m³)")
 ax.grid(alpha=0.2)
 ax.legend()
 fig.savefig("get-started-reaction.png", dpi=170)
-assert max(err_A, err_B) < 3e-8
-assert mass_error < 1e-12
+if k == 0.8 and C_A0 == 1.0 and end_time == 6.25 and time_step == 0.0625:
+    assert max(err_A, err_B) < 3e-8
+    assert mass_error < 1e-12

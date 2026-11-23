@@ -6,28 +6,28 @@
 <title>Momentum, motion and transport in fluids · Complete volume · OneSimulation</title>
 <meta name="description" content="Derive a flow from its conservation laws and boundary conditions. Quantify how length scales and material properties decide which approximation can predict a measurement.">
 <meta name="theme-color" content="#f5f2e8">
-<link rel="canonical" href="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/full-notes/">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/full-notes/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Momentum, motion and transport in fluids · Complete volume · OneSimulation">
 <meta property="og:description" content="Derive a flow from its conservation laws and boundary conditions. Quantify how length scales and material properties decide which approximation can predict a measurement.">
-<meta property="og:url" content="https://onesimulation.pages.dev/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/full-notes/">
-<meta property="og:image" content="https://onesimulation.pages.dev/assets/methods.png">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/full-notes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
 <meta property="og:image:alt" content="Momentum, motion and transport in fluids · Complete volume">
 <meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Momentum, motion and transport in fluids · Complete volume", "description": "Derive a flow from its conservation laws and boundary conditions. Quantify how length scales and material properties decide which approximation can predict a measurement.", "image": "https://onesimulation.pages.dev/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.pages.dev/about/"}, "mainEntityOfPage": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/full-notes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.pages.dev/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Momentum, motion and transport in fluids · Complete volume", "item": "https://onesimulation.pages.dev/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/full-notes/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Momentum, motion and transport in fluids · Complete volume", "description": "Derive a flow from its conservation laws and boundary conditions. Quantify how length scales and material properties decide which approximation can predict a measurement.", "image": "https://onesimulation.onrender.com/assets/methods.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/full-notes/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Fundamentals", "item": "https://onesimulation.onrender.com/fundamentals/"}, {"@type": "ListItem", "position": 3, "name": "Momentum, motion and transport in fluids · Complete volume", "item": "https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/full-notes/"}]}]}</script>
 <script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 <header class="site-header"><div class="shell header-row">
 <a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
-<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Get Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
 <nav class="platform-nav" aria-label="External links">
 <a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
 <a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=fundamentals_mechanical_engineering_fluid_mechanics_volumes_fluid_mechanics_methods_full_notes">Pricing</a>
@@ -217,6 +217,13 @@
 </section>
 <section><h3 id="volume-fluid-mechanics-methods-6-experiment">Separate resistance calibration from the boundary condition</h3>
 <p>The notebook first fits one roughness to four synthetic uniform discharge measurements and then holds it fixed for two downstream controls. The fitted \(n=0.03001\) gives depths of 1.605 m and 1.745 m one kilometre upstream of outlet depths of 1.8 and 2.2 m. The downstream 0.4 m difference has decayed substantially and still leaves an observable upstream effect.</p>
+<details class="study-aside"><summary>Interactive experiment · Change a downstream control and recompute its upstream reach</summary>
+<p>The live calculation integrates the depth equation upstream with fourth-order Runge–Kutta steps of 2 m. Keep the default discharge and roughness, move the outlet stage from 1.8 to 2.2 m and compare depths 1 km upstream. Next change roughness: normal depth moves, while critical depth stays fixed. Changing discharge moves both reference depths.</p>
+<p>The channel remains 4 m wide with bed slope 0.001. All available input combinations stay subcritical, where a downstream stage can influence the upstream reach. The plotted coordinate increases upstream, so its derivative has the opposite sign to the downstream equation. The notebook below fits roughness with OneSimulation before integrating two profiles; the browser lets you explore the consequences of prescribing that coefficient directly.</p>
+<p class="print-experiment"><a href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/volumes/fluid-mechanics-methods/06-normal-depth-and-backwater/#try-it">Open the live experiment</a></p><div id="volume-fluid-mechanics-methods-6-try-it" class="interactive-study" data-study="explore-engineering-backwater"></div>
+<noscript><p>Enable JavaScript to change the inputs, or run the companion notebook for the same subject. The recorded figure and code remain available below.</p></noscript>
+<p><a href="/downloads/fundamentals/examples/engineering-backwater.ipynb" download>Continue in the OneSimulation notebook</a> · <a href="/downloads/fundamentals/examples/engineering-backwater.py" download>Download its Python model</a></p>
+</details>
 <details class="study-aside"><summary>OneSimulation experiment · Two downstream stages produce different upstream profiles at the same calibrated roughness</summary><p>Run the notebook with OneSimulation 0.2.0, NumPy, SciPy and Matplotlib. Change the input data and compare your run with the recorded result.</p><pre><code>&quot;&quot;&quot;Infer Manning roughness from uniform flow, then predict a subcritical backwater.&quot;&quot;&quot;
 import numpy as np
 import matplotlib.pyplot as plt
@@ -281,7 +288,7 @@ outlet 2.2 m: depth 1 km upstream = 1.745 m</samp></pre><figure><img src="/asset
 <p>A frictional pipe with the worked inlet already carries gas at Mach 0.7 at a pressure tap. How much more straight pipe reaches the mathematical choking limit?</p><details><summary>Worked solution</summary><p>The remaining friction length is \(D F(0.7)/f_D=0.520\) m. This calculation assumes the same Darcy factor up to the sonic state.</p></details>
 <p>A well-insulated pipe test gives a large stagnation-pressure loss but nearly identical measured stagnation temperatures. Could a frictionless Rayleigh model with steady net heating explain both quantities?</p><details><summary>Worked solution</summary><p>Net heating necessarily raises \(h_0\). The nearly unchanged stagnation temperature supports adiabatic frictional loss or another adiabatic irreversible process. Static temperatures alone do not distinguish acceleration from wall heat.</p></details>
 <p class="references">Further reading · <a href="https://catalogimages.wiley.com/images/db/pdf/9781119683650.toc.pdf">Gerhart, Hochstein and Gerhart, Munson, Young and Okiishi’s Fundamentals of Fluid Mechanics, 9th ed.</a>, Sections 11.8–11.9.</p>
-</section></section></article></div><script src="/assets/lecture-book.js" defer></script><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-studies.js"></script>
+</section></section></article></div><script src="/assets/lecture-book.js" defer></script><script defer src="/assets/practical-engineering-methods.js"></script><script defer src="/assets/practical-explore-engineering.js"></script><script defer src="/assets/practical-spatial-view.js"></script><script defer src="/assets/practical-studies.js"></script>
 </main>
 <footer class="site-footer"><div class="shell footer-row">
 <div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>

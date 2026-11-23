@@ -22,7 +22,7 @@
     canvas.style.height = height + "px";
     const ctx = canvas.getContext("2d");
     ctx.scale(ratio, ratio);
-    const left = width < 420 ? 60 : 72, right = width - 20, top = 16, bottom = height - 51;
+    const left = width < 420 ? 74 : 84, right = width - 20, top = 16, bottom = height - 51;
     let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
     for (const series of data.curves) {
       for (const [x,y] of series.points) {
@@ -103,6 +103,11 @@
   function initialise(panel) {
     const model = window.fundamentalStudies?.[panel.dataset.study];
     if (!model) return;
+    if (window.location.hash === '#' + panel.id) {
+      for (let parent = panel.parentElement; parent; parent = parent.parentElement) {
+        if (parent.tagName === 'DETAILS') parent.open = true;
+      }
+    }
     const form = element("fieldset",panel);
     element("legend",form,"Try the calculation");
     const controls = element("div",form); controls.className = "live-inputs";
@@ -118,6 +123,8 @@
       input.addEventListener("input",() => { values[i] = Number(input.value); value.textContent = format(values[i]); update(); });
       return {input,value};
     });
+    const spatialHost = element("div",form);
+    let spatial;
     const figure = element("figure",form);
     const canvas = element("canvas",figure); canvas.setAttribute("role","img");
     const legend = element("figcaption",figure);
@@ -127,7 +134,7 @@
       const local = element("div", form);
       local.className = "live-reproduce";
       const download = element("a", local, "Download the OneSimulation model");
-      download.href = "/downloads/fundamentals/" + model.localModel.file;
+      download.href = model.localModel.url || "/downloads/fundamentals/" + model.localModel.file;
       download.download = model.localModel.file;
       element("p", local, "In your OneSimulation environment, run the model with these inputs.");
       command = element("code", local);
@@ -163,6 +170,10 @@
     function plot(){ if(data) draw(canvas,data,model.xLabel,model.yLabel); }
     function update() {
       data = model.calculate(values.slice());
+      if (data.scene && window.createFundamentalSpatialView) {
+        spatial ||= window.createFundamentalSpatialView(spatialHost);
+        spatial.update(data.scene);
+      }
       result.textContent = data.result;
       target.searchParams.set("values", values.join(","));
       share.href = target.href;
