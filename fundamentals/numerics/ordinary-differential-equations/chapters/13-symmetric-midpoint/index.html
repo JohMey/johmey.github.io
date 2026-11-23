@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implicit midpoint, reversibility and the phase of an oscillator · OneSimulation</title>
+<meta name="description" content="Imagine integrating a mechanical trajectory forward, saving only its end state and then running the same method backward. Recovering the start is a stronger demand than obtaining a plausibly small one-step error. Even exact recovery does not guarantee that an oscillation peaked at the correct time.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/13-symmetric-midpoint/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Implicit midpoint, reversibility and the phase of an oscillator · OneSimulation">
+<meta property="og:description" content="Imagine integrating a mechanical trajectory forward, saving only its end state and then running the same method backward. Recovering the start is a stronger demand than obtaining a plausibly small one-step error. Even exact recovery does not guarantee that an oscillation peaked at the correct time.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/13-symmetric-midpoint/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Implicit midpoint, reversibility and the phase of an oscillator</h1><p class="lead">Imagine integrating a mechanical trajectory forward, saving only its end state and then running the same method backward. Recovering the start is a stronger demand than obtaining a plausibly small one-step error. Even exact recovery does not guarantee that an oscillation peaked at the correct time.</p><p class="byline">Chapter 13 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#build-a-method-from-a-centred-difference">Build a method from a centred difference</a><a href="#solve-the-step-for-a-harmonic-oscillator">Solve the step for a harmonic oscillator</a><a href="#inspect-the-return-and-the-lag-separately">Inspect the return and the lag separately</a><a href="#tutorial-on-designing-an-accuracy-criterion">Tutorial on designing an accuracy criterion</a></nav></aside><article class="prose reference"><section><h2 id="build-a-method-from-a-centred-difference">Build a method from a centred difference</h2>
+<p>Integrate \(y'=f(t,y)\) over an interval of length \(h\). Midpoint quadrature approximates the integral by \(h\) times its integrand at \(t_n+h/2\). The arithmetic mean of the unknown endpoint states approximates the exact midpoint state up to order \(h^2\) on a smooth trajectory. Using this mean as the derivative's state argument gives</p>
+<div class="math display">\[y_{n+1}-y_n=h f\!\left(t_n+h/2,(y_n+y_{n+1})/2\right).\]</div>
+<p>Errors from midpoint quadrature and from evaluating \(f\) at the approximate midpoint both contribute \(O(h^3)\) locally, giving global order two on a fixed interval under the usual regularity and stability conditions. In general the unknown appears inside \(f\), so an implicit equation must be solved. If \(f\) is Lipschitz with constant \(L_f\), direct fixed-point iteration contracts when \(|h|L_f/2&lt;1\). Newton iteration can converge over a wider range. Neither a failed nonlinear solve nor loose tolerances inherit the exact algebraic properties of the method.</p>
+<p>Exchange \(y_n,y_{n+1}\) and replace \(h\) by \(-h\). The left side changes sign, the arithmetic midpoint is identical and the midpoint time is identical if the reverse step starts at \(t_{n+1}\). Thus, on the same locally unique solution branch, \(\Phi_{-h}=\Phi_h^{-1}\). A round trip using variable steps must repeat the accepted steps in reverse order. Independently choosing a new adaptive mesh on the way back need not retrace the states.</p>
+</section>
+<section><h2 id="solve-the-step-for-a-harmonic-oscillator">Solve the step for a harmonic oscillator</h2>
+<p>Write \(q'=\omega p,\ p'=-\omega q\), with scaled momentum \(p\) in the same units as \(q\), and \(z=q+ip\). The ODE becomes \(z'=-i\omega z\). Solving the linear midpoint equation gives the scalar multiplier</p>
+<div class="math display equation-chain"><div class="equation-step">\[M(u)=\frac{1-iu/2}{1+iu/2}=\exp[-2i\arctan(u/2)],\]</div><div class="equation-step">\[u=\omega h.\]</div></div>
+<p>Its numerator and denominator are complex conjugates. Hence it preserves \(q^2+p^2\), proportional to the oscillator energy, exactly in real arithmetic. For any radius or step size \(M(-u)M(u)=1\). The rotation per step is \(\theta=2\arctan(u/2)=u-u^3/12+O(u^5)\). The numerical phase lags by \(u-\theta\) per step. After \(N\) steps the accumulated lag is \(N(u-\theta)\), increasing linearly in elapsed time even while the energy remains exactly constant.</p>
+<p>Compare explicit midpoint Runge–Kutta. A half Euler predictor leads to \(M_{\rm RK2}=1-iu-u^2/2\). It also has order two, but \(|M_{\rm RK2}|^2=1+u^4/4\). The amplitude grows slowly at every nonzero step. A forward and reverse pair multiplies the starting amplitude by \(1+u^4/4\). In a conservative problem these two second-order procedures can produce visibly different long records.</p>
+</section>
+<section><h2 id="inspect-the-return-and-the-lag-separately">Inspect the return and the lag separately</h2>
+<p>With \(\omega=1\), \(h=0.5\), \(N=20\), exact accumulation is 10 radians. Midpoint gives \(40\arctan(0.25)=9.7991\) radians, a lag of \(0.2009\) radians. The explicit round trip multiplies the radius by \((1+0.5^4/4)^{20}\simeq1.364\). The implicit round trip returns the original radius and phase to roundoff. Run both updates below. Compare results at equal elapsed time by halving \(h\) and doubling \(N\). The phase error should drop by about a factor of four. The graph uses computed steps for the methods and a more finely sampled exact reference.</p>
+<div id="try-it" class="interactive-study" data-study="num-ode-midpoint"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-designing-an-accuracy-criterion">Tutorial on designing an accuracy criterion</h2>
+<p>A solver preserves the harmonic energy exactly over a simulation of 100 time units with \(\omega=1\). A measurement also requires phase error below 0.01 radians. Use the leading midpoint error to estimate an admissible step. How would you verify it?</p>
+<details><summary>Work through the solution</summary><p>The accumulated phase error is approximately \(T\omega^3h^2/12\). Solving \(100h^2/12&lt;0.01\) gives \(h&lt;0.0346\). Verify at a chosen integer step count using \(T-2N\arctan[T/(2N)]\), or by convergence against a refined trajectory that measures the phase continuously. Energy alone has zero error for all these steps, so it cannot certify the phase target.</p></details>
+<p class="source-note">Further reading · <a href="https://unige.ch/~hairer/poly_geoint/week2.pdf">Hairer's TUM geometric numerical integration course, symmetric methods</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/6/">Problem sheet 6 · Boundary and algebraic conditions</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/14-implicit-explicit-relaxation/">Chapter 14 · Splitting a stiff relaxation from a slowly varying drive</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-num-ode.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recover a trajectory from a family of actions · OneSimulation</title>
+<meta name="description" content="In Hamilton–Jacobi theory a partial differential equation for one function replaces several trajectory equations. A falling bead makes the different roles of position, energy and arrival time explicit.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/14-hamilton-jacobi/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Recover a trajectory from a family of actions · OneSimulation">
+<meta property="og:description" content="In Hamilton–Jacobi theory a partial differential equation for one function replaces several trajectory equations. A falling bead makes the different roles of position, energy and arrival time explicit.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/14-hamilton-jacobi/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a></p><h1>Recover a trajectory from a family of actions</h1><p class="lead">In Hamilton–Jacobi theory a partial differential equation for one function replaces several trajectory equations. A falling bead makes the different roles of position, energy and arrival time explicit.</p><p class="byline">Chapter 14 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#use-the-end-of-the-path-as-a-variable">Use the end of the path as a variable</a><a href="#separate-time-and-build-a-clock-from-energy">Separate time and build a clock from energy</a><a href="#work-two-arrival-time-problems">Work two arrival-time problems</a><a href="#compare-two-launch-speeds">Compare two launch speeds</a><a href="#tutorial-on-the-double-root">Tutorial on the double root</a></nav></aside><article class="prose reference"><section><h2 id="use-the-end-of-the-path-as-a-variable">Use the end of the path as a variable</h2>
+<p>Let a bead move between a fixed initial event and an adjustable final event. Denote by \(S(q,t)\) the action evaluated on the actual trajectory ending at \((q,t)\). For a small change in the endpoint, the interior variation cancels by the Euler–Lagrange equation. If time stays fixed the boundary term is \(p\,\delta q\). If time changes, part of the endpoint displacement comes from continuing along the existing path by \(\dot q\,\delta t\). The remaining independent displacement is \(\delta q-\dot q\,\delta t\). Thus</p>
+<div class="math display">\[\delta S=p(\delta q-\dot q\,\delta t)+L\,\delta t=p\,\delta q-H\,\delta t .\]</div>
+<p>It follows that \(p=\partial_q S\) and \(-H=\partial_t S\). Eliminate \(p\) to obtain</p>
+<div class="math display">\[\partial_t S+H(q,\partial_q S,t)=0 .\]</div>
+<p>The equation involves partial derivatives because it describes an entire family of possible endpoints. By contrast, \(dS/dt=L\) along a single trajectory. A useful dimensional check is that a derivative of action with respect to length is momentum, whereas a derivative with respect to time is energy.</p>
+</section>
+<section><h2 id="separate-time-and-build-a-clock-from-energy">Separate time and build a clock from energy</h2>
+<p>For a time-independent Hamiltonian try \(S=W(q;E)-Et\). With \(H=p^2/(2m)+U(q)\), this gives \((\partial_qW)^2=2m(E-U)\). A trajectory on the increasing-position branch has positive momentum, so an integral from a fixed reference position \(q_0\) supplies \(W\). Differentiate at fixed final position with respect to the family parameter \(E\):</p>
+<div class="math display equation-chain"><div class="equation-step">\[W=\int_{q_0}^{q}\!\sqrt{2m(E-U(s))}\,ds,\]</div><div class="equation-step">\[\partial_EW=\int_{q_0}^{q}\!\frac{m\,ds}{\sqrt{2m(E-U(s))}} .\]</div></div>
+<p>The integrand of the second integral is \(1/v\). Hence \(\partial_E W\) is the travel time from the reference point. Setting \(\partial_E S=0\) chooses a departure time of zero with this lower integration limit. A different constant amounts to shifting the clock. At a turning point \(p=0\), the one-way branch must be changed to continue the motion.</p>
+</section>
+<section><h2 id="work-two-arrival-time-problems">Work two arrival-time problems</h2>
+<p>Let \(q=x\) point downwards, \(U=-mgx\), and release the bead through \(x=0\) with speed \(u\). Its energy is \(E=mu^2/2\). The integral yields \(t=(\sqrt{u^2+2gx}-u)/g\). Squaring the relation after isolating the square root gives \(x=ut+gt^2/2\), the same trajectory as Newton's equation. For \(u=2.0\) m/s, \(g=9.81\) m/s² and \(x=3.0\) m the arrival time is about \(0.604\) s. The endpoint momentum uses the final speed, about \(7.93\) m/s, rather than the average over the fall.</p>
+<p>Reverse the experiment by pointing \(x\) upward in the same field. If \(u=4.0\) m/s, the maximum height is \(0.815\) m. A gate \(0.50\) m above launch is crossed twice. From \(x=ut-gt^2/2\) the two times are \(0.154\) s and \(0.661\) s. The need for two branches of \(W\) is experimentally visible in those two timestamps. A calculation that takes the positive square root everywhere loses the return journey.</p>
+</section>
+<section><h2 id="compare-two-launch-speeds">Compare two launch speeds</h2>
+<p>The plot shows upward trajectories and their common observation height. Lower the launch speed towards the value that barely reaches the gate. Watch what happens to the separation between the two arrival times.</p>
+<div id="try-it" class="interactive-study" data-study="ph-action-clock"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-the-double-root">Tutorial on the double root</h2>
+<p>A gate records two crossings 0.40 s apart in a uniform field of 9.81 m/s². How high does the trajectory rise above that gate?</p>
+<details><summary>Work through the solution</summary><p>The two crossings are symmetric about the maximum. The fall from the maximum takes 0.20 s, giving \(g(0.20)^2/2=0.1962\) m. Equivalently the speed at the gate is \(g(0.40)/2=1.962\) m/s and its kinetic energy per unit mass gives the same height.</p></details>
+<p>Estimate the arrival-time sensitivity of a gate on the rising branch. At \(u=4.0\,\mathrm{m/s}\) compare \(h=0.50\) m with \(h=0.80\) m.</p>
+<details><summary>Work through the solution</summary><p>Implicit differentiation of \(h=ut-gt^2/2\) at fixed launch speed gives \(dt/dh=1/(u-gt)\). On ascent this is \(1/\sqrt{u^2-2gh}\). Its value grows from \(0.402\,\mathrm{s/m}\) at 0.50 m to \(1.81\,\mathrm{s/m}\) at 0.80 m. Close to the top a small height error produces much larger timing uncertainty because the trajectory crosses slowly.</p></details>
+<p>Does adding a constant \(C\) to a potential alter the predicted arrival times from Hamilton–Jacobi theory when the initial position and speed are unchanged?</p>
+<details><summary>Work through the solution</summary><p>Both the total energy label and potential shift by \(C\). Hence \(p=\sqrt{2m(E-U)}\) and the abbreviated action as a path integral of \(p\) are unchanged for that orbit. The full action acquires \(-Ct\). Its spatial derivative and the time crossing predictions remain the same. Comparing the same numerical energy before and after the shift would specify different trajectories.</p></details>
+<p class="source-note">Further reading · <a href="https://link.springer.com/chapter/10.1007/978-3-662-61603-1_8">Fließbach, Hamiltonformalismus</a> · <a href="https://davidtong.org/pdfs/teaching/classical-dynamics/clas4.pdf">Tong, Hamilton–Jacobi theory</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/chapters/13-canonical-generators/">Chapter 13 · Changing the coordinates of a moving trap</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/chapters/15-cyclic-action/">Chapter 15 · Read a period from the area enclosed by an orbit</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

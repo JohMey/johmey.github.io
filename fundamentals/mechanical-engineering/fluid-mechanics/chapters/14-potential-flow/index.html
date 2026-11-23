@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A cylinder in potential flow and the absent drag · OneSimulation</title>
+<meta name="description" content="A pressure field can vary by several dynamic-pressure heads around a body while producing exactly zero resultant drag in an ideal flow. Derive the field and identify what a real measurement must add.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/14-potential-flow/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A cylinder in potential flow and the absent drag · OneSimulation">
+<meta property="og:description" content="A pressure field can vary by several dynamic-pressure heads around a body while producing exactly zero resultant drag in an ideal flow. Derive the field and identify what a real measurement must add.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/14-potential-flow/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>A cylinder in potential flow and the absent drag</h1><p class="lead">A pressure field can vary by several dynamic-pressure heads around a body while producing exactly zero resultant drag in an ideal flow. Derive the field and identify what a real measurement must add.</p><p class="byline">Chapter 14 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#solve">Satisfy two boundary conditions with a potential</a><a href="#integrate">From speed to pressure and from pressure to force</a><a href="#taps">Worked example · read three ports</a><a href="#wake">Worked example · convert a wake discrepancy into a drag</a><a href="#tutorial">Tutorial · estimate speed and test the symmetry hypothesis</a></nav></aside><article class="prose reference"><section><h2 id="solve">Satisfy two boundary conditions with a potential</h2>
+<p>Consider steady two-dimensional flow of constant density far from a circular cylinder of radius \(a\). Assume irrotational motion in the exterior, an inviscid fluid and zero circulation. Then \(\mathbf u=\nabla\phi\) and incompressibility gives \(\nabla^2\phi=0\). The incoming uniform velocity \(U\mathbf e_x\) has potential \(Ur\cos\theta\). The cylinder cannot absorb fluid, so the radial velocity must vanish at \(r=a\). Seek a correction with the same angular dependence and write \(\phi=f(r)\cos\theta\). The polar Laplacian reduces to</p>
+<div class="math display equation-chain"><div class="equation-step">\[r^2f''+rf'-f=0,\]</div><div class="equation-step">\[f=Ar+B/r .\]</div></div>
+<p>The coefficient of the growing term must be \(U\) for the far field. The derivative \(f'=U-B/r^2\) vanishes at \(a\) if \(B=Ua^2\). Taking radial and tangential derivatives then gives the complete external velocity field.</p>
+<div class="math display equation-chain"><div class="equation-step">\[u_r=U(1-a^2/r^2)\cos\theta,\]</div><div class="equation-step">\[u_\theta=-U(1+a^2/r^2)\sin\theta .\]</div></div>
+<p>The surface speed is zero at the upstream and downstream points. At either side it reaches \(2U\). The tangency condition constrains the normal component alone. At a real viscous wall liquid immediately adjacent to the solid also satisfies zero tangential speed. The ideal surface speed should be interpreted as an outer-flow prediction.</p>
+</section>
+<section><h2 id="integrate">From speed to pressure and from pressure to force</h2>
+<p>Along streamlines Bernoulli relates static pressure to speed at the same height. Since the incoming flow is uniform and irrotational the same Bernoulli constant applies throughout this ideal solution. Normalize the pressure change by \(q=\rho U^2/2\). On the body,</p>
+<div class="math display">\[C_p=(p-p_\infty)/q=1-4\sin^2\theta .\]</div>
+<p>Pressure force on an arc per unit span is \(-p(\cos\theta,\sin\theta)a\,d\theta\). Points at \(\theta\) and \(\pi-\theta\) have identical pressures and opposite horizontal normals. The corresponding drag contributions cancel exactly. Top and bottom symmetry cancels lift. A real cylinder can have a separated wake with low rear pressure. Substituting the attached-flow pressure at the rear is the assumption that then fails.</p>
+</section>
+<section><h2 id="taps">Worked example · read three ports</h2>
+<p>Water of density 1000 kg/m³ flows at 0.80 m/s, so \(q=320\) Pa. At the upstream stagnation point the model predicts \(p-p_\infty=+320\) Pa. At a point where the normal is 45° to the stream axis, \(\sin^2\theta=1/2\), so \(C_p=-1\) and the reading is −320 Pa. On the side the predicted reading is −960 Pa. The front-to-side difference is 1280 Pa, four times the incident dynamic pressure. A pressure transducer connected to these two ports requires the correct geometric factor before being interpreted as a speed meter.</p>
+</section>
+<section><h2 id="wake">Worked example · convert a wake discrepancy into a drag</h2>
+<p>Approximate a measured departure from the ideal pressure by reducing pressure uniformly by 150 Pa on the downstream semicircle and leaving the upstream half unchanged. For a radius of 50 mm, the added downstream force per span is \(150a\int_{-\pi/2}^{\pi/2}\cos\theta\,d\theta=15.0\) N/m. A span of 0.40 m gives 6.00 N before end effects. This integration illustrates why even a modest rear pressure error changes the net drag materially. Local low pressure on the sides contributes little horizontal force where the outward normals point almost vertically.</p>
+<p class="calculation-prompt">Begin with zero rear pressure deficit and check the pressure symmetry about the transverse axis. Introduce a 160 Pa downstream deficit at 0.80 m/s. Predict the pressure-drag coefficient from the projected area before reading the result.</p>
+<div id="try-it" class="interactive-study" data-study="eng-fluid-mechanics-potential-flow"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · estimate speed and test the symmetry hypothesis</h2>
+<p>An ideal front-to-side differential is 720 Pa in water. Infer the incoming speed. Two further ports mounted at 60° and 120° report a difference of 90 Pa. Can a different incoming speed make that second difference consistent with the assumed model?</p>
+<details><summary>Separate calibration from model failure</summary>
+<p>The front-to-side difference is \(4q=2\rho U^2\), giving \(U=0.600\) m/s. Both other ports have the same \(\sin^2\theta=3/4\). Their ideal pressure difference vanishes at every speed. A discrepancy at these ports therefore tests symmetry and the assumed attached field independently of the first calibration.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-25-advanced-fluid-mechanics-fall-2013/pages/potential-flow-theory/">MIT 2.25, Potential Flow Theory</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/13-oscillating-wall/">Chapter 13 · How a moving wall sends momentum into a liquid</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/15-surface-tension/">Chapter 15 · Curvature pressure, wetting and capillary rise</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turning invisible phase into visible intensity in a Fourier plane · OneSimulation</title>
+<meta name="description" content="A transparent specimen can vary the phase of a beam while transmitting nearly constant intensity. A pair of lenses gives independent access to the undiffracted beam and the waves carrying those small phase variations. Recombining them with a controlled relative phase makes the specimen visible.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/waves-optics/chapters/18-fourier-plane-filtering/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Turning invisible phase into visible intensity in a Fourier plane · OneSimulation">
+<meta property="og:description" content="A transparent specimen can vary the phase of a beam while transmitting nearly constant intensity. A pair of lenses gives independent access to the undiffracted beam and the waves carrying those small phase variations. Recombining them with a controlled relative phase makes the specimen visible.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/waves-optics/chapters/18-fourier-plane-filtering/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/waves-optics/">Waves and optics</a></p><h1>Turning invisible phase into visible intensity in a Fourier plane</h1><p class="lead">A transparent specimen can vary the phase of a beam while transmitting nearly constant intensity. A pair of lenses gives independent access to the undiffracted beam and the waves carrying those small phase variations. Recombining them with a controlled relative phase makes the specimen visible.</p><p class="byline">Chapter 18 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#locate-the-orders-in-a-four-focal-length-system">Locate the orders in a four-focal-length system</a><a href="#keep-the-field-complex-until-the-detector">Keep the field complex until the detector</a><a href="#retain-the-exact-phase-grating-for-a-numerical-check">Retain the exact phase grating for a numerical check</a><a href="#tutorial-on-the-geometry-of-a-phase-plate">Tutorial on the geometry of a phase plate</a></nav></aside><article class="prose reference"><section><h2 id="locate-the-orders-in-a-four-focal-length-system">Locate the orders in a four-focal-length system</h2>
+<p>Use coherent, normally incident monochromatic illumination and two ideal thin lenses of equal focal length \(f\). Put the specimen one focal length before lens one; its back focal plane coincides with the front focal plane of lens two, and the final image lies one further focal length beyond lens two. A spatial harmonic \(e^{i2\pi\nu x}\) leaves the object with transverse wavevector \(2\pi\nu\). In the paraxial approximation its propagation angle is \(\lambda\nu\). The first lens therefore maps it to \(X=f\lambda\nu\) in the common focal plane. The second lens recombines transmitted orders into an inverted image, apart from a common phase and scale.</p>
+<p>For grating period \(d=20\,\mu\mathrm m\), \(f=100\,\mathrm{mm}\) and \(\lambda=500\,\mathrm{nm}\), the first diffraction orders lie \(2.50\,\mathrm{mm}\) to either side of the centre. A mask small enough to cover just the undiffracted spot changes the reference wave independently of those orders if the illumination extent makes each spot sufficiently narrow.</p>
+</section>
+<section><h2 id="keep-the-field-complex-until-the-detector">Keep the field complex until the detector</h2>
+<p>Let a weak pure phase grating have transmission \(t(x)=e^{i\epsilon\cos(2\pi x/d)}\), \(|\epsilon|\ll1\). To first order it consists of a constant reference and two imaginary sidebands of amplitude \(i\epsilon/2\). The original intensity \(|t|^2\) is exactly one. Apply a phase shift \(\varphi\) to the central order alone. To first order the output field is \(e^{i\varphi}+i\epsilon\cos(2\pi x/d)\). The inverted coordinate gives the same cosine. Its intensity becomes</p>
+<div class="math display">\[I(x)/I_0=1+2\epsilon\sin\varphi\cos(2\pi x/d)+O(\epsilon^2).\]</div>
+<p>The cross term comes from multiplying the sidebands by the conjugate of the modified reference. At \(\varphi=+\pi/2\) the phase grating gains positive intensity contrast; the opposite shift reverses it. With \(\epsilon=0.10\), the leading extrema are 1.20 and 0.80. Blocking the reference entirely instead leaves a dark-field intensity \(\epsilon^2\cos^2(2\pi x/d)\), insensitive at leading order to the sign of the phase.</p>
+</section>
+<section><h2 id="retain-the-exact-phase-grating-for-a-numerical-check">Retain the exact phase grating for a numerical check</h2>
+<p>Within an ideal infinite-aperture relay, only the central Fourier coefficient is changed. That coefficient is \(c_0=(2\pi)^{-1}\int_0^{2\pi}e^{i\epsilon\cos u}du\), real because imaginary contributions cancel by symmetry. Thus the exact transmitted image field is \(e^{i\epsilon\cos u}+(e^{i\varphi}-1)c_0\). It reduces exactly to the original grating at zero phase shift. Its period-averaged intensity remains one because a lossless mask changes phases only. When \(\epsilon\) is no longer small, the image contains distorted harmonics that the linear contrast formula misses.</p>
+<p>Change the phase amplitude and central phase in the experiment. It uses periodic quadrature for \(c_0\), computes the exact intensity, and compares the linear prediction. Looking at both minima and maxima exposes weak-phase breakdown even when the overall image looks periodic. Aberrations, partial coherence and finite objective aperture can modify real measurements by affecting additional Fourier components.</p>
+<div id="try-it" class="interactive-study" data-study="ph-phase-filter"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-the-geometry-of-a-phase-plate">Tutorial on the geometry of a phase plate</h2>
+<p>Change to a \(10\,\mu\mathrm m\) grating at unchanged optics and then halve the focal length. Where do the first orders lie in the final configuration relative to their original spots?</p>
+<details><summary>Work through the solution</summary><p>Halving \(d\) doubles \(\nu\), while halving \(f\) cancels that change. Both spots again sit 2.50 mm from centre. Although the spot positions agree, the two physical gratings have different spatial periods in their respective image planes.</p></details>
+<p>A specimen gives normalised peak-to-trough intensity difference 0.32 with an ideal quarter-cycle central shift. Infer its phase amplitude in the weak model. How could you check for an amplitude grating contaminating the signal?</p>
+<details><summary>Work through the solution</summary><p>The leading difference is \(4|\epsilon|\), giving \(|\epsilon|=0.080\) rad. Reverse the central phase shift and repeat. The pure-phase contribution changes sign. Also image with no central phase shift, for which a true pure-phase transmission produces constant intensity in an ideal relay.</p></details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-71-optics-spring-2014/4b53a5747f9b58b9b73b2bbcc39945f0_MIT2_71S14_lec16_notes.pdf">MIT Optics, four-focal-length spatial filters</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/waves-optics/chapters/17-laser-threshold/">Chapter 17 · Threshold, gain saturation and the decay of stored light</a></span><span>Next<br><a href="/fundamentals/physics/waves-optics/chapters/19-quarter-wave-stacks/">Chapter 19 · Building a dielectric mirror from weakly reflecting interfaces</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

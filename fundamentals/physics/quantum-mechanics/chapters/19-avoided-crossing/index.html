@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adiabatic following and a finite sweep through an avoided crossing · OneSimulation</title>
+<meta name="description" content="Two unperturbed energies cross as a control rises. A nonzero coupling opens a gap. Whether a prepared particle follows the lower energy through the crossing depends on how quickly the eigenvectors rotate compared with the dynamical phase they accumulate.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/chapters/19-avoided-crossing/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Adiabatic following and a finite sweep through an avoided crossing · OneSimulation">
+<meta property="og:description" content="Two unperturbed energies cross as a control rises. A nonzero coupling opens a gap. Whether a prepared particle follows the lower energy through the crossing depends on how quickly the eigenvectors rotate compared with the dynamical phase they accumulate.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/chapters/19-avoided-crossing/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a></p><h1>Adiabatic following and a finite sweep through an avoided crossing</h1><p class="lead">Two unperturbed energies cross as a control rises. A nonzero coupling opens a gap. Whether a prepared particle follows the lower energy through the crossing depends on how quickly the eigenvectors rotate compared with the dynamical phase they accumulate.</p><p class="byline">Chapter 19 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#find-the-gap-and-the-rotation-rate">Find the gap and the rotation rate</a><a href="#derive-the-fast-sweep-scale-independently">Derive the fast-sweep scale independently</a><a href="#evolve-a-finite-preparation-numerically">Evolve a finite preparation numerically</a><a href="#tutorial-on-measurement-choices">Tutorial on measurement choices</a></nav></aside><article class="prose reference"><section><h2 id="find-the-gap-and-the-rotation-rate">Find the gap and the rotation rate</h2>
+<p>Let \(\hbar=1\) temporarily, with Hamiltonian \(H(t)=\begin{pmatrix}vt/2&amp;g\\g&amp;-vt/2\end{pmatrix}\), \(v&gt;0\), \(g&gt;0\). The fixed basis is called diabatic because each basis vector keeps its identity as the detuning \(vt\) changes sign. Squaring the Hamiltonian gives \([(vt/2)^2+g^2]I\); its energies are \(\pm h(t)\) with \(h=\sqrt{(vt/2)^2+g^2}\). The minimum gap is \(2g\). The corresponding Bloch axis points along \((g,0,vt/2)\); write its polar angle as \(\theta=\operatorname{atan2}(2g,vt)\).</p>
+<p>Differentiating the angle gives \(\dot\theta=-2gv/[(vt)^2+4g^2]\). A spinor aligned with this axis rotates through half its geometric angle in Hilbert space. The magnitude of the off-diagonal derivative coupling is \(|\dot\theta|/2\), largest at the crossing where it equals \(v/(4g)\). Comparison with the minimum gap frequency \(2g/\hbar\) gives a local adiabatic ratio \(\hbar v/(8g^2)\). A slow sweep or large coupling suppresses transitions between instantaneous energy states. Following the lower adiabatic state exchanges the two fixed basis labels across the crossing.</p>
+</section>
+<section><h2 id="derive-the-fast-sweep-scale-independently">Derive the fast-sweep scale independently</h2>
+<p>In the interaction picture of the diagonal part, the energy difference \(vt\) gives an accumulated relative phase \(vt^2/(2\hbar)\). First-order perturbation theory gives a transition amplitude proportional to \((g/\hbar)\int_{-\infty}^\infty e^{ivt^2/(2\hbar)}dt\). The magnitude of this Fresnel integral is \(\sqrt{2\pi\hbar/v}\), obtained by continuing the convergent Gaussian integral from a positive real damping parameter. The leading probability to change fixed basis states is therefore \(2\pi g^2/(\hbar v)\), valid only when small. The exact infinite linear-sweep Landau–Zener solution resums this dependence: the probability of retaining the initial diabatic label is \(\exp[-2\pi g^2/(\hbar v)]\). It refers to endpoints asymptotically far from the avoided crossing with constant coupling and no decoherence.</p>
+<p>For \(g=0.5\) and \(v=1\) in units where \(\hbar=1\), the infinite-sweep retention probability is \(e^{-\pi/2}=0.2079\). Halving \(v\) squares it to 0.0432. The slow sweep therefore gives greater transfer between fixed basis states while preserving the lower-energy identity more faithfully. This distinction prevents reversing the interpretation of a measured probability.</p>
+</section>
+<section><h2 id="evolve-a-finite-preparation-numerically">Evolve a finite preparation numerically</h2>
+<p>Prepare the instantaneous ground state at detuning \(vt=-10\) and finish at \(+10\). Over each short step freeze \(H\) at its midpoint. Since \(H^2=h^2I\), the constant-step propagator is exactly \(\cos(h\Delta t)I-i\sin(h\Delta t)H/h\) in the chosen units. The product is unitary up to roundoff; finite time resolution still changes accumulated phases. Compare the population of the original fixed basis state with its population in the instantaneous ground state. Their separation through the crossing directly shows where ideal adiabatic following fails. The calculated final population can differ from the infinite-sweep expression because of endpoint mixing and phases.</p>
+<div id="try-it" class="interactive-study" data-study="ph-avoided-sweep"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-measurement-choices">Tutorial on measurement choices</h2>
+<p>The coupling doubles while all else is fixed. How must the sweep rate change to leave the ideal infinite-sweep probability unchanged? Does a sweep over fixed detuning endpoints remain exactly equivalent?</p>
+<details><summary>Work through the solution</summary><p>Keep \(g^2/v\) fixed by multiplying \(v\) by four. The infinite-sweep exponent is unchanged. At fixed endpoints the ratios \(|vt|/g\) at preparation and readout are now smaller, so the finite endpoints are less asymptotic. Their state mixing can change the observed result.</p></details>
+<p>At zero detuning an energy measurement finds the lower eigenvalue with certainty. What would an immediate measurement in the fixed basis return?</p>
+<details><summary>Work through the solution</summary><p>The lower eigenstate there is \((1,-1)/\sqrt2\) in the chosen convention. Each fixed-basis outcome therefore occurs with probability one half. Certainty in the instantaneous energy is compatible with maximal uncertainty concerning the diabatic label.</p></details>
+<p class="source-note">Further reading · <a href="https://bpb-us-w2.wpmucdn.com/voices.uchicago.edu/dist/0/1830/files/2019/07/FULL-TDQMS-NOTES-UPLOAD-DECEMBER-2014.pdf">Tokmakoff, time-dependent quantum mechanics and Landau–Zener transitions</a> · <a href="https://www.princeton.edu/~mlittman/landau_zener.pdf">Rubbmark and colleagues, experimental passage through an avoided crossing</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/quantum-mechanics/chapters/18-sudden-expansion/">Chapter 18 · A sudden expansion and the distribution of measured energy</a></span><span>Next<br><a href="/fundamentals/physics/quantum-mechanics/problem-sheets/7/">Problem sheet 7 · Measuring two phases with one interferometer</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

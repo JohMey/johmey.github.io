@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a flat zero slows Newton&#x27;s method · OneSimulation</title>
+<meta name="description" content="Factor a residual near a multiple root, recover the missing factor in a Newton step and distinguish a small residual from a small location error.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/13-multiple-roots/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why a flat zero slows Newton&#x27;s method · OneSimulation">
+<meta property="og:description" content="Factor a residual near a multiple root, recover the missing factor in a Newton step and distinguish a small residual from a small location error.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/13-multiple-roots/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Why a flat zero slows Newton&#x27;s method</h1><p class="lead">Factor a residual near a multiple root, recover the missing factor in a Newton step and distinguish a small residual from a small location error.</p><p class="byline">Chapter 13 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#expand-around-the-actual-root">Expand around the actual root</a><a href="#a-contact-measurement">A contact measurement</a><a href="#compare-errors-over-twelve-iterations">Compare errors over twelve iterations</a><a href="#tutorial-on-error-certificates">Tutorial on error certificates</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="expand-around-the-actual-root">Expand around the actual root</h2>
+<p>Write \(f(x)=(x-r)^m g(x)\), with \(g\) smooth and \(g(r)\ne0\). Denote the current error by \(e=x-r\). Differentiation gives \(f'=e^{m-1}(m g+eg')\). Away from the root the quotient stays finite even when both function and derivative become very small. Substitution into Newton's update gives</p>
+<div class="math display">\[e_{+}=e-\frac{e g}{m g+eg'}=(1-1/m)e+O(e^2).\]</div>
+<p>If \(m=1\), the first-order error cancels. If \(m>1\), a fixed fraction survives. Multiplying the correction by the known multiplicity gives \(e_+=e^2g'/(mg+eg')\), restoring local quadratic convergence. A wrong value of \(m\) can send steps across the root or make them diverge.</p>
+</section>
+<section>
+<h2 id="a-contact-measurement">A contact measurement</h2>
+<p>Near tangency a gap can behave like \(f=(x-2)^2\) in dimensionless coordinates. Starting from 3 produces 2.5, 2.25 and 2.125. The gap residual falls by a factor of four per step. The location error only halves. A stopping rule \(|f|&lt;10^{-8}\) certifies merely \(|x-2|&lt;10^{-4}\) in this exact model. The multiplicity-corrected step reaches 2 immediately.</p>
+<p>Now take \(f=e^2(1+e)\) at \(e=0.1\). The residual and derivative are 0.011 and 0.23. An ordinary correction leaves error 0.05217. Twice the correction leaves 0.00435. The analytic denominator explains why this second update is no longer exact when \(g\) varies.</p>
+</section>
+<section>
+<h2 id="compare-errors-over-twelve-iterations">Compare errors over twelve iterations</h2>
+<p>Use \(f=e^m(1+e)\) with positive starting error. Follow the ordinary and multiplicity-corrected ratios without forming underflowing powers. The logarithmic display stops at a floor of \(10^{-15}\). Check the slope of the ordinary iteration after the first few steps.</p>
+<div id="try-it" class="interactive-study" data-study="num-multiple-roots"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-error-certificates">Tutorial on error certificates</h2>
+<p>A zero of \(f=e^4\) has residual \(10^{-12}\). How many decimal places of location accuracy follow from this observation alone?</p>
+<details><summary>Worked solution</summary><p>The magnitude of the location error is \(10^{-3}\). Four powers have compressed the residual. Any inference based on a nonzero lower bound for \(|f'|\) fails across this root.</p></details>
+<p>Why might a sign-changing bracket never isolate a double root?</p>
+<details><summary>Worked solution</summary><p>The leading sign is the sign of \(g(r)\) on both sides. A sampler can step across the root without a sign change. Information about stationary points or a separate lower-bound argument is needed.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Compare the error analysis at a simple root with the extra multiplicity factor derived here. <a href="https://fncbook.com/python/overview-3/">Driscoll and Braun · Solving nonlinear equations</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/6/">Problem sheet 6 · Misfit and one-sided equilibrium</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/14-aitken-acceleration/">Chapter 14 · Eliminating a fixed point&#x27;s leading geometric error</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

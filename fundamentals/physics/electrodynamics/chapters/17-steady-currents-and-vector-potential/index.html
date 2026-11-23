@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From a measured current to its magnetic field · OneSimulation</title>
+<meta name="description" content="Construct the magnetic field of a steady source, calculate a coil pair’s uniform region and extract the first magnetic moment that survives at a large distance.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/17-steady-currents-and-vector-potential/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From a measured current to its magnetic field · OneSimulation">
+<meta property="og:description" content="Construct the magnetic field of a steady source, calculate a coil pair’s uniform region and extract the first magnetic moment that survives at a large distance.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/17-steady-currents-and-vector-potential/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>From a measured current to its magnetic field</h1><p class="lead">Construct the magnetic field of a steady source, calculate a coil pair’s uniform region and extract the first magnetic moment that survives at a large distance.</p><p class="byline">Chapter 17 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#current">Identify a physically possible source</a><a href="#loop">Turn the vector integral into an axial measurement</a><a href="#coil-pair">Design a locally uniform field by cancelling curvature</a><a href="#moment">Find which source information a distant detector retains</a><a href="#experiment">Find a pair of coils with a flat central field</a><a href="#tutorial">Check which coil measurement identifies the source</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="current">Identify a physically possible source</h2>
+<p>A wire carries a measured steady current. Its magnetic effect depends on the complete current path, including the return conductor. Charge conservation requires \(\nabla\cdot\mathbf J=0\) for a stationary distribution. A finite wire segment with current suddenly ending at an insulated tip would accumulate charge. The missing return path can be neglected in an approximation only after comparing its distance and field with those of the measured segment.</p>
+<p>The magnetostatic field equations in vacuum are \(\nabla\cdot\mathbf B=0\) and \(\nabla\times\mathbf B=\mu_0\mathbf J\). The first suggests writing \(\mathbf B=\nabla\times\mathbf A\). Adding any gradient to \(\mathbf A\) leaves \(\mathbf B\) unchanged. In unbounded space we may choose \(\nabla\cdot\mathbf A=0\) together with decay for a localised source. Applying curl to the potential gives \(\nabla\times(\nabla\times\mathbf A)=\nabla(\nabla\cdot\mathbf A)-\nabla^2\mathbf A\); the chosen divergence removes the first term.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\nabla^2\mathbf A=-\mu_0\mathbf J,\]</div><div class="equation-step">\[\mathbf A(\mathbf r)=\frac{\mu_0}{4\pi}\int\frac{\mathbf J(\mathbf r')}{|\mathbf r-\mathbf r'|}\,d^3r'.\]</div></div>
+<p>Each Cartesian component solves a scalar Poisson problem. Taking the observation-coordinate curl under the integral differentiates the distance kernel. Since \(\nabla(1/R)=-\mathbf R/R^3\), exchanging the order of the cross product yields the Biot–Savart integrand \(\mathbf J(\mathbf r')\times\mathbf R/R^3\). Ampère’s circulation law remains true for all steady currents. It gives a field value immediately only when symmetry constrains the field along a chosen path.</p>
+</section>
+<section><h2 id="loop">Turn the vector integral into an axial measurement</h2>
+<p>For a thin circular loop of radius \(a\) in the \(xy\)-plane, \(\mathbf J\,d^3r'\) becomes \(I\,d\boldsymbol\ell'\). At a point \(z\) on the axis every element has the same distance \(\sqrt{a^2+z^2}\). Opposite elements produce cancelling transverse fields. The surviving axial numerator integrates to \(2\pi I a^2\) because each tangent crosses the inward radial component of \(\mathbf R\) with the same orientation. Thus</p>
+<div class="math display">\[B_z(z)=\frac{\mu_0 I a^2}{2(a^2+z^2)^{3/2}} .\]</div>
+<p>For a 40 mm loop carrying 0.80 A, the central field is \(12.57\,\mu{\rm T}\). At \(z=a\) it is smaller by \(2^{3/2}\), or \(4.44\,\mu{\rm T}\). Reversing current reverses both readings. No field singularity exists on the axis; evaluating the ideal filament field directly on the wire instead requires a model of its finite cross-section.</p>
+</section>
+<section><h2 id="coil-pair">Design a locally uniform field by cancelling curvature</h2>
+<p>Place two identical coaxial loops at \(z=\pm d/2\) carrying the same current. Their combined field is even in \(z\), so its first derivative at the midpoint is automatically zero. The second derivative sets the leading departure from uniformity. For a loop profile \(b(z)=C(a^2+z^2)^{-3/2}\), differentiation gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[b''(z)=3C\frac{4z^2-a^2}{(a^2+z^2)^{7/2}},\]</div><div class="equation-step">\[B_{\rm pair}''(0)=2b''(d/2).\]</div></div>
+<p>Choosing \(d=a\) cancels the curvature, leaving a fourth-order axial variation near the centre. The midpoint field then equals \(\mu_0 I(4/5)^{3/2}/a\) for one turn on each loop. For \(a=60.0\) mm and \(I=0.50\) A this gives \(7.49\,\mu{\rm T}\). Identical compact \(N\)-turn windings scale that reading by \(N\) while their finite winding dimensions eventually change the profile. A ratio of two nearby field readings is often a better test of spacing than an absolute reading affected by current calibration.</p>
+</section>
+<section><h2 id="moment">Find which source information a distant detector retains</h2>
+<p>For \(r\gg a\), the exact axial loop field approaches \(\mu_0 I a^2/(2r^3)\). Define the dipole moment \(\mathbf m=I\pi a^2\hat{\mathbf n}\). The axial far field is then \(\mu_0m/(2\pi r^3)\). Expanding the vector-potential kernel for a general localised steady source explains the same dependence: the term proportional to \(\int\mathbf J\,dV\) vanishes for a closed current. Indeed, applying the divergence theorem to \(x_i\mathbf J\) gives \(\int J_i\,dV=0\) when currents vanish at the outer boundary. The antisymmetric part of the next moment produces</p>
+<div class="math display equation-chain"><div class="equation-step">\[\mathbf m=\tfrac12\int\mathbf r'\times\mathbf J\,d^3r',\]</div><div class="equation-step">\[\mathbf A_{\rm dip}=\frac{\mu_0}{4\pi}\frac{\mathbf m\times\hat{\mathbf r}}{r^2}.\]</div></div>
+<p>For a planar loop the line-integral moment reduces to current times signed area. A detector far away therefore has difficulty distinguishing small loops with the same moment but different shapes. Closer readings, which retain the higher moments, are needed.</p>
+</section>
+<section><h2 id="experiment">Find a pair of coils with a flat central field</h2>
+<p>Change the separation of two identical current loops. Each curve is divided by its own central field so that the graph tests uniformity. At Helmholtz spacing, a probe one quarter-radius off centre reads about 0.42% below the centre.</p>
+<div id="try-it" class="interactive-study" data-study="em-coils"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Check which coil measurement identifies the source</h2>
+<h3>Test the dipole approximation at a specified distance</h3><p>At \(z=3a\), how large is the error if the exact loop field is replaced by its axial dipole formula? Express it relative to the exact result.</p><details><summary>Work through the solution</summary>
+<p>The approximation-to-exact ratio is \([1+(a/z)^2]^{3/2}=(10/9)^{3/2}=1.171\). The distant-source expression overpredicts by about 17.1%. At \(z=10a\) the excess falls to 1.50%. A distance of a few radii may be insufficient for precision work.</p>
+</details>
+<h3>Choose a coil polarity for a gradient probe</h3><p>The second coil of a symmetric pair is reversed. Predict the midpoint field and identify which derivative can now be nonzero there.</p><details><summary>Work through the solution</summary>
+<p>The two equal axial fields cancel at the midpoint. With opposite currents the sum is an odd function, allowing a linear gradient. For a pair \(b(z-d/2)-b(z+d/2)\), its central derivative is \(-2b'(d/2)\). With \(d&gt;0\), \(b'(d/2)&lt;0\), so this wiring gives a positive axial gradient. Checking polarity distinguishes this arrangement from the uniform-field pair.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, §§5.2–5.4, current sources and vector potential</a></li><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_15">Fließbach, Magnetischer Dipol</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/16-spherical-boundary-data/">Chapter 16 · Spherical harmonics as measurements of boundary voltage</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/18-polarisation-and-free-charge/">Chapter 18 · How microscopic dipoles produce macroscopic charge</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

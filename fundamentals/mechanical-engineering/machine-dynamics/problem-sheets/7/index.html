@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A sensor changes the resonance it is meant to measure · OneSimulation</title>
+<meta name="description" content="An accelerometer is attached to a slender cantilever near a periodically driven machine. Use an energy model to estimate the shifted mode, predict how large the forced vibration becomes, and choose a second measurement that distinguishes mass loading from damping.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/7/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A sensor changes the resonance it is meant to measure · OneSimulation">
+<meta property="og:description" content="An accelerometer is attached to a slender cantilever near a periodically driven machine. Use an energy model to estimate the shifted mode, predict how large the forced vibration becomes, and choose a second measurement that distinguishes mass loading from damping.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/problem-sheets/7/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>A sensor changes the resonance it is meant to measure</h1><p class="lead">An accelerometer is attached to a slender cantilever near a periodically driven machine. Use an energy model to estimate the shifted mode, predict how large the forced vibration becomes, and choose a second measurement that distinguishes mass loading from damping.</p><p class="byline">Problem sheet 7 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#unladen">1 · Identify the modal stiffness and effective mass</a><a href="#sensor">2 · Update the model before interpreting the spectrum</a><a href="#forcing">3 · Convert an operating speed into vibration amplitude</a><a href="#identification">4 · Use a ring-down as an independent observation</a></nav></aside><article class="prose reference"><section><h2 id="unladen">1 · Identify the modal stiffness and effective mass</h2>
+<p>A clamped beam has \(L=0.50\) m, \(EI=10\) N m² and distributed mass 0.40 kg. Take tip displacement as generalized coordinate and use \(\phi(s)=s^2(3-s)/2\), \(s=x/L\). Calculate effective stiffness, mass and the bare frequency. Why does inserting the entire beam mass as a lump at the tip fail?</p>
+<details><summary>Integrate the assumed shape</summary>
+<p>The integrals are \(\int_0^1(\phi'')^2 ds=3\) and \(\int_0^1\phi^2 ds=33/140\). Hence \(k=3EI/L^3=240\) N/m, \(m_{\rm eff}=(33/140)(0.40)=0.0943\) kg and \(f=\sqrt{k/m_{\rm eff}}/(2\pi)=8.03\) Hz. Each distributed mass contribution scales with the square of its local velocity relative to the tip. Concentrating all 0.40 kg at the tip would predict only 3.90 Hz.</p>
+</details>
+</section>
+<section><h2 id="sensor">2 · Update the model before interpreting the spectrum</h2>
+<p>Mount a 30 g sensor first at the tip and then halfway along the beam. Predict both frequencies. At which position will the accelerometer signal be smaller for the same modal tip amplitude?</p>
+<details><summary>Compute two different mass participations</summary>
+<p>At the tip the full sensor mass participates, giving \(m_{\rm eff}=0.1243\) kg and 6.99 Hz. At half-span \(\phi=0.3125\), so the correction to effective mass is \(0.030(0.3125)^2=0.00293\) kg and the predicted frequency is 7.91 Hz. Half-span acceleration at the same frequency and modal amplitude is only 31.25% of the tip acceleration. In a real run, moving the sensor also shifts the resonance, so account for the changed response when comparing raw accelerometer amplitudes.</p>
+</details>
+<p><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/15-rayleigh-estimate/#try-it">Set attached mass to 0.030 kg and compare half-span with the tip</a></p>
+</section>
+<section><h2 id="forcing">3 · Convert an operating speed into vibration amplitude</h2>
+<p>Leave the sensor at the tip. A measured once-per-revolution harmonic supplies 0.20 N peak generalized force. Use modal damping ratio 0.040. Calculate the tip response amplitude at 420 rpm and at 300 rpm using the loaded frequency. Monitor displacement as well as acceleration.</p>
+<details><summary>Evaluate the frequency response</summary>
+<p>Peak displacement is \((F_0/k)/\sqrt{(1-r^2)^2+(2\zeta r)^2}\) with \(r=f_{\rm force}/f_n\). At 420 rpm the forcing is 7.00 Hz, essentially on the 6.99 Hz mode. The predicted amplitude is 0.0104 m. At 300 rpm the forcing is 5.00 Hz and the prediction drops to 0.00169 m. At 7 Hz the 10.4 mm amplitude corresponds to about 20.1 m/s² acceleration. The large amplification warrants checking the assumed linear spring and damping against amplitude-dependent measurements.</p>
+</details>
+</section>
+<section><h2 id="identification">4 · Use a ring-down as an independent observation</h2>
+<p>After removing harmonic forcing, two successive positive displacement peaks are 8.0 and 6.2 mm. Estimate damping from their ratio. How could you tell whether shifting a peak after moving the sensor resulted primarily from damping or inertia?</p>
+<details><summary>Use logarithmic decrement before comparing resonances</summary>
+<p>The decrement is \(\delta=\ln(8.0/6.2)=0.255\), hence \(\zeta=\delta/\sqrt{4\pi^2+\delta^2}=0.0405\). At that damping the damped free frequency is \(f_d=f_n\sqrt{1-\zeta^2}\), only about 0.08% below the undamped frequency. The roughly 13% increase predicted when moving this sensor from tip to half-span is much larger. Measure decay ratios and peak periods in both configurations and compare the mass-weighted mode prediction with the period shift.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/19-periodic-loading/">Chapter 19 · When the third harmonic matters more than the fundamental</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

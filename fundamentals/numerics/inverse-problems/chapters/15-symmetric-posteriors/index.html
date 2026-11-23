@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When a single uncertainty interval hides two explanations · OneSimulation</title>
+<meta name="description" content="Start from a squared-amplitude measurement, derive the full posterior and design a second observation capable of identifying the sign.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/15-symmetric-posteriors/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When a single uncertainty interval hides two explanations · OneSimulation">
+<meta property="og:description" content="Start from a squared-amplitude measurement, derive the full posterior and design a second observation capable of identifying the sign.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/15-symmetric-posteriors/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>When a single uncertainty interval hides two explanations</h1><p class="lead">Start from a squared-amplitude measurement, derive the full posterior and design a second observation capable of identifying the sign.</p><p class="byline">Chapter 15 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#symmetry-is-an-identifiability-statement">Symmetry is an identifiability statement</a><a href="#numbers-and-competing-summaries">Numbers and competing summaries</a><a href="#buy-a-measurement-that-identifies-the-sign">Buy a measurement that identifies the sign</a><a href="#tutorial-on-designing-another-experiment">Tutorial on designing another experiment</a></nav></aside><article class="prose reference"><section>
+<h2 id="symmetry-is-an-identifiability-statement">Symmetry is an identifiability statement</h2>
+<p>A sensor measures \(d=x^2+\eta\) with Gaussian noise of standard deviation \(s\). A symmetric Gaussian prior of variance \(\tau^2\) puts equal weight on opposite signs. Bayes' rule gives the density</p>
+<div class="math display">\[p(x\mid d)\propto\exp\!\left[-\frac{(d-x^2)^2}{2s^2}-\frac{x^2}{2\tau^2}\right].\]</div>
+<p>The exponent is even, so the posterior mean is exactly zero whenever the integral exists. That mean may make an extremely poor prediction of the observed quantity. To locate modes, differentiate the negative log density to get \(x[2(x^2-d)/s^2+1/\tau^2]\). Two off-centre modes appear precisely when \(d>s^2/(2\tau^2)\). At smaller \(d\), the prior and noise merge the explanations into one central mode.</p>
+</section>
+<section>
+<h2 id="numbers-and-competing-summaries">Numbers and competing summaries</h2>
+<p>Set \(d=1\), \(s=0.2\), and \(\tau=2\). The modes are at \(\pm\sqrt{0.995}\), close to \(\pm0.9975\). The density ratio of \(x=0\) to \(x=1\) is \(\exp[-1/(2s^2)+1/(2\tau^2)]\), about \(4.2\times10^{-6}\). The reported mean of zero sits in a very low-density region.</p>
+<p>For \(d=-0.05\), there is no real parameter that exactly fits the measured amplitude squared. A noisy sensor can still produce this value. The distribution has a single mode at zero, and there is no justification for taking the square root of the negative datum or discarding the observation.</p>
+</section>
+<section>
+<h2 id="buy-a-measurement-that-identifies-the-sign">Buy a measurement that identifies the sign</h2>
+<p>Assume an independent second sensor reports \(b=x+\epsilon\) with known standard deviation 0.5. Add \(-(b-x)^2/(2\cdot0.5^2)\) to the log density. The original two signs now receive different weights. Both curves in the plot are independently normalised by quadrature on the displayed interval; the sign probability is conditional on that interval. Compare the observation \(b=0\) with \(b=1\).</p>
+<div id="try-it" class="interactive-study" data-study="num-symmetric-posteriors"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-designing-another-experiment">Tutorial on designing another experiment</h2>
+<p>Repeat the squared-amplitude measurement a hundred times with independent noise. What can become precise?</p>
+<details><summary>Worked solution</summary><p>The magnitude \(x^2\) can become very precise. Every likelihood factor remains even in \(x\), so the sign probabilities stay equal with this prior. More data of the same kind cannot break that symmetry.</p></details>
+<p>If the two candidate states were exactly \(x=\pm1\), what likelihood ratio does \(b=0.5\) give in favour of the positive state?</p>
+<details><summary>Worked solution</summary><p>The exponent difference is \(((0.5+1)^2-(0.5-1)^2)/(2\cdot0.5^2)=4\). The likelihood ratio is \(e^4\), about 54.6. A continuous posterior also averages over the spread around each candidate.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/chapters/14-sequential-assimilation/">Chapter 14 · Learning a drifting temperature from a sequence of readings</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/chapters/16-resolution-and-discrepancy/">Chapter 16 · How model error masquerades as a fitted physical parameter</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

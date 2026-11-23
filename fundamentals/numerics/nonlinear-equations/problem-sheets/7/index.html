@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project · Locate contact and calibrate a misleading residual · OneSimulation</title>
+<meta name="description" content="Two surfaces touch tangentially. A height sensor measures gap rather than signed distance. Decide what rootfinding, residual checks and a second sensor can each certify.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/problem-sheets/7/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Project · Locate contact and calibrate a misleading residual · OneSimulation">
+<meta property="og:description" content="Two surfaces touch tangentially. A height sensor measures gap rather than signed distance. Decide what rootfinding, residual checks and a second sensor can each certify.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/problem-sheets/7/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Project · Locate contact and calibrate a misleading residual</h1><p class="lead">Two surfaces touch tangentially. A height sensor measures gap rather than signed distance. Decide what rootfinding, residual checks and a second sensor can each certify.</p><p class="byline">Problem sheet 7 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#recover-the-collision-of-two-mathematical-roots">Recover the collision of two mathematical roots</a><a href="#calibrate-a-stopping-tolerance">Calibrate a stopping tolerance</a><a href="#audit-an-algorithm-that-always-reports-convergence">Audit an algorithm that always reports convergence</a><a href="#choose-an-additional-measurement">Choose an additional measurement</a></nav></aside><article class="prose reference"><section><h2 id="recover-the-collision-of-two-mathematical-roots">Recover the collision of two mathematical roots</h2>
+<p>Near the contact, model the gap as \(g(x,p)=(x-1)^2-p\), with all variables scaled by their reference units. Sketch its zeros for \(p\) above and below zero. For \(p=0.01\) begin with \([0.95,1.2]\) and test whether a sign-changing bracket isolates a root.</p>
+<details><summary>Work through the solution</summary><p>Real roots are \(1\pm\sqrt p\) for positive \(p\), a double root at one for \(p=0\), and none for negative \(p\). At 0.95 the residual is \(-0.0075\), while at 1.2 it is 0.03. The bracket contains only the upper root at 1.1. A wider interval with both endpoints outside the two roots can have equal endpoint signs even when it contains both.</p></details>
+</section>
+<section><h2 id="calibrate-a-stopping-tolerance">Calibrate a stopping tolerance</h2>
+<p>With \(p=0\) begin at 1.2. Take three ordinary Newton steps and one multiplicity-corrected step. A calibrated sensor reading places the nonnegative gap in \([0,10^{-6}]\). What location interval follows from that bound? Compare the slopes in the <a href="/fundamentals/numerics/nonlinear-equations/chapters/13-multiple-roots/#try-it">multiple-root experiment</a>.</p>
+<details><summary>Work through the solution</summary><p>The successive locations are 1.1, 1.05 and 1.025. Multiplying the first Newton correction by two lands exactly on 1 for this pure square. A gap of \(10^{-6}\) is compatible with a displacement of magnitude \(10^{-3}\). Supplying more digits in the root does not improve that data-based bound.</p></details>
+</section>
+<section><h2 id="audit-an-algorithm-that-always-reports-convergence">Audit an algorithm that always reports convergence</h2>
+<p>At \(p=-0.001\) a least-squares routine stops at \(x=1\) and reports zero gradient. Find the residual and explain the report. Use the <a href="/fundamentals/numerics/nonlinear-equations/chapters/15-trust-radius/#try-it">trust-region model</a> to distinguish a decreasing merit function from a good final fit.</p>
+<details><summary>Work through the solution</summary><p>The residual is 0.001, and the merit gradient \(gg'\) vanishes because \(g'=0\). This is the best fit of this model to the infeasible contact target. The positive minimum is 1,000 times the \(10^{-6}\) gap tolerance used in the preceding test. Report a nonzero closest separation and the uncertainty rather than a located contact.</p></details>
+</section>
+<section><h2 id="choose-an-additional-measurement">Choose an additional measurement</h2>
+<p>You may measure one signed local slope \(g_x\) with uncertainty 0.002, or repeat the same absolute gap measurement. Which option resolves the side of a nearby contact? Express the position uncertainty before combining measurements.</p>
+<details><summary>Work through the solution</summary><p>\(g_x=2(x-1)\) changes sign through contact. Its stated uncertainty yields an uncertainty of 0.001 in the inferred \(x\). An interval for the signed slope that excludes zero resolves which side of contact the instrument occupies. If the measured magnitude is at most 0.002, both signs still fit within the uncertainty. Repeated absolute gaps can improve precision in distance magnitude while retaining the symmetry between left and right solutions.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/17-fold-conditioning/">Chapter 17 · Finding a turning point without using the load as a coordinate</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

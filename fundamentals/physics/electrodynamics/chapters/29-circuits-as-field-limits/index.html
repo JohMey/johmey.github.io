@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When a circuit element must be treated as a field · OneSimulation</title>
+<meta name="description" content="Can a short pair of conductors be called a capacitor? At low frequencies it stores energy almost electrostatically. As propagation time becomes important, the same open conductors support standing waves and their input current no longer grows proportionally to frequency.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/29-circuits-as-field-limits/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When a circuit element must be treated as a field · OneSimulation">
+<meta property="og:description" content="Can a short pair of conductors be called a capacitor? At low frequencies it stores energy almost electrostatically. As propagation time becomes important, the same open conductors support standing waves and their input current no longer grows proportionally to frequency.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/29-circuits-as-field-limits/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>When a circuit element must be treated as a field</h1><p class="lead">Can a short pair of conductors be called a capacitor? At low frequencies it stores energy almost electrostatically. As propagation time becomes important, the same open conductors support standing waves and their input current no longer grows proportionally to frequency.</p><p class="byline">Chapter 29 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#distributed">Build a transmission line from small field volumes</a><a href="#input">Derive the input admittance of an open end</a><a href="#examples">Two decisions about model size</a><a href="#coupling">A second circuit limit from magnetic energy</a><a href="#experiment">Measure the range of a lumped capacitor model</a><a href="#tutorial">Problem sheet · estimating the cost of a circuit approximation</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="distributed">Build a transmission line from small field volumes</h2>
+<p>Consider a uniform two-conductor line supporting a transverse electromagnetic wave. Let \(V(z,t)\) measure the transverse potential difference and \(I(z,t)\) the current toward \(+z\). Denote its inductance and capacitance per unit length by \(L'\) and \(C'\). For the moment assume ideal conductors, a linear lossless dielectric and negligible radiation. A segment \(dz\) stores charge \(C'V\,dz\). Charge balance gives \(I(z)-I(z+dz)=C' dz\,\partial_t V\). Its linked magnetic flux is \(L'I\,dz\); Faraday's law gives the voltage drop \(V(z)-V(z+dz)=L' dz\,\partial_t I\). Division by \(dz\) yields</p>
+<div class="math display equation-chain"><div class="equation-step">\[\partial_z I=-C'\partial_t V,\]</div><div class="equation-step">\[\partial_z V=-L'\partial_t I .\]</div></div>
+<p>Differentiate the second relation with respect to \(z\) and substitute the first. The result is \(\partial_z^2 V=L'C'\partial_t^2V\), with speed \(u=1/\sqrt{L'C'}\). An outgoing wave \(F(t-z/u)\) satisfies \(V/I=Z_0=\sqrt{L'/C'}\). The electric and magnetic field energies per length are \(C'V^2/2\) and \(L'I^2/2\), and they are equal for this travelling wave. Multiplying the two equations by \(V\) and \(I\) also gives a one-dimensional conservation law: \(\partial_z(VI)=-\partial_t(C'V^2/2+L'I^2/2)\).</p>
+</section>
+<section><h2 id="input">Derive the input admittance of an open end</h2>
+<p>Use \(e^{-i\omega t}\) time dependence, and let the far end \(z=\ell\) be open so \(I(\ell)=0\). Then \(\partial_zV(\ell)=0\). The solution is \(V(z)=V_L\cos k(\ell-z)\), where \(k=\omega/u\). Since \(\partial_zV=i\omega L'I\), the current is \(-i V_L\sin k(\ell-z)/Z_0\). At the input,</p>
+<div class="math display equation-chain"><div class="equation-step">\[Y_{\rm in}=-\frac{i}{Z_0}\tan(k\ell),\]</div><div class="equation-step">\[Y_{\rm lumped}=-i\omega C'\ell,\]</div><div class="equation-step">\[\frac{Y_{\rm in}}{Y_{\rm lumped}}=\frac{\tan x}{x},\]</div><div class="equation-step">\[x=\frac{\omega\ell}{u} .\]</div></div>
+<p>At small \(x\), \(\tan x/x=1+x^2/3+O(x^4)\). Thus a circuit approximation can be assigned an error estimate. Near \(x=\pi/2\) the input voltage approaches a node and the ideal input admittance diverges. Losses round the pole in a real line. Beyond this frequency even the sign can change, although the far end remains open.</p>
+</section>
+<section><h2 id="examples">Two decisions about model size</h2>
+<h3>A 15 cm open lead</h3>
+<p>Take \(u=2.00\times10^8\) m/s and \(Z_0=50.0\,\Omega\). Then \(C'=1/(Z_0u)=100\) pF/m and the lumped capacitance is 15.0 pF. At 20.0 MHz, \(x=0.09425\); the exact admittance exceeds the capacitive prediction by 0.297%. At 200 MHz, \(x=0.9425\), and the excess is about 46.0%. A component measured on an open fixture can therefore appear to acquire substantial extra capacitance at high frequency.</p>
+<h3>A time trace on the same lead</h3>
+<p>The one-way flight time is \(0.75\) ns. A step launched down the line first sees the characteristic impedance. Information about the open end returns only after \(1.50\) ns. At an open end an incident positive voltage wave is reflected with the same sign. The current waves cancel there, enforcing zero terminal current, while the terminal voltage doubles at their first overlap. For a source matched to \(Z_0\), the returning wave is absorbed at the source. This time-domain argument provides a check on the origin of the standing-wave solution.</p>
+</section>
+<section><h2 id="coupling">A second circuit limit from magnetic energy</h2>
+<p>In the slow-variation limit, linked flux in two fixed coils is linear in both currents. For a reciprocal medium, \(\lambda_1=L_1I_1+MI_2\), \(\lambda_2=MI_1+L_2I_2\). Integrate the supplied power \(I_1\dot\lambda_1+I_2\dot\lambda_2\) to obtain \(U=(L_1I_1^2+2MI_1I_2+L_2I_2^2)/2\). Completing the square gives \(2U=L_1(I_1+MI_2/L_1)^2+(L_2-M^2/L_1)I_2^2\). A passive magnetic energy requires \(|M|\leq\sqrt{L_1L_2}\). The sign of \(M\) depends on terminal orientations. This bound is an independent way to check a measured or numerically inferred circuit model.</p>
+</section>
+<section><h2 id="experiment">Measure the range of a lumped capacitor model</h2>
+<p>The line has speed 2.00 × 10⁸ m/s and impedance 50 Ω. For a 15 cm open section its first quarter-wave pole is 333 MHz. At 60% of that frequency the distributed admittance exceeds the lumped value by 46%. Move the open end and compare the two curves.</p>
+<div id="try-it" class="interactive-study" data-study="em-circuit"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Problem sheet · estimating the cost of a circuit approximation</h2>
+<h3>Set a one-percent frequency limit</h3><p>For a 0.30 m open line with speed \(1.8\times10^8\) m/s, estimate the highest frequency for a 1% correction in input admittance. State the approximation used.</p><details><summary>Work through the solution</summary>
+<p>Set \(x^2/3=0.01\), giving \(x\simeq0.173\) and \(f=xu/(2\pi\ell)=16.5\) MHz. The next term is \(2x^4/15\simeq0.00012\), so the estimate slightly overstates the allowable frequency. Bisection on \(\tan x/x=1.01\) gives \(x\simeq0.1722\).</p>
+</details>
+<h3>Check a claimed mutual inductance</h3><p>A two-coil model has \(L_1=4\) mH, \(L_2=9\) mH and \(M=7\) mH. Find the current combination that reveals a problem.</p><details><summary>Work through the solution</summary>
+<p>Choose \(I_1=-MI_2/L_1=-1.75I_2\). The surviving coefficient is \(9-49/4=-3.25\) mH, giving a negative stored energy for every nonzero \(I_2\). A passive reciprocal model with these self-inductances can support at most 6 mH of mutual inductance in magnitude.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_26">Fließbach, chapter 26 · oscillating circuits</a></li><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, 5th ed., §§7.2, 9.5 · inductance and guided waves</a></li><li><a href="https://davidtong.org/pdfs/teaching/electromagnetism/electro3.pdf">Cambridge Electromagnetism, chapter 3 · induction and inductance</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/28-scattering-and-radiated-power/">Chapter 28 · Why a small transparent sphere scatters light</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/30-rays-wavefronts-and-caustics/">Chapter 30 · From wavefronts to rays, focusing and caustics</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

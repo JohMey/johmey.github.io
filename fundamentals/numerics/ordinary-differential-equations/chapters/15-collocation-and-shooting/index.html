@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a boundary value problem can be easier than its shooting equation · OneSimulation</title>
+<meta name="description" content="A concentration decays across a slab, with concentrations known at both faces. Computing a solution from the first face alone can bring in an exponentially growing mode. Enforcing both faces together gives a different numerical problem with the same differential equation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/15-collocation-and-shooting/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why a boundary value problem can be easier than its shooting equation · OneSimulation">
+<meta property="og:description" content="A concentration decays across a slab, with concentrations known at both faces. Computing a solution from the first face alone can bring in an exponentially growing mode. Enforcing both faces together gives a different numerical problem with the same differential equation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/15-collocation-and-shooting/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Why a boundary value problem can be easier than its shooting equation</h1><p class="lead">A concentration decays across a slab, with concentrations known at both faces. Computing a solution from the first face alone can bring in an exponentially growing mode. Enforcing both faces together gives a different numerical problem with the same differential equation.</p><p class="byline">Chapter 15 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#distinguish-the-boundary-map-from-the-physical-solution">Distinguish the boundary map from the physical solution</a><a href="#enforce-the-equation-at-the-interior-nodes">Enforce the equation at the interior nodes</a><a href="#compare-errors-with-a-common-physical-target">Compare errors with a common physical target</a><a href="#tutorial-on-a-boundary-tolerance">Tutorial on a boundary tolerance</a></nav></aside><article class="prose reference"><section><h2 id="distinguish-the-boundary-map-from-the-physical-solution">Distinguish the boundary map from the physical solution</h2>
+<p>Use a nondimensional interval \(0\le x\le1\) and write \(y''=\lambda^2y\), with \(y(0)=1\), \(y(1)=e^{-\lambda}\), \(\lambda&gt;0\). The exact solution is \(e^{-\lambda x}\), a smooth layer of thickness approximately \(1/\lambda\). A shooting method prescribes a tentative slope \(s=y'(0)\), integrates the initial value problem, and adjusts \(s\) to meet the second boundary. The exact initial-value solution is \(\cosh(\lambda x)+(s/\lambda)\sinh(\lambda x)\). The correct slope is \(-\lambda\). The small right boundary is recovered by subtracting two large nearly equal terms.</p>
+<p>Perturb the exact slope by \(\delta s\). Superposition gives the resulting error everywhere without a second initial-value solve:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\delta y(x)=\frac{\delta s}{\lambda}\sinh(\lambda x),\]</div><div class="equation-step">\[\frac{d\,y(1)}{ds}=\frac{\sinh\lambda}{\lambda}.\]</div></div>
+<p>At \(\lambda=20\) the right-end amplification is \(1.21\times10^7\). A slope error as small as \(10^{-12}\) gives about \(1.21\times10^{-5}\) endpoint error, while the target value is just \(2.06\times10^{-9}\). The actual boundary problem is much less sensitive to changes in prescribed concentrations. Its basis functions for arbitrary face values are \(\sinh[\lambda(1-x)]/\sinh\lambda\) and \(\sinh(\lambda x)/\sinh\lambda\), each bounded by one. A stable physical boundary problem can be paired with an ill-conditioned forward initial-value calculation. The particular derivative above measures sensitivity of the forward shooting evaluation.</p>
+</section>
+<section><h2 id="enforce-the-equation-at-the-interior-nodes">Enforce the equation at the interior nodes</h2>
+<p>Take \(N\) equal intervals with \(h=1/N\). The centred second difference of any smooth exact solution equals \(y''(x_j)+h^2y^{(4)}(x_j)/12+O(h^4)\), by Taylor expansion about \(x_j\). Set that second difference equal to \(\lambda^2Y_j\). Incorporate the known boundary data \(Y_0,Y_N\) into the first and last right-hand sides. The interior equations are</p>
+<div class="math display equation-chain"><div class="equation-step">\[-Y_{j-1}+[2+(\lambda h)^2]Y_j-Y_{j+1}=0,\]</div><div class="equation-step">\[j=1,\ldots,N-1.\]</div></div>
+<p>Each row now couples neighbouring nodes and no row asks for a missing starting slope. The diagonal exceeds the sum of the off-diagonal magnitudes for \(\lambda&gt;0\). Eliminate the lower diagonal from left to right and substitute back from the right. Both work and storage grow linearly with \(N\). This finite-difference collocation approximates the differential equation at grid points. It still needs enough points inside the layer. The grid parameter \(\lambda h\) measures its resolution.</p>
+<p>At \(\lambda=5\) and just two intervals there is one unknown midpoint. Its equation gives \(Y_1=(1+e^{-5})/(2+2.5^2)=0.1220\), while the exact midpoint is \(e^{-2.5}=0.08208\). Both boundary values are satisfied exactly. Their residual alone cannot reveal the interior error. As \(h\) is halved at fixed \(\lambda\), a well-resolved smooth solution exhibits second-order convergence.</p>
+</section>
+<section><h2 id="compare-errors-with-a-common-physical-target">Compare errors with a common physical target</h2>
+<p>The graph plots logarithmic absolute errors against position. The shooting curve isolates propagation of a controlled absolute initial slope perturbation of \(10^{-12}\), using the analytical propagation factor to avoid cancellation in the demonstration. The collocation curve solves the tridiagonal system numerically and compares each node to \(e^{-\lambda x_j}\). Values below \(10^{-16}\) are plotted at a floor. These are different sources of error. Increasing \(N\) improves collocation truncation error but cannot repair an error in the supplied shooting slope. At low \(\lambda\) the perturbed shooting solution may be much more accurate. Increase \(\lambda\) while keeping \(N\) fixed and identify where each method struggles.</p>
+<div id="try-it" class="interactive-study" data-study="num-ode-bvp"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-a-boundary-tolerance">Tutorial on a boundary tolerance</h2>
+<p>At \(\lambda=15\), require the error caused by the shooting slope alone to be less than \(10^{-8}\) at the right face. What absolute accuracy is needed in \(s\)? Give an independent accuracy check for the collocation solution.</p>
+<details><summary>Work through the solution</summary><p>Rearrangement gives \(|\delta s|&lt;15\times10^{-8}/\sinh15=9.18\times10^{-14}\). For collocation solve on a nested mesh with half the spacing and compare shared nodes. In the second-order regime the refined error is roughly one third of the coarse-to-fine difference there. Check that the estimate stabilises under another refinement and that the fine mesh resolves \(1/\lambda\).</p></details>
+<p class="source-note">Further reading · <a href="https://tobydriscoll.net/fnc-julia/bvp/linear.html">Driscoll and Braun, finite-difference collocation for linear boundary problems</a> · <a href="https://fncbook.com/shooting/">Driscoll and Braun, shooting and instability</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/14-implicit-explicit-relaxation/">Chapter 14 · Splitting a stiff relaxation from a slowly varying drive</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/16-transient-growth/">Chapter 16 · How two decaying modes produce a growing signal</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-num-ode.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

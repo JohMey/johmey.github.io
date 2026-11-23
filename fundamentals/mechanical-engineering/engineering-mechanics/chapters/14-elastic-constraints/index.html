@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a lateral restraint changes a measured modulus · OneSimulation</title>
+<meta name="description" content="A short compression test can report a larger stiffness than a tensile coupon cut from the same material. Derive the difference from the strains that the fixture permits.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/14-elastic-constraints/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a lateral restraint changes a measured modulus · OneSimulation">
+<meta property="og:description" content="A short compression test can report a larger stiffness than a tensile coupon cut from the same material. Derive the difference from the strains that the fixture permits.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/14-elastic-constraints/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>How a lateral restraint changes a measured modulus</h1><p class="lead">A short compression test can report a larger stiffness than a tensile coupon cut from the same material. Derive the difference from the strains that the fixture permits.</p><p class="byline">Chapter 14 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#material">Separate changes of volume and changes of shape</a><a href="#sleeve">Derive the stiffness in a close-fitting sleeve</a><a href="#pad">Worked example · recover the sleeve reaction</a><a href="#liquid">Worked example · infer a bulk property independently</a><a href="#tutorial">Tutorial · identify a Poisson effect from two tests</a></nav></aside><article class="prose reference"><section><h2 id="material">Separate changes of volume and changes of shape</h2>
+<p>For small strain, uniaxial tension \(\sigma\) gives longitudinal strain \(\sigma/E\) and transverse strain \(-\nu\sigma/E\). These are experimental definitions of Young’s modulus and Poisson’s ratio for an isotropic material. In a linear solid the three normal coordinate loading cases can be superposed. Under tensile stresses positive, this gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[E\epsilon_x=\sigma_x-\nu(\sigma_y+\sigma_z),\]</div><div class="equation-step">\[E\epsilon_y=\sigma_y-\nu(\sigma_x+\sigma_z),\]</div><div class="equation-step">\[E\epsilon_z=\sigma_z-\nu(\sigma_x+\sigma_y).\]</div></div>
+<p>Add the three equations. The sum of the small normal strains is the relative volume change because the product \((1+\epsilon_x)(1+\epsilon_y)(1+\epsilon_z)\) retains only first-order terms. Under compressive pressure \(p\) all three normal stresses are \(-p\). Hence</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{\Delta V}{V}=-\frac{3(1-2\nu)}{E}p=-\frac{p}{K},\]</div><div class="equation-step">\[K=\frac{E}{3(1-2\nu)} .\]</div></div>
+<p>Large bulk stiffness can coexist with moderate shear stiffness. Near \(\nu=0.5\), changing volume becomes difficult, while changing shape can remain easy. This distinction matters when interpreting a pad compressed between smooth plates and the same pad enclosed within a rigid sleeve.</p>
+</section>
+<section><h2 id="sleeve">Derive the stiffness in a close-fitting sleeve</h2>
+<p>Apply axial stress \(\sigma_z\) to a specimen with both lateral strains constrained to zero. Assume uniform deformation away from the ends and identical conditions in \(x\) and \(y\). Symmetry gives \(\sigma_x=\sigma_y=s\). The first strain law becomes \(0=(1-\nu)s-\nu\sigma_z\), so the sleeve must supply a lateral stress even though no lateral load was specified at the start.</p>
+<div class="math display equation-chain"><div class="equation-step">\[s=\frac{\nu}{1-\nu}\sigma_z,\]</div><div class="equation-step">\[\frac{\sigma_z}{\epsilon_z}=\frac{E(1-\nu)}{(1+\nu)(1-2\nu)}=M .\]</div></div>
+<p>The constraint modulus \(M\) increases rapidly near incompressibility. It is the ratio of a particular stress to a particular strain in this test. The material constants in the original three-dimensional law continue to apply in both fixtures. A supposedly free compression test with strong friction on the platens may fall between ideal free and fully confined behaviour.</p>
+</section>
+<section><h2 id="pad">Worked example · recover the sleeve reaction</h2>
+<p>A linearly elastic sample has \(E=30\) MPa and \(\nu=0.40\). Its thickness is 20 mm and the axial stress is −0.30 MPa. With free sidewalls the axial strain is −0.0100 and the contraction is 0.200 mm. Inside the ideal rigid sleeve, \(M=64.29\) MPa, giving contraction \(20(0.30/64.29)=0.0933\) mm. Each lateral stress is −0.200 MPa. Substitution into the original \(x\)-strain equation gives zero, a direct test of the force that was inferred from compatibility.</p>
+</section>
+<section><h2 id="liquid">Worked example · infer a bulk property independently</h2>
+<p>Compress the same material hydrostatically by 0.15 MPa. The measured constants predict \(K=50.0\) MPa and a volume loss of 0.300%. A 40 cm³ specimen would lose 0.120 cm³. Using its sleeve modulus in this calculation would underestimate the volume change. In hydrostatic compression all three strains are equal. In the sleeve only one strain can be nonzero. A constitutive test must specify what is imposed on the other faces and what the measurement records.</p>
+<p class="calculation-prompt">Start with zero Poisson ratio. Explain why the two compression curves coincide. Raise the ratio to 0.45 and read the force required for equal movement in the two tests. Which part of the constitutive law causes the slopes to separate?</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-mechanics-elastic-constraints"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · identify a Poisson effect from two tests</h2>
+<p>An axial test gives \(E=24\) MPa. A hydrostatic test gives \(K=40\) MPa. Infer the Poisson ratio and predict the axial stress required for 0.5% compression in an ideal sleeve. Which additional measurement would reveal slipping or a clearance in the sleeve?</p>
+<details><summary>Reconstruct the constraint</summary>
+<p>Solving \(E=3K(1-2\nu)\) gives \(\nu=0.40\). The constraint modulus is \(24(0.60)/(1.40\times0.20)=51.43\) MPa. For \(\epsilon_z=-0.005\) the stress is −0.257 MPa. The ideal lateral strain is zero everywhere in the uniform test section. A transverse displacement measurement along the midsection tests this condition directly. Near the ends the same reading can include fixture effects.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://solidmechanics.org/Text/Chapter3_2/Chapter3_2.htm">A. F. Bower, Applied Mechanics of Solids, §3.2, linear elastic material behaviour</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/13-local-equilibrium/">Chapter 13 · From cut forces to local equilibrium</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/15-annular-elasticity/">Chapter 15 · Radial displacement and hoop stress in a thick ring</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Potentials, gauge freedom and the arrival of a signal · OneSimulation</title>
+<meta name="description" content="When a source changes at noon, which part of its history can affect a detector at twelve o’clock and one nanosecond? The answer emerges from Maxwell’s equations once we specify both the source and the boundary condition in time.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/23-retarded-potentials-and-gauge/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Potentials, gauge freedom and the arrival of a signal · OneSimulation">
+<meta property="og:description" content="When a source changes at noon, which part of its history can affect a detector at twelve o’clock and one nanosecond? The answer emerges from Maxwell’s equations once we specify both the source and the boundary condition in time.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/23-retarded-potentials-and-gauge/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Potentials, gauge freedom and the arrival of a signal</h1><p class="lead">When a source changes at noon, which part of its history can affect a detector at twelve o’clock and one nanosecond? The answer emerges from Maxwell’s equations once we specify both the source and the boundary condition in time.</p><p class="byline">Chapter 23 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#potentials">Why introduce two potentials?</a><a href="#lorenz">Uncoupling the field equations</a><a href="#green">Constructing the retarded kernel</a><a href="#examples">Two calculations with potentials</a><a href="#experiment">Compare the arrival of a compact pulse at two radii</a><a href="#tutorial">Problem sheet · delays and a time-dependent gauge</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="potentials">Why introduce two potentials?</h2>
+<p>A magnetic field with zero divergence can, on a contractible region, be written as \(\mathbf B=\nabla\times\mathbf A\). Faraday's law then says that \(\mathbf E+\partial_t\mathbf A\) has zero curl. Define its scalar potential as \(-\nabla\phi\). These two definitions solve the homogeneous Maxwell equations identically. Two inhomogeneous equations still determine how charge and current generate the fields. The potentials contain more components than necessary. For any smooth function \(\chi\), put</p>
+<div class="math display equation-chain"><div class="equation-step">\[\mathbf A'=\mathbf A+\nabla\chi,\]</div><div class="equation-step">\[\phi'=\phi-\partial_t\chi.\]</div></div>
+<p>The curl of a gradient vanishes. The two extra terms in the electric field cancel because mixed derivatives commute. This freedom lets us choose which equations to solve while keeping every force measurement identical.</p>
+</section>
+<section><h2 id="lorenz">Uncoupling the field equations</h2>
+<p>Insert the potentials into Gauss's law. This gives \(\nabla^2\phi+\partial_t\nabla\cdot\mathbf A=-\rho/\epsilon_0\). Now substitute them in Ampère–Maxwell and use the curl-of-curl identity. Keeping the gradient terms together gives</p>
+<div class="math display">\[(\nabla^2-c^{-2}\partial_t^2)\mathbf A=-\mu_0\mathbf J+\nabla(\nabla\cdot\mathbf A+c^{-2}\partial_t\phi).\]</div>
+<p>Choose the Lorenz condition \(\nabla\cdot\mathbf A+c^{-2}\partial_t\phi=0\). A gauge transformation can achieve it by solving the scalar wave equation for \(\chi\) with the negative of the original condition as source. Both potentials then obey wave equations with the same propagation speed. Under this choice, charge continuity is essential. Applying the wave operator to the Lorenz condition returns \(-\mu_0(\nabla\cdot\mathbf J+\partial_t\rho)\), which vanishes for a conserved source. Residual gauge functions obey the homogeneous wave equation.</p>
+</section>
+<section><h2 id="green">Constructing the retarded kernel</h2>
+<p>In a source-free spherical shell a radial scalar field \(\psi\) obeys \(\partial_r^2(r\psi)=c^{-2}\partial_t^2(r\psi)\). The one-dimensional equation has an outgoing branch \(r\psi=f(t-r/c)\) and an incoming branch \(g(t+r/c)\). An isolated source with no incident wave selects the outgoing branch. The response to an instantaneous impulse is supported at \(t=r/c\). Its spatial normalisation follows by integrating the static kernel over a tiny sphere, where \(-\nabla^2(1/4\pi r)=\delta^3(\mathbf r)\). The causal kernel is therefore \(\delta(t-r/c)/(4\pi r)\). Integrating the source over time removes the delta function:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\phi(\mathbf x,t)=\frac{1}{4\pi\epsilon_0}\int \frac{\rho(\mathbf x',t-R/c)}{R}\,d^3x',\]</div><div class="equation-step">\[\mathbf A(\mathbf x,t)=\frac{\mu_0}{4\pi}\int \frac{\mathbf J(\mathbf x',t-R/c)}{R}\,d^3x',\]</div><div class="equation-step">\[R=|\mathbf x-\mathbf x'|.\]</div></div>
+<p>Every volume element contributes at its own source time. If an incident wave is already present, add its homogeneous solution. In Coulomb gauge the scalar potential instead satisfies an instantaneous Poisson equation. Its instantaneous contribution to \(-\nabla\phi\) combines with \(-\partial_t\mathbf A\) to give the same causal electric field.</p>
+</section>
+<section><h2 id="examples">Two calculations with potentials</h2>
+<h3>A pulse recorded at two distances</h3>
+<p>Measure an isolated outgoing spherical wave component in a source-free exterior. At radius \(0.30\) m its field trace peaks at \(10.0\) ns. At \(1.80\) m its peak arrives \(1.50/c=5.00\) ns later. The peak amplitude is \(0.30/1.80=1/6\) of the first. Multiplying each trace by its radius removes spreading. Shifting the second trace back by \(5.00\) ns then superposes them. For an electromagnetic dipole these statements describe its outgoing transverse radiation term along the same ray. Reactive near-field terms have different radial dependences.</p>
+<h3>Two vector potentials for a uniform field</h3>
+<p>For a constant magnetic field \(B\hat{\mathbf z}\) one choice is \(\mathbf A=Bx\hat{\mathbf y}\), \(\phi=0\). Choose \(\chi=-Bxy/2\). Its gradient adds \(-By\hat{\mathbf x}/2-Bx\hat{\mathbf y}/2\), giving \(\mathbf A'=(-By\hat{\mathbf x}+Bx\hat{\mathbf y})/2\). Its curl has \(z\) component \(B/2-(-B/2)=B\). The line integrals around any closed loop match because the integral of the added gradient is zero.</p>
+</section>
+<section><h2 id="experiment">Compare the arrival of a compact pulse at two radii</h2>
+<p>This source-free outgoing component has a finite start and finish. A 1.80 m detector records the front 5.00 ns after a 0.30 m detector and measures one sixth of its amplitude. Can changing the pulse duration change either observation?</p>
+<div id="try-it" class="interactive-study" data-study="em-retarded"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Problem sheet · delays and a time-dependent gauge</h2>
+<h3>A finite source</h3><p>Two ends of a source are 12 cm apart along a detector's line of sight. Bound the difference in retarded source times. At what frequency does the corresponding maximum phase span reach one radian?</p><details><summary>Work through the solution</summary>
+<p>The triangle inequality gives \(|R_1-R_2|\leq0.12\) m. Thus \(\Delta t\leq0.400\) ns. For a harmonic source the maximum phase difference is \(2\pi f\Delta t\). One radian requires \(f=398\) MHz approximately. Well below that frequency one common retarded time can be accurate for this part of the phase. A dipole approximation also requires a source small compared with the observation distance.</p>
+</details>
+<h3>A gauge with a time derivative</h3><p>Start with zero potentials. Set \(\chi=\alpha xt\), where \(\alpha\) is constant. Determine both transformed potentials and check the fields.</p><details><summary>Work through the solution</summary>
+<p>The new potentials are \(\mathbf A'=\alpha t\hat{\mathbf x}\) and \(\phi'=-\alpha x\). Hence \(-\nabla\phi'=+\alpha\hat{\mathbf x}\) and \(-\partial_t\mathbf A'=-\alpha\hat{\mathbf x}\). Their sum and the curl of the spatially uniform vector potential are both zero. The example also satisfies the Lorenz condition, consistent with \(\chi\) solving the homogeneous wave equation.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, 5th ed., §§10.1–10.2 · potentials and retarded sources</a></li><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_17">Fließbach, chapter 17 · general solution of Maxwell’s equations</a></li><li><a href="https://davidtong.org/pdfs/teaching/electromagnetism/electro5.pdf">Cambridge Electromagnetism, §5.1 · retarded potentials</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/22-dispersion-loss-and-causality/">Chapter 22 · Why dispersion and absorption belong together</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/24-fields-of-a-moving-charge/">Chapter 24 · A moving charge, its retarded position and its radiation</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

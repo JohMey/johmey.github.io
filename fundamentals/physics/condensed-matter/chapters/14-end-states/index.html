@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finding an end state one bond at a time · OneSimulation</title>
+<meta name="description" content="The bulk spectrum of an alternating chain is unchanged when strong and weak bonds exchange places. A boundary with a named first site breaks this equivalence. The zero-energy equations provide its wavefunction without diagonalising a large matrix.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/condensed-matter/chapters/14-end-states/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Finding an end state one bond at a time · OneSimulation">
+<meta property="og:description" content="The bulk spectrum of an alternating chain is unchanged when strong and weak bonds exchange places. A boundary with a named first site breaks this equivalence. The zero-energy equations provide its wavefunction without diagonalising a large matrix.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/condensed-matter/chapters/14-end-states/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/condensed-matter/">Condensed matter and band theory</a></p><h1>Finding an end state one bond at a time</h1><p class="lead">The bulk spectrum of an alternating chain is unchanged when strong and weak bonds exchange places. A boundary with a named first site breaks this equivalence. The zero-energy equations provide its wavefunction without diagonalising a large matrix.</p><p class="byline">Chapter 14 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#start-at-an-exposed-a-site">Start at an exposed A site</a><a href="#impose-the-far-boundary-too">Impose the far boundary too</a><a href="#connect-the-recurrence-to-the-bulk-phase">Connect the recurrence to the bulk phase</a><a href="#tutorial-on-inspecting-a-local-measurement">Tutorial on inspecting a local measurement</a></nav></aside><article class="prose reference"><section><h2 id="start-at-an-exposed-a-site">Start at an exposed A site</h2>
+<p>Use the alternating chain with intracell link \(t_1\) and intercell link \(t_2\), both positive. End the left edge at \(A_1\). The first B site connects \(A_1\) and \(A_2\). Seek an eigenstate at \(E=0\) supported only on A sites. Each A-site equation then holds because all neighbouring B amplitudes vanish. Each B-site equation requires cancellation between its two neighbouring A amplitudes. Hence</p>
+<div class="math display equation-chain"><div class="equation-step">\[0=t_1 A_j+t_2 A_{j+1},\]</div><div class="equation-step">\[A_j=(-t_1/t_2)^{j-1}A_1.\]</div></div>
+<p>Relative signs matter in the cancellation, even though a local probability measurement sees only squared magnitudes. On a semi-infinite chain the geometric series for the norm converges only for \(r=t_1/t_2&lt;1\). Normalising gives \(|A_1|^2=1-r^2\). The amplitude decay length satisfies \(e^{-a/\ell}=r\), so \(\ell=a/\ln(t_2/t_1)\). The probability decay length is half that. As the bulk gap closes, the decay length diverges and the bound state spreads into the interior.</p>
+</section>
+<section><h2 id="impose-the-far-boundary-too">Impose the far boundary too</h2>
+<p>A finite chain can have \(M\) A sites and \(M-1\) B sites, ending on A at both edges. Every B site still imposes exactly the recurrence above, leaving one overall free amplitude. The resulting state has exactly zero energy for any positive hoppings. Its finite norm is the sum of \(M\) successive powers of \(r^2\). At \(r=1\) the apparent zero over zero in the closed formula is resolved by summing \(M\) unit terms. The state then has probability \(1/M\) at every A site.</p>
+<p>When \(r&gt;1\) its norm remains finite in this finite sample and the weight accumulates at the right edge. An equal-sublattice finite chain ending on B instead has an additional boundary equation. Two exponentially localised end solutions can then hybridise, shifting their energies slightly above and below zero. Equal sublattice counts alone provide no exact zero eigenvalue. A change of boundary conditions can therefore alter the interpretation of a measured near-zero peak.</p>
+</section>
+<section><h2 id="connect-the-recurrence-to-the-bulk-phase">Connect the recurrence to the bulk phase</h2>
+<p>The off-diagonal matrix element \(h=t_1+t_2e^{ika}\) traces a circle centred at \(t_1\) with radius \(t_2\) as \(k\) crosses the Brillouin zone. If \(t_2&gt;t_1\) it winds once around zero. If \(t_2&lt;t_1\) it misses zero. Passing between the two with fixed cell choice requires the gap \(2|h|\) to close. A diagonal potential on just one sublattice would break the off-diagonal symmetry used to pin energies to zero. The winding statement and the boundary argument require a consistent assignment of the unit cell and termination.</p>
+<p>For \(r=0.5\) the first three semi-infinite A probabilities are 0.75, 0.1875 and 0.046875. For \(r=0.90\), the first site has only 0.19 and the amplitude decay length increases from \(1.44a\) to \(9.49a\). Use the finite odd chain below to move the density from one end to the other. At reciprocal hopping ratios the two distributions must be mirror images. Check this using the endpoint readouts.</p>
+<div id="try-it" class="interactive-study" data-study="ph-end-mode"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-inspecting-a-local-measurement">Tutorial on inspecting a local measurement</h2>
+<p>Four successive A sites have relative intensities \(1,0.36,0.1296,0.0467\) near a left edge. Infer the hopping ratio and amplitude decay length. Would a local intensity probe detect the alternating signs of the state?</p>
+<details><summary>Work through the solution</summary><p>Ratios of neighbouring probabilities equal \(r^2\), hence \(r=0.60\). The amplitude length is \(-a/\ln(0.60)=1.96a\). A measurement proportional to the absolute square loses the sign. Interference with a phase reference or a measurement sensitive to the amplitude across a bond can access the phase relation.</p></details>
+<p>A finite odd chain has five A sites and hopping ratio \(r=0.8\). What fraction of zero-mode probability lies on its first two A sites?</p>
+<details><summary>Work through the solution</summary><p>Sum the finite geometric sequence. The requested fraction is \((1+r^2)/\sum_{j=0}^4r^{2j}=(1-r^4)/(1-r^{10})=0.661\). Taking the semi-infinite formula would give \(1-r^4=0.590\). The far boundary changes the normalisation substantially for this short array.</p></details>
+<p>Can bond disorder that preserves positive nonzero nearest-neighbour hoppings destroy the exact zero solution of a finite chain ending on A at both ends?</p>
+<details><summary>Work through the solution</summary><p>At each B site retain the local recursion \(A_{j+1}=-(t_{1j}/t_{2j})A_j\). It produces a finite nonzero solution after choosing \(A_1\), with all B amplitudes zero. The profile is a product of local ratios and may cease to look like a single exponential. A generic A-site potential would invalidate the zero-energy equation.</p></details>
+<p class="source-note">Further reading · <a href="https://arxiv.org/abs/1509.02295">Asbóth, Oroszlány and Pályi, edge states and bulk-boundary correspondence</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/condensed-matter/chapters/13-dimerised-band/">Chapter 13 · How alternating bonds split a one-dimensional band</a></span><span>Next<br><a href="/fundamentals/physics/condensed-matter/chapters/15-honeycomb-cones/">Chapter 15 · Why a honeycomb lattice has Dirac cones</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

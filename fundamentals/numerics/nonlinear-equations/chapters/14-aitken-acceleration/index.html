@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eliminating a fixed point&#x27;s leading geometric error · OneSimulation</title>
+<meta name="description" content="Recover a limit from three consecutive iterates, derive Steffensen&#x27;s update and find the cancellation that makes an apparently faster step unreliable.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/14-aitken-acceleration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Eliminating a fixed point&#x27;s leading geometric error · OneSimulation">
+<meta property="og:description" content="Recover a limit from three consecutive iterates, derive Steffensen&#x27;s update and find the cancellation that makes an apparently faster step unreliable.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/14-aitken-acceleration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Eliminating a fixed point&#x27;s leading geometric error</h1><p class="lead">Recover a limit from three consecutive iterates, derive Steffensen&#x27;s update and find the cancellation that makes an apparently faster step unreliable.</p><p class="byline">Chapter 14 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#three-readings-of-an-unknown-limit">Three readings of an unknown limit</a><a href="#two-computed-limits">Two computed limits</a><a href="#compare-by-number-of-map-evaluations">Compare by number of map evaluations</a><a href="#tutorial-on-stability-of-the-transformation">Tutorial on stability of the transformation</a></nav></aside><article class="prose reference"><section>
+<h2 id="three-readings-of-an-unknown-limit">Three readings of an unknown limit</h2>
+<p>Suppose \(x_n=r+cq^n\) with unknown \(r,c,q\). Consecutive differences are \(c(q-1)q^n\) and \(c(q-1)q^{n+1}\). Their ratio estimates \(q\). Substituting that ratio into the sum of the geometric tail gives Aitken's delta-squared estimate</p>
+<div class="math display">\[\widehat r=x_n-\frac{(x_{n+1}-x_n)^2}{x_{n+2}-2x_{n+1}+x_n}.\]</div>
+<p>For an exactly geometric sequence the denominator is \(cq^n(q-1)^2\) and the cancellation is exact. For a smooth fixed-point map \(g\) with \(|g'(r)|&lt;1\), the leading error is locally geometric, with a quadratic remainder. Replacing \(x_n,x_{n+1},x_{n+2}\) by \(x,g(x),g(g(x))\), then restarting at the estimate, gives Steffensen's iteration. Each outer step costs two map evaluations.</p>
+</section>
+<section>
+<h2 id="two-computed-limits">Two computed limits</h2>
+<p>For \(g(x)=1+0.8(x-1)\) and \(x=0\), the three numbers are 0, 0.2 and 0.36. The denominator is \(-0.04\). The accelerated value is \(0-0.04/(-0.04)=1\). A slowly contracting map can supply a very accurate extrapolation when the data are exact.</p>
+<p>To solve \(x=\cos x\), begin at 0.5. The next two map evaluations are approximately 0.87758 and 0.63901. The accelerated value is about 0.73139. Its fixed-point residual is much smaller than the initial \(\cos(0.5)-0.5\), but plugging the result back into the original equation is essential: the geometric model is now only local.</p>
+</section>
+<section>
+<h2 id="compare-by-number-of-map-evaluations">Compare by number of map evaluations</h2>
+<p>Use the smooth map \(g(1+e)=1+qe+0.05e^2\) close to its fixed point. Plain substitution gets one update per function call. The accelerated curve receives two calls per update. Read the horizontal axis before deciding which method made better use of the budget.</p>
+<div id="try-it" class="interactive-study" data-study="num-aitken-acceleration"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-stability-of-the-transformation">Tutorial on stability of the transformation</h2>
+<p>For an exact linear map with \(q=0.999\) and error one, what order of magnitude is the second difference?</p>
+<details><summary>Worked solution</summary><p>Its magnitude is \((1-q)^2=10^{-6}\), while the three original readings may be of order one. A measurement perturbation comparable to this denominator can completely change the extrapolation.</p></details>
+<p>What should an implementation do at an exact fixed point where all three readings agree?</p>
+<details><summary>Worked solution</summary><p>Return that fixed point after checking the residual. The delta-squared expression is then \(0/0\). Away from a certified fixed point, a small denominator warrants retaining a verified plain step or a different local model.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/13-multiple-roots/">Chapter 13 · Why a flat zero slows Newton&#x27;s method</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/15-trust-radius/">Chapter 15 · Deciding how far to trust a linearised residual</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From wavefronts to rays, focusing and caustics · OneSimulation</title>
+<meta name="description" content="A ray is a prediction extracted from the phase of a wave. Following its amplitude at the same time reveals the point at which a ray calculation loses its validity. A gently graded transparent material gives a solvable example of both effects.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/30-rays-wavefronts-and-caustics/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From wavefronts to rays, focusing and caustics · OneSimulation">
+<meta property="og:description" content="A ray is a prediction extracted from the phase of a wave. Following its amplitude at the same time reveals the point at which a ray calculation loses its validity. A gently graded transparent material gives a solvable example of both effects.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/30-rays-wavefronts-and-caustics/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>From wavefronts to rays, focusing and caustics</h1><p class="lead">A ray is a prediction extracted from the phase of a wave. Following its amplitude at the same time reveals the point at which a ray calculation loses its validity. A gently graded transparent material gives a solvable example of both effects.</p><p class="byline">Chapter 30 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#scale">Derive the phase and transport equations together</a><a href="#trajectory">Follow the normal to a wavefront</a><a href="#graded">Solve a graded-index profile</a><a href="#examples">A focus and a reconstructed gradient</a><a href="#experiment">Focus and tilt a bundle of paraxial rays</a><a href="#tutorial">Problem sheet · optical path and diffraction</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="scale">Derive the phase and transport equations together</h2>
+<p>In a lossless isotropic dielectric with a slowly varying refractive index \(n(\mathbf r)\), consider one scalar polarisation component satisfying \(\nabla^2\psi+k_0^2 n^2\psi=0\), where \(k_0=\omega/c\). This scalar description works when vector-polarisation coupling is negligible over the scales of interest. Set \(\psi=A(\mathbf r)e^{ik_0S(\mathbf r)}\) with a slowly varying real amplitude. Differentiation twice gives</p>
+<div class="math display">\[0=\nabla^2 A+i k_0[2\nabla A\cdot\nabla S+A\nabla^2S]+k_0^2 A(n^2-|\nabla S|^2).\]</div>
+<p>If the material and amplitude vary little over a wavelength, first equate the leading \(k_0^2\) term to zero. At the next order the \(k_0\) term vanishes. The two results are the eikonal equation and transport equation:</p>
+<div class="math display equation-chain"><div class="equation-step">\[|\nabla S|^2=n^2,\]</div><div class="equation-step">\[\nabla\cdot(A^2\nabla S)=0 .\]</div></div>
+<p>The first fixes the optical length accumulated between neighbouring wavefronts. The second transports energy down a thin ray tube. Across a tube of area \(\mathcal A\) perpendicular to the phase gradient, \(A^2 n\mathcal A\) is constant to this order. In a uniform medium a spherical tube grows as \(r^2\), giving \(A\propto1/r\), consistent with the outgoing wave.</p>
+</section>
+<section><h2 id="trajectory">Follow the normal to a wavefront</h2>
+<p>Choose arclength \(s\) along the ray and \(\hat{\mathbf t}=\nabla S/n\). In the eikonal equation take a spatial derivative. Since \(\nabla S\) is a gradient, \((\nabla S\cdot\nabla)\nabla S=\nabla(|\nabla S|^2)/2=n\nabla n\). Divide by \(n\). The ray equation is</p>
+<div class="math display">\[\frac{d}{ds}(n\hat{\mathbf t})=\nabla n .\]</div>
+<p>A transverse increase of index bends the ray toward larger optical index. If \(n\) depends only on the coordinate normal to layers, the component of \(n\hat{\mathbf t}\) parallel to them stays constant. Thus \(n\sin\theta\) is conserved for an angle measured from the normal, recovering Snell's law. The same equation follows by requiring stationary optical length \(\int n\,ds\) when varying the path with fixed endpoints.</p>
+</section>
+<section><h2 id="graded">Solve a graded-index profile</h2>
+<p>For paraxial rays travelling close to \(+z\), take \(n(y)\simeq n_0(1-g^2y^2/2)\). Assume \(|gy|\ll1\) and \(|dy/dz|\ll1\). Then \(ds\simeq dz\), \(\hat t_y\simeq y'\), and \(d(ny')/dz\simeq n_0y''\) to leading order. Since \(\partial_y n=-n_0g^2y\), the trajectory solves \(y''+g^2y=0\). Initial height \(y_0\) and slope \(s_0\) give</p>
+<div class="math display equation-chain"><div class="equation-step">\[y(z)=y_0\cos(gz)+\frac{s_0}{g}\sin(gz),\]</div><div class="equation-step">\[y'(z)=-g y_0\sin(gz)+s_0\cos(gz).\]</div></div>
+<p>For a collimated bundle, all \(s_0=0\). The transverse magnification \(\partial y/\partial y_0=\cos(gz)\) vanishes simultaneously for all rays at \(z_f=\pi/(2g)\). This is a caustic of the ray description. In this planar example the ray density grows as \(1/|\cos(gz)|\). Its divergence signals that the neglected \(\nabla^2 A\) becomes important. The underlying wave stays finite and develops diffraction near the focus.</p>
+</section>
+<section><h2 id="examples">A focus and a reconstructed gradient</h2>
+<h3>Refocus an off-axis bundle</h3>
+<p>Take \(g=20\ {\rm m^{-1}}\), initial heights between \(-1\) and \(+1\) mm and zero slopes. The predicted first focus is \(78.5\) mm downstream. The extreme rays acquire slopes of magnitude \(0.020\) at the focus, well within the paraxial regime. Tilt every initial ray by 0.010 rad. At \(z_f\) the common height shifts to \(s_0/g=0.50\) mm. The focal length is insensitive to this common tilt in the parabolic approximation.</p>
+<h3>Estimate the index from a photograph</h3>
+<p>Two successive crossings of initially parallel symmetric rays are 120 mm apart. Crossings occur at \(gz=\pi/2+m\pi\), so \(g=\pi/0.120=26.2\ {\rm m^{-1}}\). At a height of 2 mm, the predicted fractional index decrease from the central index is \(g^2y^2/2=1.37\times10^{-3}\). Resolving this small contrast through repeated bending can be easier than resolving it through a single refraction measurement.</p>
+</section>
+<section><h2 id="experiment">Focus and tilt a bundle of paraxial rays</h2>
+<p>At gradient 20 m⁻¹, five parallel rays meet after 78.5 mm. A common tilt of 10 mrad displaces their meeting point by 0.50 mm. Follow the bundle through a crossing and decide why the geometric density ceases to predict a finite intensity there.</p>
+<div id="try-it" class="interactive-study" data-study="em-eikonal"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Problem sheet · optical path and diffraction</h2>
+<h3>A travel-time check</h3><p>A ray passes through two homogeneous layers of thicknesses \(a,b\), indices \(n_1,n_2\), with lateral endpoint separation \(D\). Write travel time as a function of crossing coordinate \(x\). Recover the interface condition.</p><details><summary>Work through the solution</summary>
+<p>The time is \(T(x)=[n_1\sqrt{a^2+x^2}+n_2\sqrt{b^2+(D-x)^2}]/c\). The derivative vanishes when \(n_1 x/\sqrt{a^2+x^2}=n_2(D-x)/\sqrt{b^2+(D-x)^2}\). The two fractions are the sines of the angles to the interface normal. Each segment's length has positive second derivative, making this stationary path a local minimum in this geometry.</p>
+</details>
+<h3>Estimate the diffraction scale</h3><p>A circular pupil of numerical aperture 0.030 focuses vacuum light of wavelength 600 nm. Estimate the first dark-ring radius and compare it with a ray focus.</p><details><summary>Work through the solution</summary>
+<p>For a uniformly illuminated circular aperture in the paraxial limit the first Airy minimum is \(0.61\lambda_0/\mathrm{NA}\), giving \(12.2\) μm. Different pupil shapes change the numerical factor. The wavelength dependence is absent from the ray crossing, so a ray trace alone cannot distinguish two experiments with identical geometry but different wavelengths.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_38">Fließbach, chapter 38 · geometrical optics</a></li><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_36">Fließbach, chapter 36 · interference and diffraction</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/29-circuits-as-field-limits/">Chapter 29 · When a circuit element must be treated as a field</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/31-radiation-reaction-and-energy-balance/">Chapter 31 · Radiation reaction and the energy stored near a charge</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Splitting a stiff relaxation from a slowly varying drive · OneSimulation</title>
+<meta name="description" content="A sensor tries to follow a changing reference while a fast relaxation damps departures. An explicit method may oscillate wildly even though the underlying transient decays monotonically. Treating the restoring term implicitly can resolve the slow motion using steps longer than the transient time. Whether those steps measure the transient accurately is a different question.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/14-implicit-explicit-relaxation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Splitting a stiff relaxation from a slowly varying drive · OneSimulation">
+<meta property="og:description" content="A sensor tries to follow a changing reference while a fast relaxation damps departures. An explicit method may oscillate wildly even though the underlying transient decays monotonically. Treating the restoring term implicitly can resolve the slow motion using steps longer than the transient time. Whether those steps measure the transient accurately is a different question.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/14-implicit-explicit-relaxation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Splitting a stiff relaxation from a slowly varying drive</h1><p class="lead">A sensor tries to follow a changing reference while a fast relaxation damps departures. An explicit method may oscillate wildly even though the underlying transient decays monotonically. Treating the restoring term implicitly can resolve the slow motion using steps longer than the transient time. Whether those steps measure the transient accurately is a different question.</p><p class="byline">Chapter 14 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#construct-an-exact-benchmark-with-two-time-scales">Construct an exact benchmark with two time scales</a><a href="#solve-only-the-fast-part-implicitly">Solve only the fast part implicitly</a><a href="#test-early-time-accuracy-and-late-time-stability">Test early-time accuracy and late-time stability</a><a href="#tutorial-on-identifying-which-component-is-stiff">Tutorial on identifying which component is stiff</a></nav></aside><article class="prose reference"><section><h2 id="construct-an-exact-benchmark-with-two-time-scales">Construct an exact benchmark with two time scales</h2>
+<p>Let \(s(t)=\sin t\) and choose a relaxation time \(\varepsilon&gt;0\). Consider \(y'=s'(t)+(s(t)-y)/\varepsilon\), with \(y(0)=1\). Set \(e=y-s\). Subtraction of \(s'\) gives \(e'=-e/\varepsilon\), hence the reference solution \(y(t)=\sin t+e^{-t/\varepsilon}\). The slow reference changes over times of order one, while the initial mismatch decays significantly over \(\varepsilon\). We know both pieces exactly and can diagnose errors even when a stable result looks visually smooth.</p>
+<p>Explicit Euler applied to a perturbation of the state multiplies that perturbation by \(1-r\), with \(r=h/\varepsilon\). It damps monotonically only for \(0&lt;r\le1\), changes sign while damping for \(1&lt;r&lt;2\), and grows for \(r&gt;2\). These statements compare nearby solutions at equal drive. The full signal also contains the time variation of \(s\). At the boundary \(r=2\) a state perturbation alternates without decaying. Refining the step to follow a slow input alone can therefore give the wrong choice of \(h\).</p>
+</section>
+<section><h2 id="solve-only-the-fast-part-implicitly">Solve only the fast part implicitly</h2>
+<p>Split \(f_{\rm slow}(t)=\cos t\) from \(f_{\rm fast}(t,y)=(\sin t-y)/\varepsilon\). Evaluate the slow part at \(t_n\) and the fast part at \(t_{n+1},y_{n+1}\). This first-order additive implicit-explicit Euler step needs one scalar linear solve:</p>
+<div class="math display">\[(1+r)y_{n+1}=y_n+h\cos t_n+r\sin t_{n+1}.\]</div>
+<p>The state perturbation now multiplies by \(1/(1+r)\). It is damped at every positive step and tends to zero as \(r\) grows. Subtract \(\sin t_{n+1}\) from both sides after solving. The mismatch obeys \(e_{n+1}=[e_n+h\cos t_n-(\sin t_{n+1}-\sin t_n)]/(1+r)\). The bracketed forcing defect is \(O(h^2)\) for smooth input. In the stiff limit at fixed \(h\), the endpoint approaches the current reference. Moving the reference in the fast term to the old time would instead drag it one sample behind in that limit. The choice of what to treat implicitly includes the time at which a fast equilibrium is imposed.</p>
+</section>
+<section><h2 id="test-early-time-accuracy-and-late-time-stability">Test early-time accuracy and late-time stability</h2>
+<p>For \(\varepsilon=0.02\), \(h=0.05\), \(r=2.5\). At the first step the exact value is \(\sin(0.05)+e^{-2.5}=0.1321\). Explicit Euler gives \(1+0.05(1-50)=-1.45\). The implicit-explicit value is \([1+0.05+2.5\sin(0.05)]/3.5=0.3357\). The latter is stable but visibly overestimates the surviving transient. Its damping factor \(1/3.5=0.286\) differs substantially from \(e^{-2.5}=0.0821\). A question about peak rate or initial settling requires shorter steps even if the late-time reference is recovered.</p>
+<p>The experiment holds the final time at one while the number of steps changes. The vertical coordinate is the base-ten logarithm of absolute error, with values below \(10^{-15}\) drawn at that floor. Negative heights therefore correspond to errors less than one. Track the maximum error separately from the final error as the transient dies out. Try an initially unstable explicit run, then double the number of steps. The stiffness criterion depends on the ratio \(h/\varepsilon\), while accuracy on the reference also depends on \(h\) itself.</p>
+<div id="try-it" class="interactive-study" data-study="num-ode-imex"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-identifying-which-component-is-stiff">Tutorial on identifying which component is stiff</h2>
+<p>Keep \(h=0.04\) and reduce \(\varepsilon\) from 0.04 to 0.004. For each case compare exact, explicit and implicit amplification of a state perturbation. What quantity would force a reduction of \(h\) even with the implicit-explicit method?</p>
+<details><summary>Work through the solution</summary><p>At \(r=1\) the three factors are \(e^{-1}=0.368\), zero and \(1/2\). At \(r=10\) they are \(4.54\times10^{-5}\), \(-9\) and \(1/11=0.0909\). For a measurement of the initial decay rate the implicit discretisation substantially misrepresents both exact factors. Bounding error during that transient requires smaller steps relative to \(\varepsilon\), even though its numerical amplification is stable.</p></details>
+<p class="source-note">Further reading · <a href="https://www.cs.ubc.ca/sites/default/files/tr/1993/TR-93-15_0.pdf">Ascher, Ruuth and Wetton, implicit-explicit time discretisations</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/13-symmetric-midpoint/">Chapter 13 · Implicit midpoint, reversibility and the phase of an oscillator</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/15-collocation-and-shooting/">Chapter 15 · Why a boundary value problem can be easier than its shooting equation</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-num-ode.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a stable plant can initially move in the wrong direction · OneSimulation</title>
+<meta name="description" content="Two processes may act on a measured output at different speeds and with opposite signs. Their combined output can first fall after a positive command and later rise. Derive that transient and see why trying to cancel its zero creates an unstable internal state.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/17-inverse-response/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why a stable plant can initially move in the wrong direction · OneSimulation">
+<meta property="og:description" content="Two processes may act on a measured output at different speeds and with opposite signs. Their combined output can first fall after a positive command and later rise. Derive that transient and see why trying to cancel its zero creates an unstable internal state.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/17-inverse-response/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Why a stable plant can initially move in the wrong direction</h1><p class="lead">Two processes may act on a measured output at different speeds and with opposite signs. Their combined output can first fall after a positive command and later rise. Derive that transient and see why trying to cancel its zero creates an unstable internal state.</p><p class="byline">Chapter 17 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#pathways">Build a right-half-plane zero from two stable responses</a><a href="#transient">Locate the undershoot without a numerical search</a><a href="#cancellation">Read a time-domain constraint directly from the zero</a><a href="#examples">Two experiments with the same final reading</a><a href="#tutorial">Tutorial · infer a hidden fast time constant</a></nav></aside><article class="prose reference"><section><h2 id="pathways">Build a right-half-plane zero from two stable responses</h2>
+<p>Let a unit input drive two stable first-order processes in parallel. A slow path has gain \(a&gt;0\) and time constant \(T_s\); a fast path is subtracted, with gain \(b&gt;0\) and time constant \(T_f&lt;T_s\). The measured output transfer function is</p>
+<div class="math display">\[G(s)={a\over1+sT_s}-{b\over1+sT_f}={(a-b)+(aT_f-bT_s)s\over(1+sT_s)(1+sT_f)}.\]</div>
+<p>Choose \(a&gt;b\) so the final step response is positive. Its initial slope is \(a/T_s-b/T_f\). When this slope is negative, \(bT_s&gt;aT_f\), so the numerator has a real positive zero \(z=(a-b)/(bT_s-aT_f)\). Each storage process has a stable pole. The right-half-plane zero expresses the way their contributions are combined in the output.</p>
+</section>
+<section><h2 id="transient">Locate the undershoot without a numerical search</h2>
+<p>For a unit step apply each path's time-domain solution and subtract. Setting the time derivative to zero and taking logarithms gives the time of minimum.</p>
+<div class="math display equation-chain"><div class="equation-step">\[y(t)=a(1-e^{-t/T_s})-b(1-e^{-t/T_f}),\]</div><div class="equation-step">\[t_{\min}={\ln[bT_s/(aT_f)]\over 1/T_f-1/T_s}.\]</div></div>
+<p>For the inverse-response conditions this is positive. The steady value diagnosis alone would see only \(a-b\); a short test would reveal mostly the fast negative path. Identifying both requires measurements on both time scales. When the fast and slow slopes exactly match, the numerator loses its s term and the finite zero moves to infinity.</p>
+</section>
+<section><h2 id="cancellation">Read a time-domain constraint directly from the zero</h2>
+<p>For a bounded causal unit-step response \(Y(s)=G(s)/s\). At the zero \(Y(z)=0\), hence \(\int_0^\infty e^{-zt}y(t)\,dt=0\). An output ultimately settling to a positive constant cannot stay positive at every time while obeying this weighted integral. A controller implementing the exact inverse \(1/G\) would have a pole at z and an exponentially growing response to small errors in its internal state. Shaping the command over a longer interval can reduce an undershoot without introducing that unstable inversion.</p>
+</section>
+<section><h2 id="examples">Two experiments with the same final reading</h2>
+<p>Take \(a=2,\ b=1,\ T_s=4\) s and \(T_f=0.50\) s. The zero is at \(1/3\) s⁻¹. The initial slope is \(0.5-2=-1.5\) s⁻¹ and the minimum occurs at 0.792 s. Evaluating the response gives about −0.435 before it ultimately reaches +1. This initial dip can look like a sensor wired with the wrong sign until the slow path has had time to act.</p>
+<p>Lengthen the fast path to 1.5 s. The same final value +1 now accompanies a less negative initial slope of −0.167 s⁻¹. The zero moves to \(1/(4-3)=1\) s⁻¹ and the minimum occurs at 0.690 s with an undershoot about −0.052. Try moving the fast time constant through 2 s. Predict the initial slope and disappearance of the undershoot before examining the curves.</p>
+<p class="calculation-prompt">Increase the fast time constant through the equal-slope value of 2 s at the default gains. Predict the disappearance of the negative excursion. Reduce the subtracted gain and derive the new equal-slope condition before repeating the test.</p>
+<div id="try-it" class="interactive-study" data-study="eng-control-engineering-inverse-response"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · infer a hidden fast time constant</h2>
+<p>A fitted slow path has \(a=2,\ T_s=4\) s. The steady step response is 1 and the measured initial slope is −0.75 s⁻¹. Infer b, \(T_f\), the zero position and the time of minimum.</p>
+<details><summary>Show the parameter recovery</summary>
+<p>The final reading gives \(b=a-1=1\). The initial slope gives \(1/T_f=2/4+0.75=1.25\) s⁻¹, so \(T_f=0.80\) s. The zero is \(1/(4-1.6)=0.417\) s⁻¹ and \(t_{\min}=\ln(4/1.6)/(1.25-0.25)=0.916\) s. Combining a static observation with a dynamic one makes both path parameters identifiable in this ideal two-path model.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://www.cds.caltech.edu/~murray/books/AM08/pdf/fbs-limits_24Jul2020.pdf">Åström and Murray, Feedback Systems · chapter 14 on fundamental limits</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/16-delay-margin/">Chapter 16 · How much transport delay a feedback loop can tolerate</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/18-phase-lead/">Chapter 18 · Designing a lead network at a specified gain crossover</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

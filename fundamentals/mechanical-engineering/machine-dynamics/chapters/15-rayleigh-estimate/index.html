@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimating a cantilever frequency from energy · OneSimulation</title>
+<meta name="description" content="A clamped beam carries a small sensor at its tip. Its precise mode shape is unknown. Use the static deflection shape to approximate the fundamental frequency and see why concentrating a small mass at the tip has a large effect.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/15-rayleigh-estimate/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Estimating a cantilever frequency from energy · OneSimulation">
+<meta property="og:description" content="A clamped beam carries a small sensor at its tip. Its precise mode shape is unknown. Use the static deflection shape to approximate the fundamental frequency and see why concentrating a small mass at the tip has a large effect.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/15-rayleigh-estimate/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Estimating a cantilever frequency from energy</h1><p class="lead">A clamped beam carries a small sensor at its tip. Its precise mode shape is unknown. Use the static deflection shape to approximate the fundamental frequency and see why concentrating a small mass at the tip has a large effect.</p><p class="byline">Chapter 15 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#shape">Choose a displacement field that respects the support</a><a href="#energy">Compute effective stiffness and mass from the same field</a><a href="#examples">Choose a sensor after estimating its dynamic effect</a><a href="#onesimulation-comparison">A related OneSimulation calculation</a><a href="#tutorial">Tutorial · estimate an unknown attached mass</a></nav></aside><article class="prose reference"><section><h2 id="shape">Choose a displacement field that respects the support</h2>
+<p>Write \(w(x,t)=q(t)\phi(s)\) with \(s=x/L\), taking \(q\) as tip displacement. Choose the shape from a uniform cantilever under a static transverse tip force. The bending moment varies linearly from root to tip. Integrating curvature twice with \(w(0)=w'(0)=0\), then normalizing at \(s=1\), gives \(\phi=s^2(3-s)/2\). The shape satisfies both essential clamp conditions. Its free-tip shear need not match the exact unloaded vibration mode. The energy formulation can use such admissible trial shapes.</p>
+</section>
+<section><h2 id="energy">Compute effective stiffness and mass from the same field</h2>
+<p>The strain energy density of a slender beam in bending is \(\tfrac12 EI w_{xx}^2\). Its translational kinetic energy is \(\tfrac12\rho A w_t^2\) per unit length. Changing variables from x to s introduces different powers of L into the two integrals. Include a point mass M at the tip, neglecting its rotary inertia.</p>
+<div class="math display equation-chain"><div class="equation-step">\[U={EI q^2\over 2L^3}\int_0^1(\phi'')^2\,ds,\]</div><div class="equation-step">\[K={\dot q^2\over2}\left[\rho AL\int_0^1\phi^2\,ds+M\right].\]</div></div>
+<p>Since \(\phi''=3(1-s)\), the stiffness integral is 3. Squaring \(s^2(3-s)/2\) and integrating \( (9s^4-6s^5+s^6)/4\) gives \(33/140\). The Euler–Lagrange equation for q is consequently a single oscillator equation with</p>
+<div class="math display">\[\omega_R^2={3EI/L^3\over(33/140)\rho AL+M}.\]</div>
+<p>For M=0 this gives the dimensionless coefficient \(\sqrt{140/11}=3.5675\). Solving the exact unloaded cantilever condition \(\cosh\beta\cos\beta=-1\) gives \(\beta_1^2=3.5160\). The estimate is high by about 1.5%. The Rayleigh minimum principle explains that direction of error for conservative systems with admissible trial shapes. Restricting motion to a single shape restricts the set over which the energy quotient can attain its minimum.</p>
+</section>
+<section><h2 id="examples">Choose a sensor after estimating its dynamic effect</h2>
+<p>Take \(EI=10\) N m², \(L=0.50\) m and total beam mass 0.40 kg. The tip stiffness is 240 N/m and the distributed effective mass is only 0.0943 kg. The estimate gives 8.03 Hz without a sensor and 6.49 Hz with a 0.05 kg tip sensor. The sensor weighs one eighth of the beam, yet it has over half the effective mass associated with the chosen tip coordinate.</p>
+<p>Place the same sensor at half-span instead. There \(\phi(0.5)=0.3125\). Its kinetic energy contributes \(M\phi(0.5)^2=0.00488\) kg to the effective mass, so the estimate rises to 7.83 Hz. The sensor measures a smaller local motion as it perturbs the frequency less. Compare that trade-off at different attachment positions with the plot.</p>
+<p class="calculation-prompt">Move along the position axis with a fixed sensor mass. Identify the interval in which frequency is most sensitive to changing attachment position. Double the sensor mass and check whether the change in frequency doubles at the tip.</p>
+<div id="try-it" class="interactive-study" data-study="eng-machine-dynamics-rayleigh-estimate"></div>
+</section>
+<section><h2 id="onesimulation-comparison">A related OneSimulation calculation</h2>
+<p>The course frame model has several modes and an independently variable payload rotary inertia. Compare a pure translation-mass change with a rotary-inertia change; the scalar point-mass estimate above addresses the first mechanism.</p>
+<p><a href="/fundamentals/mechanical-engineering/machine-dynamics/#experiment">Open the OneSimulation frame eigenvalue experiment</a></p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · estimate an unknown attached mass</h2>
+<p>The same bare beam is fitted with a small tip part and resonates at 6.0 Hz. Estimate the attached mass. Give one reason the inferred mass could differ from a scale reading even when the frequency measurement is accurate.</p>
+<details><summary>Show the mass estimate</summary>
+<p>The required effective mass is \(240/(2\pi\cdot6)^2=0.1689\) kg. Subtract 0.0943 kg for the beam to obtain about 0.0746 kg. Clamp compliance would reduce the effective stiffness and frequency, which this fit would interpret as extra tip mass. The trial shape and omission of rotary inertia also limit the estimate for a part with appreciable extent.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://solidmechanics.org/Text/Chapter5_9/Chapter5_9.htm">Bower, Applied Mechanics of Solids · Rayleigh–Ritz methods</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/14-bending-waves/">Chapter 14 · Why the frequencies of a bending beam are not equally spaced</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/16-moving-frame/">Chapter 16 · Why a radial slide presses sideways on a rotating guide</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

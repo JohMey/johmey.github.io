@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Separating reference tracking from disturbance rejection · OneSimulation</title>
+<meta name="description" content="A positioning or speed loop can reject a load well but follow a demanded trajectory poorly. Add a feedforward signal computed from the requested motion, and derive precisely how mismatch and command smoothness affect tracking.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/15-reference-shaping/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Separating reference tracking from disturbance rejection · OneSimulation">
+<meta property="og:description" content="A positioning or speed loop can reject a load well but follow a demanded trajectory poorly. Add a feedforward signal computed from the requested motion, and derive precisely how mismatch and command smoothness affect tracking.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/15-reference-shaping/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Separating reference tracking from disturbance rejection</h1><p class="lead">A positioning or speed loop can reject a load well but follow a demanded trajectory poorly. Add a feedforward signal computed from the requested motion, and derive precisely how mismatch and command smoothness affect tracking.</p><p class="byline">Chapter 15 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#model">Use a physical balance to predict the required input</a><a href="#reference">Design a command with finite endpoint slopes</a><a href="#examples">A tracking error that reveals the wrong inertia</a><a href="#tutorial">Tutorial · distinguish drag bias from inertia bias</a></nav></aside><article class="prose reference"><section><h2 id="model">Use a physical balance to predict the required input</h2>
+<p>Take a first-order plant \(J\dot y+by=u-d\) with positive inertia and drag. Suppose the commanded speed \(r(t)\) and its derivative are available from a trajectory generator. From the plant balance the model input that would exactly sustain \(y=r\) at zero disturbance is \(\widehat J\dot r+\widehat b r\), where hats indicate estimated parameters. Add ordinary proportional correction on the tracking error \(e=r-y\):</p>
+<div class="math display equation-chain"><div class="equation-step">\[u=\widehat J\dot r+\widehat b r+K_pe,\]</div><div class="equation-step">\[J\dot e+(b+K_p)e=(J-\widehat J)\dot r+(b-\widehat b)r+d .\]</div></div>
+<p>This error equation separates three causes of deviation. Feedback changes the decay rate and attenuates each forcing term. With exact parameters, zero disturbance and correct initial conditions, arbitrary differentiable trajectories are tracked exactly in this ideal model. A discontinuous step calls for an impulse through the derivative term; a finite actuator cannot follow it. A generated smooth trajectory supplies a realizable alternative.</p>
+</section>
+<section><h2 id="reference">Design a command with finite endpoint slopes</h2>
+<p>Move from zero to target R during an interval T with \(r=R(3s^2-2s^3)\), \(s=t/T\). It has zero velocity derivative at both ends and peak \(\dot r=1.5 R/T\) at the midpoint. Doubling T halves the inertial part of the nominal torque without changing the final drag torque. An acceleration or torque budget can therefore determine trajectory duration before feedback gains are selected. A sensor derivative of a noisy measured speed is unnecessary here because \(\dot r\) is computed from the commanded polynomial.</p>
+<p>For a constant-slope segment \(r=vt\), suppose drag is estimated exactly and the load is zero. The mismatch forcing is \((J-\widehat J)v\). Away from segment transitions the settled tracking lag is \((J-\widehat J)v/(b+K_p)\). At a hold after the segment the mismatch forcing disappears, and this lag decays with time constant \(J/(b+K_p)\).</p>
+</section>
+<section><h2 id="examples">A tracking error that reveals the wrong inertia</h2>
+<p>Let \(J=0.20\), \(b=0.50\) and \(K_p=1.5\) in consistent SI units. The tracking time constant is 0.10 s. With \(\widehat J=0.15\), correct drag and a 4 rad/s² ramp, the lag approaches \(0.05(4)/2=0.10\) rad/s. After 0.30 s it reaches \(0.10(1-e^{-3})=0.0950\) rad/s. A constant opposing load of 0.40 N m adds a steady 0.20 rad/s lag regardless of this inertia mismatch. Correcting feedforward inertia can improve tracking without changing load rejection.</p>
+<p>For a cubic transition to 4 rad/s in 1 s, the midpoint has \(r=2\) rad/s and \(\dot r=6\) rad/s². The nominal motor torque at that instant is \(0.20(6)+0.50(2)=2.20\) N m. Repeating the move in 2 s reduces the midpoint request to 1.60 N m; the final torque remains 2.0 N m for both durations. The plot integrates the error equation, so it also captures lag while the slope changes.</p>
+<p class="calculation-prompt">Set estimated inertia equal to the actual 0.20 kg m² before changing move duration. Then halve the estimate and compare lag during acceleration and during the hold. Explain how shortening move duration tests the available torque separately from feedback damping.</p>
+<div id="try-it" class="interactive-study" data-study="eng-control-engineering-reference-shaping"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · distinguish drag bias from inertia bias</h2>
+<p>With no external load, a long constant-speed hold at 4 rad/s leaves a 0.10 rad/s lag. Use the same true b and tuned \(K_p\) to estimate \(\widehat b\). Can a measurement during this hold identify the feedforward inertia as well?</p>
+<details><summary>Show the identification argument</summary>
+<p>At constant reference \(\dot r=0\) and at equilibrium \(\dot e=0\). Thus \(0.10=(0.50-\widehat b)(4)/2\), giving \(\widehat b=0.45\) N m s/rad. The inertia term vanishes identically on this data segment. A segment with nonzero \(\dot r\), ideally repeated at opposite slopes at the same speed, supplies an independent observation of inertial mismatch.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://www.cds.caltech.edu/~murray/books/AM08/pdf/fbs-loopsyn_24Jul2020.pdf">Åström and Murray, Feedback Systems · chapter 12, feedforward design</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/14-integral-load/">Chapter 14 · Why integral action rejects an unknown constant load</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/16-delay-margin/">Chapter 16 · How much transport delay a feedback loop can tolerate</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

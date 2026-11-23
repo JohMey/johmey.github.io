@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a moving wall sends momentum into a liquid · OneSimulation</title>
+<meta name="description" content="A plate oscillating horizontally in a deep bath has no average velocity. It nevertheless dissipates energy continuously. A velocity measurement at two heights can reveal the fluid’s viscosity.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/13-oscillating-wall/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a moving wall sends momentum into a liquid · OneSimulation">
+<meta property="og:description" content="A plate oscillating horizontally in a deep bath has no average velocity. It nevertheless dissipates energy continuously. A velocity measurement at two heights can reveal the fluid’s viscosity.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/13-oscillating-wall/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>How a moving wall sends momentum into a liquid</h1><p class="lead">A plate oscillating horizontally in a deep bath has no average velocity. It nevertheless dissipates energy continuously. A velocity measurement at two heights can reveal the fluid’s viscosity.</p><p class="byline">Chapter 13 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#equation">Keep the unsteady term in a parallel flow</a><a href="#periodic">Read decay and phase from one complex root</a><a href="#probe">Worked example · interpret a submerged velocity probe</a><a href="#loss">Worked example · power delivered to the wall layer</a><a href="#onesimulation-comparison">A related OneSimulation calculation</a><a href="#tutorial">Tutorial · estimate a material property without a force sensor</a></nav></aside><article class="prose reference"><section><h2 id="equation">Keep the unsteady term in a parallel flow</h2>
+<p>Let \(y\) increase upward from a very broad, horizontal plate. The liquid is Newtonian and incompressible with constant kinematic viscosity \(\nu\); the plate moves parallel to itself with speed \(U\cos\omega t\). Ignore edges, any pressure gradient along the plate and transients left from starting the motion. By symmetry the velocity has a single component \(u(y,t)\). A parcel has no vertical speed and meets no streamwise velocity variation, so convective acceleration vanishes even though the motion is time dependent. Horizontal momentum balance on a slice of thickness \(dy\) compares its acceleration with the shear-stress difference on its two faces.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\rho\,dy\,\partial_t u=\tau(y+dy)-\tau(y),\]</div><div class="equation-step">\[\tau=\mu\,\partial_yu,\]</div><div class="equation-step">\[\partial_tu=\nu\partial_y^2u .\]</div></div>
+<p>Velocity is prescribed at the plate by no slip and tends to zero far away. The same equation describes thermal diffusion with temperature in place of velocity. Here the quantity transferred is horizontal momentum, and a velocity gradient sets its transfer rate.</p>
+</section>
+<section><h2 id="periodic">Read decay and phase from one complex root</h2>
+<p>Represent periodic velocity by the real part of \(\widehat u(y)e^{i\omega t}\). Inserting it into the equation gives \(\widehat u''=(i\omega/\nu)\widehat u\). Since \((1+i)^2=2i\), the decaying branch of the solution has an exponent with equal real and imaginary parts.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\delta=\sqrt{2\nu/\omega},\]</div><div class="equation-step">\[u(y,t)=Ue^{-y/\delta}\cos(\omega t-y/\delta).\]</div></div>
+<p>Every increase in height by \(\delta\) divides the amplitude by \(e\) and delays the phase by one radian. This \(\delta\) is a scale rather than a physical edge. The unbounded solution requires the top and sidewalls to be far enough away for the amplitude there to be negligible. At five penetration depths it is less than one percent of its value at the plate.</p>
+</section>
+<section><h2 id="probe">Worked example · interpret a submerged velocity probe</h2>
+<p>In an oil with \(\nu=5.0\times10^{-5}\) m²/s, set \(f=2.00\) Hz and \(U=0.080\) m/s. Using \(\omega=2\pi f\) gives \(\delta=2.82\) mm. At 3.00 mm the predicted amplitude is \(0.080e^{-3/2.82}=0.0276\) m/s. The phase lag is 1.06 rad or 0.0846 s. A synchronized velocity snapshot can therefore show nearly stationary liquid while the wall speed is large. A single instantaneous ratio generally differs from the ratio of fitted amplitudes.</p>
+</section>
+<section><h2 id="loss">Worked example · power delivered to the wall layer</h2>
+<p>The wall exerts on the fluid a tangential traction \(-\mu u_y(0,t)\). Its complex amplitude is \(\mu U(1+i)/\delta\). Only the in-phase part contributes to power averaged over a cycle, since averaging a product of two cosines gives one half of the cosine of their phase difference. Thus \(\overline P/A=\mu U^2/(2\delta)\). For the same oil at density 900 kg/m³, \(\mu=0.045\) Pa s and the mean power is 0.0510 W/m². The positive value is consistent with viscous dissipation even though mean shear and mean speed separately vanish.</p>
+<p class="calculation-prompt">Freeze the phase at a quarter cycle and find the depth at which the velocity first changes sign away from the wall. Sweep the phase to distinguish that moving zero from the stationary amplitude envelope, then double the frequency and predict the new penetration depth.</p>
+<div id="try-it" class="interactive-study" data-study="eng-fluid-mechanics-oscillating-wall"></div>
+</section>
+<section><h2 id="onesimulation-comparison">A related OneSimulation calculation</h2>
+<p>The course flat-plate calculation provides a second momentum-diffusion example. Predict what doubling viscosity does to the measured layer thickness at a fixed downstream station, then compare the square-root scaling across the two geometries.</p>
+<p><a href="/fundamentals/mechanical-engineering/fluid-mechanics/#experiment">Measure boundary-layer thickness in OneSimulation</a></p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · estimate a material property without a force sensor</h2>
+<p>At 1.00 Hz two probes spaced 2.00 mm vertically report fitted amplitudes in the ratio upper/lower = 0.500. Estimate \(\delta,\nu\), and the phase difference. Identify a measurement that would falsify this model even if the amplitude ratio agreed.</p>
+<details><summary>Use both the magnitude and phase predictions</summary>
+<p>The spacing divided by \(\delta\) is \(\ln2\), giving \(\delta=2.89\) mm. Then \(\nu=\omega\delta^2/2=2.62\times10^{-5}\) m²/s. The upper signal must lag by 0.693 rad, equivalent to 0.110 s. A substantial phase discrepancy suggests confinement, an unremoved transient or motion beyond a one-dimensional shear layer. Fitting both observables is a stronger test than assigning a viscosity to every amplitude pair.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-25-advanced-fluid-mechanics-fall-2013/ae8a045fb09d50686cc1764c296f83f1_MIT2_25F13_SolutionStokes2.pdf">MIT 2.25, Stokes’ second problem (PDF)</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/6/">Problem sheet 6 · Rotor work and compressible discharge</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/14-potential-flow/">Chapter 14 · A cylinder in potential flow and the absent drag</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

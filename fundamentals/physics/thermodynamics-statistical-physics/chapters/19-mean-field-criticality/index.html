@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mean-field ordering, response and the critical point · OneSimulation</title>
+<meta name="description" content="Interactions can make a magnet favour a nonzero moment even when the applied field vanishes. Averaging the local exchange field gives a solvable model whose critical predictions can be compared with the exact one-dimensional chain.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/19-mean-field-criticality/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mean-field ordering, response and the critical point · OneSimulation">
+<meta property="og:description" content="Interactions can make a magnet favour a nonzero moment even when the applied field vanishes. Averaging the local exchange field gives a solvable model whose critical predictions can be compared with the exact one-dimensional chain.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/19-mean-field-criticality/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Mean-field ordering, response and the critical point</h1><p class="lead">Interactions can make a magnet favour a nonzero moment even when the applied field vanishes. Averaging the local exchange field gives a solvable model whose critical predictions can be compared with the exact one-dimensional chain.</p><p class="byline">Chapter 19 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#build-the-free-energy-from-the-count-of-spin-states">Build the free energy from the count of spin states</a><a href="#expand-about-the-loss-of-stability">Expand about the loss of stability</a><a href="#compute-a-response-then-compare-with-an-exact-counterexample">Compute a response, then compare with an exact counterexample</a><a href="#tutorial-on-critical-response">Tutorial on critical response</a></nav></aside><article class="prose reference"><section><h2 id="build-the-free-energy-from-the-count-of-spin-states">Build the free energy from the count of spin states</h2>
+<p>Take \(N\) spins \(s_i=\pm1\), nearest-neighbour energy \(-J\sum_{\langle ij\rangle}s_is_j\) and Zeeman energy \(-h\sum_i s_i\), where \(h\) has energy units. Denote mean spin by \(m\). The fractions of positive and negative spins are \(p_\pm=(1\pm m)/2\). The binomial count and Stirling's approximation give entropy per spin \(-k_B(p_+\ln p_++p_-\ln p_-)\). Independent-neighbour mean field replaces each pair average by \(m^2\). With \(z\) neighbours and each bond counted once, interaction energy per spin becomes \(-zJm^2/2\).</p>
+<div class="math display">\[f(m)=-\tfrac12zJm^2-hm+k_BT[p_+\ln p_++p_-\ln p_-].\]</div>
+<p>Differentiate at fixed \(T,h\). The entropy contribution has derivative \(k_BT\operatorname{atanh}m\), giving \(m=\tanh[(zJm+h)/(k_BT)]\). This equation can have three real roots, so an iterative solver returning a root alone is insufficient. The equilibrium phase minimises \(f\); the second derivative \(k_BT/(1-m^2)-zJ\) distinguishes local minima and maxima.</p>
+</section>
+<section><h2 id="expand-about-the-loss-of-stability">Expand about the loss of stability</h2>
+<p>Near zero magnetisation, \(\operatorname{atanh}m=m+m^3/3+\cdots\). Set \(T_c=zJ/k_B\) and integrate the expanded derivative to obtain</p>
+<div class="math display">\[f(m)-f(0)\simeq\tfrac{k_B}{2}(T-T_c)m^2+\tfrac{k_BT}{12}m^4-hm .\]</div>
+<p>At zero field and \(T&gt;T_c\), \(m=0\) is stable. Below \(T_c\), symmetry gives two minima whose leading magnitudes satisfy \(m^2\simeq3(T_c-T)/T\). Thus the order parameter vanishes like \((T_c-T)^{1/2}\) close to \(T_c\). At \(T=T_c\) a small nonzero field instead gives \(m\simeq[3h/(k_BT_c)]^{1/3}\). These powers describe this model's limiting behaviour. For a finite sample symmetry makes the unbiased ensemble average zero if it samples both minima. Spontaneous magnetisation refers to the thermodynamic limit with an infinitesimal field selecting a sign.</p>
+</section>
+<section><h2 id="compute-a-response-then-compare-with-an-exact-counterexample">Compute a response, then compare with an exact counterexample</h2>
+<p>Above \(T_c\) the small-field stationary equation gives \(\chi=\partial m/\partial h=1/[k_B(T-T_c)]\). Below \(T_c\), differentiate the exact stationarity equation on the positive branch, obtaining \(\chi=[k_BT/(1-m^2)-zJ]^{-1}\). Expanding near \(T_c\) there gives \(\chi\simeq[2k_B(T_c-T)]^{-1}\), half the above-transition amplitude at equal distance. At \(T=0.8T_c\), the full zero-field solution is about \(m=0.7104\); the small-\(m\) estimate \(\sqrt{3(1-0.8)/0.8}=0.866\) is already visibly inaccurate.</p>
+<p>Mean field predicts an ordering temperature even for a one-dimensional chain with \(z=2\). The exact finite-temperature correlation length in the earlier transfer-matrix solution is finite at all \(T&gt;0\). Spatial fluctuations and domain walls invalidate the independent-neighbour closure in one dimension. The experiment plots the full mean-field free energy and its quartic approximation for the same normalised \(T,h\). Find the minima before inspecting the calculated order parameter. Compare how a weak bias changes their relative depths.</p>
+<div id="try-it" class="interactive-study" data-study="ph-mean-field"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-critical-response">Tutorial on critical response</h2>
+<p>At \(T=1.10T_c\), what is the linear-response mean spin expected at \(h/(k_BT_c)=0.002\)? At the critical point use the cubic equation to estimate \(m\) for the same field.</p>
+<details><summary>Work through the solution</summary><p>Above the transition \(m\simeq0.002/0.10=0.020\). At criticality \(m\simeq(0.006)^{1/3}=0.182\). The larger response signals the loss of the quadratic restoring term; linear extrapolation through \(T_c\) would give a divergent susceptibility.</p></details>
+<p>At \(h=0\) and \(T=0.95T_c\), is \(m=0\) a possible output from a fixed-point solver? How should an equilibrium calculation prevent a wrong interpretation?</p>
+<details><summary>Work through the solution</summary><p>Starting the symmetric iteration at exactly zero returns zero repeatedly, even below \(T_c\). Its free-energy curvature is \(k_B(T-T_c)&lt;0\); it is a local maximum. Compare the free energies or bracket the two symmetry-related nonzero stationary points before reporting an equilibrium moment.</p></details>
+<p class="source-note">Further reading · <a href="https://davidtong.org/teaching/statistical-physics/">Cambridge statistical physics, mean-field Ising and Landau theory</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/18-sommerfeld-expansion/">Chapter 18 · Why only a narrow shell of a Fermi gas carries heat</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/7/">Problem sheet 7 · Can a fluctuation reveal attraction on a surface?</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

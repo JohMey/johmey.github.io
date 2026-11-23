@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Removing unequal scales before an iteration · OneSimulation</title>
+<meta name="description" content="Derive the change of variables behind diagonal preconditioning, then measure what it can and cannot repair in a two-spring system.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/14-energy-preconditioning/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Removing unequal scales before an iteration · OneSimulation">
+<meta property="og:description" content="Derive the change of variables behind diagonal preconditioning, then measure what it can and cannot repair in a two-spring system.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/14-energy-preconditioning/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Removing unequal scales before an iteration</h1><p class="lead">Derive the change of variables behind diagonal preconditioning, then measure what it can and cannot repair in a two-spring system.</p><p class="byline">Chapter 14 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#coordinates-in-the-energy">Coordinates in the energy</a><a href="#choosing-a-common-step">Choosing a common step</a><a href="#two-quite-different-causes-of-a-slow-solve">Two quite different causes of a slow solve</a><a href="#compare-convergence-factors">Compare convergence factors</a><a href="#tutorial-on-interpreting-convergence">Tutorial on interpreting convergence</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="coordinates-in-the-energy">Coordinates in the energy</h2>
+<p>Suppose one displacement is measured in millimetres and the other in metres. A steepest-descent direction depends on the Euclidean lengths of the coordinates. The physical minimum does not. Let \(A\) be symmetric positive definite, \(D=\operatorname{diag}(A)\), and introduce \(y=D^{1/2}x\). Substituting \(x=D^{-1/2}y\) in the energy produces</p>
+<div class="math display equation-chain"><div class="equation-step">\[\widetilde A=D^{-1/2}AD^{-1/2},\]</div><div class="equation-step">\[\widetilde b=D^{-1/2}b.\]</div></div>
+<p>The diagonal of the new matrix is one. Its off-diagonal entry is the original coupling divided by the geometric mean of the two direct stiffnesses. This is a dimensionless measure of interaction. The transformed gradient step maps back to \(x_{j+1}=x_j+\alpha D^{-1}(b-Ax_j)\).</p>
+</section>
+<section>
+<h2 id="choosing-a-common-step">Choosing a common step</h2>
+<p>For any eigenvector of the transformed matrix the iteration multiplies the error by \(1-\alpha\lambda\). With eigenvalues in \([m,M]\), equalise the two extreme absolute factors by taking \(1-\alpha m=-(1-\alpha M)\). This gives \(\alpha=2/(M+m)\) and worst-case contraction \((M-m)/(M+m)\). If \(m\) approaches zero the direction barely moves, however accurately the linear algebra is performed.</p>
+</section>
+<section>
+<h2 id="two-quite-different-causes-of-a-slow-solve">Two quite different causes of a slow solve</h2>
+<p>For \(A=\operatorname{diag}(100,1)\), an optimal unscaled step shrinks the error by only \(99/101\). Diagonal scaling gives the identity. One step of length one then solves both components exactly. This is the effect of unlike units or stiffness scales.</p>
+<p>For a unit-diagonal matrix with coupling 0.95, scaling leaves the matrix unchanged. Its eigenvalues are 1.95 and 0.05. Each optimal step can retain 95% of the error. The nearly free opposing motion is part of the problem itself. A preconditioner that represents the coupling, or a different physical constraint, is needed for faster convergence in that direction.</p>
+</section>
+<section>
+<h2 id="compare-convergence-factors">Compare convergence factors</h2>
+<p>Vary the stiffness ratio and coupling independently. The curves are worst-case error factors raised to the iteration count. They give bounds attained by an extreme eigenmode with this particular fixed optimal step.</p>
+<div id="try-it" class="interactive-study" data-study="num-energy-preconditioning"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-interpreting-convergence">Tutorial on interpreting convergence</h2>
+<p>If a bound decreases from 1 to \(10^{-3}\) in \(k\) steps, how do you determine \(k\) from a known factor 0.8?</p>
+<details><summary>Worked solution</summary><p>Take logarithms in \(0.8^k\le10^{-3}\). Because \(\log(0.8)\) is negative, division reverses the inequality. The smallest integer is 31.</p></details>
+<p>Why should a conjugate-gradient implementation use a positive definite preconditioner?</p>
+<details><summary>Worked solution</summary><p>In transformed variables CG minimises an energy for a symmetric positive definite operator. A positive definite preconditioner admits an invertible square root and transfers this property by congruence. An indefinite matrix does not define the corresponding norm.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Track which linear system must be solved at each iteration. Compare the cost of a preconditioner with the reduction in the iteration count. <a href="https://fncbook.com/python/precond/">Driscoll and Braun · Preconditioning</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/13-positive-pivots/">Chapter 13 · Why a positive energy has a Cholesky factor</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/15-rayleigh-stationarity/">Chapter 15 · How a moderately accurate mode can give a precise frequency</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

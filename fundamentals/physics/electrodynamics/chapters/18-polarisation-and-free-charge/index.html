@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How microscopic dipoles produce macroscopic charge · OneSimulation</title>
+<meta name="description" content="Derive the volume and surface charges of a polarised body, determine the fields in layers and calculate which electrical work a capacitance measurement includes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/18-polarisation-and-free-charge/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How microscopic dipoles produce macroscopic charge · OneSimulation">
+<meta property="og:description" content="Derive the volume and surface charges of a polarised body, determine the fields in layers and calculate which electrical work a capacitance measurement includes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/18-polarisation-and-free-charge/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>How microscopic dipoles produce macroscopic charge</h1><p class="lead">Derive the volume and surface charges of a polarised body, determine the fields in layers and calculate which electrical work a capacitance measurement includes.</p><p class="byline">Chapter 18 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#sum">Replace a dense collection of dipoles by a smooth field</a><a href="#displacement">Separate what an external circuit supplies</a><a href="#layers">Turn boundary conditions into a measurable capacitance</a><a href="#work">Track the source that holds the voltage</a><a href="#experiment">Move a dielectric interface between voltage-controlled plates</a><a href="#tutorial">Infer a hidden material property</a><a href="#practicum">Practicum · locate free and bound charge from a buried voltage tap</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="sum">Replace a dense collection of dipoles by a smooth field</h2>
+<p>A small neutral molecule can have positive and negative charge centres separated by a displacement. Its dipole moment \(\mathbf p\) points from negative to positive. A volume containing many molecules but small compared with the macroscopic variation defines a dipole moment per volume \(\mathbf P\), in C/m². For observation points outside the body the sum of dipole potentials becomes</p>
+<div class="math display">\[V(\mathbf r)=\frac{1}{4\pi\epsilon_0}\int_\Omega\mathbf P(\mathbf r')\cdot\nabla'\frac1{|\mathbf r-\mathbf r'|}\,d^3r'.\]</div>
+<p>The prime matters: differentiation with respect to source position has the opposite sign from differentiation with respect to observation position. Apply the product rule to \(\nabla'\cdot(\mathbf P/R)\) and integrate the divergence over the body. The result has exactly the Coulomb form for a volume distribution \(\rho_b=-\nabla\cdot\mathbf P\) and a surface distribution \(\sigma_b=\mathbf P\cdot\mathbf n\). Together the two carry zero total charge for a bounded polarised neutral object. The volume and surface terms can each be nonzero.</p>
+<h3>Worked slab with a polarisation gradient</h3>
+<p>In \(0&lt;z&lt;d\), prescribe \(P_z=P_0z/d\) over a broad slab. The bound volume charge is uniform at \(-P_0/d\). The lower face carries zero and the upper face \(+P_0\). Per unit area the negative volume contribution is \(-P_0\), cancelling the positive face. In an isolated large-plane approximation with no applied background, \(D_z=0\) outside and inside. Thus \(E_z=-P_0 z/(\epsilon_0 d)\) in the slab. Voltage rises from bottom to top by \(P_0d/(2\epsilon_0)\). With \(P_0=10\) nC/m² and \(d=2.0\) mm the rise is 1.13 V. Uniformly polarised material is the special case in which only the two faces carry charge.</p>
+</section>
+<section><h2 id="displacement">Separate what an external circuit supplies</h2>
+<p>Gauss’s law says \(\epsilon_0\nabla\cdot\mathbf E=\rho_{\rm free}+\rho_b\). Substituting the polarisation divergence and collecting terms defines \(\mathbf D=\epsilon_0\mathbf E+\mathbf P\) with \(\nabla\cdot\mathbf D=\rho_{\rm free}\). A small pillbox then gives the jump in the normal component of \(\mathbf D\) as the free surface density. A narrow electrostatic circulation loop gives continuity of tangential \(\mathbf E\). These two statements specify different components. A spatially varying material can make \(\nabla\times\mathbf D\ne0\) even when \(\nabla\times\mathbf E=0\).</p>
+<p>For a reversible linear isotropic dielectric, measurements can supply \(\mathbf P=\epsilon_0\chi_e\mathbf E\). Then \(\epsilon=\epsilon_0(1+\chi_e)\) converts between \(\mathbf D\) and \(\mathbf E\). Permanent polarisation and history-dependent dielectrics require additional constitutive information. The prescribed-gradient example deliberately specified \(\mathbf P\) directly.</p>
+</section>
+<section><h2 id="layers">Turn boundary conditions into a measurable capacitance</h2>
+<p>Place two clean dielectric layers of thicknesses \(d_1,d_2\) between broad electrodes. There is no free sheet at their interface. Both layers therefore have the same normal \(D=Q/A\) away from edges. Each voltage drop is \(D d_i/\epsilon_i\). Adding the drops gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac CA=\frac{1}{d_1/\epsilon_1+d_2/\epsilon_2},\]</div><div class="equation-step">\[\frac{V_1}{V_2}=\frac{d_1/\epsilon_1}{d_2/\epsilon_2}.\]</div></div>
+<p>Take one millimetre of relative permittivity 2 and one millimetre of relative permittivity 8. With 10 V applied, the first layer takes 8 V and the second 2 V. Their fields are 8 and 2 kV/m. The free plate density is \(1.42\times10^{-7}\) C/m². A simple arithmetic mean of the permittivities would give a wrong voltage split. The layers share normal displacement in this orientation. For strips lying side by side across the electrode face, the voltage is common and their capacitances add in parallel.</p>
+</section>
+<section><h2 id="work">Track the source that holds the voltage</h2>
+<p>At fixed geometry, adding a small plate charge \(dQ\) requires reversible work \(V\,dQ\). With constant linear capacitance, integrating from zero to \(Q\) gives \(U=Q^2/(2C)\). In the layered capacitor this equals \((A/2)\sum_i d_i E_iD_i\). Changing a layer while \(Q\) stays fixed changes the mechanical work by the corresponding change in \(U\). Holding voltage fixed connects a source that supplies or removes charge. If insertion at fixed \(V\) increases capacitance by \(dC\), source work is \(V\,dQ=V^2dC\); the field stores only \(V^2dC/2\). The other half can appear as mechanical work by the electric force. Specifying the electrical control variable resolves an apparent sign ambiguity in capacitor force calculations.</p>
+</section>
+<section><h2 id="experiment">Move a dielectric interface between voltage-controlled plates</h2>
+<p>The pair has a total thickness of 2 mm and an applied voltage of 10 V. The first dielectric has relative permittivity 2. Equal layer thicknesses and a second permittivity of 8 give slopes of 8 and 2 V/mm. Which physical charge would be missed by forcing those slopes to agree?</p>
+<div id="try-it" class="interactive-study" data-study="em-layer"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Infer a hidden material property</h2>
+<h3>Recover a permittivity from a voltage tap</h3><p>Two layers of thickness 0.80 and 1.20 mm share 9.0 V. A tap shows a 3.0 V drop across the first layer of relative permittivity 4. Find the second relative permittivity.</p><details><summary>Work through the solution</summary>
+<p>Equal normal displacement gives \(\epsilon_1 V_1/d_1=\epsilon_2 V_2/d_2\). The second drop is 6.0 V, hence \(\epsilon_{r2}=4(3.0/0.80)(1.20/6.0)=3.0\). A free interfacial sheet would supply a jump in \(D\) and invalidate this inversion.</p>
+</details>
+<h3>Predict which bound charge a probe detects at the internal interface</h3><p>In the equal-thickness, 10 V example choose the field direction positive from layer 1 to layer 2. Find the combined bound interface density and check against the field jump.</p><details><summary>Work through the solution</summary>
+<p>With \(E_1=8000\), \(E_2=2000\) V/m, \(P_1=\epsilon_0 E_1\) and \(P_2=7\epsilon_0 E_2\). The top face of layer 1 and bottom face of layer 2 together carry \(P_1-P_2=-6000\epsilon_0=-53.1\) nC/m². This agrees with \(\epsilon_0(E_2-E_1)\) from Gauss’s law for total charge.</p>
+</details>
+</section>
+<section><h2 id="practicum">Practicum · locate free and bound charge from a buried voltage tap</h2>
+<p>Two broad metal electrodes at \(z=0\) and \(z=d_1+d_2\) are held at 10.0 V and 0 V. Between them lie linear isotropic dielectrics, first \(d_1=1.00\) mm with \(\epsilon_{r1}=2.00\), then \(d_2=2.00\) mm with \(\epsilon_{r2}=6.00\). A very thin immobile sheet of free charge may be trapped at their interface. An ideal nonperturbing probe there reads 4.00 V. Neglect fringing. On paper, sketch a candidate potential and label the electric field, displacement, and source of each surface charge. Can all of your labels fit the three voltage readings simultaneously?</p>
+<h3>Reconstruct the source from field jumps</h3>
+<p>Determine both field vectors, both displacement vectors, the free charge sheet and the bound interface charge. State the direction associated with a positive sheet density.</p><details><summary>Follow the calculation and check the result</summary>
+<p>Set the interface normal from layer 1 to layer 2 along \(+\hat{\mathbf z}\). The potentials in the two charge-free interiors must be affine because \(\partial_z(\epsilon\partial_zV)=0\) there. The slopes are \(-6.00\) V/mm and \(-2.00\) V/mm. Therefore \(E_1=6000\) V/m, \(E_2=2000\) V/m and both point along the normal. Their displacements agree: \(D_1=2\epsilon_0(6000)=D_2=6\epsilon_0(2000)=106.25\) nC/m². Gauss's law for free charge gives \(\sigma_f=D_2-D_1=0\).</p>
+<p>Compute the polarisation separately. \(P_1=\epsilon_0(6000)\) and \(P_2=5\epsilon_0(2000)\). Facing surfaces contribute \(+P_1\) and \(-P_2\), so \(\sigma_b=P_1-P_2=-35.42\) nC/m². A vacuum pillbox that counts all charge gives \(\epsilon_0(E_2-E_1)=-35.42\) nC/m², the same result by a different route. The signed density indicates charge per area, while the oriented normal fixes the sign in each jump equation.</p>
+</details>
+<h3>Change one reading without changing either electrode</h3>
+<p>After a treatment, the tap reads 5.00 V with both plate voltages unchanged. A colleague assumes that equal voltage drops imply equal charge on facing electrodes. Test the inference, find the trapped charge, and close a global charge budget.</p><details><summary>Follow the calculation and check the result</summary>
+<p>Now \(E_1=5000\) V/m and \(E_2=2500\) V/m because the equal voltage drops occur across different thicknesses. So \(D_1=88.54\) nC/m², \(D_2=132.81\) nC/m² and the trapped free sheet is \(+44.27\) nC/m². The conductor face charges are \(+88.54\) nC/m² on the low-\(z\) plate and \(-132.81\) nC/m² on the high-\(z\) plate. Added to the sheet they sum to zero, consistent with zero exterior displacement for the ideal screened setup.</p>
+<p>At the internal interface the bound charge is \(P_1-P_2=\epsilon_0(5000-12500)=-66.41\) nC/m². Total charge there is \(-22.14\) nC/m² even though the trapped free sheet is positive. Check it using \(\epsilon_0(E_2-E_1)=-22.14\) nC/m². An instrument sensitive only to the electric-field jump would give the wrong sign if its reading were interpreted as free charge.</p>
+</details>
+<h3>Test what the measurements can actually resolve</h3>
+<p>Suppose the second tap reading has uncertainty ±0.05 V and the other inputs are known exactly. Propagate the uncertainty to the inferred free surface charge, then propose a null experiment.</p><details><summary>Follow the calculation and check the result</summary>
+<p>With \(V_m\) the tap reading, \(\sigma_f=\epsilon_0[\epsilon_{r2}V_m/d_2-\epsilon_{r1}(10-V_m)/d_1]\). Its slope is \(\epsilon_0(3000+2000)\) per volt in SI units, namely 44.27 nC/m² per volt. The inferred sheet is \(44.27\pm2.21\) nC/m². The uncertainty in the same tap is correlated between both drops, so treating the two inferred fields as independent would give a different uncertainty.</p>
+<p>Remove the trapped charge and repeat with both electrodes at 0 V. The unique solution has zero field, and a residual tap voltage would indicate an offset or a violation of the material assumptions. A stronger differential test keeps the sheet and changes the applied voltage: the inferred jump in displacement should remain fixed while the two plate charges adjust. In a numerical boundary-value calculation, compare the reconstructed fluxes on either side of the interface and the integrated free charge, using the physical face permittivity.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, §§4.2–4.4, bound charge, displacement and energy</a></li><li><a href="https://davidtong.org/pdfs/teaching/electromagnetism/electro6.pdf">Tong, Electromagnetism in Matter, polarisation and displacement</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/17-steady-currents-and-vector-potential/">Chapter 17 · From a measured current to its magnetic field</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/19-magnetisation-and-bound-currents/">Chapter 19 · How a magnet produces an exterior field</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

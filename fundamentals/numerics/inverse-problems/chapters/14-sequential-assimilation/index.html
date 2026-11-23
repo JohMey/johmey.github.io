@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning a drifting temperature from a sequence of readings · OneSimulation</title>
+<meta name="description" content="Derive the scalar Kalman update by completing the square and see how process uncertainty controls memory of the past.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/14-sequential-assimilation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Learning a drifting temperature from a sequence of readings · OneSimulation">
+<meta property="og:description" content="Derive the scalar Kalman update by completing the square and see how process uncertainty controls memory of the past.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/14-sequential-assimilation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Learning a drifting temperature from a sequence of readings</h1><p class="lead">Derive the scalar Kalman update by completing the square and see how process uncertainty controls memory of the past.</p><p class="byline">Chapter 14 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#propagate-a-distribution-through-time">Propagate a distribution through time</a><a href="#a-reading-with-units-and-a-repeated-reading">A reading with units and a repeated reading</a><a href="#follow-a-change-in-the-underlying-temperature">Follow a change in the underlying temperature</a><a href="#tutorial-on-noisy-data-over-time">Tutorial on noisy data over time</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="propagate-a-distribution-through-time">Propagate a distribution through time</h2>
+<p>A drifting offset follows \(x_k=x_{k-1}+w_k\). A thermometer reports \(z_k=x_k+v_k\). Assume independent, zero-mean Gaussian process increments of variance \(Q\) and sensor noise of variance \(R\), independent at each time and of the initial state. Before the next reading, the mean stays at \(m^-=m_{k-1}\) and the variance adds, \(P^-=P_{k-1}+Q\).</p>
+<p>The negative log posterior, up to constants, is \((x-m^-)^2/(2P^-)+(z_k-x)^2/(2R)\). Collect the coefficient of \(x^2\) and its linear term. The result can be written in two equivalent forms:</p>
+<div class="math display equation-chain"><div class="equation-step">\[P_k=(1/P^-+1/R)^{-1},\]</div><div class="equation-step">\[m_k=m^-+K(z_k-m^-),\]</div><div class="equation-step">\[K=P^-/(P^-+R).\]</div></div>
+<p>Thus the fraction of the innovation used is a model prediction. When sensors are noisy the gain falls. When the model permits rapid drift, uncertainty grows between readings, giving the new measurement a larger role. These are variances, so a stated standard deviation must be squared first.</p>
+</section>
+<section>
+<h2 id="a-reading-with-units-and-a-repeated-reading">A reading with units and a repeated reading</h2>
+<p>A prior says \(20.0\pm2.0\) °C (one standard deviation), with negligible intervening drift. A sensor of standard deviation 1 °C reads 23 °C. The gain is \(4/(4+1)=0.8\), giving \(22.4\) °C and variance \(0.8\) °C². A second independent reading of 23 °C gives gain \(0.8/1.8\) and mean \(22.6667\) °C. Treating a duplicate record as independent would falsely claim the same information gain.</p>
+<p>In a long random walk with \(Q=0.25\) and \(R=1\) in squared units, a steady posterior variance satisfies \(P=(P+Q)R/(P+Q+R)\). Rearrangement gives \(P^2+QP-QR=0\), so the physically positive root is about 0.3904. New uncertainty replenishes the information squeezed out by measurement.</p>
+</section>
+<section>
+<h2 id="follow-a-change-in-the-underlying-temperature">Follow a change in the underlying temperature</h2>
+<p>For a reproducible illustration, a fixed synthetic thermometer trace contains a smooth periodic disturbance and a step in the hidden temperature. It is deliberately held fixed while the filter's assumed \(Q\) and \(R\) change. Compare the lag just after the step with the wiggle once the temperature settles.</p>
+<div id="try-it" class="interactive-study" data-study="num-sequential-assimilation"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-noisy-data-over-time">Tutorial on noisy data over time</h2>
+<p>If \(Q=0\), show how \(n\) independent readings with the same variance affect precision.</p>
+<details><summary>Worked solution</summary><p>Each update adds \(1/R\) to precision \(1/P\). Induction gives \(1/P_n=1/P_0+n/R\). This is precisely the precision of a batch Gaussian update.</p></details>
+<p>What pattern in the innovations would call the random-walk assumptions into question?</p>
+<details><summary>Worked solution</summary><p>A long run of positive innovations after a systematic ramp suggests bias in the prediction. Serial correlation suggests missing dynamics or correlated observation errors. Check against predicted innovation variance \(P^-+R\) and examine signs and lags as well as their sizes.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Extend the scalar precision update to several state variables and identify the matrix made invertible by a positive observation variance. <a href="https://ee363.stanford.edu/archive/lectures.html">Stephen Boyd · Stanford EE363, estimation and the Kalman filter</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/chapters/13-discrepancy-and-gcv/">Chapter 13 · Choosing regularisation when the true answer is hidden</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/chapters/15-symmetric-posteriors/">Chapter 15 · When a single uncertainty interval hides two explanations</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

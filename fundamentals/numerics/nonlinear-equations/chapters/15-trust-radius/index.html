@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deciding how far to trust a linearised residual · OneSimulation</title>
+<meta name="description" content="Derive an acceptance test from predicted versus actual decrease and see how it rescues a Newton direction that crosses the root by a large distance.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/15-trust-radius/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deciding how far to trust a linearised residual · OneSimulation">
+<meta property="og:description" content="Derive an acceptance test from predicted versus actual decrease and see how it rescues a Newton direction that crosses the root by a large distance.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/15-trust-radius/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Deciding how far to trust a linearised residual</h1><p class="lead">Derive an acceptance test from predicted versus actual decrease and see how it rescues a Newton direction that crosses the root by a large distance.</p><p class="byline">Chapter 15 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#choosing-a-step-from-a-local-model">Choosing a step from a local model</a><a href="#two-proposals-for-the-same-equation">Two proposals for the same equation</a><a href="#look-along-the-step-before-accepting-it">Look along the step before accepting it</a><a href="#tutorial-on-choosing-a-merit-function">Tutorial on choosing a merit function</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="choosing-a-step-from-a-local-model">Choosing a step from a local model</h2>
+<p>For a scalar residual \(f\), finding a zero also minimises \(\phi=f^2/2\) if a zero is attainable. Near \(x\), approximate \(f(x+s)\) by \(f(x)+f'(x)s\), yielding a quadratic model \(m(s)=(f+f's)^2/2\). Minimise this model subject to \(|s|\le\Delta\). In one dimension this clips the ordinary Newton step to the interval; when \(f'=0\), the model contains no preferred direction.</p>
+<p>Measure both predicted and actual decrease. Provided the predicted decrease is positive, define</p>
+<div class="math display">\[\rho=\frac{\phi(x)-\phi(x+s)}{m(0)-m(s)}.\]</div>
+<p>A ratio near one supports the local model. A negative ratio means that a predicted gain produced an actual loss. Shrink the radius and repeat from the same point. A successful boundary step can justify enlarging the next radius. These decisions require an extra residual evaluation and do not require a globally accurate Taylor approximation.</p>
+</section>
+<section>
+<h2 id="two-proposals-for-the-same-equation">Two proposals for the same equation</h2>
+<p>For \(f(x)=x^2-2\) at \(x=0.2\), \(f=-1.96\), \(f'=0.4\). The full Newton proposal \(s=4.9\) lands at \(5.1\), where the residual is 24.01. The linear model predicted zero. The merit function rises catastrophically.</p>
+<p>With radius one, \(s=1\) gives \(x=1.2\) and \(f=-0.56\). Predicted merit decrease is \((1.96^2-1.56^2)/2=0.704\). Actual decrease is \((1.96^2-0.56^2)/2=1.764\). The ratio exceeds one because the curvature accelerated the improvement. A large ratio is possible and has a direct interpretation.</p>
+</section>
+<section>
+<h2 id="look-along-the-step-before-accepting-it">Look along the step before accepting it</h2>
+<p>Compare the true merit function and the local model along positive steps from a starting value below the root. Move the trust radius and read the ratio for the constrained minimiser. Locate a region in which predicted and observed changes have opposite signs.</p>
+<div id="try-it" class="interactive-study" data-study="num-trust-radius"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-choosing-a-merit-function">Tutorial on choosing a merit function</h2>
+<p>Start at zero for the same equation. Can reducing the radius find a direction from this particular model?</p>
+<details><summary>Worked solution</summary><p>Here \(f'=0\) while \(f=-2\). The linearised residual is constant, hence every step predicts zero decrease. The ratio is undefined. A curvature model, perturbation, or another starting point is needed.</p></details>
+<p>Is a small gradient of \(f^2/2\) sufficient to certify a root?</p>
+<details><summary>Worked solution</summary><p>Its gradient is \(ff'\). It can vanish either at a root or at a stationary residual. Report the original residual and test feasibility to distinguish these outcomes.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Follow the nonlinear least-squares section to compare damping a proposed step with solving a constrained local subproblem. <a href="https://fncbook.com/python/overview-3/">Driscoll and Braun · Nonlinear equations</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/14-aitken-acceleration/">Chapter 14 · Eliminating a fixed point&#x27;s leading geometric error</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/16-logarithmic-unknowns/">Chapter 16 · A physically positive root across six decades</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

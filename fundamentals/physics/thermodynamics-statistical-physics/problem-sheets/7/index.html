@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can a fluctuation reveal attraction on a surface? · OneSimulation</title>
+<meta name="description" content="Two surfaces have identical mean coverage at a chosen gas pressure. Repeated microscopy images nevertheless show different event-to-event scatter in the number of occupied sites. Determine whether interactions can account for the excess and design a measurement that distinguishes clustering from instrumental drift.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/7/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Can a fluctuation reveal attraction on a surface? · OneSimulation">
+<meta property="og:description" content="Two surfaces have identical mean coverage at a chosen gas pressure. Repeated microscopy images nevertheless show different event-to-event scatter in the number of occupied sites. Determine whether interactions can account for the excess and design a measurement that distinguishes clustering from instrumental drift.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/7/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Can a fluctuation reveal attraction on a surface?</h1><p class="lead">Two surfaces have identical mean coverage at a chosen gas pressure. Repeated microscopy images nevertheless show different event-to-event scatter in the number of occupied sites. Determine whether interactions can account for the excess and design a measurement that distinguishes clustering from instrumental drift.</p><p class="byline">Problem sheet 7 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#predict-the-independent-site-baseline">Predict the independent-site baseline</a><a href="#map-an-interacting-row-to-spins">Map an interacting row to spins</a><a href="#use-the-correlation-length-to-predict-number-noise">Use the correlation length to predict number noise</a><a href="#check-whether-the-observation-is-spatial-or-temporal">Check whether the observation is spatial or temporal</a></nav></aside><article class="prose reference"><section><h2 id="predict-the-independent-site-baseline">Predict the independent-site baseline</h2>
+<p>Each image samples 100 equivalent sites in thermal equilibrium. At half coverage, predict the mean occupied population, its standard deviation and the slope of the mean population with respect to \(\beta\mu\). What changes if independent sites have binding energies larger by \(k_BT\ln3\) at fixed \(\mu\)?</p>
+<details><summary>Work through the solution</summary><p>At \(\theta=1/2\), mean population is 50 and standard deviation \(\sqrt{100/4}=5\). The number fluctuation identity gives slope 25. Multiplying the original odds by three gives coverage \(3/4\), mean 75, variance \(100(3/4)(1/4)=18.75\) and standard deviation 4.33. A change of mean binding at fixed coverage, compensated by the chemical potential, cannot by itself enhance the independent-site half-coverage variance.</p></details>
+<p><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/14-adsorption-and-number-fluctuations/#try-it">Check the half-coverage variance and the response to a chemical-potential shift</a></p>
+</section>
+<section><h2 id="map-an-interacting-row-to-spins">Map an interacting row to spins</h2>
+<p>Model the surface as a ring of sites with occupancies \(n_j=0,1\), attraction \(-w n_jn_{j+1}\) per occupied pair, and grand-energy contribution \(-(\epsilon+\mu)n_j\) per site. Put \(n_j=(1+s_j)/2\). Determine the Ising exchange \(J\) and the chemical potential that gives zero Ising field.</p>
+<details><summary>Work through the solution</summary><p>The pair product becomes \([1+s_j+s_{j+1}+s_js_{j+1}]/4\). On a periodic row each site enters two pair terms. The exchange is \(J=w/4\) and the field coefficient in \(-H\sum_j s_j\) is \(H=(w+\epsilon+\mu)/2\). Choosing \(\mu=-\epsilon-w\) gives \(H=0\), and spin reversal then enforces mean occupation \(1/2\). Pair attraction can therefore be hidden by a shift of the half-coverage chemical potential.</p></details>
+</section>
+<section><h2 id="use-the-correlation-length-to-predict-number-noise">Use the correlation length to predict number noise</h2>
+<p>Let \(w=4k_BT\) at the adjusted half-coverage point. Calculate the correlation at one and ten bonds and the predicted population deviation for 100 sites. Compare to the independent-site prediction.</p>
+<details><summary>Work through the solution</summary><p>Here \(J/(k_BT)=1\), \(q=\tanh1=0.76159\), and \(\langle s_0s_r\rangle\simeq q^r\), giving 0.7616 and 0.0657. Since \(n=(1+s)/2\), occupancy covariance is \(q^r/4\). Summing the covariance over all site pairs for a ring much longer than \(-1/\ln q=3.67\) gives \(\operatorname{var}N\simeq(100/4)[1+2\sum_{r=1}^\infty q^r]=25(1+q)/(1-q)=184.7\). The deviation is 13.59 sites. Positive spatial covariances account for the extra noise.</p></details>
+<p><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/17-ising-chain-correlations/#try-it">Compare a 100-site ring with a shorter ring at the same temperature</a></p>
+</section>
+<section><h2 id="check-whether-the-observation-is-spatial-or-temporal">Check whether the observation is spatial or temporal</h2>
+<p>Repeat the experiment with eight sites on a ring. Derive the variance from the finite-ring correlation \(C_r=(q^r+q^{8-r})/(1+q^8)\). What measurements would test the interpretation of the excess variance on the larger sample?</p>
+<details><summary>Work through the solution</summary><p>Translational invariance gives \(\operatorname{var}N=(8/4)\sum_{r=0}^{7} C_r=2(1+q)(1-q^8)/[(1-q)(1+q^8)]\), approximately 11.77 at \(q=\tanh1\). Report a standard deviation of about 3.43 sites. Measure occupancy covariance against spatial separation and repeat after changing the delay between images. Surface correlations predict a distance-dependent decay within individual images. Temporal drift common to all sites can instead give a substantial long-range component and serially correlated frame means.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/19-mean-field-criticality/">Chapter 19 · Mean-field ordering, response and the critical point</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

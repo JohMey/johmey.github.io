@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading an effective resistance from a singular graph matrix · OneSimulation</title>
+<meta name="description" content="Assemble Kirchhoff&#x27;s equations from oriented edge differences, remove the arbitrary reference voltage and relate a two-terminal measurement to minimum dissipation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/17-network-resistance/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reading an effective resistance from a singular graph matrix · OneSimulation">
+<meta property="og:description" content="Assemble Kirchhoff&#x27;s equations from oriented edge differences, remove the arbitrary reference voltage and relate a two-terminal measurement to minimum dissipation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/17-network-resistance/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Reading an effective resistance from a singular graph matrix</h1><p class="lead">Assemble Kirchhoff&#x27;s equations from oriented edge differences, remove the arbitrary reference voltage and relate a two-terminal measurement to minimum dissipation.</p><p class="byline">Chapter 17 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#one-matrix-for-current-balance">One matrix for current balance</a><a href="#compute-a-three-node-measurement-in-two-ways">Compute a three-node measurement in two ways</a><a href="#challenge-a-network-calibration">Challenge a network calibration</a><a href="#tutorial-on-identifiability-in-a-circuit">Tutorial on identifiability in a circuit</a></nav></aside><article class="prose reference"><section>
+<h2 id="one-matrix-for-current-balance">One matrix for current balance</h2>
+<p>Give each resistor edge an arbitrary orientation. A row of the incidence matrix \(B\) has −1 at its tail and +1 at its head. The difference \(Bv\) measures an oriented voltage drop. With diagonal conductances \(G\), the dissipated power is \(P=v^TB^TGBv\). Differentiating half this quadratic minus injected-current work \(j^Tv\) gives \(Lv=j\) with \(L=B^TGB\). Changing an edge orientation changes a sign twice and leaves \(L\) unchanged.</p>
+<p>A constant voltage lies in the nullspace because \(B\mathbf1=0\). On a connected graph the converse follows from \(v^TLv=\sum_e g_e(\Delta v_e)^2\): zero energy forces equal voltage across every edge. The current injections must sum to zero. Set one reference voltage to zero or constrain the mean to remove this unobservable constant.</p>
+</section>
+<section>
+<h2 id="compute-a-three-node-measurement-in-two-ways">Compute a three-node measurement in two ways</h2>
+<p>Connect terminals A and C by a 6 Ω resistor. A second path passes through B with 2 Ω between A and B and 4 Ω between B and C. Inject 1 A at A, remove 1 A at C and ground C. Kirchhoff at B gives \((V_B-V_A)/2+V_B/4=0\), so \(V_B=2V_A/3\). At A, \(V_A/6+(V_A-V_B)/2=1\), giving \(V_A=3\) V and \(V_B=2\) V. Effective resistance is 3 Ω.</p>
+<p>Each parallel path carries 0.5 A, and dissipates \(0.5^2(6)=1.5\) W. Total heat equals \(I(V_A-V_C)=3\) W. Opening the direct edge doubles the effective resistance. Opening an edge that bridges two otherwise disconnected subgraphs can instead make it impossible to pass any steady current between the terminals.</p>
+</section>
+<section>
+<h2 id="challenge-a-network-calibration">Challenge a network calibration</h2>
+<p>Change the two series resistors. The independent variable is the direct A–C resistance. The graph compares the terminal resistance with the middle-node voltage under a 1 A test current. In these numerical units volts and ohms have equal numbers; each curve's legend identifies the physical quantity.</p>
+<div id="try-it" class="interactive-study" data-study="num-network-resistance"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-identifiability-in-a-circuit">Tutorial on identifiability in a circuit</h2>
+<p>Can a single terminal-resistance reading isolate the two series resistor values?</p>
+<details><summary>Worked solution</summary><p>It determines only their sum if the direct edge is known. Measuring \(V_B\) under the same known 1 A injection determines the division within that sum.</p></details>
+<p>Why does minimising dissipation with prescribed terminal voltages yield Kirchhoff balance at interior nodes?</p>
+<details><summary>Worked solution</summary><p>A variation of any free voltage contributes twice its net current departure to the first variation of total power. At the minimum all such coefficients vanish. Terminal voltages are fixed and their reaction currents are the measured injections.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/16-fitting-a-rotation/">Chapter 16 · How to rotate two point clouds into agreement</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/problem-sheets/7/">Problem sheet 7 · Project · Can two displacement sensors distinguish soft and stiff modes?</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

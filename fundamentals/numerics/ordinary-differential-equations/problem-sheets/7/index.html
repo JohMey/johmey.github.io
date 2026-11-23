@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project · Choose a time integrator from measurements · OneSimulation</title>
+<meta name="description" content="A velocity sensor monitors an oscillator with one nearly conservative coordinate and one rapidly relaxing auxiliary variable. Design distinct numerical checks for phase, damping and the conditioning of a boundary measurement.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/7/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Project · Choose a time integrator from measurements · OneSimulation">
+<meta property="og:description" content="A velocity sensor monitors an oscillator with one nearly conservative coordinate and one rapidly relaxing auxiliary variable. Design distinct numerical checks for phase, damping and the conditioning of a boundary measurement.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/problem-sheets/7/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Project · Choose a time integrator from measurements</h1><p class="lead">A velocity sensor monitors an oscillator with one nearly conservative coordinate and one rapidly relaxing auxiliary variable. Design distinct numerical checks for phase, damping and the conditioning of a boundary measurement.</p><p class="byline">Problem sheet 7 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-stable-calculation-with-the-wrong-period">A stable calculation with the wrong period</a><a href="#relax-a-sensor-without-overdrawing-the-step-budget">Relax a sensor without overdrawing the step budget</a><a href="#diagnose-a-spatial-boundary-sensor">Diagnose a spatial boundary sensor</a><a href="#design-a-reporting-table">Design a reporting table</a></nav></aside><article class="prose reference"><section><h2 id="a-stable-calculation-with-the-wrong-period">A stable calculation with the wrong period</h2>
+<p>The ideal oscillator has angular frequency \(2\) s⁻¹. Use an implicit midpoint step of 0.5 s. Derive the discrete rotation angle by acting on the complex scalar \(u'=i\omega u\). Estimate how far the numerical phase lags after 20 s. Compare with the <a href="/fundamentals/numerics/ordinary-differential-equations/chapters/13-symmetric-midpoint/#try-it">midpoint experiment</a>.</p>
+<details><summary>Work through the solution</summary><p>One step multiplies by \((1+i\omega h/2)/(1-i\omega h/2)\). Its magnitude is one and argument \(2\arctan(0.5)=0.927295\) rad. In forty steps the exact phase advances 40 rad and the computed phase about 37.092 rad. The lag is about 2.91 rad even though the amplitude stays constant. A plot of energy alone cannot certify the period.</p></details>
+</section>
+<section><h2 id="relax-a-sensor-without-overdrawing-the-step-budget">Relax a sensor without overdrawing the step budget</h2>
+<p>The auxiliary measurement follows \(z'=-(z-u)/\tau\), with \(\tau=0.02\) s. During one short window, regard \(u=1\) as constant and start from \(z=0\). Compare forward and backward Euler and the exact value at \(h=0.1\) s. Which qualitative property matters when the measurement represents a bounded response?</p>
+<details><summary>Work through the solution</summary><p>Forward Euler gives \(z_1=5\). Backward Euler gives \(z_1=(z_0+5u)/(1+5)=5/6\). The exact value is \(1-e^{-5}\approx0.99326\). The implicit step is bounded and monotone but its transient error is substantial. Use the <a href="/fundamentals/numerics/ordinary-differential-equations/chapters/14-implicit-explicit-relaxation/#try-it">split relaxation experiment</a> to distinguish resolving a transient from staying stable after it.</p></details>
+</section>
+<section><h2 id="diagnose-a-spatial-boundary-sensor">Diagnose a spatial boundary sensor</h2>
+<p>A separate steady calibration solves \(y''=k^2 y\) on \([0,1]\) with specified endpoint values. Starting a shooting solution with slope error \(\delta s\) at zero and exact starting value, derive the right-end error. Evaluate it at \(k=10\), \(\delta s=10^{-5}\). Why might a global boundary solve help?</p>
+<details><summary>Work through the solution</summary><p>The error solves the homogeneous equation with \(e(0)=0\) and \(e'(0)=\delta s\). Therefore \(e(1)=\delta s\sinh(k)/k\approx0.01101\). A trial slope that looks accurate in isolation gives a visibly wrong right boundary. A collocation matrix imposes both boundaries together; its own error and conditioning still need verification. Compare the <a href="/fundamentals/numerics/ordinary-differential-equations/chapters/15-collocation-and-shooting/#try-it">two boundary solvers</a>.</p></details>
+</section>
+<section><h2 id="design-a-reporting-table">Design a reporting table</h2>
+<p>Name a distinct scalar check for each part of this instrument. State when you would halve the time step and when you would change the mathematical formulation.</p>
+<details><summary>Work through the solution</summary><p>Record accumulated phase at a fixed physical time, range and time-to-90% for the sensor response, and endpoint residual plus interior profile error for the spatial calibration. Halve the time step to test temporal truncation error. Change the boundary solver when initial-slope perturbations dominate the measurement despite a converged integrator.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/17-grazing-events/">Chapter 17 · Locating a grazing event between time steps</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

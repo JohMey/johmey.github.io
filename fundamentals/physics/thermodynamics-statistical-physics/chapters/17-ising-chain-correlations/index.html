@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Extracting a length from thermal spin fluctuations · OneSimulation</title>
+<meta name="description" content="A one-dimensional row of magnetic moments favours local alignment. At low temperature a snapshot can contain a long row of identical spins. An exact calculation distinguishes a large correlated domain from a thermodynamic phase with permanent order.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/17-ising-chain-correlations/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Extracting a length from thermal spin fluctuations · OneSimulation">
+<meta property="og:description" content="A one-dimensional row of magnetic moments favours local alignment. At low temperature a snapshot can contain a long row of identical spins. An exact calculation distinguishes a large correlated domain from a thermodynamic phase with permanent order.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/17-ising-chain-correlations/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>Extracting a length from thermal spin fluctuations</h1><p class="lead">A one-dimensional row of magnetic moments favours local alignment. At low temperature a snapshot can contain a long row of identical spins. An exact calculation distinguishes a large correlated domain from a thermodynamic phase with permanent order.</p><p class="byline">Chapter 17 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#sum-all-configurations-by-multiplying-a-small-matrix">Sum all configurations by multiplying a small matrix</a><a href="#insert-two-local-measurements">Insert two local measurements</a><a href="#compare-a-chain-at-two-temperatures">Compare a chain at two temperatures</a><a href="#tutorial-on-estimating-an-interaction">Tutorial on estimating an interaction</a></nav></aside><article class="prose reference"><section><h2 id="sum-all-configurations-by-multiplying-a-small-matrix">Sum all configurations by multiplying a small matrix</h2>
+<p>Consider \(N\) classical spins \(s_j=\pm1\) on a ring with \(s_{N+1}=s_1\). At zero applied field the energy is \(-J\sum_j s_js_{j+1}\) with \(J&gt;0\). The Boltzmann weight factors into nearest-neighbour terms \(e^{Ks_js_{j+1}}\), with \(K=J/(k_BT)\). Construct the matrix \(T_{ss'}=e^{Kss'}\), whose diagonal elements are \(e^K\) and off-diagonal elements \(e^{-K}\). Multiplying \(T\)'s automatically sums each intermediate spin over its two choices. Closing the first and last indices gives \(Z_N=\operatorname{tr}(T^N)\).</p>
+<p>The symmetric and antisymmetric vectors \((1,1)/\sqrt2\) and \((1,-1)/\sqrt2\) have eigenvalues \(\lambda_+=2\cosh K\) and \(\lambda_-=2\sinh K\). Thus \(Z_N=\lambda_+^N+\lambda_-^N\). At every finite positive temperature the ratio of eigenvalues is strictly below one. In the large-system limit the free energy per spin is \(-k_BT\ln(2\cosh K)\). Differentiating with respect to \(\beta\) yields the energy per spin \(-J\tanh K\).</p>
+</section>
+<section><h2 id="insert-two-local-measurements">Insert two local measurements</h2>
+<p>Multiplying an individual configuration by a measured spin corresponds to inserting \(S=\operatorname{diag}(1,-1)\) in the matrix trace. To measure two sites separated by \(r\) bonds use \(\operatorname{tr}(ST^rST^{N-r})/Z_N\). In the eigenbasis of \(T\), \(S\) exchanges the symmetric and antisymmetric vectors. The numerator therefore contains one factor \(\lambda_-^r\lambda_+^{N-r}\) and one with the eigenvalues exchanged. With \(q=\lambda_-/\lambda_+=\tanh K\),</p>
+<div class="math display equation-chain"><div class="equation-step">\[\langle s_0s_r\rangle_N=\frac{q^r+q^{N-r}}{1+q^N},\]</div><div class="equation-step">\[\langle s_0s_r\rangle_\infty=q^r=e^{-ra/\xi},\]</div><div class="equation-step">\[\xi=-\frac{a}{\ln q}.\]</div></div>
+<p>Here \(a\) is the lattice spacing and the infinite-chain limit holds for fixed \(r\). The second finite-ring term comes from the other way around the circle. At equal sites the full ratio equals one. In zero field spin reversal makes the mean spin zero in the thermal distribution. Thus this correlation already equals the connected correlation.</p>
+</section>
+<section><h2 id="compare-a-chain-at-two-temperatures">Compare a chain at two temperatures</h2>
+<p>At \(k_BT=J\), \(q=0.7616\) and \(\xi=3.67a\). Spins ten bonds apart have correlation only \(0.0657\). At \(k_BT=0.5J\), \(\xi=27.30a\) and the corresponding correlation is \(0.693\). Lower temperature suppresses individual domain walls. Since \(s_js_{j+1}\) is +1 for alignment and −1 for a wall, its average equals \(1-2P_{\rm wall}=q\). At low temperature \(P_{\rm wall}\simeq e^{-2K}\) and \(\xi/a\simeq e^{2K}/2\). Even rare walls eventually destroy alignment in a sufficiently long chain.</p>
+<p>Compare the finite ring with the infinite-chain result. Change the ring length while leaving the temperature fixed. When the correlation length becomes comparable to the circumference, the long route contributes appreciably. Returning to the starting site must restore correlation one. A straight-line fit to the back half of a semilog finite-ring plot would consequently give a misleading decay length.</p>
+<div id="try-it" class="interactive-study" data-study="ph-ising-ring"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-estimating-an-interaction">Tutorial on estimating an interaction</h2>
+<p>In a very long zero-field chain the nearest-neighbour correlation is 0.6. Determine \(J/(k_BT)\), the probability of a wall on a given bond and the separation at which correlation first falls below 0.1.</p>
+<details><summary>Work through the solution</summary><p>Invert \(q=\tanh K\) to obtain \(K=\tfrac12\ln[(1+q)/(1-q)]=0.6931\). The wall probability is \((1-q)/2=0.20\). Solve \(r&gt;\ln(0.1)/\ln(0.6)=4.51\). At five bonds the correlation is 0.07776. An even number of walls can restore the original spin direction, so this correlation counts more than the probability of finding a completely wall-free interval.</p></details>
+<p>At \(k_BT=J\) a nearest-neighbour bond is aligned with probability \(p\). Find \(p\) and its relation to the mean energy per bond.</p>
+<details><summary>Work through the solution</summary><p>The correlation is \(2p-1=\tanh1=0.7616\), so \(p=0.8808\). Multiplying \(2p-1\) by \(-J\) gives \(-0.7616J\). This directly connects counts of local defects in snapshots with the thermodynamic energy obtained from the partition function.</p></details>
+<p>Why can an odd number of walls never occur on a closed ring? Would dropping the finite-ring correction give the correct wall count at arbitrary temperature?</p>
+<details><summary>Work through the solution</summary><p>Each wall reverses the spin when following the ring. Returning to the starting site requires an even number of reversals. The exact nearest-neighbour correlation is \((q+q^{N-1})/(1+q^N)\). Thus the mean wall count is \(N(1-C_1)/2\). Approximating \(C_1\) by \(q\) works when \(N\) substantially exceeds the correlation length; otherwise ring closure changes the result.</p></details>
+<p class="source-note">Further reading · <a href="https://davidtong.org/teaching/statistical-physics/">Cambridge statistical physics, Ising chain and correlation functions</a> · <a href="https://www.davidtong.org/pdfs/teaching/statistical-physics/statphys5.pdf">Cambridge statistical mechanics, phase transitions and transfer matrices</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/16-convexity-and-coexistence/">Chapter 16 · Why two coexisting phases share a tangent</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/18-sommerfeld-expansion/">Chapter 18 · Why only a narrow shell of a Fermi gas carries heat</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacitance as a matrix of electrostatic energies · OneSimulation</title>
+<meta name="description" content="Three conductors occupy a grounded metal enclosure. Charging one can induce charge on another even when its voltage stays fixed. To predict a measurement we must specify which conductors have fixed voltage, which are isolated and what defines the reference potential.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/34-capacitance-coefficients/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Capacitance as a matrix of electrostatic energies · OneSimulation">
+<meta property="og:description" content="Three conductors occupy a grounded metal enclosure. Charging one can induce charge on another even when its voltage stays fixed. To predict a measurement we must specify which conductors have fixed voltage, which are isolated and what defines the reference potential.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/34-capacitance-coefficients/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Capacitance as a matrix of electrostatic energies</h1><p class="lead">Three conductors occupy a grounded metal enclosure. Charging one can induce charge on another even when its voltage stays fixed. To predict a measurement we must specify which conductors have fixed voltage, which are isolated and what defines the reference potential.</p><p class="byline">Chapter 34 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#construct-unit-voltage-solutions">Construct unit-voltage solutions</a><a href="#identify-the-reference-and-the-energy">Identify the reference and the energy</a><a href="#float-one-terminal-and-read-a-different-capacitance">Float one terminal and read a different capacitance</a><a href="#tutorial-on-calibrated-terminal-measurements">Tutorial on calibrated terminal measurements</a></nav></aside><article class="prose reference"><section><h2 id="construct-unit-voltage-solutions">Construct unit-voltage solutions</h2>
+<p>Consider a connected dielectric region with stationary geometry, linear reciprocal permittivity tensor \(\boldsymbol\epsilon(\boldsymbol r)\), no free volume charge, and perfectly conducting boundaries. For conductor \(j\), define \(u_j\) as the solution of \(\nabla\cdot(\boldsymbol\epsilon\nabla u_j)=0\) which equals one on conductor \(j\) and zero on all other boundaries. When a grounded enclosing wall is used, each of these basis solutions also vanishes on that wall. Linearity and uniqueness give \(\phi(\boldsymbol r)=\sum_j V_j u_j(\boldsymbol r)\). Setting just one conductor to unit voltage determines an entire column of responses, measurable by holding the other potentials fixed.</p>
+<p>Take \(\boldsymbol n\) to be the unit normal pointing out of the dielectric, into the conductor. Since \(\boldsymbol D=-\boldsymbol\epsilon\nabla\phi\), the conductor's charge facing the dielectric is \(Q_i=\int_{S_i}\boldsymbol n\cdot\boldsymbol\epsilon\nabla\phi\,dS\). The two sign reversals, one from the electric field and one from the conductor's outward normal, cancel. The coefficients \(C_{ij}=\partial Q_i/\partial V_j\) consequently integrate the flux from each basis solution.</p>
+<div class="math display equation-chain"><div class="equation-step">\[Q_i=\sum_jC_{ij}V_j,\]</div><div class="equation-step">\[C_{ij}=\int_\Omega \nabla u_i\cdot\boldsymbol\epsilon\nabla u_j\,d^3r .\]</div></div>
+<p>To obtain the volume formula, apply the divergence theorem to \(u_i\boldsymbol\epsilon\nabla u_j\). Only the gradient product survives in the volume. Only boundary \(i\) survives on the surface because it is the sole boundary where \(u_i=1\). Reciprocal permittivity makes the volume formula symmetric under \(i\leftrightarrow j\); capacitance readings must therefore agree when drive and pickup electrodes are exchanged under the same conditions.</p>
+</section>
+<section><h2 id="identify-the-reference-and-the-energy">Identify the reference and the energy</h2>
+<p>The electrostatic energy is \(U=\frac12\int\boldsymbol E\cdot\boldsymbol D\,d^3r=\frac12\boldsymbol V^TC\boldsymbol V\). Its derivative with respect to \(V_i\) equals \(Q_i\) at fixed geometry. When the enclosing wall is included as an additional voltage degree of freedom, adding the same constant to all voltages leaves every gradient unchanged. The basis solutions including the wall sum to one. The full matrix then annihilates the vector of ones, its row sums vanish, and energy depends only on potential differences. Fixing the wall voltage removes that null mode. The reduced matrix acting on inner voltages can have nonzero row sums and is positive definite for a connected enclosure with positive permittivity.</p>
+<p>For example, two electrodes have pair capacitance \(c=4\) pF, with additional \(g_1=2\) pF and \(g_2=3\) pF from each to the wall. The energy is \([g_1V_1^2+g_2V_2^2+c(V_1-V_2)^2]/2\) in pJ for volt units. Differentiate to obtain reduced \(C_{11}=6,\ C_{22}=7,\ C_{12}=C_{21}=-4\) pF. At \(V_1=2,V_2=-1\) V the charges are \(16,-15\) pC and the energy is 23.5 pJ. Including the wall restores total charge zero for the charges facing the dielectric; the wall carries \(-1\) pC.</p>
+</section>
+<section><h2 id="float-one-terminal-and-read-a-different-capacitance">Float one terminal and read a different capacitance</h2>
+<p>Disconnect the second electrode with initial charge zero. Its potential adjusts to satisfy \(0=-cV_1+(g_2+c)V_2\), giving \(V_2=4V_1/7\). Substituting into \(Q_1\) yields \(C_{\rm in}=g_1+c-c^2/(g_2+c)=26/7\) pF. With electrode two grounded instead, \(C_{\rm in}=6\) pF. Both results came from the same electrostatic matrix; a voltmeter or guard changes the boundary conditions. The plot compares the charge delivered as the driven voltage changes. Vary the mutual coupling, and check that eliminating an isolated electrode agrees with differentiating the energy after minimising over its voltage for zero charge.</p>
+<div id="try-it" class="interactive-study" data-study="em-coefficient-network"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-calibrated-terminal-measurements">Tutorial on calibrated terminal measurements</h2>
+<p>A measured reduced matrix has diagonal entries 8 and 9 pF and off-diagonal entries \(-3\) pF. Recover the three pair capacitances to one another and to a reference enclosure. Predict the wall charge at \(V_1=1,V_2=2\) V.</p>
+<details><summary>Work through the solution</summary><p>The mutual pair is 3 pF. Subtracting it from the diagonals gives 5 and 6 pF to the wall. The driven charges are \(8-6=2\) pC and \(-3+18=15\) pC. The enclosure-facing surface supplies the remaining \(-17\) pC.</p></details>
+<p>In the worked example electrode two is isolated with a trapped \(Q_2=7\) pC. Determine the voltage induced when \(V_1=0\), and the small-signal input capacitance measured by varying \(V_1\).</p>
+<details><summary>Work through the solution</summary><p>Solve \(7=-4V_1+7V_2\) to find \(V_2=1+4V_1/7\) V. The input charge is then \(-4+(26/7)V_1\) pC. The trapped charge shifts the intercept while leaving the incremental capacitance \(26/7\) pF in this linear dielectric model.</p></details>
+<p>Why can an inferred matrix with a negative eigenvalue fail even if its two diagonal entries are positive?</p>
+<details><summary>Work through the solution</summary><p>Choosing potentials proportional to that eigenvector would make the quadratic field energy negative. In a passive static dielectric with positive permittivity the field integral is nonnegative for every potential pattern. Positivity constrains the off-diagonal terms as well, for two terminals requiring \(C_{11}C_{22}\ge C_{12}^2\).</p></details>
+<p class="source-note">Further reading · <a href="https://live.ocw.mit.edu/courses/8-07-electromagnetism-ii-fall-2012/1ffda29d6ddadef8e37e4be9c071b4e7_MIT8_07F12_ln4.pdf">MIT 8.07, conductors and the capacitance matrix</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/33-charged-particle-worldlines/">Chapter 33 · Energy, momentum and a charged particle’s worldline</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/35-magnetic-diffusion/">Chapter 35 · How a conductor admits a field step and a sinusoid</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

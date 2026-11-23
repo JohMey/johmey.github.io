@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where should a random quadrature spend its samples? · OneSimulation</title>
+<meta name="description" content="Derive the weight that corrects a nonuniform sampling density and see why an unbiased quadrature can nevertheless have infinite variance.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/17-importance-sampling/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Where should a random quadrature spend its samples? · OneSimulation">
+<meta property="og:description" content="Derive the weight that corrects a nonuniform sampling density and see why an unbiased quadrature can nevertheless have infinite variance.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/17-importance-sampling/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Where should a random quadrature spend its samples?</h1><p class="lead">Derive the weight that corrects a nonuniform sampling density and see why an unbiased quadrature can nevertheless have infinite variance.</p><p class="byline">Chapter 17 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#change-the-experiment-while-preserving-its-mean">Change the experiment while preserving its mean</a><a href="#a-finite-expectation-with-an-infinite-error-bar">A finite expectation with an infinite error bar</a><a href="#compare-sampling-plans-on-the-same-draws">Compare sampling plans on the same draws</a><a href="#tutorial-on-signs-and-diagnostics">Tutorial on signs and diagnostics</a></nav></aside><article class="prose reference"><section>
+<h2 id="change-the-experiment-while-preserving-its-mean">Change the experiment while preserving its mean</h2>
+<p>For \(I=\int_0^1 f(x)\,dx\), choose a probability density \(p(x)>0\) wherever \(f\ne0\). If \(X\) is drawn from \(p\), then averaging \(W=f(X)/p(X)\) gives \(E[W]=\int (f/p)p=I\). With independent draws and finite second moment, the estimator variance is \([\int f^2/p-I^2]/N\). Merely changing the point distribution without changing the weight would compute a different integral.</p>
+<p>For nonnegative \(f\), Cauchy–Schwarz gives \((\int f)^2\le(\int f^2/p)(\int p)\). Equality holds if \(p\) is proportional to \(f\). The ideal distribution would give identical weights, although constructing its exact normaliser frequently requires already knowing the answer. It remains a guide to choosing an approximate density.</p>
+</section>
+<section>
+<h2 id="a-finite-expectation-with-an-infinite-error-bar">A finite expectation with an infinite error bar</h2>
+<p>For \(f(x)=x^{-1/2}\) the integral is 2. Uniform sampling produces weights \(X^{-1/2}\) whose second moment is \(\int_0^1 x^{-1}\,dx=\infty\). The estimate has the right expected value, but its usual finite-variance standard error has no foundation.</p>
+<p>Take \(p_a(x)=(a+1)x^a\) with \(a>-1\). An inverse-CDF draw is \(X=U^{1/(a+1)}\) for a uniform \(U\). For \(f=x^b\), the second moment is \(1/[(a+1)(2b-a+1)]\) when \(2b-a>-1\). At \(b=a=-1/2\), \(X=U^2\) and every weight equals exactly two. At \(b=-1/2,a=-1/4\), the second moment is \(1/(0.75\times0.25)=5.3333\). The variance is 1.3333 and 100 independent draws have standard deviation about 0.1155.</p>
+</section>
+<section>
+<h2 id="compare-sampling-plans-on-the-same-draws">Compare sampling plans on the same draws</h2>
+<p>Use the same fixed pseudo-random uniform sequence for the two plans so changes reflect the transformation. Sweep the proposal exponent through the finite-variance boundary and inspect the running mean. One finite trajectory can look benign even when the theoretical second moment diverges.</p>
+<div id="try-it" class="interactive-study" data-study="num-importance-sampling"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-signs-and-diagnostics">Tutorial on signs and diagnostics</h2>
+<p>If \(f\) changes sign, can sampling proportional to \(|f|\) remove every fluctuation?</p>
+<details><summary>Worked solution</summary><p>Then the weight is a constant magnitude multiplied by the sign of \(f\). Its variance vanishes only if that sign is constant almost everywhere. Cancellation between positive and negative contributions can still make relative accuracy poor.</p></details>
+<p>A proposal has zero density on a short interval where \(f\) is nonzero. Does increasing the number of samples repair the estimate?</p>
+<details><summary>Worked solution</summary><p>No sample can reach that interval, so the corresponding integral contribution is absent. This is a bias from missing support; the derivation of \(E[W]=I\) fails there.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/16-clenshaw-recurrence/">Chapter 16 · Summing a Chebyshev series by working backwards</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/problem-sheets/7/">Problem sheet 7 · Project · How many sensors measure the mean around a ring?</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

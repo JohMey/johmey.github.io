@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Predicting a new measurement when the fitted parameters are correlated · OneSimulation</title>
+<meta name="description" content="Propagate the full posterior covariance to a quantity of interest, distinguish latent and measured uncertainty and select the observation that reduces the uncertainty of the actual prediction.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/17-posterior-prediction/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Predicting a new measurement when the fitted parameters are correlated · OneSimulation">
+<meta property="og:description" content="Propagate the full posterior covariance to a quantity of interest, distinguish latent and measured uncertainty and select the observation that reduces the uncertainty of the actual prediction.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/17-posterior-prediction/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Predicting a new measurement when the fitted parameters are correlated</h1><p class="lead">Propagate the full posterior covariance to a quantity of interest, distinguish latent and measured uncertainty and select the observation that reduces the uncertainty of the actual prediction.</p><p class="byline">Chapter 17 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#one-model-supplies-many-possible-targets">One model supplies many possible targets</a><a href="#a-precise-sum-and-an-uncertain-difference">A precise sum and an uncertain difference</a><a href="#choose-the-measurement-direction">Choose the measurement direction</a><a href="#tutorial-on-prediction-and-parameter-recovery">Tutorial on prediction and parameter recovery</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="one-model-supplies-many-possible-targets">One model supplies many possible targets</h2>
+<p>For parameters \(\theta\) with posterior mean \(m\) and covariance \(C\), a linear target \(s=h^T\theta\) has mean \(h^Tm\). Subtract the mean and expand the quadratic product to obtain \(\operatorname{Var}(s)=h^TCh\). An independent sensor with variance \(R\) changes the variance of a future measured value to \(h^TCh+R\). Repeated fits of noisy datasets and repeated physical measurements are distinct sources of variation.</p>
+<p>A candidate new observation \(z=a^T\theta+\epsilon\) with variance \(R_a\) has covariance \(h^TCa\) with the target. For a Gaussian posterior the conditional covariance update is \(C_+=C-Caa^TC/(a^TCa+R_a)\), found either by completing the square or projecting out the optimal multiple of the innovation. The target variance decreases by</p>
+<div class="math display">\[\Delta\operatorname{Var}(s)=\frac{(h^TCa)^2}{a^TCa+R_a}.\]</div>
+</section>
+<section>
+<h2 id="a-precise-sum-and-an-uncertain-difference">A precise sum and an uncertain difference</h2>
+<p>Let \(C\) have diagonal entries 1 and correlation \(-0.9\). A target \(h=(1,1)\) has variance \(2-1.8=0.2\). The difference \(h=(1,-1)\) has variance 3.8. Ignoring correlations would predict 2 for both. With sensor variance 0.25, a newly measured sum has variance 0.45 although the latent sum variance remains 0.2.</p>
+<p>For the target sum, measuring the first coordinate with variance 0.25 reduces variance by \((1-0.9)^2/(1+0.25)=0.008\). Measuring the sum itself at the same variance reduces it by \(0.2^2/(0.2+0.25)=0.0889\). These two sensors have differently normalised sensitivity vectors. Their stated noise levels refer to their own output units and must be calibrated before a cost comparison.</p>
+</section>
+<section>
+<h2 id="choose-the-measurement-direction">Choose the measurement direction</h2>
+<p>For a fairer geometric comparison, restrict both measurement and prediction directions to unit length. Fix the target along the normalised sum. Sweep candidate observation angles and read the remaining prediction variance. Change the parameter correlation: when does a coordinate sensor improve the target appreciably?</p>
+<div id="try-it" class="interactive-study" data-study="num-posterior-prediction"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-prediction-and-parameter-recovery">Tutorial on prediction and parameter recovery</h2>
+<p>If \(h^TCa=0\), can a noise-free measurement of \(a^T\theta\) improve the linear prediction under these Gaussian assumptions?</p>
+<details><summary>Worked solution</summary><p>The covariance reduction is exactly zero. The measurement may determine another direction precisely while carrying no linear information about the target.</p></details>
+<p>The posterior on \(\theta\) is strongly non-Gaussian. Which conclusions still hold exactly?</p>
+<details><summary>Worked solution</summary><p>Mean and variance of a fixed linear prediction still follow from its first two moments, and independent sensor variance still adds. The Gaussian conditional update and an interval based only on two standard deviations need additional assumptions.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Compare the projection of a vector measurement with the covariance of a scalar target. Check the direction of each matrix product. <a href="https://ee363.stanford.edu/archive/lectures.html">Stephen Boyd · Stanford EE363, estimation</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/chapters/16-resolution-and-discrepancy/">Chapter 16 · How model error masquerades as a fitted physical parameter</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/problem-sheets/7/">Problem sheet 7 · Project · Which thermometer should the laboratory buy?</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

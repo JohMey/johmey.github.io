@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Locating a grazing event between time steps · OneSimulation</title>
+<meta name="description" content="Derive a sensitivity formula for event time, then measure how a harmless error in a trajectory can create or remove two threshold crossings.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/17-grazing-events/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Locating a grazing event between time steps · OneSimulation">
+<meta property="og:description" content="Derive a sensitivity formula for event time, then measure how a harmless error in a trajectory can create or remove two threshold crossings.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/ordinary-differential-equations/chapters/17-grazing-events/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/ordinary-differential-equations/">Numerical ordinary differential equations</a></p><h1>Locating a grazing event between time steps</h1><p class="lead">Derive a sensitivity formula for event time, then measure how a harmless error in a trajectory can create or remove two threshold crossings.</p><p class="byline">Chapter 17 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-time-is-an-implicitly-defined-output">A time is an implicitly defined output</a><a href="#resolve-two-crossings-analytically">Resolve two crossings analytically</a><a href="#what-two-endpoint-samples-fail-to-tell-you">What two endpoint samples fail to tell you</a><a href="#tutorial-on-event-tolerances">Tutorial on event tolerances</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-time-is-an-implicitly-defined-output">A time is an implicitly defined output</h2>
+<p>Suppose an integrator advances \(y'=f(t,y)\) and an event occurs at \(g(t,y(t))=0\). Along the solution the derivative of the event function is \(\dot g=g_t+\nabla_y g\cdot f\). A perturbation \(\delta g\) in the computed event function shifts a simple event time by \(\delta t\simeq-\delta g/\dot g\). This estimate separates trajectory accuracy from event-time accuracy. At a tangency the denominator vanishes and the formula cannot be used.</p>
+</section>
+<section>
+<h2 id="resolve-two-crossings-analytically">Resolve two crossings analytically</h2>
+<p>Take \(g(t)=(t-t_0)^2-d\), a local model for a turning point relative to a sensor threshold. For \(d>0\) the events are \(t_0\pm\sqrt d\). Their separation is \(2\sqrt d\), and their slopes are \(\pm2\sqrt d\). For \(d=0\) there is only a tangent touch. If \(d<0\), the sensor is never triggered. An additive constant perturbation \(\epsilon\) changes the effective parameter from \(d\) to \(d-\epsilon\).</p>
+<p>At \(t_0=1\), \(d=0.01\) and \(\epsilon=0.001\), the first event moves from 0.9 to about 0.90513. The linear prediction is \(0.001/0.2=0.005\). At \(d=0.0004\) the same perturbation removes both crossings entirely. Reporting more digits from a polished scalar rootfinder would not recover them.</p>
+</section>
+<section>
+<h2 id="what-two-endpoint-samples-fail-to-tell-you">What two endpoint samples fail to tell you</h2>
+<p>With \(d=0.0025\), a step from 0.9 to 1.1 has equal positive endpoint values of 0.0075 but crosses the threshold twice. Dense interpolation followed by an extremum check can detect this pair if the interpolant resolves the turning point. A sign-change test at accepted endpoints alone cannot. An interpolant is itself an approximation, so event feasibility should be tested against an error scale at the extremum.</p>
+<div id="try-it" class="interactive-study" data-study="num-grazing-events"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-event-tolerances">Tutorial on event tolerances</h2>
+<p>For a simple crossing with slope magnitude 0.04 units/s, what error in the event function is consistent with a 1 ms time tolerance to first order?</p>
+<details><summary>Worked solution</summary><p>Multiply the slope by the desired time uncertainty. The event function should be accurate to about \(4\times10^{-5}\) units near the crossing.</p></details>
+<p>A contact model needs the first event, even if it only touches the threshold and returns. How should the experiment be reported near grazing?</p>
+<details><summary>Worked solution</summary><p>Report the minimum event-function value and an estimated error on it, in addition to any time estimates. If zero lies within that uncertainty one cannot distinguish no crossing, tangency and a nearby pair from these data alone.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/ordinary-differential-equations/chapters/16-transient-growth/">Chapter 16 · How two decaying modes produce a growing signal</a></span><span>Next<br><a href="/fundamentals/numerics/ordinary-differential-equations/problem-sheets/7/">Problem sheet 7 · Project · Choose a time integrator from measurements</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-num-ode.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

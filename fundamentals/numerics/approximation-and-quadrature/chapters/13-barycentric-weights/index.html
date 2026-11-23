@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluating an interpolant without rebuilding its polynomial · OneSimulation</title>
+<meta name="description" content="Derive a quotient from the Lagrange basis, evaluate the removable singularity at a data point and separate rounding error from sensitivity to the data.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/13-barycentric-weights/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Evaluating an interpolant without rebuilding its polynomial · OneSimulation">
+<meta property="og:description" content="Derive a quotient from the Lagrange basis, evaluate the removable singularity at a data point and separate rounding error from sensitivity to the data.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/13-barycentric-weights/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Evaluating an interpolant without rebuilding its polynomial</h1><p class="lead">Derive a quotient from the Lagrange basis, evaluate the removable singularity at a data point and separate rounding error from sensitivity to the data.</p><p class="byline">Chapter 13 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#one-product-shared-by-all-the-basis-functions">One product shared by all the basis functions</a><a href="#worked-interpolation-and-data-sensitivity">Worked interpolation and data sensitivity</a><a href="#put-more-sensors-near-the-endpoints">Put more sensors near the endpoints</a><a href="#tutorial-on-what-the-formula-guarantees">Tutorial on what the formula guarantees</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="one-product-shared-by-all-the-basis-functions">One product shared by all the basis functions</h2>
+<p>Let distinct nodes \(x_0,\ldots,x_n\) carry data \(y_j\). The cardinal function \(\ell_j(x)\) is one at node \(j\) and zero at the other nodes. Its product formula is expensive if every evaluation repeats the same differences. Set \(w_j=1/\prod_{k\ne j}(x_j-x_k)\) and \(P(x)=\prod_k(x-x_k)\). Away from all nodes, \(\ell_j(x)=P(x)w_j/(x-x_j)\). The polynomial interpolating constant data equal to one is one everywhere. Dividing the interpolating polynomial by this partition of unity cancels \(P(x)\) to give</p>
+<div class="math display">\[p(x)=\frac{\sum_j w_jy_j/(x-x_j)}{\sum_j w_j/(x-x_j)}.\]</div>
+<p>At a node the written quotient divides infinities. Multiply numerator and denominator by \(x-x_j\) and take the limit to recover \(y_j\) exactly. An implementation should return the stored value when the evaluation coordinate equals a node. Multiplying every weight by the same nonzero factor leaves the quotient invariant, a useful freedom when storing weights.</p>
+</section>
+<section>
+<h2 id="worked-interpolation-and-data-sensitivity">Worked interpolation and data sensitivity</h2>
+<p>Take the nodes \(-1,0,1\). Their weights are proportional to \(1,-2,1\). With data \(1,0,1\) at \(x=0.5\), the numerator is \(2/3-2=-4/3\) and the denominator is \(2/3-4-2=-16/3\). Hence \(p(0.5)=1/4\), as the polynomial \(x^2\) requires.</p>
+<p>Change the middle datum from 0 to 0.01. Its cardinal function is \(1-x^2\), so the prediction at 0.5 rises by 0.0075. For arbitrary data perturbations bounded by \(\delta\), the triangle inequality gives \(|\Delta p(x)|\le\delta\sum_j|\ell_j(x)|\). Large values of this sum signal a sensitivity of the interpolation problem. Evaluating the same polynomial by a smarter formula cannot remove this source of error.</p>
+</section>
+<section>
+<h2 id="put-more-sensors-near-the-endpoints">Put more sensors near the endpoints</h2>
+<p>Approximate \(f(x)=1/(1+25x^2)\) on \([-1,1]\). Both curves use the same number of exact samples and the same barycentric algorithm. One uses equally spaced nodes and the other uses projections of equally spaced angles on a semicircle. Check the interior before inspecting the ends.</p>
+<div id="try-it" class="interactive-study" data-study="num-barycentric-weights"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-what-the-formula-guarantees">Tutorial on what the formula guarantees</h2>
+<p>Why do three weights with alternating signs produce an answer between zero and one in the first calculation? Must it always lie between the smallest and largest data?</p>
+<details><summary>Worked solution</summary><p>The example reconstructs \(x^2\), which stays within that range on this interval. General cardinal functions may be negative. Unlike a convex combination, their weighted sum can overshoot the sampled range.</p></details>
+<p>For the three nodes above, perturb only the datum at \(-1\) by 0.04. What is the change at \(x=0.5\)?</p>
+<details><summary>Worked solution</summary><p>The left cardinal polynomial is \(x(x-1)/2\), equal to \(-1/8\) at \(0.5\). The change is \(-0.005\), with the opposite sign to the perturbation.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Compare the construction of weights with the theorem on the barycentric form. Reuse the same nodes to reproduce the data-perturbation calculation. <a href="https://fncbook.com/python/barycentric/">Driscoll and Braun · Barycentric interpolation</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/problem-sheets/6/">Problem sheet 6 · Choosing where to sample</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/14-periodic-aliasing/">Chapter 14 · When a trapezoidal sum counts the wrong frequency perfectly</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a real gas cools or warms across a throttle · OneSimulation</title>
+<meta name="description" content="A gas passes through an insulated porous plug. Its pressure drops and its measured temperature changes. Start with the energy flowing through the plug and obtain a prediction from the equation of state.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/14-throttling/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why a real gas cools or warms across a throttle · OneSimulation">
+<meta property="og:description" content="A gas passes through an insulated porous plug. Its pressure drops and its measured temperature changes. Start with the energy flowing through the plug and obtain a prediction from the equation of state.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/14-throttling/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>Why a real gas cools or warms across a throttle</h1><p class="lead">A gas passes through an insulated porous plug. Its pressure drops and its measured temperature changes. Start with the energy flowing through the plug and obtain a prediction from the equation of state.</p><p class="byline">Chapter 14 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#balance">Establish which property travels through the plug</a><a href="#maxwell">Recover the pressure dependence of enthalpy</a><a href="#virial">An instructive gas with an inversion temperature</a><a href="#tutorial">Tutorial · infer the attractive correction</a></nav></aside><article class="prose reference"><section><h2 id="balance">Establish which property travels through the plug</h2>
+<p>A steady control volume with one inlet, one outlet and no shaft work has \(h_1+u_1^2/2+gz_1=h_2+u_2^2/2+gz_2\) when the casing is insulated. Choose the measurement stations in large, level pipes where changes in mean kinetic energy are negligible. Then \(h_1=h_2\). The pressure gradient is sustained by irreversible friction in the plug. Along the family of equilibrium outlet states, a small pressure change produces \(dT=\mu_{JT}dp\), with \(\mu_{JT}=(\partial T/\partial p)_h\). This family lets us compute endpoints without resolving the interior pore flow.</p>
+</section>
+<section><h2 id="maxwell">Recover the pressure dependence of enthalpy</h2>
+<p>Use molar properties. For a simple compressible pure substance, \(dh=T\,ds+v\,dp\). View entropy as a function of \(T,p\). At fixed pressure its temperature derivative is \(c_p/T\). To obtain its pressure derivative, differentiate \(g=h-Ts\). Its differential is \(dg=-s\,dT+v\,dp\). Equality of mixed derivatives gives \((\partial s/\partial p)_T=-(\partial v/\partial T)_p\). Substitution yields</p>
+<div class="math display equation-chain"><div class="equation-step">\[dh=c_p\,dT+\left[v-T\left({\partial v\over\partial T}\right)_p\right]dp,\]</div><div class="equation-step">\[\mu_{JT}={T(\partial v/\partial T)_p-v\over c_p}.\]</div></div>
+<p>For an ideal gas \(v=RT/p\) the two numerator terms cancel at all temperatures. Real gas attractions and finite molecular volume affect this near cancellation. Since \(dp&lt;0\) for the pressure drop, positive \(\mu_{JT}\) indicates cooling. Check units by dividing cubic metres per mole by joules per mole per kelvin. The result is kelvins per pascal.</p>
+</section>
+<section><h2 id="virial">An instructive gas with an inversion temperature</h2>
+<p>Represent a dilute model gas by \(v=RT/p+B(T)\), with \(B=b-a/(RT)\). Here \(a,b\) are constants and the omitted equation-of-state terms become important at higher density. The ideal part cancels identically. Differentiating the correction gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[\mu_{JT}\simeq {T B'(T)-B(T)\over c_p}={2a/(RT)-b\over c_p},\]</div><div class="equation-step">\[T_{\rm inv}={2a\over Rb}.\]</div></div>
+<p>With \(b=4.0\times10^{-5}\) m³/mol, \(a=0.080\) Pa m⁶/mol², \(R=8.314\) J/(mol K) and \(c_p=30\) J/(mol K), the inversion lies near 481 K. At 300 K, \(\mu_{JT}=0.0805\) K/bar. A modest drop from 3 bar to 1 bar cools this gas by about 0.161 K. At 600 K the derivative is about −0.0264 K/bar. The same pressure drop then warms the gas by 0.0528 K. Treat this as a local calculation. Over a large temperature range one should integrate the property derivative using a validated equation of state.</p>
+<p class="calculation-prompt">Alter the pressure drop while holding the attractive constant fixed. Locate the zero crossing at two pressure drops. Explain why it remains at the same temperature in this first-order calculation and why the cooling magnitudes change.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-thermodynamics-throttling"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · infer the attractive correction</h2>
+<p>A low-density gas at 320 K gives a positive slope of 0.060 K/bar in a throttle experiment. Assume the same \(b,c_p\) as above. Estimate a and the inversion temperature. How would an unaccounted heat leak from a warm room bias the inference if the gas cools?</p>
+<details><summary>Show the inference and sign check</summary>
+<p>Convert the slope to \(6.0\times10^{-7}\) K/Pa. Rearranging gives \(a=(RT/2)(c_p\mu_{JT}+b)=0.0772\) Pa m⁶/mol², whence \(T_{\rm inv}=464\) K. A warm leak partially cancels cooling, making the observed outlet temperature drop too small. Because the pressure drop is also negative, the apparent positive slope is smaller. In this parameter fit the estimated a is therefore too low.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-43-advanced-thermodynamics-spring-2024/mit2_43_s24_lec05.pdf">MIT 2.43 · property relations and the Joule–Thomson coefficient</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/13-gas-cycle/">Chapter 13 · Choosing a pressure ratio for a gas-turbine cycle</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/15-fins/">Chapter 15 · When another centimetre of cooling fin stops helping</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

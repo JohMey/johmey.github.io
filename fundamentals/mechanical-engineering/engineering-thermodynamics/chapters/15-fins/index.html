@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When another centimetre of cooling fin stops helping · OneSimulation</title>
+<meta name="description" content="A fin adds surface area, but heat must travel down its length before it can reach that area. Derive the temperature profile from an energy balance and quantify how much of the nominal area contributes to cooling.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/15-fins/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When another centimetre of cooling fin stops helping · OneSimulation">
+<meta property="og:description" content="A fin adds surface area, but heat must travel down its length before it can reach that area. Derive the temperature profile from an energy balance and quantify how much of the nominal area contributes to cooling.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/15-fins/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>When another centimetre of cooling fin stops helping</h1><p class="lead">A fin adds surface area, but heat must travel down its length before it can reach that area. Derive the temperature profile from an energy balance and quantify how much of the nominal area contributes to cooling.</p><p class="byline">Chapter 15 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#balance">Balance a short slice with distributed convection</a><a href="#limits">Efficiency follows by comparing with an isothermal fin</a><a href="#examples">Two fins made from the same stock</a><a href="#tutorial">Tutorial · select a length from a marginal-benefit criterion</a></nav></aside><article class="prose reference"><section><h2 id="balance">Balance a short slice with distributed convection</h2>
+<p>Consider a straight prismatic fin of conductivity k, cross-section A, exposed perimeter P and length L. Hold the root at \(T_b\), let a fluid at \(T_\infty\) surround the fin and use a uniform convection coefficient h. Temperature is assumed nearly uniform across each cross-section. A small transverse Biot number \(h(A/P)/k\) supports that assumption. Ignore radiation and heat loss from the tip. Define \(\theta=T-T_\infty\). The axial heat entering a slice, less the heat leaving its far face, must equal \(hP\theta\,dx\).</p>
+<div class="math display equation-chain"><div class="equation-step">\[q_x=-kA\,\theta',\]</div><div class="equation-step">\[-{dq_x\over dx}=hP\theta,\]</div><div class="equation-step">\[\theta''-m^2\theta=0,\]</div><div class="equation-step">\[m=\sqrt{hP/(kA)}.\]</div></div>
+<p>A positive temperature excess makes the heat flow diminish downstream. For an insulated tip \(q_x(L)=0\), so a hyperbolic cosine centered at the tip satisfies the zero-slope condition. Its coefficient follows from the root temperature.</p>
+<div class="math display equation-chain"><div class="equation-step">\[{\theta(x)\over\theta_b}={\cosh[m(L-x)]\over\cosh(mL)},\]</div><div class="equation-step">\[Q_b=kAm\theta_b\tanh(mL).\]</div></div>
+</section>
+<section><h2 id="limits">Efficiency follows by comparing with an isothermal fin</h2>
+<p>If every part of the lateral area stayed at \(T_b\), the heat transfer would be \(hPL\theta_b\). The actual-to-ideal ratio is therefore \(\eta_f=\tanh(mL)/(mL)\). For small mL the temperature falls little along the wall and doubling the area nearly doubles the heat flow. For large mL the root heat flow approaches \(kAm\theta_b\). Near the long-fin limit increasing conductivity or the root cross-section can buy more cooling than adding length. Efficiency alone does not measure total heat removal because it contains the nominal area in its denominator.</p>
+</section>
+<section><h2 id="examples">Two fins made from the same stock</h2>
+<p>Use a rectangular aluminium strip, 20 mm wide, 2 mm thick, \(k=200\) W/(m K), \(h=25\) W/(m² K) and \(\theta_b=50\) K. All four long faces are exposed. With \(A=4.0\times10^{-5}\) m² and \(P=0.044\) m, \(m=11.73\) m⁻¹. At 50 mm length, \(mL=0.586\), \(Q_b=2.47\) W and \(\eta_f=0.899\). The tip remains about 42.5 K above ambient.</p>
+<p>At 150 mm, the heat rate is 4.43 W and the efficiency drops to 0.536. The material and exposed area tripled, while the heat transfer increased by about 79%. A fin root bonded through a finite contact resistance \(R_c\) would run cooler than the heated base. Replacing the temperature excess by \(T_{\rm base}-T_\infty-Q_b R_c\) in the root heat equation gives a direct way to include the bond in a thermal circuit.</p>
+<p class="calculation-prompt">Choose a short fin and inspect how far the infinite-fin approximation is from the insulated-tip temperature. Increase length until the root heat rate is almost saturated. Estimate the added cooling from another centimetre at that point.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-thermodynamics-fins"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · select a length from a marginal-benefit criterion</h2>
+<p>For the same strip, require 95% of the infinitely long fin's heat rate. Find the required length. Then estimate the heat rate if the base is held 50 K above ambient through a contact resistance of 1 K/W.</p>
+<details><summary>Show the inverse calculation</summary>
+<p>Set \(\tanh(mL)=0.95\), giving \(mL=\tfrac12\ln(1.95/0.05)=1.832\) and \(L=0.156\) m. The root conductance there is \(G=kAm(0.95)=0.0891\) W/K. Adding the contact resistance gives \(Q=50/(1/G+1)=4.09\) W. The temperature drop across the contact is about 4.09 K. This check distinguishes the fin-root temperature from the base temperature reported by a sensor under the bond.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ahtt.mit.edu/">Lienhard and Lienhard · A Heat Transfer Textbook, chapter 4 on conduction and fins</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/14-throttling/">Chapter 14 · Why a real gas cools or warms across a throttle</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/16-freezing-front/">Chapter 16 · A moving boundary in a freezing layer</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

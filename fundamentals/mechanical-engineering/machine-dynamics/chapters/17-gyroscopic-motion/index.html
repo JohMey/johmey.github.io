@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steady gyroscopic precession and its two possible rates · OneSimulation</title>
+<meta name="description" content="A spinning axisymmetric rotor supported at one point can keep a constant tilt under gravity. Predict the rate at which its axis turns, examine the fast-spin approximation and determine when slow steady precession is possible.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/17-gyroscopic-motion/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Steady gyroscopic precession and its two possible rates · OneSimulation">
+<meta property="og:description" content="A spinning axisymmetric rotor supported at one point can keep a constant tilt under gravity. Predict the rate at which its axis turns, examine the fast-spin approximation and determine when slow steady precession is possible.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/17-gyroscopic-motion/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Steady gyroscopic precession and its two possible rates</h1><p class="lead">A spinning axisymmetric rotor supported at one point can keep a constant tilt under gravity. Predict the rate at which its axis turns, examine the fast-spin approximation and determine when slow steady precession is possible.</p><p class="byline">Chapter 17 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#geometry">Identify the changing direction of angular momentum</a><a href="#exact">Keep the angular momentum due to precession</a><a href="#examples">A tabletop rotor as its spin slows</a><a href="#tutorial">Tutorial · infer a moment arm from observed motion</a></nav></aside><article class="prose reference"><section><h2 id="geometry">Identify the changing direction of angular momentum</h2>
+<p>Let the centre of mass be a distance l along the symmetry axis from a fixed pivot. The symmetry axis is tilted by \(\theta\) from the upward vertical. The moment of inertia about that axis is \(I_3\), and about either transverse axis through the pivot it is \(I_1\). Define \(\omega_3\) as the total component of angular velocity along the symmetry axis. When the spin angular momentum dominates, \(\mathbf H\simeq I_3\omega_3\mathbf e_3\). Under uniform precession at rate \(\Omega\), its tip traces a horizontal circle of radius \(I_3\omega_3\sin\theta\).</p>
+<div class="math display equation-chain"><div class="equation-step">\[|\dot{\mathbf H}|\simeq\Omega I_3\omega_3\sin\theta,\]</div><div class="equation-step">\[|\boldsymbol\tau_g|=mgl\sin\theta,\]</div><div class="equation-step">\[\Omega_{\rm slow}\simeq {mgl\over I_3\omega_3}.\]</div></div>
+<p>The tilt factors cancel for nonvertical orientations. Gravity changes the direction of angular momentum while doing zero work in a steady precession at fixed height. Reversing the spin changes the direction of slow precession. The support force has zero moment about the pivot.</p>
+</section>
+<section><h2 id="exact">Keep the angular momentum due to precession</h2>
+<p>For a regular precession at fixed tilt the transverse angular velocity is the part of \(\Omega\mathbf e_z\) perpendicular to \(\mathbf e_3\). Thus \(\mathbf H=I_1\Omega\mathbf e_z+(I_3\omega_3-I_1\Omega\cos\theta)\mathbf e_3\). The vertical first term is constant. The rotating second term has derivative \(\Omega\mathbf e_z\times\mathbf H\). Equating it to the gravitational torque yields</p>
+<div class="math display">\[I_1\cos\theta\,\Omega^2-I_3\omega_3\Omega+mgl=0 .\]</div>
+<p>For \(0&lt;\theta&lt;90^\circ\) and positive spin, two positive real rates exist only if \(D=(I_3\omega_3)^2-4I_1 mgl\cos\theta\ge0\). The smaller root is most accurately evaluated as \(2mgl/(I_3\omega_3+\sqrt D)\), avoiding subtraction of nearly equal numbers at high spin. The larger root corresponds to a different initial angular velocity. Releasing a rotor without providing an appropriate initial precession generally adds nutation.</p>
+</section>
+<section><h2 id="examples">A tabletop rotor as its spin slows</h2>
+<p>Take \(m=0.50\) kg, \(l=0.060\) m, \(I_1=0.0030\) kg m², \(I_3=0.0020\) kg m² and \(\theta=60^\circ\). At \(\omega_3=100\) rad/s the first estimate gives 1.47 rad/s. The quadratic gives 1.49 rad/s for the slow branch and 131.8 rad/s for the fast branch. The 1% discrepancy in the slow result is consistent with a small transverse angular momentum.</p>
+<p>At \(\omega_3=30\) rad/s the approximation gives 4.91 rad/s and the exact slow rate is 5.72 rad/s. The two rates meet at a spin of roughly 21.0 rad/s. Below this value there is no constant-tilt solution for the prescribed angle and inertias. Plotting the discriminant or using the real branches avoids reporting a fictitious real rate after the branches disappear.</p>
+<p class="calculation-prompt">Compare the approximation and exact branch near the minimum admissible spin, then at high spin. Raise the tilt toward a right angle. Predict whether the minimum spin increases or falls before checking the new domain of the curve.</p>
+<div id="try-it" class="interactive-study" data-study="eng-machine-dynamics-gyroscopic-motion"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · infer a moment arm from observed motion</h2>
+<p>For the same inertias and mass, measure \(\omega_3=50\) rad/s, \(\Omega=3.0\) rad/s and \(\theta=60^\circ\). Estimate l from the full relation. Calculate the bias if transverse angular momentum is omitted.</p>
+<details><summary>Show the torque estimate</summary>
+<p>The full torque parameter is \(mgl=I_3\omega_3\Omega-I_1\cos\theta\,\Omega^2=0.300-0.0135=0.2865\) N m. The arm is \(l=0.2865/(0.50\cdot9.81)=58.4\) mm. Keeping only the first term gives 61.2 mm, overestimating the arm by about 4.7%. Measuring steady precession over several cycles helps distinguish that systematic error from fluctuations caused by nutation.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-003sc-engineering-dynamics-fall-2011/pages/angular-momentum-and-motion-of-rotating-rigid-bodies/">MIT 2.003SC · angular momentum and rotating rigid bodies</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/16-moving-frame/">Chapter 16 · Why a radial slide presses sideways on a rotating guide</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/18-dry-friction/">Chapter 18 · Why Coulomb damping loses a fixed amplitude each half-cycle</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

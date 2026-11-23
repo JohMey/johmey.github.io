@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffusion with a stationary carrier gas · OneSimulation</title>
+<meta name="description" content="A solvent evaporates into a gas layer. Its molecules diffuse relative to the mixture, while evaporation also induces a bulk molar flow. Work through the species balances to see why the flux ceases to scale linearly with surface concentration.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/17-stagnant-film/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Diffusion with a stationary carrier gas · OneSimulation">
+<meta property="og:description" content="A solvent evaporates into a gas layer. Its molecules diffuse relative to the mixture, while evaporation also induces a bulk molar flow. Work through the species balances to see why the flux ceases to scale linearly with surface concentration.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/17-stagnant-film/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>Diffusion with a stationary carrier gas</h1><p class="lead">A solvent evaporates into a gas layer. Its molecules diffuse relative to the mixture, while evaporation also induces a bulk molar flow. Work through the species balances to see why the flux ceases to scale linearly with surface concentration.</p><p class="byline">Chapter 17 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#balance">Choose the reference frame for a flux</a><a href="#profile">Separate variables and enforce both boundary concentrations</a><a href="#examples">Small and large amounts of vapour at the surface</a><a href="#tutorial">Tutorial · recover the effective film thickness</a></nav></aside><article class="prose reference"><section><h2 id="balance">Choose the reference frame for a flux</h2>
+<p>Let A be the evaporating species and B an insoluble carrier. A planar film of thickness L lies between the evaporating surface, at mole fraction \(y_s\), and a well-mixed reservoir at \(y_\infty&lt;y_s\). Keep total pressure, temperature, total molar concentration \(c=p/(RT)\) and binary diffusivity D uniform. In a stationary laboratory frame the total species flux equals diffusion relative to the molar-average velocity plus transport by that velocity. If positive z points towards the reservoir, write</p>
+<div class="math display">\[N_A=-cD{dy_A\over dz}+y_A(N_A+N_B).\]</div>
+<p>Steady conditions in one dimension make \(N_A,N_B\) independent of z. Carrier B cannot enter the liquid and has zero net flux there. This fixes \(N_B=0\) throughout the film. B still diffuses towards the interface relative to the moving mixture. Its diffusive flux balances its outward convective flux. The constraint \(N_A+N_B=0\) would instead describe equimolar counterdiffusion between two exchanging species.</p>
+</section>
+<section><h2 id="profile">Separate variables and enforce both boundary concentrations</h2>
+<p>Collect the terms in \(N_A\), divide by \(1-y_A\) and integrate from the surface to the reservoir. The remaining integral is a logarithm of the carrier mole fraction.</p>
+<div class="math display equation-chain"><div class="equation-step">\[N_A(1-y_A)=-cD{dy_A\over dz},\]</div><div class="equation-step">\[N_A={cD\over L}\ln{1-y_\infty\over 1-y_s}.\]</div></div>
+<div class="math display">\[1-y_A(z)=(1-y_s)\left({1-y_\infty\over1-y_s}\right)^{z/L}.\]</div>
+<p>The concentration profile curves because a given net flux requires a different concentration gradient at different carrier fractions. A dilute expansion of the logarithm gives \(N_A\simeq(cD/L)(y_s-y_\infty)\). The exact-to-dilute flux ratio exceeds unity when the surface emits A. The discrepancy becomes measurable long before the carrier disappears. At fractions very close to unity, the assumptions of a stagnant, isothermal film also deserve new scrutiny.</p>
+</section>
+<section><h2 id="examples">Small and large amounts of vapour at the surface</h2>
+<p>At 300 K and 1 bar, \(c=40.09\) mol/m³. Take \(D=2.0\times10^{-5}\) m²/s and \(L=5\) mm. The coefficient \(cD/L=0.1604\) mol/(m² s). With a vapour-free reservoir and \(y_s=0.05\), the logarithm is 0.05129 and the predicted flux is 0.00823 mol/(m² s). A linear gradient would give 0.00802, about 2.5% lower.</p>
+<p>For \(y_s=0.50\), the flux rises to 0.111 mol/(m² s), versus 0.0802 for the dilute estimate. At mid-depth the exact fraction is \(1-\sqrt{0.5}=0.293\), while linear interpolation gives 0.25. An experimental check can therefore use either a mass-loss measurement or a local concentration measurement. Evaporative cooling changes the saturation mole fraction at the surface, so a measured surface temperature matters even if room temperature seems stable.</p>
+<p class="calculation-prompt">Use a vapour-free reservoir and increase the surface fraction from 0.10 to 0.80. Estimate which midpoint concentration lies farther from linear interpolation. Compare the resulting flux errors and identify the physical transport term responsible.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-thermodynamics-stagnant-film"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · recover the effective film thickness</h2>
+<p>At the same temperature and diffusivity the surface mole fraction is 0.30, the reservoir fraction is 0.05 and a balance reports \(N_A=0.050\) mol/(m² s). Estimate L. What film thickness would be inferred if the outward molar flow were ignored?</p>
+<details><summary>Show the two fits</summary>
+<p>Solving the exact expression gives \(L=cD\ln(0.95/0.70)/N_A=4.90\) mm. The linear fit yields \(L=cD(0.25)/N_A=4.01\) mm. The latter fit makes the film thinner to compensate for omitted advection. In an experiment that effective thickness would predict the wrong flux when the surface composition changes appreciably.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ahtt.mit.edu/">Lienhard and Lienhard · A Heat Transfer Textbook, chapter 11 on mass transfer by diffusion</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/16-freezing-front/">Chapter 16 · A moving boundary in a freezing layer</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/18-vapour-refrigeration/">Chapter 18 · Reading a vapour-compression refrigerator from its four enthalpies</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

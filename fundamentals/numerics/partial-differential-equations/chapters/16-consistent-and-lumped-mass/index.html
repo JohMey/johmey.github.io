@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why two finite-element wave solvers propagate the same mode at different speeds · OneSimulation</title>
+<meta name="description" content="Build the element mass matrix by integrating shape functions and track the effect of diagonal lumping on the wave spectrum.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/chapters/16-consistent-and-lumped-mass/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why two finite-element wave solvers propagate the same mode at different speeds · OneSimulation">
+<meta property="og:description" content="Build the element mass matrix by integrating shape functions and track the effect of diagonal lumping on the wave spectrum.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/chapters/16-consistent-and-lumped-mass/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Why two finite-element wave solvers propagate the same mode at different speeds</h1><p class="lead">Build the element mass matrix by integrating shape functions and track the effect of diagonal lumping on the wave spectrum.</p><p class="byline">Chapter 16 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#from-a-continuum-wave-to-nodal-masses">From a continuum wave to nodal masses</a><a href="#diagonalise-the-assembled-periodic-problem">Diagonalise the assembled periodic problem</a><a href="#two-wavelengths-in-one-mesh">Two wavelengths in one mesh</a><a href="#tutorial-on-interpreting-a-convergence-test">Tutorial on interpreting a convergence test</a></nav></aside><article class="prose reference"><section>
+<h2 id="from-a-continuum-wave-to-nodal-masses">From a continuum wave to nodal masses</h2>
+<p>For \(u_{tt}=c^2u_{xx}\), multiply by a test function and integrate by parts. On a periodic line the boundary contributions cancel. A piecewise-linear element of width \(h\) uses shape functions \(1-\xi,\xi\), with \(\xi\in[0,1]\). Integrating products of shape functions gives \(M_e=(h/6)\left(\begin{smallmatrix}2&1\\1&2\end{smallmatrix}\right)\). Integrating derivative products gives \(K_e=(c^2/h)\left(\begin{smallmatrix}1&-1\\-1&1\end{smallmatrix}\right)\). Row-sum lumping replaces each mass row by its sum on the corresponding diagonal, \(h/2\). This preserves the mass associated with a uniform velocity but changes the response to a velocity that varies within an element.</p>
+</section>
+<section>
+<h2 id="diagonalise-the-assembled-periodic-problem">Diagonalise the assembled periodic problem</h2>
+<p>A periodic nodal mode has \(u_j=e^{ij\theta}\). Each neighbour contributes \(e^{\pm i\theta}\) relative to node \(j\). Thus \(K\) multiplies by \(2c^2(1-\cos\theta)/h\), consistent \(M\) by \(h(2+\cos\theta)/3\), and lumped \(M\) by \(h\). Dividing stiffness by mass gives the discrete squared frequency. Relative to the exact frequency \(c\theta/h\),</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{\omega_L}{c\theta/h}=\frac{2\sin(\theta/2)}{\theta},\]</div><div class="equation-step">\[\frac{\omega_C}{c\theta/h}=\frac{2\sin(\theta/2)}{\theta}\sqrt{\frac{3}{2+\cos\theta}}.\]</div></div>
+<p>Both tend to one for long waves; the leading quadratic errors have opposite signs. This is a spatial effect, present even with exact time integration.</p>
+</section>
+<section>
+<h2 id="two-wavelengths-in-one-mesh">Two wavelengths in one mesh</h2>
+<p>At four cells per wavelength \(\theta=\pi/2\). The lumped ratio is \(2\sqrt2/\pi\approx0.9003\); the consistent ratio is about 1.1027. One wave solver lags by roughly ten per cent and the other leads by roughly ten per cent. At eight cells per wavelength the ratios move much closer to one, but repeated propagation over many wavelengths can still accumulate visible phase error.</p>
+<p>At the shortest grid mode \(\theta=\pi\), the consistent frequency is \(\sqrt{12}c/h\) and the lumped frequency \(2c/h\). A central-difference time integrator stable for \(h_t\omega\le2\) therefore requires a smaller step for the consistent mass. Accuracy at one wavelength and stability at the grid scale are different design criteria.</p>
+<div id="try-it" class="interactive-study" data-study="num-consistent-and-lumped-mass"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-interpreting-a-convergence-test">Tutorial on interpreting a convergence test</h2>
+<p>Which mass gives the exact kinetic energy for a linear velocity varying from \(v\) to \(-v\) on one element?</p>
+<details><summary>Worked solution</summary><p>The continuum energy with unit density is \(hv^2/6\). The consistent matrix reproduces it by exact integration. The lumped kinetic energy is \(hv^2/2\), because it assigns both end masses the full endpoint speed.</p></details>
+<p>How would you isolate spatial dispersion from time stepping in a measurement of a cavity eigenfrequency?</p>
+<details><summary>Worked solution</summary><p>Solve the generalised eigenproblem \(Kq=\omega^2Mq\) directly for increasingly fine meshes or converge time steps on each fixed mesh. Then compare with the continuum frequency and report both \(h\) and the time tolerance.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/15-fourier-diffusion/">Chapter 15 · What a periodic grid does to a decaying Fourier mode</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/17-conservative-remapping/">Chapter 17 · Moving a cell average without inventing or losing material</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-num-pde.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

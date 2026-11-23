@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parametric resonance and Floquet growth · OneSimulation</title>
+<meta name="description" content="A pendulum can gain energy when its length varies periodically even if no additive force acts on it. A modulation near twice a natural frequency amplifies one phase of the oscillation and attenuates another. The stability test concerns the growth of a perturbation over a complete modulation period.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/19-parametric-instability/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Parametric resonance and Floquet growth · OneSimulation">
+<meta property="og:description" content="A pendulum can gain energy when its length varies periodically even if no additive force acts on it. A modulation near twice a natural frequency amplifies one phase of the oscillation and attenuates another. The stability test concerns the growth of a perturbation over a complete modulation period.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/19-parametric-instability/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a></p><h1>Parametric resonance and Floquet growth</h1><p class="lead">A pendulum can gain energy when its length varies periodically even if no additive force acts on it. A modulation near twice a natural frequency amplifies one phase of the oscillation and attenuates another. The stability test concerns the growth of a perturbation over a complete modulation period.</p><p class="byline">Chapter 19 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#linearise-the-timing-mechanism">Linearise the timing mechanism</a><a href="#find-the-first-instability-tongue">Find the first instability tongue</a><a href="#compute-the-period-map-without-averaging">Compute the period map without averaging</a><a href="#tutorial-on-phase-sensitive-amplification">Tutorial on phase-sensitive amplification</a></nav></aside><article class="prose reference"><section><h2 id="linearise-the-timing-mechanism">Linearise the timing mechanism</h2>
+<p>Consider \(\ddot x+2\gamma\dot x+\omega_0^2[1+h\cos(\Omega t)]x=0\). Here \(h\) is the fractional modulation of the stiffness and \(\gamma\) is the amplitude damping rate. If \(x=\dot x=0\) exactly, the solution stays zero. Small fluctuations or an initial condition provide the seed. Direct differentiation of \(E=[\dot x^2+\omega_0^2(1+h\cos\Omega t)x^2]/2\) yields \(\dot E=-2\gamma\dot x^2-h\omega_0^2\Omega x^2\sin(\Omega t)/2\). Energy transfer depends on the phase of \(x^2\), which naturally contains a component at twice the oscillation frequency.</p>
+<p>Near \(\nu=\Omega/2\simeq\omega_0\), write \(x=A(t)e^{i\nu t}+A^*(t)e^{-i\nu t}\) with slowly varying \(A\). Multiplication by \(\cos(2\nu t)\) mixes the negative-frequency term back into the positive-frequency term with coefficient \(h\omega_0^2/2\). There is also a component at \(3\nu\), rapidly oscillating in this first-resonance approximation. Retain terms proportional to \(e^{i\nu t}\), neglect \(\ddot A\) and products of small damping with \(\dot A\). This gives \(2i\nu\dot A+(\omega_0^2-\nu^2+2i\gamma\nu)A+(h\omega_0^2/2)A^*=0\).</p>
+</section>
+<section><h2 id="find-the-first-instability-tongue">Find the first instability tongue</h2>
+<p>Set \(\Delta=\nu-\omega_0\) and keep leading terms in the small ratios \(h,\gamma/\omega_0,|\Delta|/\omega_0\). The slow equations are \(\dot A=(-\gamma-i\Delta)A+igA^*\) and their conjugate, where \(g=h\omega_0/4\). The two-by-two characteristic equation is \((s+\gamma)^2=g^2-\Delta^2\). The faster exponent is</p>
+<div class="math display">\[\operatorname{Re}s_+=-\gamma+\operatorname{Re}\sqrt{(h\omega_0/4)^2-\Delta^2}.\]</div>
+<p>The oscillation grows when \(g^2&gt;\gamma^2+\Delta^2\). Exactly on resonance this gives \(h&gt;4\gamma/\omega_0\). With \(\omega_0=10\,\mathrm{s^{-1}}\), \(\gamma=0.10\,\mathrm{s^{-1}}\) and \(h=0.08\), \(g=0.20\,\mathrm{s^{-1}}\), giving an on-resonance doubling time \(\ln2/0.10=6.93\,\mathrm s\). The approximate growing interval in drive angular frequency is \(20\pm0.346\,\mathrm{s^{-1}}\). A large-amplitude real oscillator can saturate as its natural frequency changes with amplitude, a mechanism absent from this linear equation.</p>
+</section>
+<section><h2 id="compute-the-period-map-without-averaging">Compute the period map without averaging</h2>
+<p>Integrate the original linear equation over one drive period from two independent initial states \((1,0)\) and \((0,1)\). Their final columns form a matrix \(M\), which maps every initial perturbation over the same period \(T\). After \(j\) periods the map is \(M^j\); the maximum asymptotic amplitude exponent is \(\ln\max|\lambda_i(M)|/T\). Its determinant also has an exact check \(e^{-2\gamma T}\) from the divergence in the \((x,\dot x)\) plane. The calculation below integrates both columns by fourth-order Runge–Kutta. Compare the numerical Floquet exponent with the averaged prediction as the modulation depth increases. Both curves describe growth rates, including negative rates for decay.</p>
+<div id="try-it" class="interactive-study" data-study="ph-floquet"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-phase-sensitive-amplification">Tutorial on phase-sensitive amplification</h2>
+<p>At exact resonance and zero loss, substitute \(A=X+iY\) into \(\dot A=igA^*\). Identify the two special quadrature directions.</p>
+<details><summary>Work through the solution</summary><p>Equating real and imaginary parts yields \(\dot X=gY,\ \dot Y=gX\). Along \(Y=X\) both grow at \(g\), whereas along \(Y=-X\) they decay at \(g\). These directions reflect how timing the stiffness change can add or remove work on each cycle.</p></details>
+<p>On resonance an oscillator with \(\omega_0=40\,\mathrm{s^{-1}}\) first grows near \(h=0.03\). Estimate its small-signal damping and its free amplitude e-folding time.</p>
+<details><summary>Work through the solution</summary><p>From the weak-modulation threshold \(\gamma=h\omega_0/4=0.30\,\mathrm{s^{-1}}\). Without modulation the underdamped free amplitude falls as \(e^{-\gamma t}\), giving \(3.33\,\mathrm s\). Threshold uncertainty or nonlinear frequency shifts propagate into this inference.</p></details>
+<p class="source-note">Further reading · <a href="https://www.staff.science.uu.nl/~verhu101/Parametric.pdf">Verhulst, Utrecht University, perturbation analysis of parametric resonance</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/chapters/18-liouville-flow/">Chapter 18 · Liouville flow and what an ensemble can remember</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/problem-sheets/7/">Problem sheet 7 · Reconstructing an accelerating trap</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

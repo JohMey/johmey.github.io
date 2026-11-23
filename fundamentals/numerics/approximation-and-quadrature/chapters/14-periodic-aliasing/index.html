@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When a trapezoidal sum counts the wrong frequency perfectly · OneSimulation</title>
+<meta name="description" content="Use a finite geometric series to explain why a very accurate periodic quadrature rule can completely miss an oscillation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/14-periodic-aliasing/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When a trapezoidal sum counts the wrong frequency perfectly · OneSimulation">
+<meta property="og:description" content="Use a finite geometric series to explain why a very accurate periodic quadrature rule can completely miss an oscillation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/14-periodic-aliasing/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>When a trapezoidal sum counts the wrong frequency perfectly</h1><p class="lead">Use a finite geometric series to explain why a very accurate periodic quadrature rule can completely miss an oscillation.</p><p class="byline">Chapter 14 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#summing-one-fourier-mode">Summing one Fourier mode</a><a href="#two-rings-of-sensors">Two rings of sensors</a><a href="#move-the-sampling-ring">Move the sampling ring</a><a href="#tutorial-on-resolution">Tutorial on resolution</a></nav></aside><article class="prose reference"><section>
+<h2 id="summing-one-fourier-mode">Summing one Fourier mode</h2>
+<p>A smooth closed curve parameterised by angle provides a natural periodic integral. On \(N\) equally spaced points \(\theta_j=2\pi j/N\), write the trapezoidal estimate of a mean as \(T_N=N^{-1}\sum_{j=0}^{N-1}f(\theta_j)\). The endpoint \(2\pi\) equals zero angle and is counted only once. For \(f=e^{ik\theta}\), put \(q=e^{2\pi i k/N}\). If \(q\ne1\) then \((1-q)(1+q+\cdots+q^{N-1})=1-q^N=0\). If \(q=1\) all \(N\) samples equal one.</p>
+<p>For a Fourier series whose absolute convergence permits termwise summation, this gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[T_N=\sum_{\ell\in\mathbb Z}\widehat f_{\ell N},\]</div><div class="equation-step">\[T_N-\widehat f_0=\sum_{\ell\ne0}\widehat f_{\ell N}.\]</div></div>
+<p>The continuous mean sees only the constant mode. The grid silently adds every integer multiple of its sample count to that mode. Fast decay of smooth Fourier coefficients usually makes this error small. A single deliberately aligned harmonic can defeat the rule.</p>
+</section>
+<section>
+<h2 id="two-rings-of-sensors">Two rings of sensors</h2>
+<p>A ring carries the temperature \(20+3\cos(8\theta)\) °C. Eight sensors at zero angular offset all read 23 °C. The true mean is 20 °C. Nine equally spaced sensors give the exact mean for this harmonic. Moving the eight sensors through an offset \(\phi\) changes their mean to \(20+3\cos(8\phi)\) while the ring is unchanged.</p>
+<p>A different signal \(2+\cos(3\theta)+0.2\cos(10\theta)\) on five sensors gives 2.2 because the tenth harmonic aliases to zero frequency. Increasing the number to ten gives the same wrong answer. Independent node offsets or a noncommensurate sample count can challenge an apparently converged result.</p>
+</section>
+<section>
+<h2 id="move-the-sampling-ring">Move the sampling ring</h2>
+<p>The curve gives the mean reconstructed from rotated sensors over one revolution. Change the number of sensors and the physical harmonic separately. Predict the counts that will make the measurement depend on the angular offset.</p>
+<div id="try-it" class="interactive-study" data-study="num-periodic-aliasing"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-resolution">Tutorial on resolution</h2>
+<p>A discrete test gives the exact mean of \(\cos(7\theta)\) on eight equally spaced nodes. Can eight samples reconstruct that frequency uniquely?</p>
+<details><summary>Worked solution</summary><p>Its mean vanishes, but samples of \(\cos(7\theta)\) coincide with those of \(\cos(\theta)\) on this grid. Accurate integration of the mean does not imply unique reconstruction.</p></details>
+<p>Average two \(N\)-point rules offset by \(\pi/N\). Which aliases survive?</p>
+<details><summary>Worked solution</summary><p>Together the rings form a \(2N\)-point uniform grid. Terms at odd multiples of \(N\) change sign between grids and cancel. Terms at even multiples survive.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/13-barycentric-weights/">Chapter 13 · Evaluating an interpolant without rebuilding its polynomial</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/15-richardson-tableau/">Chapter 15 · Deriving Romberg integration and recognising a broken error model</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

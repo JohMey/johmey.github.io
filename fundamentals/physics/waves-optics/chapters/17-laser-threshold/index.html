@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Threshold, gain saturation and the decay of stored light · OneSimulation</title>
+<meta name="description" content="After establishing a transverse cavity mode, consider its intensity over many round trips. The same mirror losses determine a threshold with pumping and a measurable decay time when gain is removed.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/waves-optics/chapters/17-laser-threshold/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Threshold, gain saturation and the decay of stored light · OneSimulation">
+<meta property="og:description" content="After establishing a transverse cavity mode, consider its intensity over many round trips. The same mirror losses determine a threshold with pumping and a measurable decay time when gain is removed.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/waves-optics/chapters/17-laser-threshold/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/waves-optics/">Waves and optics</a></p><h1>Threshold, gain saturation and the decay of stored light</h1><p class="lead">After establishing a transverse cavity mode, consider its intensity over many round trips. The same mirror losses determine a threshold with pumping and a measurable decay time when gain is removed.</p><p class="byline">Chapter 17 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#record-every-factor-in-one-round-trip">Record every factor in one round trip</a><a href="#find-the-stationary-intensity">Find the stationary intensity</a><a href="#read-the-passive-lifetime-from-the-same-losses">Read the passive lifetime from the same losses</a><a href="#tutorial-on-inferring-a-mirror-reflectance">Tutorial on inferring a mirror reflectance</a></nav></aside><article class="prose reference"><section><h2 id="record-every-factor-in-one-round-trip">Record every factor in one round trip</h2>
+<p>Let \(L\) be the physical distance between mirrors. Their intensity reflectances are \(R_1,R_2\). Suppose the entire length contains a uniform medium with intensity gain coefficient \(g\) and distributed intensity loss coefficient \(\alpha\), both per metre. Traversing length \(dz\) multiplies intensity by \(1+(g-\alpha)dz\), which integrates to \(e^{(g-\alpha)L}\). During a round trip the light crosses the medium twice and reflects once at each mirror. The multiplier is \(\mathcal M=R_1R_2e^{2(g-\alpha)L}\). Small fluctuations in light intensity grow if \(\mathcal M&gt;1\). Setting it to one and taking logarithms gives</p>
+<div class="math display">\[g_{\rm th}=\alpha+\frac1{2L}\ln\frac1{R_1R_2}.\]</div>
+<p>This is a balance for a resonant mode. Phase closure also selects the allowed longitudinal frequencies and only modes overlapping the gain band can meet threshold. If a shorter gain section occupies length \(\ell&lt;L\), its exponent is \(2g\ell\) while background loss can still act over \(2L\). Using an amplitude reflectivity in a formula derived for intensity would introduce a second independent factor-of-two error.</p>
+</section>
+<section><h2 id="find-the-stationary-intensity">Find the stationary intensity</h2>
+<p>As stimulated emission increases, the available population inversion typically falls. In a simple homogeneously saturated, single-mode, spatially averaged model use \(g(I)=g_0/(1+I/I_s)\) with small-signal gain \(g_0\) and saturation intensity \(I_s\). A stationary positive intensity requires \(g(I)=g_{\rm th}\), hence \(I/I_s=g_0/g_{\rm th}-1\). Below threshold the positive solution disappears and the deterministic zero-intensity state is stable. Above threshold a small increase in intensity lowers gain and pushes the system back. Spontaneous emission seeds a real laser and smooths the ideal transition. Relaxation oscillations would require an explicit time equation for the inversion.</p>
+<p>For \(L=0.30\,\mathrm m\), \(\alpha=0.10\,\mathrm{m^{-1}}\), \(R_1=0.98\) and \(R_2=0.90\), \(g_{\rm th}=0.3093\,\mathrm{m^{-1}}\). A pump giving \(g_0=0.50\,\mathrm{m^{-1}}\) therefore sustains \(I\simeq0.617I_s\). If the output mirror transmitted more light, it could extract a greater fraction of the circulating light per encounter. It would also raise threshold. At a fixed pump these effects compete.</p>
+</section>
+<section><h2 id="read-the-passive-lifetime-from-the-same-losses">Read the passive lifetime from the same losses</h2>
+<p>Switch the gain term to zero. After \(j\) round trips the intensity is \(I_j=I_0[R_1R_2e^{-2\alpha L}]^j\). The time per round trip in a uniform medium of group index \(n_g\) is \(t_{\rm rt}=2n_gL/c\). Match \(I_j/I_0=e^{-jt_{\rm rt}/\tau}\) to obtain \(\tau=-t_{\rm rt}/\ln(R_1R_2e^{-2\alpha L})\). In air the preceding example gives \(\tau=10.8\,\mathrm{ns}\). This is the intensity lifetime. The electric-field amplitude would decay twice as slowly.</p>
+<p>Adjust the output reflectance, then predict which way the threshold and passive lifetime will move. The graph gives the stationary circulating intensity against small-signal gain. Its change of slope is observable even without knowing \(I_s\) exactly. The readout evaluates the selected pump point and the passive lifetime independently.</p>
+<div id="try-it" class="interactive-study" data-study="ph-laser"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-inferring-a-mirror-reflectance">Tutorial on inferring a mirror reflectance</h2>
+<p>A passive air cavity of length \(0.30\,\mathrm m\) with negligible internal absorption has an intensity lifetime \(20.0\,\mathrm{ns}\). Mirror one reflects 99.0 percent. Infer mirror two's intensity reflectance and the uniform gain coefficient required for threshold.</p>
+<details><summary>Work through the solution</summary><p>The round-trip time is \(2.00\,\mathrm{ns}\). The round-trip intensity retention is \(e^{-2.00/20.0}=0.9048\), so \(R_2=0.9048/0.990=0.914\). The threshold is \(-\ln(0.9048)/(0.60\,\mathrm m)=0.167\,\mathrm{m^{-1}}\). Scattering or absorption unaccounted for in the inference would be attributed to mirror two.</p></details>
+<p>Compare the energy lost per round trip with the exponential time constant in the example. Why would treating the logarithm as its first-order expansion bias the lifetime?</p>
+<details><summary>Work through the solution</summary><p>The retention is \(0.98\times0.90e^{-0.06}=0.8306\). The fractional loss is 0.1694, but the exponential log decrement is \(-\ln0.8306=0.1856\). Using the fractional loss instead would give \(2.00\,\mathrm{ns}/0.1694=11.8\,\mathrm{ns}\), longer than the exact 10.8 ns. The difference vanishes only in the small-loss limit.</p></details>
+<p>If an ideal gain crystal fills half the original cavity and all other losses remain, determine the gain coefficient required inside the crystal.</p>
+<details><summary>Work through the solution</summary><p>The round-trip gain becomes \(2g\ell\) with \(\ell=L/2\). The target round-trip log gain is unchanged. Therefore the necessary crystal gain doubles from \(0.3093\) to \(0.6186\,\mathrm{m}^{-1}\). This comparison assumes the gain crystal does not alter reflectance, group velocity or losses elsewhere.</p></details>
+<p class="source-note">Further reading · <a href="https://interactivetextbooks.tudelft.nl/tn2421/content/Chap7_Lasers/Lasers_2022_01Clean.html">Delft Interactive Optics, gain, resonators and laser threshold</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/waves-optics/chapters/16-resonator-stability/">Chapter 16 · When do two curved mirrors support a confined beam?</a></span><span>Next<br><a href="/fundamentals/physics/waves-optics/chapters/18-fourier-plane-filtering/">Chapter 18 · Turning invisible phase into visible intensity in a Fourier plane</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

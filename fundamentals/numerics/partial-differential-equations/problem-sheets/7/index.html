@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project · Verify a heat solver before interpreting its temperature · OneSimulation</title>
+<meta name="description" content="A laboratory plate can be heated internally and cooled at its boundary. Check global feasibility, the spatial error between nodes and the wavelength-dependent decay of periodic modes.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/7/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Project · Verify a heat solver before interpreting its temperature · OneSimulation">
+<meta property="og:description" content="A laboratory plate can be heated internally and cooled at its boundary. Check global feasibility, the spatial error between nodes and the wavelength-dependent decay of periodic modes.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/partial-differential-equations/problem-sheets/7/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/partial-differential-equations/">Numerical partial differential equations</a></p><h1>Project · Verify a heat solver before interpreting its temperature</h1><p class="lead">A laboratory plate can be heated internally and cooled at its boundary. Check global feasibility, the spatial error between nodes and the wavelength-dependent decay of periodic modes.</p><p class="byline">Problem sheet 7 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#can-the-thermal-problem-have-a-steady-solution">Can the thermal problem have a steady solution?</a><a href="#fix-the-reference-and-check-signs">Fix the reference and check signs</a><a href="#explain-the-missing-inter-element-curvature">Explain the missing inter-element curvature</a><a href="#test-an-independent-transient-boundary-condition">Test an independent transient boundary condition</a></nav></aside><article class="prose reference"><section><h2 id="can-the-thermal-problem-have-a-steady-solution">Can the thermal problem have a steady solution?</h2>
+<p>A one-dimensional bar of unit length and cross section obeys \(-u''=2\) in scaled units. Prescribe outward conductive fluxes \(q_L=0.5\), \(q_R=1.2\). Integrate the equation before solving. What physical quantity changes with time under these fluxes? Correct the right flux while keeping the left.</p>
+<details><summary>Work through the solution</summary><p>Outward flux is \(-u'n\). Total outward flux must equal the integrated source, 2. The prescribed sum is 1.7, leaving a positive heating imbalance of 0.3. With finite heat capacity the mean temperature rises. A compatible right flux is 1.5. A steady calculation with purely Neumann data then needs a reference temperature. Use the <a href="/fundamentals/numerics/partial-differential-equations/chapters/13-neumann-nullspace/#try-it">Neumann compatibility experiment</a>. Its left sensor reports zero rightward flux. For this comparison set \(v=u-0.5x\), which shifts the rightward flux by +0.5 at both ends. The original measurement then corresponds to the slider setting “Right flux minus 2” of −0.30, and the corrected data correspond to zero.</p></details>
+</section>
+<section><h2 id="fix-the-reference-and-check-signs">Fix the reference and check signs</h2>
+<p>For the compatible data, find the quadratic solution with zero spatial mean. Verify both fluxes and show which part a gradient measurement cannot recover.</p>
+<details><summary>Work through the solution</summary><p>Integrating twice gives \(u=-x^2+0.5x+C\) because at the left \(q_L=u'(0)=0.5\). At the right \(-u'(1)=1.5\). The mean is \(-1/3+1/4+C\), so \(C=1/12\). Adding any constant leaves every flux and gradient unchanged. A measured mean supplies information absent from the differential equation.</p></details>
+</section>
+<section><h2 id="explain-the-missing-inter-element-curvature">Explain the missing inter-element curvature</h2>
+<p>Interpolate that exact quadratic linearly on uniform elements of width \(h\). Derive the peak pointwise interpolation error on one element and the jump in its piecewise-constant derivative between adjacent elements. Predict what happens when \(h\) halves. Compare the two errors with the <a href="/fundamentals/numerics/partial-differential-equations/chapters/14-residual-refinement/#try-it">residual and refinement example</a>, which uses unequal sources on the two halves and reports a global energy norm.</p>
+<details><summary>Work through the solution</summary><p>On \([a,b]\), \(u-I_hu=-(x-a)(x-b)\), which peaks at \(h^2/4\). The slope of each secant equals the exact derivative at its midpoint. Moving to the next element changes this slope by \(-2h\). Halving \(h\) quarters the peak value error and halves the jump magnitude. The adaptive experiment measures the gradient error in an energy norm. Uniformly halving all element widths would halve that norm for this quadratic. Selective refinement can give a different global ratio. Machine-small residual in the assembled linear system alone measures neither the field error nor the derivative jump.</p></details>
+</section>
+<section><h2 id="test-an-independent-transient-boundary-condition">Test an independent transient boundary condition</h2>
+<p>Now join the ends periodically. For \(u_t=u_{xx}\) on a unit ring, a sine of mode \(m\) decays at rate \((2\pi m)^2\). Derive the semi-discrete finite-difference rate and evaluate its ratio to the true rate at eight points per wavelength.</p>
+<details><summary>Work through the solution</summary><p>A Fourier mode on the grid acquires factor \(-4\sin^2(\pi m h)/h^2\) under the centred second difference. At eight points per wavelength, the ratio is \([\sin(\pi/8)/(\pi/8)]^2\approx0.94964\). Numerical decay is about 5% too slow even with exact time integration. Compare with the <a href="/fundamentals/numerics/partial-differential-equations/chapters/15-fourier-diffusion/#try-it">modal diffusion experiment</a> with 16 nodes and mode 2. The frequency and domain scaling differ, but the decay-rate ratio depends only on points per wavelength. Periodic and flux tests isolate distinct boundary and discretisation errors.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/partial-differential-equations/chapters/17-conservative-remapping/">Chapter 17 · Moving a cell average without inventing or losing material</a></span><span>Next<br><a href="/fundamentals/numerics/partial-differential-equations/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

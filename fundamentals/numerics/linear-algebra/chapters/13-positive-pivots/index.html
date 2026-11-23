@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a positive energy has a Cholesky factor · OneSimulation</title>
+<meta name="description" content="Start with the work stored in two coupled springs and discover a triangular square root of a matrix by completing the square.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/13-positive-pivots/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why a positive energy has a Cholesky factor · OneSimulation">
+<meta property="og:description" content="Start with the work stored in two coupled springs and discover a triangular square root of a matrix by completing the square.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/13-positive-pivots/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>Why a positive energy has a Cholesky factor</h1><p class="lead">Start with the work stored in two coupled springs and discover a triangular square root of a matrix by completing the square.</p><p class="byline">Chapter 13 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#from-positive-energy-to-two-triangular-solves">From positive energy to two triangular solves</a><a href="#worked-equilibrium-and-a-change-of-load">Worked equilibrium and a change of load</a><a href="#change-the-coupling">Change the coupling</a><a href="#tutorial-on-pivots-and-supports">Tutorial on pivots and supports</a></nav></aside><article class="prose reference"><section>
+<h2 id="from-positive-energy-to-two-triangular-solves">From positive energy to two triangular solves</h2>
+<p>If displacements \(x\) store elastic energy \(x^TAx/2\), then a fixed structure with no free modes has \(x^TAx>0\) for every nonzero \(x\). Equilibrium under load \(f\) minimises \(x^TAx/2-f^Tx\). Differentiation gives \(Ax=f\) for symmetric \(A\). Can the energy itself tell us which operations are safe in a solver?</p>
+<p>Write the first coordinate as \(s\) and the remaining coordinates as \(z\). Expand the quadratic form using first entry \(a\), coupling column \(b\), and trailing block \(C\). The cross term is \(2s b^Tz\). Adding and subtracting \((b^Tz)^2/a\) gives</p>
+<div class="math display">\[x^TAx=a(s+b^Tz/a)^2+z^T(C-bb^T/a)z.\]</div>
+<p>Positivity with \(x=e_1\) proves \(a>0\). For any nonzero \(z\), choose \(s=-b^Tz/a\). The remaining term must then be positive, so the reduced matrix is positive definite. The argument repeats down to a scalar. Each completed square supplies one row of a triangular factor and one positive pivot. In matrix notation \(A=LL^T\), with \(L_{11}=\sqrt{a}\) and \(L_{2:n,1}=b/\sqrt{a}\). Solve \(Ly=f\) forward, then \(L^Tx=y\) backward. Neither inverse need be formed.</p>
+</section>
+<section>
+<h2 id="worked-equilibrium-and-a-change-of-load">Worked equilibrium and a change of load</h2>
+<p>Use \(A=\left(\begin{smallmatrix}4&2\\2&5\end{smallmatrix}\right)\) kN/m. The first diagonal factor is 2, the off-diagonal factor is 1, and the remaining pivot is \(5-1^2=4\). Thus \(L=\left(\begin{smallmatrix}2&0\\1&2\end{smallmatrix}\right)\) in consistent numerical units. For \(f=(2,3)^T\) kN the intermediate result is \(y=(1,1)^T\). Back substitution gives \(x=(0.25,0.5)^T\) m. Check the second row directly: \(2(0.25)+5(0.5)=3\).</p>
+<p>Now apply \(f=(0,2)^T\) to the same structure. The intermediate vector changes to \((0,1)^T\) and the displacements to \((-0.25,0.5)^T\). The same two square roots serve both load cases. This matters for many load cases on one stiffness matrix.</p>
+</section>
+<section>
+<h2 id="change-the-coupling">Change the coupling</h2>
+<p>For the dimensionless matrix with diagonal 1 and off-diagonal \(c\), predict which load direction becomes soft as \(c\) approaches one. The plot follows elimination along the first displacement for three fixed values of the second. Read the minimum on each slice before changing \(c\).</p>
+<div id="try-it" class="interactive-study" data-study="num-positive-pivots"></div>
+<p>The second pivot is \(1-c^2\). Under the antisymmetric load \((1,-1)^T\) the displacement is \((1,-1)^T/(1-c)\). A modest change in the input coupling can therefore have a large physical effect even with an exact factorisation.</p>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-pivots-and-supports">Tutorial on pivots and supports</h2>
+<p>A free two-node spring has matrix \(k\left(\begin{smallmatrix}1&-1\\-1&1\end{smallmatrix}\right)\). Where does the recurrence stop and which physical motion does it reveal?</p>
+<details><summary>Worked solution</summary><p>Elimination gives the second pivot \(k-k^2/k=0\). Translating both endpoints by the same amount stores zero energy. Fixing one displacement removes that unconstrained motion.</p></details>
+<p>For diagonal entries 9 and 4, what range of coupling \(b\) admits positive pivots? Interpret the endpoints.</p>
+<details><summary>Worked solution</summary><p>The first pivot is 9. The second is \(4-b^2/9>0\), or \(|b|&lt;6\). At equality the second completed square vanishes. There is a displacement with zero energy even though each diagonal term separately is positive.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/problem-sheets/6/">Problem sheet 6 · Accurate constrained solves</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/14-energy-preconditioning/">Chapter 14 · Removing unequal scales before an iteration</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

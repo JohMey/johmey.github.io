@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Locating a part with six contacts and predicting datum error · OneSimulation</title>
+<meta name="description" content="A dimensionally accurate part can still be assembled in the wrong place. Use small rigid-body motions to work out what six contacts actually locate, then predict how dirt or a tilted guide appears in a measurement.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/13-kinematic-location/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Locating a part with six contacts and predicting datum error · OneSimulation">
+<meta property="og:description" content="A dimensionally accurate part can still be assembled in the wrong place. Use small rigid-body motions to work out what six contacts actually locate, then predict how dirt or a tilted guide appears in a measurement.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/13-kinematic-location/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Locating a part with six contacts and predicting datum error</h1><p class="lead">A dimensionally accurate part can still be assembled in the wrong place. Use small rigid-body motions to work out what six contacts actually locate, then predict how dirt or a tilted guide appears in a measurement.</p><p class="byline">Chapter 13 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#geometry">One frictionless contact supplies one scalar condition</a><a href="#plane">Compute a tilted datum from three measured pad heights</a><a href="#examples">A particle under a pad and an encoder offset</a><a href="#tutorial">Tutorial · reconstruct an entire datum plane</a></nav></aside><article class="prose reference"><section><h2 id="geometry">One frictionless contact supplies one scalar condition</h2>
+<p>Take the infinitesimal rigid motion of a body to consist of a translation \(\mathbf t\) and a rotation vector \(\boldsymbol\varphi\) in radians. A point initially at \(\mathbf r_i\) moves by \(\mathbf t+\boldsymbol\varphi\times\mathbf r_i\). A rigid locating pad at that point controls the component along its inward normal \(\mathbf n_i\). If its normal height error is \(e_i\), the displacement condition is</p>
+<div class="math display">\[\mathbf n_i\cdot\mathbf t+(\mathbf r_i\times\mathbf n_i)\cdot\boldsymbol\varphi=e_i .\]</div>
+<p>Stack the contact rows into a six-column matrix. Six independent rows locate a rigid part in three dimensions for small changes while the contacts remain seated. Three contacts in a plane support translation normal to the plane and two tilts. Two contacts on a second face locate one further translation and the remaining rotation. One on a third face sets the last translation. A preload must keep the unilateral contacts engaged. Six pads clustered along a single line would leave rotations undetermined despite the pad count.</p>
+</section>
+<section><h2 id="plane">Compute a tilted datum from three measured pad heights</h2>
+<p>Place the first three pads at coordinates \((0,0),(a,0),(0,b)\) on the nominal support plane. Normal displacement of a point \((x,y)\) is \(w=t_z+\varphi_x y-\varphi_y x\). Evaluate at the pads and subtract the origin row. The inverse relation gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[t_z=e_1,\]</div><div class="equation-step">\[\varphi_x=(e_3-e_1)/b,\]</div><div class="equation-step">\[\varphi_y=-(e_2-e_1)/a .\]</div></div>
+<p>The predicted height of any feature is therefore an affine interpolation of the three heights. Outside their triangle it is an extrapolation and can magnify a small discrepancy. An additional hard pad away from the plane defined by the first three requires elastic deformation, a gap or loss of another contact. Its load sharing needs a stiffness model.</p>
+</section>
+<section><h2 id="examples">A particle under a pad and an encoder offset</h2>
+<p>Use \(a=120\) mm and \(b=80\) mm. A 12 μm particle raises only pad 2. Then \(\varphi_y=-100\) μrad and \(\varphi_x=t_z=0\). A feature 180 mm from the origin in the x direction rises by 18 μm. Doubling the spacing a halves this sensitivity while leaving the particle height unchanged. The feature error varies with position and cannot be removed at every point by a single vertical zero adjustment.</p>
+<p>Consider a horizontal translation stage whose encoder sits a vertical distance \(d=75\) mm from a tool point. A pitch change \(\varphi_y=80\) μrad produces a longitudinal difference \(d\varphi_y=6.0\) μm between the two lines of action. This is the first-order Abbe error derived from the same rigid-body rotation law. Encoder scale calibration alone cannot distinguish this error from translation at a single feature. Compare the extrapolated feature trace with the heights inside the support footprint.</p>
+<p class="calculation-prompt">Fix one pad-height error and move pad 2 farther from the origin. Predict the shift halfway between the original pad positions versus the shift halfway between the new positions. Label the point whose physical location changes between those comparisons.</p>
+<div id="try-it" class="interactive-study" data-study="eng-machine-elements-kinematic-location"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · reconstruct an entire datum plane</h2>
+<p>Pad heights at the three locations are 3, −3 and 11 μm. Find the two tilts and the vertical shift of a feature at (60,40) mm. What will a second probe at (120,80) mm read relative to nominal?</p>
+<details><summary>Show the plane reconstruction</summary>
+<p>The differences are −6 μm over 120 mm and +8 μm over 80 mm, giving \(\varphi_y=+50\) μrad and \(\varphi_x=+100\) μrad. At the first feature the height is \(3-3+4=4\) μm. At the second it is \(3-6+8=5\) μm. The first point lies on the line joining pads 2 and 3, so its height is also their arithmetic mean. That geometric check detects a reversed rotation sign.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-72-elements-of-mechanical-design-spring-2009/resources/mit2_72s09_lec06/">MIT 2.72 · lecture 6 on constraint-based design</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-elements/problem-sheets/6/">Problem sheet 6 · Weld demand, assembly yield and reliability</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/14-parallel-flexures/">Chapter 14 · Sizing the leaves of a compliant translation guide</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project · Which thermometer should the laboratory buy? · OneSimulation</title>
+<meta name="description" content="Separate an unknown common temperature, a calibration contrast and temporal drift. Design a measurement that improves the weakly determined quantity and check whether a small residual signals a trustworthy reconstruction.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/7/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Project · Which thermometer should the laboratory buy? · OneSimulation">
+<meta property="og:description" content="Separate an unknown common temperature, a calibration contrast and temporal drift. Design a measurement that improves the weakly determined quantity and check whether a small residual signals a trustworthy reconstruction.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/problem-sheets/7/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Project · Which thermometer should the laboratory buy?</h1><p class="lead">Separate an unknown common temperature, a calibration contrast and temporal drift. Design a measurement that improves the weakly determined quantity and check whether a small residual signals a trustworthy reconstruction.</p><p class="byline">Problem sheet 7 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#resolve-two-independent-directions">Resolve two independent directions</a><a href="#separate-an-assumption-from-a-measurement">Separate an assumption from a measurement</a><a href="#reuse-the-sensors-over-time">Reuse the sensors over time</a><a href="#audit-the-purchase-decision">Audit the purchase decision</a></nav></aside><article class="prose reference"><section><h2 id="resolve-two-independent-directions">Resolve two independent directions</h2>
+<p>Two calibrated outputs in orthogonal data coordinates are \(d_1=x_1+\eta_1\), \(d_2=0.02x_2+\eta_2\). Both noise standard deviations are 0.01 °C. The observed outputs are 1.00 and 0.03. Compute the unregularised estimates and their standard deviations. Which parameter does the experiment measure reliably?</p>
+<details><summary>Work through the solution</summary><p>The estimates are 1 and 1.5. Independent noise standard deviations propagate by division by the sensitivities, giving 0.01 and 0.5. Both fitted data residuals are zero. Sensor fit alone has hidden the factor of fifty between parameter uncertainties.</p></details>
+</section>
+<section><h2 id="separate-an-assumption-from-a-measurement">Separate an assumption from a measurement</h2>
+<p>With \(\lambda=0.02\) apply the zero-centred Tikhonov penalty. Calculate both fitted parameters, their predicted data and the residual. Compare with the <a href="/fundamentals/numerics/inverse-problems/chapters/13-discrepancy-and-gcv/#try-it">regularisation path</a>. Its three-channel test adds a middle sensitivity of 0.2. Set the weak-channel error to 0.010 for the same weak observation and compare the weak-channel prediction. The third sensor changes the total residual norm. Would another identical weak measurement halve the unregularised standard deviation?</p>
+<details><summary>Work through the solution</summary><p>The first estimate is \(1/1.0004\approx0.9996\). The second gain is \(0.02/(0.0004+0.0004)=25\), hence \(x_2=0.75\). The two predicted data are about 0.9996 and 0.015. Subtracting these from the observed data gives residuals 0.0004 and 0.015, with Euclidean norm about 0.0150. Two independent readings at the same design divide standard deviation by \(\sqrt 2\). A change of sensitivity from 0.02 to 0.04 would halve it directly.</p></details>
+</section>
+<section><h2 id="reuse-the-sensors-over-time">Reuse the sensors over time</h2>
+<p>For a common temperature whose prior variance is 0.04 °C², a time step adds process variance 0.01 °C². A new independent reading has variance 0.04 °C² and lies 0.3 °C above prediction. Calculate the posterior mean shift and standard deviation. Use the <a href="/fundamentals/numerics/inverse-problems/chapters/14-sequential-assimilation/#try-it">temperature filter</a> to predict what increasing process variance does to lag.</p>
+<details><summary>Work through the solution</summary><p>The predicted variance is 0.05. Gain is \(0.05/(0.05+0.04)=5/9\), hence the mean shifts by 0.1667 °C. The posterior variance is \(0.05(4/9)=0.02222\), giving standard deviation 0.1491 °C. Larger process variance gives a higher gain, tending to reduce lag while allowing more measurement variability into the estimate.</p></details>
+</section>
+<section><h2 id="audit-the-purchase-decision">Audit the purchase decision</h2>
+<p>A cheaper replacement responds to \(x_2^2\) with very low noise. Is it a good replacement when the sign of the calibration contrast decides whether to add or subtract a correction? Explore the <a href="/fundamentals/numerics/inverse-problems/chapters/15-symmetric-posteriors/#try-it">signed measurement experiment</a>.</p>
+<details><summary>Work through the solution</summary><p>A precise squared measurement alone still cannot distinguish equal positive and negative contrasts under a symmetric prior. A weak signed reading can split the two explanations. Evaluate loss in the corrected temperature and the cost of choosing the wrong sign before choosing hardware.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/chapters/17-posterior-prediction/">Chapter 17 · Predicting a new measurement when the fitted parameters are correlated</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liouville flow and what an ensemble can remember · OneSimulation</title>
+<meta name="description" content="A cloud of identical noninteracting beads is released with slightly different initial positions and momenta. Its position distribution widens. Does the system occupy more phase space, or has its uncertainty merely changed shape?">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/18-liouville-flow/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Liouville flow and what an ensemble can remember · OneSimulation">
+<meta property="og:description" content="A cloud of identical noninteracting beads is released with slightly different initial positions and momenta. Its position distribution widens. Does the system occupy more phase space, or has its uncertainty merely changed shape?">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/18-liouville-flow/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a></p><h1>Liouville flow and what an ensemble can remember</h1><p class="lead">A cloud of identical noninteracting beads is released with slightly different initial positions and momenta. Its position distribution widens. Does the system occupy more phase space, or has its uncertainty merely changed shape?</p><p class="byline">Chapter 18 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#follow-a-small-phase-space-element">Follow a small phase-space element</a><a href="#propagate-a-cloud-released-into-free-flight">Propagate a cloud released into free flight</a><a href="#compare-reversible-shear-and-real-drag">Compare reversible shear and real drag</a><a href="#tutorial-on-distinguishing-a-shear-from-dissipation">Tutorial on distinguishing a shear from dissipation</a></nav></aside><article class="prose reference"><section><h2 id="follow-a-small-phase-space-element">Follow a small phase-space element</h2>
+<p>For one canonical degree of freedom the velocity of a point \((q,p)\) is \((\partial_pH,-\partial_qH)\). A short-time map takes \(\boldsymbol z\) to \(\boldsymbol z+\boldsymbol v(\boldsymbol z,t)\,dt\). Its Jacobian matrix is \(I+(\partial\boldsymbol v/\partial\boldsymbol z)dt\); expanding the determinant gives \(1+(\nabla_z\cdot\boldsymbol v)dt+O(dt^2)\). Hamilton's equations make the divergence zero because the two mixed second derivatives of a smooth Hamiltonian cancel. Each additional canonical pair contributes a similar cancellation. A time-dependent Hamiltonian may change energy but still preserve the instantaneous phase-space volume along the flow.</p>
+<p>Conservation of the number of ensemble members in a moving phase-space box also gives the continuity equation \(\partial_t f+\nabla_z\cdot(f\boldsymbol v)=0\). The vanishing divergence leaves \(df/dt=0\) on each trajectory. A stationary mechanical system can admit \(f=F(H)\) as a stationary distribution because trajectories stay on energy surfaces. Such stationarity alone does not imply that one trajectory explores an entire energy surface. For example, further integrals of motion restrict regular multidimensional trajectories.</p>
+</section>
+<section><h2 id="propagate-a-cloud-released-into-free-flight">Propagate a cloud released into free flight</h2>
+<p>For mass \(m\), the exact map is \(p=p_0,\ q=q_0+tp_0/m\). Its determinant is one regardless of time. An initially uncorrelated cloud with variances \(s_q^2,s_p^2\) has evolved covariance \(C_{qp}=ts_p^2/m\). The new position variance is \(s_q^2+(ts_p/m)^2\), while the momentum variance stays fixed. Compute the determinant of this covariance matrix:</p>
+<div class="math display">\[\sigma_q^2\sigma_p^2-C_{qp}^2=s_q^2s_p^2 .\]</div>
+<p>For a Gaussian the ellipse at a fixed multiple of the covariance radius thus retains its area while it shears. With \(m=1\,\mathrm{kg}\), \(s_q=1\,\mathrm m\), \(s_p=0.5\,\mathrm{kg\,m/s}\), and \(t=4\,\mathrm s\), the observed position standard deviation is \(\sqrt5=2.236\,\mathrm m\). The momentum standard deviation remains 0.5 and the covariance becomes \(1.0\,\mathrm{kg\,m^2/s}\). Their uncorrected width product is 1.118 in action units. The square root of the covariance determinant is still 0.5. Multiplication of measured marginal widths alone falsely suggests an area increase.</p>
+</section>
+<section><h2 id="compare-reversible-shear-and-real-drag">Compare reversible shear and real drag</h2>
+<p>Now apply a linear drag \(\dot p=-\gamma p\) to each bead with constant \(\gamma&gt;0\). Its phase-space divergence is \(-\gamma\), hence the map determinant after time \(t\) is \(e^{-\gamma t}\). Direct integration gives \(p=e^{-\gamma t}p_0,\ q=q_0+(1-e^{-\gamma t})p_0/(m\gamma)\). The cloud now genuinely loses area in the reduced bead description. A larger Hamiltonian model of bead plus environment can remain volume preserving. Choose a drag rate in the graph and compare the original, freely sheared and damped ellipses for the same observation time. Check there is a smooth zero-drag limit rather than substituting zero into a quotient.</p>
+<div id="try-it" class="interactive-study" data-study="ph-liouville"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-distinguishing-a-shear-from-dissipation">Tutorial on distinguishing a shear from dissipation</h2>
+<p>A harmonic oscillator maps its scaled quadratures by a rotation. Show why an initially anisotropic cloud can periodically sharpen in position without phase-space cooling.</p>
+<details><summary>Work through the solution</summary><p>Write its covariance as \(R\Sigma_0R^T\). Since \(\det R=1\), its determinant is unchanged. A rotation of one quarter turn exchanges the original widths, so position can sharpen when the original momentum width in scaled units was smaller. Energy extraction is unnecessary.</p></details>
+<p>At \(t=3\,\mathrm s\) the measured ellipse area is 55 percent of the initial area in the linear-drag model. Infer \(\gamma\). Which independent observable checks the inference?</p>
+<details><summary>Work through the solution</summary><p>\(\gamma=-\ln(0.55)/3=0.199\,\mathrm{s}^{-1}\). The ratio of final to initial momentum standard deviations should also be 0.55 for drag without random forcing. Added environmental fluctuations would modify that prediction.</p></details>
+<p class="source-note">Further reading · <a href="https://davidtong.org/pdfs/teaching/classical-dynamics/clas4.pdf">Cambridge classical dynamics, Hamiltonian flow and Liouville's theorem</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/chapters/17-proper-time-and-momentum/">Chapter 17 · Proper time, momentum and a moving clock</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/chapters/19-parametric-instability/">Chapter 19 · Parametric resonance and Floquet growth</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

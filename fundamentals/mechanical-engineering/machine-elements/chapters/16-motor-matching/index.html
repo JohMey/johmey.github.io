@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matching a gear ratio to load inertia and move time · OneSimulation</title>
+<meta name="description" content="A larger reduction increases output torque and reduces speed. During acceleration the motor must also spin its own rotor faster. Refer the dynamics to a single shaft and find which reduction gives the shortest idealized move.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/16-motor-matching/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Matching a gear ratio to load inertia and move time · OneSimulation">
+<meta property="og:description" content="A larger reduction increases output torque and reduces speed. During acceleration the motor must also spin its own rotor faster. Refer the dynamics to a single shaft and find which reduction gives the shortest idealized move.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/16-motor-matching/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Matching a gear ratio to load inertia and move time</h1><p class="lead">A larger reduction increases output torque and reduces speed. During acceleration the motor must also spin its own rotor faster. Refer the dynamics to a single shaft and find which reduction gives the shortest idealized move.</p><p class="byline">Chapter 16 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#energy">Reflect inertia using kinetic energy</a><a href="#optimize">Find the ratio for maximum acceleration at rest</a><a href="#examples">Test a candidate against a motor speed limit</a><a href="#tutorial">Tutorial · account for a constant resisting torque</a></nav></aside><article class="prose reference"><section><h2 id="energy">Reflect inertia using kinetic energy</h2>
+<p>Let \(N=\omega_m/\omega_L\) be the reduction, with motor inertia \(J_m\), load inertia \(J_L\), and negligible gear inertia and losses. Kinetic energy is the sum of \(\tfrac12J_m\omega_m^2\) and \(\tfrac12J_L\omega_L^2\). Substituting \(\omega_L=\omega_m/N\) gives the load inertia referred to the motor as \(J_L/N^2\). Alternatively, express the energy in load coordinates and obtain \(J_L+N^2J_m\). Both descriptions predict the same acceleration if the torque is referred to the same coordinate.</p>
+<div class="math display">\[(J_L+N^2J_m)\alpha_L=NT_m-T_L .\]</div>
+<p>Here \(T_L\) is a positive resisting load torque. The factor multiplying motor torque follows independently from equality of power \(T_m\omega_m=(NT_m)\omega_L\) for an ideal gear. Combining reflected inertia from one side with torque from the other introduces an erroneous factor N.</p>
+</section>
+<section><h2 id="optimize">Find the ratio for maximum acceleration at rest</h2>
+<p>First let \(T_L=0\) and let the motor deliver constant torque \(T_m\). Differentiating the load acceleration gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[{d\alpha_L\over dN}=T_m\,{J_L-N^2J_m\over(J_L+N^2J_m)^2},\]</div><div class="equation-step">\[N_*=\sqrt{J_L/J_m},\]</div><div class="equation-step">\[\alpha_*={T_m\over2\sqrt{J_LJ_m}} .\]</div></div>
+<p>At the optimum the reflected load inertia equals the motor inertia. Provided the motor can reverse torque instantly, an ideal rest-to-rest move with symmetric acceleration and braking switches at half distance. For load travel \(\Delta\theta\), \(t_{\rm move}=2\sqrt{\Delta\theta/\alpha_L}\) and the peak load speed is \(\sqrt{\alpha_L\Delta\theta}\). A motor speed limit, speed-dependent torque or external load can shift the useful choice away from the inertia match.</p>
+</section>
+<section><h2 id="examples">Test a candidate against a motor speed limit</h2>
+<p>Take \(J_m=0.0002\) kg m², \(J_L=0.020\) kg m² and \(T_m=0.40\) N m. The inertia match is \(N=10\). Load acceleration is 100 rad/s². A 1 rad move takes 0.20 s in the ideal triangular speed profile and reaches 10 rad/s at the load, hence 100 rad/s at the motor. At \(N=5\) acceleration is 80 rad/s²; at \(N=20\) it is also 80 rad/s². The time penalty is the same for these two reciprocal changes around the optimum, but the motor peak speeds differ by a factor of four.</p>
+<p>With \(N=10\) and a hard motor speed limit of 60 rad/s, the load can reach only 6 rad/s. Acceleration and deceleration each require 0.06 s and cover 0.18 rad. Traversing the remaining 0.64 rad at constant speed adds 0.107 s. The total is 0.227 s. An actuator selected purely on peak torque would miss this change in move profile.</p>
+<p class="calculation-prompt">Locate the inertia-only acceleration maximum and compare ratios equally far below and above it on a multiplicative scale. Add a resisting torque and decide which direction a sensible ratio change must take to recover acceleration.</p>
+<div id="try-it" class="interactive-study" data-study="eng-machine-elements-motor-matching"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · account for a constant resisting torque</h2>
+<p>Let \(T_L=1.0\) N m during a positive accelerating stroke with the same motor and inertias. Compare acceleration at N=10 and 12, and derive the new maximizing ratio assuming constant torque at the motor.</p>
+<details><summary>Show the shifted maximum</summary>
+<p>At N=10 the net load torque is \(4-1=3\) N m and acceleration is 75 rad/s². At N=12 it is \(3.8/0.0488=77.9\) rad/s². Differentiating the loaded acceleration and cancelling constants gives \(N^2-2(T_L/T_m)N-J_L/J_m=0\). The positive root is \(2.5+\sqrt{6.25+100}=12.81\). During braking the external load can assist deceleration, so the symmetric switching rule used in the unforced example needs to be rederived for that operating condition.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-72-elements-of-mechanical-design-spring-2009/resources/mit2_72s09_lec14/">MIT 2.72 · lecture 14 on actuators and motion-system design</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/15-screw-drives/">Chapter 15 · Deriving screw-drive torque, efficiency and backdrivability</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/17-toggle-linkage/">Chapter 17 · Force transmission and compliance near a toggle position</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

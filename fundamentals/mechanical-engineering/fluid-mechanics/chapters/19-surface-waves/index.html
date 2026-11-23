@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How gravity and surface tension select different wave speeds · OneSimulation</title>
+<meta name="description" content="A long crest and a millimetre-scale ripple on the same deep liquid can travel at different speeds. Derive their dispersion relation from two surface boundary conditions and distinguish the motion of a crest from the motion of a narrow packet.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/19-surface-waves/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How gravity and surface tension select different wave speeds · OneSimulation">
+<meta property="og:description" content="A long crest and a millimetre-scale ripple on the same deep liquid can travel at different speeds. Derive their dispersion relation from two surface boundary conditions and distinguish the motion of a crest from the motion of a narrow packet.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/19-surface-waves/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>How gravity and surface tension select different wave speeds</h1><p class="lead">A long crest and a millimetre-scale ripple on the same deep liquid can travel at different speeds. Derive their dispersion relation from two surface boundary conditions and distinguish the motion of a crest from the motion of a narrow packet.</p><p class="byline">Chapter 19 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#field">Continue the surface motion down into the liquid</a><a href="#restoring">Translate curvature and elevation into surface pressure</a><a href="#examples">Find the slowest crests and time a wave packet</a><a href="#tutorial">Tutorial · recover surface tension from a measured frequency</a></nav></aside><article class="prose reference"><section><h2 id="field">Continue the surface motion down into the liquid</h2>
+<p>Use z positive upward, liquid occupying \(z&lt;0\), and an undisturbed planar free surface at zero. Neglect viscosity and consider small-amplitude irrotational motion. The velocity is \(\nabla\phi\); incompressibility requires \(\nabla^2\phi=0\). A horizontal Fourier component \(e^{i(kx-\omega t)}\) with \(k&gt;0\) therefore has vertical dependence \(e^{kz}\) in water deep compared with \(1/k\). The other Laplace solution grows without bound as \(z\to-\infty\) and is discarded. Let \(\eta\) denote surface elevation. Linearising the kinematic condition at z=0 gives \(\eta_t=\phi_z\), since the surface moves with the normal fluid velocity.</p>
+</section>
+<section><h2 id="restoring">Translate curvature and elevation into surface pressure</h2>
+<p>For small slope the liquid surface pressure above atmospheric is \(-\gamma\eta_{xx}\), positive beneath a crest. Linear Bernoulli with the hydrostatic shift at the rising surface gives \(\phi_t+g\eta-(\gamma/\rho)\eta_{xx}=0\) at z=0. For amplitudes \(\Phi,\hat\eta\), the kinematic condition gives \(-i\omega\hat\eta=k\Phi\). Insert this in the dynamic condition to eliminate \(\Phi\):</p>
+<div class="math display equation-chain"><div class="equation-step">\[\omega^2=gk+{\gamma\over\rho}k^3,\]</div><div class="equation-step">\[c_p={\omega\over k}=\sqrt{g/k+\gamma k/\rho},\]</div><div class="equation-step">\[c_g={d\omega\over dk}={g+3\gamma k^2/\rho\over2\omega}.\]</div></div>
+<p>For long deep-water gravity waves \(c_g\simeq c_p/2\). In the opposite capillary limit \(c_g\simeq3c_p/2\). Thus tracking the envelope of a short group and timing an individual crest can give different speeds even with accurate instruments. Finite depth would multiply the right-hand side for \(\omega^2\) by \(\tanh(kH)\); deep-water long-wave asymptotics still require \(kH\gg1\).</p>
+</section>
+<section><h2 id="examples">Find the slowest crests and time a wave packet</h2>
+<p>For water take \(\rho=1000\) kg/m³ and \(\gamma=0.072\) N/m. Differentiating \(c_p^2\) with respect to k gives a stationary point at \(k_*=\sqrt{\rho g/\gamma}\), so \(\lambda_*=2\pi\sqrt{\gamma/(\rho g)}=17.0\) mm. Here gravity and capillarity contribute equally to \(\omega^2\); the minimum phase speed is 0.231 m/s. Also \(d(kc_p)/dk=c_p+k\,dc_p/dk=c_p\) at this point. Thus group and phase velocities coincide locally.</p>
+<p>At 100 mm wavelength the predicted phase and group speeds are 0.401 and 0.212 m/s. At 10 mm they are 0.247 and 0.307 m/s. Over a 0.50 m path a narrow 10 mm packet envelope takes about 1.63 s, whereas timing a crest across the same distance would give 2.03 s if it stayed observable. Surface contamination changes effective restoring and damping behaviour, and dispersion broadens a packet with appreciable bandwidth.</p>
+<p class="calculation-prompt">Find where phase and group speed meet, then halve the surface tension and predict the new wavelength of that crossing. Time an individual short crest and its packet over half a metre. Which arrives first on either side of the crossing?</p>
+<div id="try-it" class="interactive-study" data-study="eng-fluid-mechanics-surface-waves"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · recover surface tension from a measured frequency</h2>
+<p>A sinusoidal mode of wavelength 12.0 mm oscillates at 20.0 Hz in deep water of density 1000 kg/m³. Infer its surface tension using the full relation and estimate the error caused by discarding gravity. Which depth would make the deep-water approximation credible?</p>
+<details><summary>Solve for the constitutive parameter</summary>
+<p>With \(k=523.6\) m⁻¹ and \(\omega=125.66\) rad/s, \(\gamma=\rho(\omega^2-gk)/k^3\simeq0.0742\) N/m. Omitting gravity gives about 0.110 N/m, roughly 48% high. At depth 10 mm, \(kH=5.24\) and \(\tanh(kH)\) exceeds 0.9999, making the finite-depth correction very small in this model. Frequency, wavelength and depth should all be measured before attributing a discrepancy to surface chemistry.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://thales.mit.edu/bush/wp-content/uploads/2024/03/Lec-8-Waves.pdf">John Bush, MIT · lecture 8 on water waves, curvature and dispersion</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/18-wall-turbulence/">Chapter 18 · How turbulent momentum transport produces a logarithmic velocity profile</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/problem-sheets/7/">Problem sheet 7 · A capillary that fills horizontally and climbs vertically</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

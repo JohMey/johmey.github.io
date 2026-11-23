@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a circular wall selects Bessel modes · OneSimulation</title>
+<meta name="description" content="A voltage pattern is imposed on the end of a long grounded tube. Its penetration length depends on the tube radius through a number that looks unfamiliar in a Cartesian Fourier series. Deriving that number also explains the proper radial weight for projecting data.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/41-bessel-modes-in-a-cylindrical-tube/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a circular wall selects Bessel modes · OneSimulation">
+<meta property="og:description" content="A voltage pattern is imposed on the end of a long grounded tube. Its penetration length depends on the tube radius through a number that looks unfamiliar in a Cartesian Fourier series. Deriving that number also explains the proper radial weight for projecting data.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/41-bessel-modes-in-a-cylindrical-tube/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>How a circular wall selects Bessel modes</h1><p class="lead">A voltage pattern is imposed on the end of a long grounded tube. Its penetration length depends on the tube radius through a number that looks unfamiliar in a Cartesian Fourier series. Deriving that number also explains the proper radial weight for projecting data.</p><p class="byline">Chapter 41 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#separation">Separate Laplace’s equation without flattening the circular wall</a><a href="#projection">Derive the radial weight and coefficients</a><a href="#examples">Estimate a leakage length and a modal error</a><a href="#experiment">Reconstruct a circular electrode pattern with Bessel modes</a><a href="#tutorial">Problem sheet · source weighting and a radial inverse problem</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="separation">Separate Laplace’s equation without flattening the circular wall</h2>
+<p>Take an empty cylinder of radius \(a\) extending from \(z=0\) to large positive \(z\). Its side is grounded. A segmented end electrode imposes the continuous axisymmetric potential \(V(r,0)=V_0[1-(r/a)^2]\), matching zero at the rim. In cylindrical coordinates \(\nabla^2V=r^{-1}\partial_r(r\partial_rV)+\partial_z^2V=0\). Set \(V=R(r)Z(z)\). A decaying solution requires \(Z=e^{-kz}\) with \(k&gt;0\). Then</p>
+<div class="math display">\[(rR')'+k^2rR=0 .\]</div>
+<p>Using \(\xi=kr\) gives Bessel's equation of order zero. The regular solution \(J_0(\xi)\) starts at one with zero derivative. Its series follows by substituting \(R=\sum c_m\xi^{2m}\): the recurrence is \(c_{m+1}=-c_m/[4(m+1)^2]\). The independent solution diverges logarithmically at the origin and would introduce an unmodelled line source. The side boundary requires \(J_0(ka)=0\), so \(k_n=j_n/a\) with \(j_n\) the positive zeros of \(J_0\). The first three are approximately \(2.40483,5.52008,8.65373\).</p>
+</section>
+<section><h2 id="projection">Derive the radial weight and coefficients</h2>
+<p>Multiply the equation for \(R_m\) by \(R_n\) and subtract the reversed equation. Integration gives \((k_m^2-k_n^2)\int_0^a rR_mR_n\,dr\) equal to a boundary term. At \(a\) both functions vanish; at zero their derivatives are regular and the factor \(r\) vanishes. Hence distinct modes are orthogonal with the radial weight \(r\). That factor represents the area of a circular ring. The squared norm follows from the derivative identities \(J_0'=-J_1\), \((tJ_1)'=tJ_0\), using the known zero at \(a\):</p>
+<div class="math display equation-chain"><div class="equation-step">\[\int_0^1 xJ_0(j_nx)^2\,dx=\frac{J_1(j_n)^2}{2},\]</div><div class="equation-step">\[b_n=\frac{2\int_0^1 x(1-x^2)J_0(j_nx)\,dx}{J_1(j_n)^2}.\]</div></div>
+<p>Use \((xJ_1(jx))'=jxJ_0(jx)\) to integrate the numerator by parts. The endpoint factor \(1-x^2\) vanishes at \(x=1\); the remaining integral is \(2j^{-1}\int_0^1 x^2 J_1(jx)\,dx=2J_2(j)/j^2\). At a zero of \(J_0\), \(J_2(j)=2J_1(j)/j\). Thus \(b_n=8/[j_n^3J_1(j_n)]\), with alternating signs. The full solution is</p>
+<div class="math display">\[V(r,z)=V_0\sum_{n=1}^\infty b_n J_0(j_n r/a)e^{-j_n z/a}.\]</div>
+<p>Each partial sum exactly grounds the side wall and decays toward infinity. The representation of the end electrode improves as modes are added. For a finite cylinder closed at \(z=L\), replace each exponential by \(\sinh[k_n(L-z)]/\sinh(k_nL)\). This satisfies both end conditions and tends to the long-cylinder result at fixed \(z\) as \(L\) grows.</p>
+</section>
+<section><h2 id="examples">Estimate a leakage length and a modal error</h2>
+<h3>How far does the slowest mode survive?</h3>
+<p>For \(a=12\) mm the first modal decay length is \(a/j_1=4.99\) mm. Far from the end, two axis probes separated by 5.0 mm should read voltages in ratio about \(e^{-2.40483(5/12)}=0.367\). The first coefficient \(b_1\simeq1.108\) is larger than unity because the higher modes bring the prescribed central boundary value back to exactly \(V_0\). A fit using \(V_0e^{-j_1z/a}\) would get the correct distant slope but the wrong amplitude.</p>
+<h3>Predict the accuracy of a one-mode model</h3>
+<p>The second coefficient is about \(-0.140\). On axis the magnitude of its contribution relative to the first is approximately \(0.126\,e^{-(5.520-2.405)z/a}\). At \(z=a\) this is 0.56%. At \(z=0\) higher modes cannot be neglected at the same tolerance. Near a radial node of a chosen reference mode a relative error becomes unstable; use absolute potential error measured in units of \(V_0\) there.</p>
+</section>
+<section><h2 id="experiment">Reconstruct a circular electrode pattern with Bessel modes</h2>
+<p>Each retained mode exactly satisfies the side-wall condition. At the end, one mode alone overestimates the central voltage by about 10.8%. Move the detector deeper into the tube and compare three and eight modes until their interior traces coincide to the precision you need.</p>
+<div id="try-it" class="interactive-study" data-study="em-bessel"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Problem sheet · source weighting and a radial inverse problem</h2>
+<h3>Explain a nonzero axis slope in a file of radial data</h3><p>Someone fits the central potential by \(V=A+Br\) near the cylinder axis. What does a nonzero \(B\) imply in the continuum problem?</p><details><summary>Work through the solution</summary>
+<p>A smooth axisymmetric Cartesian scalar must have zero radial derivative at the axis. The term \(Br\) would give \(r^{-1}\partial_r(r\partial_rV)=B/r\), incompatible with a smooth source-free interior and finite homogeneous axial curvature. An interpolation can manufacture this feature if it treats the axis as an arbitrary material boundary.</p>
+</details>
+<h3>Infer tube radius using only distant measurements</h3><p>Two distant on-axis probes separated by 3.00 mm have a voltage ratio of 0.500. Infer \(a\) under first-mode dominance, then design a check against residual higher modes.</p><details><summary>Work through the solution</summary>
+<p>From \(e^{-j_1\Delta z/a}=1/2\), \(a=j_1\Delta z/\ln2=10.4\) mm. Move both probes farther from the end by the same amount. A persistent ratio supports the one-mode approximation. If higher modes remain, their changing relative weight changes the ratio. Very small voltages may instead expose the noise floor and lead to an apparently shallower decay.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_10">Fließbach, chapter 10 · cylindrical boundary-value problems</a></li><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, 5th ed., §3.3 · separation of variables</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/40-spherical-images-and-grounding/">Chapter 40 · The same metal sphere connected to ground or electrically isolated</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/42-coupled-coils-and-magnetic-coenergy/">Chapter 42 · Forces and torques from a matrix of flux linkages</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

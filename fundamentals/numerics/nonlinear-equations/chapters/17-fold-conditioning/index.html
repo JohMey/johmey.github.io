@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finding a turning point without using the load as a coordinate · OneSimulation</title>
+<meta name="description" content="Use tangent geometry to continue across a fold, and distinguish branch sensitivity from an ill-posed choice of variable in an equilibrium computation.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/17-fold-conditioning/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Finding a turning point without using the load as a coordinate · OneSimulation">
+<meta property="og:description" content="Use tangent geometry to continue across a fold, and distinguish branch sensitivity from an ill-posed choice of variable in an equilibrium computation.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/nonlinear-equations/chapters/17-fold-conditioning/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/nonlinear-equations/">Nonlinear equations</a></p><h1>Finding a turning point without using the load as a coordinate</h1><p class="lead">Use tangent geometry to continue across a fold, and distinguish branch sensitivity from an ill-posed choice of variable in an equilibrium computation.</p><p class="byline">Chapter 17 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#two-equilibria-share-one-control-value">Two equilibria share one control value</a><a href="#add-a-geometric-condition">Add a geometric condition</a><a href="#a-step-that-crosses-the-maximum">A step that crosses the maximum</a><a href="#test-the-predictor-before-trusting-it">Test the predictor before trusting it</a><a href="#tutorial-on-the-experimental-meaning">Tutorial on the experimental meaning</a></nav></aside><article class="prose reference"><section>
+<h2 id="two-equilibria-share-one-control-value">Two equilibria share one control value</h2>
+<p>Use the scaled normal form \(F(x,p)=x^2+p=0\). The equilibrium curve is \(p=-x^2\). At \(p=-0.01\) two displacements, \(x=\pm0.1\), give the same load. Direct continuation in \(p\) uses \(dx/dp=-F_p/F_x=-1/(2x)\). The derivative diverges at the fold. Plotting \(p\) against \(x\), however, produces a smooth curve there.</p>
+</section>
+<section>
+<h2 id="add-a-geometric-condition">Add a geometric condition</h2>
+<p>At a known point \(y_0=(x_0,p_0)\), let \(t\) be a unit tangent perpendicular to \((2x_0,1)\). A predictor \(y_*=y_0+\Delta s\,t\) lies on the tangent. Correct it by solving \(F(x,p)=0\) together with \(t\cdot(y-y_*)=0\), which confines corrections to a line normal to the old tangent. At the fold the Jacobian of this pair is</p>
+<div class="math display equation-chain"><div class="equation-step">\[J=\begin{pmatrix}0&1\\t_x&t_p\end{pmatrix},\]</div><div class="equation-step">\[\det J=-t_x.\]</div></div>
+<p>With the tangent aligned with the displacement axis, \(t_x\) is nonzero. The pair remains locally invertible where load control alone fails. This is a change in the computation's coordinate, not removal of the physical multiple equilibria at a fixed load.</p>
+</section>
+<section>
+<h2 id="a-step-that-crosses-the-maximum">A step that crosses the maximum</h2>
+<p>Start at \(x_0=-0.1,p_0=-0.01\) with increasing \(x\), so \(t=(1,0.2)/\sqrt{1.04}\). A step of length 0.2 predicts \(x_*\simeq0.0961,p_*\simeq0.0292\), which is off the curve and has positive load. The correction line satisfies \(x+0.2p=x_*+0.2p_*\). Substitute \(p=-x^2\) to obtain \(x-0.2x^2\simeq0.1020\). The nearby root is about 0.1041 and the corrected load about −0.0108. Both endpoints have negative load despite crossing the maximum.</p>
+</section>
+<section>
+<h2 id="test-the-predictor-before-trusting-it">Test the predictor before trusting it</h2>
+<p>Choose the starting displacement and step length. Plot the tangent segment, the original curve and the selected nearby intersection of the correction line with the curve. A large step makes the tangent less faithful. The correction must stay on the intended local branch.</p>
+<div id="try-it" class="interactive-study" data-study="num-fold-conditioning"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-the-experimental-meaning">Tutorial on the experimental meaning</h2>
+<p>At \(p=-0.01\), a pressure measurement has uncertainty 0.001. Estimate its local displacement uncertainty and compare it near \(p=-0.0001\).</p>
+<details><summary>Worked solution</summary><p>At \(|x|=0.1\), \(|dx/dp|=5\) and the linear estimate is 0.005. At \(|x|=0.01\), the formal factor is 50. The same pressure error now exceeds the distance to the fold, so the local linear approximation itself loses validity.</p></details>
+<p>If the continuation algorithm traces both sides smoothly, are both equilibria dynamically stable?</p>
+<details><summary>Worked solution</summary><p>A static residual gives equilibrium locations. Stability requires the linearisation of a specified evolution law or a second variation of the appropriate energy. Smooth numerical traversal gives no such certificate.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/nonlinear-equations/chapters/16-logarithmic-unknowns/">Chapter 16 · A physically positive root across six decades</a></span><span>Next<br><a href="/fundamentals/numerics/nonlinear-equations/problem-sheets/7/">Problem sheet 7 · Project · Locate contact and calibrate a misleading residual</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why increasing the length of a bonded overlap gives diminishing returns · OneSimulation</title>
+<meta name="description" content="Two slender straps transfer a tensile load through adhesive shear. Average stress decreases in inverse proportion to overlap length, but edge stress can approach a finite plateau. Derive the difference by coupling the axial extension of each strap to its neighbour.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/19-bonded-overlaps/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why increasing the length of a bonded overlap gives diminishing returns · OneSimulation">
+<meta property="og:description" content="Two slender straps transfer a tensile load through adhesive shear. Average stress decreases in inverse proportion to overlap length, but edge stress can approach a finite plateau. Derive the difference by coupling the axial extension of each strap to its neighbour.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/19-bonded-overlaps/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Why increasing the length of a bonded overlap gives diminishing returns</h1><p class="lead">Two slender straps transfer a tensile load through adhesive shear. Average stress decreases in inverse proportion to overlap length, but edge stress can approach a finite plateau. Derive the difference by coupling the axial extension of each strap to its neighbour.</p><p class="byline">Chapter 19 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#model">Convert adhesive distortion into a distributed force</a><a href="#solution">Apply symmetry and recover the edge-to-mean ratio</a><a href="#examples">Compare an average-based estimate with the load-transfer profile</a><a href="#tutorial">Tutorial · tune load-transfer length using adhesive thickness</a></nav></aside><article class="prose reference"><section><h2 id="model">Convert adhesive distortion into a distributed force</h2>
+<p>Consider identical adherends of thickness t, width b and Young's modulus E. A thin adhesive of thickness \(t_a\) and shear modulus G connects them over a length L. A tensile force P enters through strap 1 at the left and leaves through strap 2 on the right. Let \(n_1,n_2\) be axial force per unit width, with \(n_1+n_2=N=P/b\). Exclude bending and peel to isolate the symmetric extensional load-transfer mechanism. This idealization is more credible for an aligned or symmetrically balanced joint than for an eccentric single-lap joint.</p>
+<p>Choose coordinates so the transmitted shear \(\tau=-n_1'=n_2'\) is positive. Axial strains are \(u_i'=n_i/(Et)\). Taking adhesive shear in the load-transfer direction as \(\tau=(G/t_a)(u_2-u_1)\) gives \(\tau'=G(n_2-n_1)/(t_aEt)\). One more derivative eliminates the member forces:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\tau''-\lambda^2\tau=0,\]</div><div class="equation-step">\[\lambda=\sqrt{{2G\over t_aEt}},\]</div><div class="equation-step">\[\int_{-L/2}^{L/2}\tau\,dx=N .\]</div></div>
+<p>The inverse transfer length \(1/\lambda\) is a mechanical length scale. A stiff adhesive transfers load over a shorter distance. A stiffer or thicker adherend distributes the required relative extension over a larger region. Reversing coordinate labels reverses force derivatives consistently without changing the predicted stress magnitude.</p>
+</section>
+<section><h2 id="solution">Apply symmetry and recover the edge-to-mean ratio</h2>
+<p>Identical adherends loaded at opposite ends give a shear profile symmetric about the middle. Set \(\tau=C\cosh(\lambda x)\) and choose C so its integral equals N. At the centre and edge this yields</p>
+<div class="math display equation-chain"><div class="equation-step">\[\tau(x)={N\lambda\cosh(\lambda x)\over2\sinh(\lambda L/2)},\]</div><div class="equation-step">\[{\tau_{\rm edge}\over N/L}={\lambda L\over2}\coth{\lambda L\over2}.\]</div></div>
+<p>For a very short overlap the ratio approaches one because \(\sinh y\sim y\). For a long overlap the edge stress approaches \(N\lambda/2\) even while \(N/L\) continues to decrease. The central portion then carries little shear. The model computes a smooth nominal adhesive stress; it does not resolve singular edge detail, peel or a local failure criterion.</p>
+</section>
+<section><h2 id="examples">Compare an average-based estimate with the load-transfer profile</h2>
+<p>Take \(P=1000\) N, \(b=20\) mm, \(E=70000\) MPa, \(t=2\) mm, \(t_a=0.20\) mm and \(G=300\) MPa. The force per width is 50 N/mm and \(\lambda=0.1464\) mm⁻¹, giving a transfer length of 6.83 mm. With \(L=20\) mm the mean stress is 2.50 MPa, but the edge sees 4.07 MPa and the centre only 1.79 MPa.</p>
+<p>At \(L=40\) mm mean stress halves to 1.25 MPa. The edge stress falls only to 3.68 MPa and the centre drops to 0.393 MPa. The long-overlap limiting edge stress is 3.66 MPa. Thus using mean stress alone would suggest substantial unused room at the ends. Doubling the width at fixed P, in contrast, halves N and every stress in this one-dimensional model. Manufacturing constraints and adhesion quality can still change which failure mechanism occurs first.</p>
+<p class="calculation-prompt">Double overlap length while keeping adhesive thickness fixed. Compare the percentage fall in centre and edge stress. Then increase adhesive thickness and predict where the newly transferred load is distributed along the overlap.</p>
+<div id="try-it" class="interactive-study" data-study="eng-machine-elements-bonded-overlaps"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · tune load-transfer length using adhesive thickness</h2>
+<p>At the original E, t, G and force, a preliminary model calls for a long-overlap edge stress no greater than 3.0 MPa. Find the minimum adhesive thickness implied by that asymptote. Can a finite overlap at that exact thickness satisfy the same bound?</p>
+<details><summary>Invert the long-overlap limit</summary>
+<p>The limit requires \(\lambda\le 2(3.0)/50=0.120\) mm⁻¹. Thus \(t_a\ge2G/(Et\lambda^2)=0.298\) mm. For a finite length, \(\coth(\lambda L/2)&gt;1\), so the edge stress at exactly that thickness stays slightly above 3.0 MPa. One must allow additional thickness, adjust the width, or evaluate a different load path. An adhesive change also alters deformation and peel, so this result is one design condition rather than a full joint qualification.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://pure.tue.nl/ws/portalfiles/portal/203456906/A_2006.5_S.G._Ogink_Strength_prediction_of_adhesive_single_lap_joints_with_the_singularity_approach.pdf">Eindhoven University of Technology · adhesive single-lap joints and analytical shear-lag models</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/18-involute-contact/">Chapter 18 · How an involute gear pair keeps contact from one tooth to the next</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-elements/problem-sheets/7/">Problem sheet 7 · Closing a flexure-guided fixture with a screw drive</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

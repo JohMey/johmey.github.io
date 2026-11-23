@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From a chain of springs to an elastic field · OneSimulation</title>
+<meta name="description" content="A rod ringing after a small axial displacement can be described by one differential equation at every point. Derive that field equation, its boundary conditions and the range of wavelengths for which it represents a discrete chain.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/16-elastic-field/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From a chain of springs to an elastic field · OneSimulation">
+<meta property="og:description" content="A rod ringing after a small axial displacement can be described by one differential equation at every point. Derive that field equation, its boundary conditions and the range of wavelengths for which it represents a discrete chain.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/classical-mechanics/chapters/16-elastic-field/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/classical-mechanics/">Classical mechanics</a></p><h1>From a chain of springs to an elastic field</h1><p class="lead">A rod ringing after a small axial displacement can be described by one differential equation at every point. Derive that field equation, its boundary conditions and the range of wavelengths for which it represents a discrete chain.</p><p class="byline">Chapter 16 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#take-a-limit-that-represents-the-same-rod">Take a limit that represents the same rod</a><a href="#vary-the-field-and-keep-the-endpoint-term">Vary the field and keep the endpoint term</a><a href="#measure-the-first-resonance">Measure the first resonance</a><a href="#test-wavelength-resolution">Test wavelength resolution</a><a href="#tutorial-on-the-continuum-error">Tutorial on the continuum error</a></nav></aside><article class="prose reference"><section><h2 id="take-a-limit-that-represents-the-same-rod">Take a limit that represents the same rod</h2>
+<p>Divide a rod of cross-sectional area \(A\), mass density \(\rho\), length \(L\) and Young modulus \(Y\) into segments of length \(a\). Let \(u_j(t)\) be the axial displacement at a site. Each segment carries mass \(\rho Aa\). Under a small relative displacement \(\Delta u\) the strain is \(\Delta u/a\). Hooke's law gives force \(YA\Delta u/a\), hence the segment spring constant is \(YA/a\). Refining the chain must change both its masses and its springs by these rules to preserve the material.</p>
+<div class="math display">\[\rho Aa\,\ddot u_j=\frac{YA}{a}(u_{j+1}-2u_j+u_{j-1}).\]</div>
+<p>For a smooth displacement the second difference is \(a^2u_{xx}+a^4u_{xxxx}/12+\cdots\). Cancel a common factor of \(Aa\). The leading continuum equation is \(\rho u_{tt}=Yu_{xx}\) with wave speed \(c=\sqrt{Y/\rho}\). The next term already shows why sharp disturbances with wavelengths close to \(a\) require the discrete chain.</p>
+</section>
+<section><h2 id="vary-the-field-and-keep-the-endpoint-term">Vary the field and keep the endpoint term</h2>
+<p>Alternatively add the kinetic and elastic energy densities using \(u_x\) for strain. The action per unit length integrated over time is</p>
+<div class="math display">\[S=\int dt\int_0^L dx\,\left(\frac{\rho A}{2}u_t^2-\frac{YA}{2}u_x^2\right).\]</div>
+<p>Vary \(u\) by any smooth small displacement that vanishes at the initial and final times. Integrating its time derivative by parts returns \(-\rho A u_{tt}\). Integrating the space derivative by parts returns \(+\partial_x(YA u_x)\) together with an endpoint term \(-[YA u_x\,\delta u]_0^L\). The interior coefficient must vanish independently. A clamped end fixes \(\delta u=0\) there. A free end permits arbitrary virtual displacement and thus requires zero axial traction \(YA u_x=0\). An externally applied force would contribute boundary work to the action. This reasoning keeps the correct equation even when stiffness and cross section vary with position.</p>
+</section>
+<section><h2 id="measure-the-first-resonance">Measure the first resonance</h2>
+<p>For a uniform rod clamped at zero, \(u=X(x)\cos(\omega t)\) gives \(X=C\sin(kx)\), with \(\omega=ck\). A free end at \(L\) requires \(\cos(kL)=0\), so \(k_n=(n+1/2)\pi/L\). With \(L=0.80\) m, \(Y=70.0\) GPa and \(\rho=2700\) kg/m³, \(c=5092\) m/s and the first axial resonance is \(c/(4L)=1591\) Hz. Clamping both ends requires \(X(L)=0\), changing that first frequency to 3183 Hz. The material has stayed the same while the measured spectrum has changed.</p>
+<p>For the infinite chain substitute \(u_j=e^{i(kja-\omega t)}\) directly into the second difference. The factors sum to \(2\cos(ka)-2=-4\sin^2(ka/2)\). Hence \(\omega=2c|\sin(ka/2)|/a\). At \(ka=\pi/2\) the ratio to the continuum frequency is \(2\sqrt2/\pi=0.9003\). Shorter wavelength changes the phase advance between neighbouring sites more strongly, making the smooth-gradient approximation less accurate.</p>
+</section>
+<section><h2 id="test-wavelength-resolution">Test wavelength resolution</h2>
+<p>Change the number of sites per wavelength and read the discrete frequency relative to the continuum prediction. Compare the phase speed with the group speed \(d\omega/dk\), which controls a narrow packet of modes.</p>
+<div id="try-it" class="interactive-study" data-study="ph-rod-chain"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-the-continuum-error">Tutorial on the continuum error</h2>
+<p>A mesh has ten sites per wavelength. Estimate its fractional phase-speed error first by series expansion, then with the sine formula.</p>
+<details><summary>Work through the solution</summary><p>With \(x=ka/2=\pi/10\), the ratio is \(\sin x/x\). Keeping \(1-x^2/6\) predicts a deficit of 0.01645. Direct evaluation gives 0.01637, about 1.64%. Doubling the sites per wavelength reduces the leading error by a factor of four.</p></details>
+<p>A frequency scan of the same rod finds equally spaced resonances from 1.59 kHz onwards at 3.18 kHz intervals. Predict the axial displacement at the support and the stress at the opposite end. Which observation distinguishes a clamped–free from a free–free rod?</p>
+<details><summary>Work through the solution</summary><p>The sequence \(f_n=(2n+1)c/(4L)\) agrees with the clamped–free case. At the clamp displacement vanishes, while at the opposite end the axial derivative and therefore stress vanish. A free–free rod also has zero stress at both ends, but its nonzero resonances are integer multiples of \(c/(2L)\); it also permits a zero-frequency rigid translation.</p></details>
+<p>For a narrow wave packet at four sites per central wavelength, use the dispersion relation to compare the arrival of the centre of the packet with a single crest.</p>
+<details><summary>Work through the solution</summary><p>Here \(ka/2=\pi/4\). The phase travels at \(c\sin(\pi/4)/(\pi/4)=0.9003c\), whereas the envelope moves at \(c\cos(\pi/4)=0.7071c\). Over a fixed distance the packet centre arrives about \(0.9003/0.7071=1.27\) times as late as a crest with that phase speed. A broadband pulse need not have one well-defined group speed.</p></details>
+<p class="source-note">Further reading · <a href="https://link.springer.com/chapter/10.1007/978-3-662-61603-1_9">Fließbach, Kontinuumsmechanik</a> · <a href="https://davidtong.org/pdfs/teaching/solid-state-physics/solidstate4.pdf">Tong, Phonons</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/classical-mechanics/chapters/15-cyclic-action/">Chapter 15 · Read a period from the area enclosed by an orbit</a></span><span>Next<br><a href="/fundamentals/physics/classical-mechanics/chapters/17-proper-time-and-momentum/">Chapter 17 · Proper time, momentum and a moving clock</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

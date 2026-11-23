@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recovering a vector field from divergence, curl and boundary data · OneSimulation</title>
+<meta name="description" content="A numerical field solver returns three components at every point. Divergence measures sources and curl measures circulation, yet neither measurement detects a spatially uniform offset. Helmholtz decomposition makes precise what can be recovered, how to compute it, and what the boundary must supply.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/38-helmholtz-decomposition/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Recovering a vector field from divergence, curl and boundary data · OneSimulation">
+<meta property="og:description" content="A numerical field solver returns three components at every point. Divergence measures sources and curl measures circulation, yet neither measurement detects a spatially uniform offset. Helmholtz decomposition makes precise what can be recovered, how to compute it, and what the boundary must supply.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/38-helmholtz-decomposition/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Recovering a vector field from divergence, curl and boundary data</h1><p class="lead">A numerical field solver returns three components at every point. Divergence measures sources and curl measures circulation, yet neither measurement detects a spatially uniform offset. Helmholtz decomposition makes precise what can be recovered, how to compute it, and what the boundary must supply.</p><p class="byline">Chapter 38 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#invert-the-vector-laplacian-in-open-space">Invert the vector Laplacian in open space</a><a href="#derive-the-fourier-projectors">Derive the Fourier projectors</a><a href="#recover-a-patterned-measurement">Recover a patterned measurement</a><a href="#specify-a-boundary-on-a-finite-domain">Specify a boundary on a finite domain</a><a href="#tutorial-on-recovering-missing-information">Tutorial on recovering missing information</a></nav></aside><article class="prose reference"><section><h2 id="invert-the-vector-laplacian-in-open-space">Invert the vector Laplacian in open space</h2>
+<p>Let \(\boldsymbol F\) be smooth on all of space and rapidly decreasing, together with its needed derivatives, so integration by parts has no surface term at infinity. The identity \(\nabla^2\boldsymbol F=\nabla(\nabla\cdot\boldsymbol F)-\nabla\times(\nabla\times\boldsymbol F)\) reduces reconstruction to three scalar Poisson inversions. Define \(G(\boldsymbol r)=1/(4\pi|\boldsymbol r|)\); distributionally \(-\nabla^2G=\delta^3\). For \(d=\nabla\cdot\boldsymbol F\) and \(\boldsymbol c=\nabla\times\boldsymbol F\), convolution with \(G\) gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[\Phi=G*d,\]</div><div class="equation-step">\[\boldsymbol A=G*\boldsymbol c,\]</div><div class="equation-step">\[\boldsymbol F=-\nabla\Phi+\nabla\times\boldsymbol A .\]</div></div>
+<p>To verify, first note that \(\nabla\cdot\boldsymbol c=0\); a supplied curl field must satisfy this compatibility condition. Moving the derivative through convolution gives \(\nabla\cdot\boldsymbol A=G*(\nabla\cdot\boldsymbol c)=0\). The divergence of the proposed \(\boldsymbol F\) is \(-\nabla^2\Phi=d\), and its curl is \(\nabla(\nabla\cdot\boldsymbol A)-\nabla^2\boldsymbol A=\boldsymbol c\). Any difference from the original field has zero divergence and curl, hence componentwise zero Laplacian. Smoothness and decay on all space force this harmonic difference to vanish. The reconstructed vector pieces are unique in this setting, while adding a gradient to an unrestricted vector potential still leaves its curl unchanged.</p>
+</section>
+<section><h2 id="derive-the-fourier-projectors">Derive the Fourier projectors</h2>
+<p>On a periodic grid separate the mean mode first. For a nonzero Fourier wavevector \(\boldsymbol k\) with convention \(e^{i\boldsymbol k\cdot\boldsymbol r}\), differentiation multiplies by \(i\boldsymbol k\). A longitudinal component is parallel to \(\boldsymbol k\), so its amplitude must reproduce the scalar product \(\boldsymbol k\cdot\widehat{\boldsymbol F}\). Subtraction leaves a perpendicular component:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\widehat{\boldsymbol F}_L=\frac{\boldsymbol k(\boldsymbol k\cdot\widehat{\boldsymbol F})}{|\boldsymbol k|^2},\]</div><div class="equation-step">\[\widehat{\boldsymbol F}_T=\widehat{\boldsymbol F}-\widehat{\boldsymbol F}_L.\]</div></div>
+<p>The first projector squared equals itself, and the two pieces are orthogonal. Thus their squared magnitudes add mode by mode, even for complex amplitudes with the Hermitian inner product. Equivalently the longitudinal piece has zero curl and the transverse piece has zero divergence. At \(\boldsymbol k=0\), the denominator vanishes and both derivative measurements are zero. A known mean, applied uniform field or boundary condition supplies that information. Setting the mean to zero silently would discard an actual applied bias.</p>
+</section>
+<section><h2 id="recover-a-patterned-measurement">Recover a patterned measurement</h2>
+<p>Take a two-dimensional periodic field \(\boldsymbol F=\boldsymbol b+\boldsymbol a\cos(2x+y)\) in dimensionless periodic coordinates with \(\boldsymbol a=(3,1)\), \(\boldsymbol b=(1,0)\). Its measured divergence is \(-7\sin(2x+y)\). Its out-of-plane curl is \(+\sin(2x+y)\), from \(\partial_xF_y-\partial_yF_x\). Projection with \(\boldsymbol k=(2,1)\) gives \(\boldsymbol a_L=(2.8,1.4)\), \(\boldsymbol a_T=(0.2,-0.4)\). The squared amplitudes are 9.8 and 0.2, summing to the original 10; only 2 percent of the nonconstant modal power is transverse. Neither differentiated pattern contains the bias. At phase zero the observed x-component is four, of which 2.8 is longitudinal, 0.2 transverse and one is uniform.</p>
+<p>The graph scans phase, showing the x-component of the measured field, the two recovered varying pieces and the mean. Change the input amplitudes until \(\boldsymbol k\cdot\boldsymbol a=0\), then until \(\boldsymbol k\times\boldsymbol a=0\). Changing the mean should move only the total and constant terms. In a discretised solver the differentiation symbol used in a projection must match the numerical divergence being tested; the exact spectral \(i\boldsymbol k\) and a finite difference need not represent the same grid operator.</p>
+<div id="try-it" class="interactive-study" data-study="em-helmholtz"></div>
+</section>
+<section><h2 id="specify-a-boundary-on-a-finite-domain">Specify a boundary on a finite domain</h2>
+<p>One convenient decomposition writes \(\boldsymbol F=\nabla u+\boldsymbol T\) with \(\nabla\cdot\boldsymbol T=0\) and \(\boldsymbol T\cdot\boldsymbol n=0\) on the boundary. Solve the Neumann problem \(\nabla^2u=\nabla\cdot\boldsymbol F,\ \partial_nu=\boldsymbol F\cdot\boldsymbol n\). The divergence theorem makes these data compatible. The potential is determined up to an additive constant in a connected domain, which does not affect its gradient. Orthogonality follows from integrating \(\nabla u\cdot\boldsymbol T\) by parts: both the volume divergence and boundary normal term vanish. Holes can admit nontrivial fields with zero curl and divergence, so reconstructing a full vector field from its derivatives alone can require additional circulation data.</p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-recovering-missing-information">Tutorial on recovering missing information</h2>
+<p>With \(\boldsymbol k=(2,1)\), a sensor returns divergence \(-5\sin(2x+y)\) and curl \(-5\sin(2x+y)\). Infer the cosine amplitudes \(a_x,a_y\).</p>
+<details><summary>Work through the solution</summary><p>From the divergence, \(2a_x+a_y=5\). From the curl, \(2a_y-a_x=5\). Solving gives \(a_x=1,a_y=3\). The projected amplitudes are \((2,1)\) and \((-1,2)\), with equal squared magnitude. The mean remains independent of both readings.</p></details>
+<p>On an annulus \(a&lt;r&lt;b\), consider \(\boldsymbol H=\boldsymbol e_\theta/r\). Which derivative and boundary data vanish? Propose one measurement that distinguishes it from zero.</p>
+<details><summary>Work through the solution</summary><p>Its planar divergence vanishes and its out-of-plane curl is \(r^{-1}\partial_r(rH_\theta)=0\) on the annulus. Its normal component vanishes at both circular boundaries. Nevertheless circulation around any circle surrounding the hole is \(2\pi\). The axis where the field is singular is excluded, so the all-space uniqueness argument does not apply.</p></details>
+<p>A computed projection claims longitudinal power 6, transverse power 4, and original power 13 in one nonzero Fourier mode. Is this consistent with exact orthogonal projection in the same norm?</p>
+<details><summary>Work through the solution</summary><p>No. The two projected vectors are perpendicular, so their powers must sum to the original 13. Check whether powers include the same normalisation, whether the mean was included, and whether the solver and diagnostic use the same differentiation symbol and inner product.</p></details>
+<p class="source-note">Further reading · <a href="https://galileoandeinstein.phys.virginia.edu/Elec_Mag/2022_Lectures/EM_05_Helmholtz_Theorem.html">University of Virginia, Helmholtz's theorem and uniqueness</a> · <a href="https://www.pas.rochester.edu/~stte/phy415F17/lectures/lect04.pdf">Rochester electromagnetic theory, transverse and longitudinal projections</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/37-polarimetry-and-stokes/">Chapter 37 · Reconstructing a partially polarised electromagnetic wave</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/39-integrating-finite-charge-sources/">Chapter 39 · A ring, a disk and an electric-field maximum in empty space</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

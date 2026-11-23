@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why the frequencies of a bending beam are not equally spaced · OneSimulation</title>
+<meta name="description" content="A distributed beam can bend into infinitely many shapes. Derive the relation between wavelength and oscillation frequency, then compare the measured response of a beam with the mode family predicted by its supports.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/14-bending-waves/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why the frequencies of a bending beam are not equally spaced · OneSimulation">
+<meta property="og:description" content="A distributed beam can bend into infinitely many shapes. Derive the relation between wavelength and oscillation frequency, then compare the measured response of a beam with the mode family predicted by its supports.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-dynamics/chapters/14-bending-waves/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-dynamics/">Machine dynamics</a></p><h1>Why the frequencies of a bending beam are not equally spaced</h1><p class="lead">A distributed beam can bend into infinitely many shapes. Derive the relation between wavelength and oscillation frequency, then compare the measured response of a beam with the mode family predicted by its supports.</p><p class="byline">Chapter 14 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#local">Combine transverse force, moment and curvature</a><a href="#modes">Obtain the simply supported series</a><a href="#examples">Choose sensor positions as carefully as the frequency range</a><a href="#onesimulation-comparison">A related OneSimulation calculation</a><a href="#tutorial">Tutorial · distinguish distributed bending from a tensioned string</a></nav></aside><article class="prose reference"><section><h2 id="local">Combine transverse force, moment and curvature</h2>
+<p>Take a straight uniform beam with small transverse deflection \(w(x,t)\), density \(\rho\), area A and second moment of area I about the bending axis. Euler–Bernoulli kinematics keeps cross-sections perpendicular to the centreline. The bending resistance is proportional to curvature \(EI w_{xx}\). For a load-free part of the beam the gradient of moment supplies shear and the gradient of shear accelerates the mass. With restoring forces opposing deflection, the resulting equation is</p>
+<div class="math display">\[\rho A\,w_{tt}+EI\,w_{xxxx}=0 .\]</div>
+<p>The fourth spatial derivative calls for four boundary conditions. At a simple support the displacement vanishes and the bending moment is zero, hence \(w=w_{xx}=0\). A clamp instead fixes displacement and slope. Interchanging a pin and a clamp changes the allowed shape family even if the span and material remain fixed.</p>
+</section>
+<section><h2 id="modes">Obtain the simply supported series</h2>
+<p>Try \(w=W\sin(kx)\cos(\omega t)\). Two spatial derivatives bring down \(-k^2\), and four give \(+k^4\). Substitution balances the inertia and stiffness terms. The conditions at x=0 hold for every k in this sine family. At x=L the sine must vanish, yielding</p>
+<div class="math display equation-chain"><div class="equation-step">\[\omega^2={EI\over\rho A}k^4,\]</div><div class="equation-step">\[k_n={n\pi\over L},\]</div><div class="equation-step">\[f_n={n^2\pi\over 2L^2}\sqrt{EI\over\rho A}.\]</div></div>
+<p>A long travelling sinusoid has phase velocity \(\omega/k=k\sqrt{EI/(\rho A)}\). The group velocity \(d\omega/dk\) is twice that value in this model. A localized pulse contains many wavelengths, which can therefore separate as it propagates. Predictions at wavelengths near the thickness require accounting for rotary inertia and shear deformation.</p>
+</section>
+<section><h2 id="examples">Choose sensor positions as carefully as the frequency range</h2>
+<p>Use a 1 m steel strip 20 mm wide and 4 mm thick with \(E=200\) GPa and \(\rho=7800\) kg/m³. For bending about the thin direction \(I=bh^3/12\) and \(I/A=h^2/12\). The first three simply supported frequencies are roughly 9.18, 36.7 and 82.7 Hz. Doubling the width alone doubles stiffness and mass together and leaves these frequencies unchanged. Doubling thickness doubles each frequency. Shortening the span by 20% increases all three by \(1/0.8^2=1.56\).</p>
+<p>At the centre a displacement pickup sees \(\sin(n\pi/2)\). It sees the first mode at its antinode and misses the second mode entirely. At the quarter point it sees that second mode strongly. An absent spectral peak can therefore result from excitation or sensing at a node. Move the measuring point before adjusting a fitted damping value to explain its absence.</p>
+<p class="calculation-prompt">Find a common node of the first and third modes and a location that suppresses the second mode alone. Change the thickness and then the span. Use the resulting frequencies to test whether each scaling is linear or quadratic.</p>
+<div id="try-it" class="interactive-study" data-study="eng-machine-dynamics-bending-waves"></div>
+</section>
+<section><h2 id="onesimulation-comparison">A related OneSimulation calculation</h2>
+<p>For a frame whose geometry and end payload preclude the simply supported sine family, compare the first three computed modes after changing the tip mass. Test whether all frequencies scale by the same factor.</p>
+<p><a href="/fundamentals/mechanical-engineering/machine-dynamics/#experiment">Compare frame modes with OneSimulation</a></p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · distinguish distributed bending from a tensioned string</h2>
+<p>A simply supported specimen has prominent peaks at 12 Hz and 108 Hz with the receiver at midspan. Infer which bending modes these could be and predict the frequency and receiver location for the missing mode. What would the third-to-first frequency ratio be for an ideal string?</p>
+<details><summary>Show the mode test</summary>
+<p>The ratio \(108/12=9\) agrees with \(n^2\) for \(n=3\). The second bending mode should lie near \(4(12)=48\) Hz. Measure at one quarter span and excite away from its nodes. An ideal uniform string has \(\omega=ck\) and a third-to-first ratio of 3. Checking both the midspan node and the shifted pickup spectrum distinguishes these models more effectively than a single peak.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-003sc-engineering-dynamics-fall-2011/resources/lecture-27-vibration-of-continuous-structures-strings-beams-rods-etc-1/">MIT 2.003SC · lecture 27 on vibration of continuous structures</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/13-elastic-waves/">Chapter 13 · How a longitudinal pulse reflects from a change in rod section</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-dynamics/chapters/15-rayleigh-estimate/">Chapter 15 · Estimating a cantilever frequency from energy</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

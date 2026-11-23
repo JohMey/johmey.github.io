@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spherical harmonics as measurements of boundary voltage · OneSimulation</title>
+<meta name="description" content="Reconstruct interior and exterior potentials from an angular voltage scan. Use orthogonality to isolate a dipole or quadrupole and quantify how rapidly fine angular structure disappears.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/16-spherical-boundary-data/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spherical harmonics as measurements of boundary voltage · OneSimulation">
+<meta property="og:description" content="Reconstruct interior and exterior potentials from an angular voltage scan. Use orthogonality to isolate a dipole or quadrupole and quantify how rapidly fine angular structure disappears.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/16-spherical-boundary-data/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Spherical harmonics as measurements of boundary voltage</h1><p class="lead">Reconstruct interior and exterior potentials from an angular voltage scan. Use orthogonality to isolate a dipole or quadrupole and quantify how rapidly fine angular structure disappears.</p><p class="byline">Chapter 16 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#modes">Why a sphere selects angular patterns</a><a href="#recover">Infer coefficients and the surface charge they require</a><a href="#resolution">Use radial decay to design a measurement</a><a href="#azimuth">Recognise when a latitude scan is insufficient</a><a href="#experiment">Continue three boundary harmonics through a sphere</a><a href="#tutorial">Distinguish angular resolution from total charge</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="modes">Why a sphere selects angular patterns</h2>
+<p>Consider a spherical surface of radius \(a\) covered by closely spaced insulated electrodes. They can prescribe a voltage varying with position, whereas a single connected conductor in electrostatic equilibrium can have only one voltage. Suppose there are no other charges, the surrounding permittivity is \(\epsilon_0\), and the reference is zero at infinity. At first let the applied voltage be independent of azimuth. In spherical coordinates the charge-free equation becomes</p>
+<div class="math display">\[\frac1{r^2}\partial_r(r^2\partial_r V)+\frac1{r^2\sin\theta}\partial_\theta(\sin\theta\,\partial_\theta V)=0 .\]</div>
+<p>Writing \(V=R(r)P(u)\) with \(u=\cos\theta\) and multiplying by \(r^2/(RP)\) separates the radial and angular parts. The angular operator becomes \(d[(1-u^2)dP/du]/du\); regularity at both poles selects eigenvalues \(\ell(\ell+1)\) for nonnegative integer \(\ell\). The regular eigenfunctions are the Legendre polynomials. The first three are \(1,u,(3u^2-1)/2\). Substitution of any of these into the angular equation verifies its eigenvalue.</p>
+<p>For each angular order the radial equation reads \((r^2R')'=\ell(\ell+1)R\). Insert \(R=r^p\) to obtain \(p(p+1)=\ell(\ell+1)\). The two choices are \(p=\ell\) and \(p=-\ell-1\). The first stays regular at the centre; the second decays at infinity. These choices describe different physical domains for the same measured surface voltage.</p>
+</section>
+<section><h2 id="recover">Infer coefficients and the surface charge they require</h2>
+<p>On the spherical surface write \(f(u)=\sum_\ell b_\ell P_\ell(u)\). Legendre polynomials are orthogonal under the integral \(du\) from \(-1\) to 1; for equal indices the integral is \(2/(2\ell+1)\). The weight has a geometric origin: a narrow latitude strip subtends solid angle \(2\pi\sin\theta\,d\theta=-2\pi\,du\). Uniform steps in polar angle must be weighted by \(\sin\theta\) before estimating the angular coefficients.</p>
+<div class="math display equation-chain"><div class="equation-step">\[b_\ell=\frac{2\ell+1}{2}\int_{-1}^{1}f(u)P_\ell(u)\,du,\]</div><div class="equation-step">\[V_{\rm in}=\sum_\ell b_\ell(r/a)^\ell P_\ell(u),\]</div><div class="equation-step">\[V_{\rm out}=\sum_\ell b_\ell(a/r)^{\ell+1}P_\ell(u).\]</div></div>
+<p>At the boundary both sides have the prescribed potential. Their normal derivatives generally differ. For each order the outward fields at \(a\) are \(+(\ell+1)b_\ell P_\ell/a\) outside and \(-\ell b_\ell P_\ell/a\) inside. Gauss’s pillbox therefore assigns the thin electrode array a net sheet charge density</p>
+<div class="math display">\[\sigma(u)=\frac{\epsilon_0}{a}\sum_\ell (2\ell+1)b_\ell P_\ell(u).\]</div>
+<h3>Worked inverse problem with three voltmeter readings</h3>
+<p>Suppose independent measurements establish that orders above two are negligible. At the north pole, equator and south pole a scan gives 4, 1 and 2 V. The first and last readings differ only in the odd term, hence \(b_1=(4-2)/2=1\) V. Their average gives \(b_0+b_2=3\) V and the equator gives \(b_0-b_2/2=1\) V. Solving yields \(b_0=5/3\) V and \(b_2=4/3\) V. On the north axis at \(r=a/2\) the predicted voltage is \(5/3+1/2+1/3=2.50\) V. The three readings alone would not exclude a higher-order angular pattern. Additional sample positions are needed to test that assumption.</p>
+</section>
+<section><h2 id="resolution">Use radial decay to design a measurement</h2>
+<p>The exterior radial factor contains one extra power of \(a/r\) compared with the relative angular order. At \(r=2a\) a quadrupole potential has fallen to one eighth of its surface value. An order-six pattern has fallen to \(1/128\). A 20 mV order-six component at a distant detector would require 2.56 V at the surface. A 20 mV instrumental uncertainty has exactly the same amplification if one attempts a surface reconstruction from that single radius.</p>
+<h3>Worked cancellation and a charge measurement</h3>
+<p>For a pure quadrupole set \(a=50\) mm and \(b_2=3.0\) V. The north-pole surface density is \(5\epsilon_0 b_2/a=2.66\) nC/m²; at the equator it is half that magnitude with opposite sign. The net charge vanishes because \(\int_{-1}^{1}P_2\,du=0\). A charge meter that captures the entire array would read zero while a local probe measures finite voltage and field. Net charge measures precisely the \(\ell=0\) coefficient.</p>
+</section>
+<section><h2 id="azimuth">Recognise when a latitude scan is insufficient</h2>
+<p>A painted voltage pattern can vary with longitude as well. A periodic azimuthal factor has form \(e^{im\phi}\) with integer \(m\). The extra angular term in Laplace’s equation introduces \(-m^2/(1-u^2)\) into the Legendre equation. Regular solutions are associated Legendre functions with \(|m|\le\ell\). Combined with the azimuthal factor and normalisation they form \(Y_{\ell m}\). For an orthonormal convention the coefficient is the surface integral of \(Y_{\ell m}^*f\) over solid angle. The radial powers remain unchanged. In particular, \(f\propto\sin\theta\cos\phi\) is a dipolar pattern oriented along the \(x\) direction. Averaging every latitude ring would completely erase it.</p>
+</section>
+<section><h2 id="experiment">Continue three boundary harmonics through a sphere</h2>
+<p>The boundary has a constant 1 V term, a 1 V dipole coefficient and an adjustable quadrupole. At half the sphere radius with a 2 V quadrupole, the pole reads 2.00 V and the equator 0.75 V. Compare inside and outside measurements with the same angular resolution.</p>
+<div id="try-it" class="interactive-study" data-study="em-sphere"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Distinguish angular resolution from total charge</h2>
+<h3>Locate a field null inside a sphere</h3><p>Take \(b_1=1.2\) V, \(b_2=-1.0\) V, \(a=60\) mm, with all other coefficients zero. Find a point on the positive axis at which the full electric field vanishes.</p><details><summary>Work through the solution</summary>
+<p>On the axis, symmetry sets transverse field to zero. The potential is \(1.2z/a-(z/a)^2\) volts. Its derivative vanishes at \(z/a=0.6\), or 36 mm. The local axial extremum is compatible with Laplace’s equation because transverse curvature has the opposite sign. The point is a saddle of the three-dimensional potential.</p>
+</details>
+<h3>Is an interior maximum consistent with the measured boundary?</h3><p>A code sampling a smooth, charge-free sphere reports 6.0 V at its centre; the largest voltage applied anywhere on the boundary is 4.0 V. Explain the discrepancy using the harmonics.</p><details><summary>Work through the solution</summary>
+<p>At the centre all terms with \(\ell&gt;0\) vanish. The remaining \(b_0\) equals the angular average of the boundary voltage and cannot exceed 4 V. The check isolates a cause to investigate: interior sources, incorrect boundary data or a defective discretisation. It does not require knowing the other coefficients.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, §§3.3.2 and 3.4, spherical separation and multipoles</a></li><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_9">Fließbach, Legendrepolynome, pp. 80–88</a></li><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_11">Fließbach, Kugelfunktionen, pp. 99–107</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/15-separation-and-harmonic-measure/">Chapter 15 · How far does an electrode pattern reach?</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/17-steady-currents-and-vector-potential/">Chapter 17 · From a measured current to its magnetic field</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

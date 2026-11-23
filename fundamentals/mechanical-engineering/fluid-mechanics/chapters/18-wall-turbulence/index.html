@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How turbulent momentum transport produces a logarithmic velocity profile · OneSimulation</title>
+<meta name="description" content="The time-averaged velocity next to a wall looks smooth, even when individual velocity records fluctuate rapidly. Decompose the momentum flux, derive the wall scaling, and recover a shear stress from two measurements in the logarithmic region.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/18-wall-turbulence/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How turbulent momentum transport produces a logarithmic velocity profile · OneSimulation">
+<meta property="og:description" content="The time-averaged velocity next to a wall looks smooth, even when individual velocity records fluctuate rapidly. Decompose the momentum flux, derive the wall scaling, and recover a shear stress from two measurements in the logarithmic region.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/18-wall-turbulence/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>How turbulent momentum transport produces a logarithmic velocity profile</h1><p class="lead">The time-averaged velocity next to a wall looks smooth, even when individual velocity records fluctuate rapidly. Decompose the momentum flux, derive the wall scaling, and recover a shear stress from two measurements in the logarithmic region.</p><p class="byline">Chapter 18 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#reynolds">Where the turbulent shear stress comes from</a><a href="#scaling">Match the inner scales and a constant-stress layer</a><a href="#examples">Predict a difference, then use it as a stress measurement</a><a href="#onesimulation-comparison">A related OneSimulation calculation</a><a href="#tutorial">Tutorial · compare pressure-drop and velocity-gradient estimates</a></nav></aside><article class="prose reference"><section><h2 id="reynolds">Where the turbulent shear stress comes from</h2>
+<p>For an incompressible constant-density fluid write \(u=U+u'\) and \(v=V+v'\), with uppercase velocities time averages and mean fluctuations zero. The flux of streamwise momentum carried in the wall-normal direction contains \(\rho\,\overline{uv}=\rho(UV+\overline{u'v'})\). In a statistically steady parallel mean flow with \(V=0\), the apparent shear transporting streamwise momentum toward the wall becomes</p>
+<div class="math display">\[\tau_{\rm total}=\mu {dU\over dy}-\rho\,\overline{u'v'} .\]</div>
+<p>Upward moving near-wall fluid often carries lower-than-average streamwise momentum and descending fluid carries higher-than-average momentum. Both events have negative \(u'v'\) in this sign convention, producing a positive turbulent shear. At a stationary impermeable no-slip wall fluctuations vanish and the entire wall stress is viscous, even when turbulence dominates a short distance away.</p>
+</section>
+<section><h2 id="scaling">Match the inner scales and a constant-stress layer</h2>
+<p>Define \(u_\tau=\sqrt{\tau_w/\rho}\), \(y^+=yu_\tau/\nu\) and \(U^+=U/u_\tau\). Close enough to the wall \(dU/dy\simeq\tau_w/\mu\), so \(U^+\simeq y^+\). Farther out, provided y is still small compared with the outer flow thickness, take \(\tau_{\rm total}\simeq\tau_w\) and viscous stress small. Prandtl's mixing-length closure approximates the turbulent shear by \(\rho \ell_m^2|U'|U'\). The near-wall dimensional assumption \(\ell_m=\kappa y\) gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[{dU\over dy}\simeq{u_\tau\over\kappa y},\]</div><div class="equation-step">\[U^+={1\over\kappa}\ln y^+ + B .\]</div></div>
+<p>The constant B must come from matching or measurements. Use illustrative smooth-wall values \(\kappa=0.41,\ B=5.0\). The line \(U^+=y^+\) applies in the viscous sublayer and the log line only in an overlap region (often beyond about \(y^+=30\) and well inside the outer layer). In between lies a buffer region. Extending a logarithm to the wall would violate the no-slip condition. Roughness and adverse pressure gradients alter these comparisons.</p>
+</section>
+<section><h2 id="examples">Predict a difference, then use it as a stress measurement</h2>
+<p>Take water with \(\rho=1000\) kg/m³, \(\nu=10^{-6}\) m²/s and \(u_\tau=0.040\) m/s. Wall stress is 1.60 Pa. At \(y=0.05\) mm, \(y^+=2\), so the viscous prediction is \(U=0.080\) m/s. At 1.0 mm and 4.0 mm, \(y^+=40,160\). If both points are in the overlap region, their velocity difference is \((0.040/0.41)\ln4=0.1353\) m/s; B cancels. The individual predicted speeds are about 0.560 and 0.695 m/s. A log-linear plot over many positions is a stronger test than fitting a line to just two values.</p>
+<p>Suppose two probes 0.80 and 3.20 mm from a similar wall instead read a difference of 0.100 m/s. The inferred friction velocity is \(0.41(0.100)/\ln4=0.0296\) m/s and the inferred stress is 0.875 Pa. The lower probe then has \(y^+=23.7\), which makes the logarithmic assumption questionable there. This check feeds the inferred parameter back into the condition for the inference. Repositioning both probes at larger wall distances, while staying away from the outer flow, supplies an independent test.</p>
+<p class="calculation-prompt">Increase viscosity while holding friction velocity fixed. Predict how the two displayed validity intervals move in millimetres. Use the reported wall distances in viscous units to decide whether a logarithmic fit through fixed probes is still plausible.</p>
+<div id="try-it" class="interactive-study" data-study="eng-fluid-mechanics-wall-turbulence"></div>
+</section>
+<section><h2 id="onesimulation-comparison">A related OneSimulation calculation</h2>
+<p>Use the laminar flat-plate calculation to compare two definitions of wall shear. Infer the wall gradient from viscosity and shear, then consider which additional velocity covariance enters an averaged turbulent momentum balance.</p>
+<p><a href="/fundamentals/mechanical-engineering/fluid-mechanics/#experiment">Read the OneSimulation flat-plate fields</a></p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · compare pressure-drop and velocity-gradient estimates</h2>
+<p>A fully developed round pipe of radius 25 mm has \(-dp/dx=160\) Pa/m. Derive its wall shear by balancing axial pressure force and perimeter friction. Predict the increase between two overlap-layer points whose distances have a ratio of three.</p>
+<details><summary>Derive the wall force and velocity increment</summary>
+<p>For pipe length L the pressure force is \((-dp/dx)L\pi R^2\), balanced by \(\tau_w2\pi RL\), hence \(\tau_w=(-dp/dx)R/2=2.0\) Pa. In water \(u_\tau=0.0447\) m/s. The expected speed increase is \(u_\tau\ln3/0.41=0.120\) m/s. The pressure-force result remains an exact mean balance under the fully developed assumptions. The profile comparison additionally depends on the closure and the placement of both probes.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://oceanwiki.ethz.ch/doku.php?id=lecture7%3Alawofthewall">ETH Zürich · turbulence lecture, law of the wall and logarithmic layer</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/17-lubrication-films/">Chapter 17 · A viscous squeeze film as a rate-dependent support</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/19-surface-waves/">Chapter 19 · How gravity and surface tension select different wave speeds</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

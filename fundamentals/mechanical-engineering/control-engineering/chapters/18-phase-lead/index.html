@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Designing a lead network at a specified gain crossover · OneSimulation</title>
+<meta name="description" content="A loop is too lightly damped at the bandwidth needed for tracking. A lead network can supply positive phase over a frequency band. Locate the band mathematically, set its gain crossover deliberately and measure the accompanying high-frequency gain increase.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/18-phase-lead/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Designing a lead network at a specified gain crossover · OneSimulation">
+<meta property="og:description" content="A loop is too lightly damped at the bandwidth needed for tracking. A lead network can supply positive phase over a frequency band. Locate the band mathematically, set its gain crossover deliberately and measure the accompanying high-frequency gain increase.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/18-phase-lead/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Designing a lead network at a specified gain crossover</h1><p class="lead">A loop is too lightly damped at the bandwidth needed for tracking. A lead network can supply positive phase over a frequency band. Locate the band mathematically, set its gain crossover deliberately and measure the accompanying high-frequency gain increase.</p><p class="byline">Chapter 18 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#shape">Build a lead element from one pole and one zero</a><a href="#design">Set the phase and magnitude at a common design point</a><a href="#examples">Calculate the network and identify a robustness cost</a><a href="#tutorial">Tutorial · allow for a known delay</a></nav></aside><article class="prose reference"><section><h2 id="shape">Build a lead element from one pole and one zero</h2>
+<p>Take \(C(s)=K(1+sT)/(1+sT/\alpha)\) with \(\alpha&gt;1\). The zero occurs at \(1/T\) and the pole at the higher frequency \(\alpha/T\). Its phase contribution is \(\phi=\arctan(\omega T)-\arctan(\omega T/\alpha)\). At very low or very high frequency that phase tends to zero. Differentiate with respect to \(z=\omega T\) to locate the interior maximum:</p>
+<div class="math display equation-chain"><div class="equation-step">\[{1\over1+z^2}-{1/\alpha\over1+z^2/\alpha^2}=0,\]</div><div class="equation-step">\[z=\sqrt{\alpha},\]</div><div class="equation-step">\[\sin\phi_{\max}={\alpha-1\over\alpha+1}.\]</div></div>
+<p>The maximum occurs at the geometric mean of the zero and pole frequencies. At this same frequency the magnitude of the dynamic part is \(\sqrt\alpha\), obtained by substituting \(z^2=\alpha\) into \(\sqrt{(1+z^2)/(1+z^2/\alpha^2)}\). Thus positive phase comes with a magnitude change. Adding lead without resetting scalar K can move crossover to a frequency where the anticipated plant phase and lead are different.</p>
+</section>
+<section><h2 id="design">Set the phase and magnitude at a common design point</h2>
+<p>For a stable minimum-phase design example with an open-loop integrator, take \(G(s)=1/[s(1+s)]\) and select \(\omega_c=2\) rad/s. Plant phase there is \(-90^\circ-\arctan2=-153.43^\circ\). Choose 30° extra lead, giving nominal phase margin 56.57°. Invert the peak-phase relation and put the peak at the target frequency:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\alpha={1+\sin\phi_{\max}\over1-\sin\phi_{\max}},\]</div><div class="equation-step">\[T={\sqrt\alpha\over\omega_c},\]</div><div class="equation-step">\[K={1\over|G(i\omega_c)|\sqrt{\alpha}}.\]</div></div>
+<p>A scalar-gain controller chosen for the same crossover would have \(K_P=1/|G(i\omega_c)|\) and margin only 26.57°. This comparison holds crossover fixed, so the phase advantage can be attributed to the compensator. The return ratio magnitude must still be checked away from crossover, especially for a plant with additional modes or delay.</p>
+</section>
+<section><h2 id="examples">Calculate the network and identify a robustness cost</h2>
+<p>For the 30° design \(\alpha=3,\ T=0.866\) s, giving zero and pole frequencies of 1.155 and 3.464 rad/s. Plant magnitude at 2 rad/s is \(1/(2\sqrt5)=0.2236\), so K=2.582. The high-frequency control gain tends to \(K\alpha=7.746\), while its low-frequency gain is 2.582. High-frequency measurement noise passed through a feedback controller can therefore induce larger actuator activity than a low-frequency calculation suggests. The actual noise transfer to the input must include the loop sensitivity.</p>
+<p>Require a more aggressive 45° boost at the same crossover. Then \(\alpha=5.828,\ T=1.207\) s and \(K=1.852\). Margin becomes 71.57° and the high-frequency gain reaches 10.80. The larger boost also lowers the DC controller gain, which changes low-frequency disturbance attenuation in this plant. Comparing the two phase traces alongside their designed crossover avoids selecting a controller purely from its maximum phase number.</p>
+<p class="calculation-prompt">Keep crossover at 2 rad/s and increase the required phase from 30 to 45 degrees. Compare the high-frequency controller gains. Now fix lead and move crossover upward to inspect how plant phase can consume the added margin.</p>
+<div id="try-it" class="interactive-study" data-study="eng-control-engineering-phase-lead"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · allow for a known delay</h2>
+<p>Return to the 30° design and insert a 0.10 s pure delay. Compute the remaining phase margin at 2 rad/s. What maximum additional delay is compatible with a required 40° margin? Why is there no gain crossover shift for this change?</p>
+<details><summary>Spend the phase reserve in radians</summary>
+<p>At crossover 0.10 s adds \(2(0.10)=0.20\) rad or 11.46° of phase lag. Margin falls to 45.11°. To retain 40° permits a further \((45.11-40)\pi/[180(2)]=0.0446\) s. Pure delay has unit magnitude at every frequency, so the designed crossover stays fixed. In contrast, adding a physical low-pass filter would change both gain and phase and require a fresh crossover calculation.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://www.cds.caltech.edu/~murray/books/AM08/pdf/fbs-loopsyn_24Jul2020.pdf">Åström and Murray, Feedback Systems · chapter 12, feedback design by loop shaping</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/17-inverse-response/">Chapter 17 · Why a stable plant can initially move in the wrong direction</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/19-relay-regulation/">Chapter 19 · The period and duty cycle of a thermostat with hysteresis</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

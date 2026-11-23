@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why a bonded pair of strips bends under uniform heating · OneSimulation</title>
+<meta name="description" content="Two perfectly bonded strips would expand by different amounts if separated. After bonding they must share a continuous longitudinal strain field. Solve simultaneously for its mean and its curvature and recover stresses that can be present even when the entire strip is free.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/19-thermal-curvature/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why a bonded pair of strips bends under uniform heating · OneSimulation">
+<meta property="og:description" content="Two perfectly bonded strips would expand by different amounts if separated. After bonding they must share a continuous longitudinal strain field. Solve simultaneously for its mean and its curvature and recover stresses that can be present even when the entire strip is free.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/19-thermal-curvature/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Why a bonded pair of strips bends under uniform heating</h1><p class="lead">Two perfectly bonded strips would expand by different amounts if separated. After bonding they must share a continuous longitudinal strain field. Solve simultaneously for its mean and its curvature and recover stresses that can be present even when the entire strip is free.</p><p class="byline">Chapter 19 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#kinematics">Separate total strain into free and constrained parts</a><a href="#equilibrium">Use both a zero axial force and a zero moment</a><a href="#examples">A tiny curvature can coexist with measurable stress</a><a href="#tutorial">Tutorial · infer thermal mismatch from shape</a></nav></aside><article class="prose reference"><section><h2 id="kinematics">Separate total strain into free and constrained parts</h2>
+<p>Consider a narrow long strip of width b and total thickness \(2t\), with layers of equal thickness on either side of \(z=0\). The upper layer has expansion coefficient \(\alpha_+\), the lower \(\alpha_-\), and both have the same E here. Start stress-free, then impose a uniform temperature increase \(\Delta T\). With plane sections remaining plane, define signed curvature by writing longitudinal strain \(\epsilon=\epsilon_0+\kappa z\). Stress is proportional to the difference from the free thermal strain:</p>
+<div class="math display">\[\sigma_\pm(z)=E[\epsilon_0+\kappa z-\alpha_\pm\Delta T].\]</div>
+<p>Perfect adhesion enforces continuity of longitudinal displacement at the interface. It permits longitudinal stress to jump there because the stress-free thermal strain changes discontinuously. Traction continuity across the horizontal interface concerns its normal and shear traction components. This beam model describes the middle portion away from free ends where interfacial shear transfers load between layers.</p>
+</section>
+<section><h2 id="equilibrium">Use both a zero axial force and a zero moment</h2>
+<p>For an unconstrained strip no external force or moment acts on its section. The thickness integral of stress must vanish, and its first moment must also vanish. Because z is measured from the symmetric section midpoint, the odd integrals of \(\epsilon_0 z\) and \(\kappa z\) cancel. Separate the thermal integrals over the two layers:</p>
+<div class="math display equation-chain"><div class="equation-step">\[2t\epsilon_0=t(\alpha_++\alpha_-)\Delta T,\]</div><div class="equation-step">\[{2t^3\over3}\kappa={t^2\over2}(\alpha_+-\alpha_-)\Delta T .\]</div></div>
+<p>Hence \(\epsilon_0=(\alpha_++\alpha_-)\Delta T/2\) and \(\kappa=3(\alpha_+-\alpha_-)\Delta T/(4t)\). The higher-expansion side takes the greater total strain at large positive z. For unequal moduli, the two equilibrium equations still work but must retain E inside the integrals; symmetry no longer removes every strain–curvature coupling term.</p>
+</section>
+<section><h2 id="examples">A tiny curvature can coexist with measurable stress</h2>
+<p>Let \(t=0.50\) mm, \(E=100\) GPa, \(\alpha_+=20\) and \(\alpha_-=10\) micrometres per metre per kelvin, with \(\Delta T=40\) K. The mean strain is 600 microstrain, curvature is 0.600 m⁻¹, and the radius of curvature is 1.67 m. Across a free 100 mm length with one end setting the reference tangent, the small-slope tip offset magnitude is \(\kappa L^2/2=3.0\) mm. A free single layer with either coefficient would expand without this curvature.</p>
+<p>At the interface the upper layer has stress \(100\,{\rm GPa}(600-800)10^{-6}=-20\) MPa and the lower +20 MPa. At the outer surfaces the bending term contributes ±300 microstrain; the upper stress becomes +10 MPa and the lower −10 MPa. If a fixture holds the same strip flat while allowing average extension, the mean strain is still 600 microstrain but the layer stresses are uniform ±20 MPa. The fixture must now supply a restraining moment. Compare the stress fields at fixed temperature before interpreting a strain-gauge reading as stress.</p>
+<p class="calculation-prompt">First set both expansion coefficients to 10 and heat the strip. Next restore the mismatch and cool by the same temperature magnitude. Locate stress reversals at the interface and within each layer. Which of these reversals would a gauge on an external face detect?</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-mechanics-thermal-curvature"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · infer thermal mismatch from shape</h2>
+<p>For \(t=0.40\) mm a free 80 mm strip bends 1.20 mm from its initial tangent after a 30 K rise. Estimate the expansion-coefficient difference and the upper-interface stress magnitude for \(E=100\) GPa. State what independent measurement identifies the average expansion coefficient.</p>
+<details><summary>Recover mismatch and mean expansion separately</summary>
+<p>The curvature magnitude is \(2(0.00120)/(0.080)^2=0.375\) m⁻¹. Inversion gives \(|\Delta\alpha|=4t\kappa/(3\Delta T)=6.67\times10^{-6}\) K⁻¹. The interface stress magnitude is \(E|\Delta\alpha|\Delta T/2=10.0\) MPa. Curvature alone determines only the difference. Measuring strain on both external surfaces and averaging removes the bending term and gives the common mid-plane strain from which the mean expansion coefficient follows.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/3-11-mechanics-of-materials-fall-1999/resources/mit3_11f99_laminates/">David Roylance, MIT 3.11 · laminate force and moment resultants and thermal strains</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/18-energy-reciprocity/">Chapter 18 · Finding a displacement when no load acts in its direction</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/7/">Problem sheet 7 · Calibrating a compression fixture through three independent readings</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

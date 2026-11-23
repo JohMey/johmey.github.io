@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a moderately accurate mode can give a precise frequency · OneSimulation</title>
+<meta name="description" content="Use the Rayleigh quotient to estimate an eigenvalue, understand its stationary error and check a proposed mode with a residual.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/15-rayleigh-stationarity/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a moderately accurate mode can give a precise frequency · OneSimulation">
+<meta property="og:description" content="Use the Rayleigh quotient to estimate an eigenvalue, understand its stationary error and check a proposed mode with a residual.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/15-rayleigh-stationarity/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>How a moderately accurate mode can give a precise frequency</h1><p class="lead">Use the Rayleigh quotient to estimate an eigenvalue, understand its stationary error and check a proposed mode with a residual.</p><p class="byline">Chapter 15 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#a-frequency-estimate-from-a-trial-shape">A frequency estimate from a trial shape</a><a href="#angular-error-and-the-residual">Angular error and the residual</a><a href="#two-measurements">Two measurements</a><a href="#tilt-the-trial-vector">Tilt the trial vector</a><a href="#tutorial-on-frequency-estimates">Tutorial on frequency estimates</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="a-frequency-estimate-from-a-trial-shape">A frequency estimate from a trial shape</h2>
+<p>For \(Kq=\lambda Mq\) with symmetric \(K\) and positive definite mass \(M\), a trial vector \(v\) fixes a direction but leaves an amplitude free. Substituting \(q(t)=a(t)v\) in kinetic and elastic energy gives effective mass \(v^TMv\) and stiffness \(v^TKv\). Their ratio \(R(v)\) estimates the squared frequency. Rescaling \(v\) has no effect. For \(M=I\), differentiating \(v^TKv/(v^Tv)\) gives a gradient proportional to \(Kv-Rv\). Its zeros are precisely the eigenvectors.</p>
+</section>
+<section>
+<h2 id="angular-error-and-the-residual">Angular error and the residual</h2>
+<p>Take exact orthonormal modes \(u_1,u_2\) and a trial \(v=u_1\cos\theta+u_2\sin\theta\). Orthogonality removes all cross terms. Then</p>
+<div class="math display equation-chain"><div class="equation-step">\[R(v)-\lambda_1=(\lambda_2-\lambda_1)\sin^2\theta,\]</div><div class="equation-step">\[\|Kv-R(v)v\|_2=|\lambda_2-\lambda_1|\,|\sin\theta\cos\theta|.\]</div></div>
+<p>The eigenvalue error is second order in a small angular error. The residual is first order. For general dimension write \(v=\sum c_i u_i\) with unit norm. The squared residual is \(\sum |c_i|^2(\lambda_i-R)^2\), so at least one eigenvalue lies within one residual norm of \(R\). Identifying which mode requires more information about the spectrum.</p>
+</section>
+<section>
+<h2 id="two-measurements">Two measurements</h2>
+<p>For squared frequencies 4 and 9 in s⁻² and a 10-degree error in the first trial mode, \(R=4+5(0.03015)=4.1508\) s⁻². The estimated angular frequency is 2.0373 rad/s. The relative error in frequency is about half the relative error in its square at small errors.</p>
+<p>For eigenvalues 4 and 4.01, a 45-degree mixture gives a residual of just 0.005. This very small number is consistent with a large uncertainty in shape. If the two eigenvalues were identical, every combination in the eigenspace would be an exact mode.</p>
+</section>
+<section>
+<h2 id="tilt-the-trial-vector">Tilt the trial vector</h2>
+<p>The plot shows the quotient error and residual across trial angles for a chosen spectral gap. Move the angle marker, halve a small angle and compare the two responses.</p>
+<div id="try-it" class="interactive-study" data-study="num-rayleigh-stationarity"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-frequency-estimates">Tutorial on frequency estimates</h2>
+<p>For eigenvalues 2 and 10, a trial produces \(R=2.08\). Assuming the two-mode model, estimate its angular error.</p>
+<details><summary>Worked solution</summary><p>The mixture fraction is \((2.08-2)/(10-2)=0.01\). Hence \(|\sin\theta|=0.1\), or about 5.74 degrees near the lower mode.</p></details>
+<p>A trial gives \(R=5\) and residual zero. Does it prove that 5 is the lowest eigenvalue?</p>
+<details><summary>Worked solution</summary><p>It proves that the trial vector is an exact eigenvector for 5. To certify the lowest eigenvalue one also needs a lower bound or a description of the remaining spectral subspace.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Compare how quickly an eigenvector direction converges with the rate for its Rayleigh-quotient eigenvalue estimate. <a href="https://fncbook.com/python/power/">Driscoll and Braun · Power iteration</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/14-energy-preconditioning/">Chapter 14 · Removing unequal scales before an iteration</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/16-fitting-a-rotation/">Chapter 16 · How to rotate two point clouds into agreement</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing a pressure ratio for a gas-turbine cycle · OneSimulation</title>
+<meta name="description" content="Why does a bigger pressure ratio eventually reduce the work from a gas turbine? Follow one kilogram of gas round four devices, keep separate accounts for heat and work, and see what changes when the compressor and turbine are imperfect.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/13-gas-cycle/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Choosing a pressure ratio for a gas-turbine cycle · OneSimulation">
+<meta property="og:description" content="Why does a bigger pressure ratio eventually reduce the work from a gas turbine? Follow one kilogram of gas round four devices, keep separate accounts for heat and work, and see what changes when the compressor and turbine are imperfect.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/13-gas-cycle/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>Choosing a pressure ratio for a gas-turbine cycle</h1><p class="lead">Why does a bigger pressure ratio eventually reduce the work from a gas turbine? Follow one kilogram of gas round four devices, keep separate accounts for heat and work, and see what changes when the compressor and turbine are imperfect.</p><p class="byline">Chapter 13 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#states">Label four states before comparing designs</a><a href="#balance">Subtract the compressor demand before optimizing output</a><a href="#examples">A design point and its sensitivity to losses</a><a href="#onesimulation-comparison">A related OneSimulation calculation</a><a href="#tutorial">Tutorial · can the exhaust preheat the compressed gas?</a></nav></aside><article class="prose reference"><section><h2 id="states">Label four states before comparing designs</h2>
+<p>Use an air-standard Brayton cycle. A compressor takes gas from state 1 to 2. A constant-pressure heater raises it to the maximum allowed temperature at 3. A turbine expands the gas to the original pressure at 4. A cooler returns it to 1. Neglect kinetic and potential energy changes and pressure losses in the heat exchangers. The heater and cooler replace combustion and exhaust in this closed model. Use a calorically perfect gas with constant \(c_p\) and \(\gamma=c_p/c_v\). For an ideal adiabatic reversible device the entropy change vanishes. Integrating the ideal-gas entropy differential gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[0=c_p\ln(T_{2s}/T_1)-R\ln r,\]</div><div class="equation-step">\[x=r^{(\gamma-1)/\gamma},\]</div><div class="equation-step">\[T_{2s}=xT_1,\]</div><div class="equation-step">\[T_{4s}=T_3/x .\]</div></div>
+<p>The pressure ratio \(r=p_2/p_1=p_3/p_4\) is dimensionless. The subscript s identifies a state at the specified exit pressure reached along an isentrope. The turbine and compressor compare different inlet states. A common bookkeeping mistake is to use the compressor inlet temperature to calculate turbine work.</p>
+</section>
+<section><h2 id="balance">Subtract the compressor demand before optimizing output</h2>
+<p>Write positive turbine output and positive compressor consumption separately. The first law then gives the net delivered work \(w\) and the heat input \(q\) per kilogram. Maximizing \(w\) at fixed \(T_1,T_3\) amounts to differentiating with respect to x.</p>
+<div class="math display equation-chain"><div class="equation-step">\[{w\over c_p}=T_3(1-1/x)-T_1(x-1),\]</div><div class="equation-step">\[{q\over c_p}=T_3-xT_1,\]</div><div class="equation-step">\[{1\over c_p}{dw\over dx}=T_3/x^2-T_1 .\]</div></div>
+<p>The maximum occurs at \(x=\sqrt{T_3/T_1}\). The second derivative is negative. There the compressor exit and turbine exit have the same temperature. Dividing work by heat also gives the ideal efficiency \(1-1/x\), which increases throughout the range that admits positive heat input. A design chosen for maximum shaft work and a design chosen for maximum thermal efficiency can therefore have different pressure ratios. At the extreme \(x=T_3/T_1\), both heat input and net work vanish.</p>
+</section>
+<section><h2 id="examples">A design point and its sensitivity to losses</h2>
+<p>At 300 K and 1200 K with \(\gamma=1.4,\ c_p=1.005\) kJ/(kg K), maximum ideal work occurs at \(x=2\), hence \(r=2^{3.5}=11.31\). Both intermediate temperatures are 600 K. The compressor consumes 301.5 kJ/kg and the turbine produces 603.0 kJ/kg. The delivered 301.5 kJ/kg for 603.0 kJ/kg heating gives 50% efficiency.</p>
+<p>Now set the compressor isentropic efficiency to 0.80 and the turbine efficiency to 0.90. The actual compressor rise is divided by its efficiency, while the ideal turbine drop is multiplied by its efficiency. At the same pressure ratio the actual temperatures are 675 K and 660 K, the net work is 165.8 kJ/kg, and heat input is 527.6 kJ/kg. The corresponding work derivative vanishes at \(x=\sqrt{\eta_t\eta_c T_3/T_1}\). This moves the optimum to a smaller pressure ratio. Use the curves to locate both maxima before calculating their positions.</p>
+<p class="calculation-prompt">Start with both device efficiencies set to one, record the pressure ratio at maximum work, then reduce only compressor efficiency. Predict which side of the old optimum becomes more costly and compare your reasoning to the shifted peak.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-thermodynamics-gas-cycle"></div>
+</section>
+<section><h2 id="onesimulation-comparison">A related OneSimulation calculation</h2>
+<p>A regenerator adds hot and cold stream constraints to the shaft-work calculation. Use the course counterflow-exchanger study to examine how effectiveness and actual transferred power respond when heat-capacity rates change.</p>
+<p><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/#experiment">Compare heat-exchanger cases in OneSimulation</a></p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · can the exhaust preheat the compressed gas?</h2>
+<p>Take the same imperfect components at \(r=4\). Calculate temperatures 2 and 4. An insulated counterflow regenerator has equal capacity rates and effectiveness 0.70. Determine the saving in heater duty and explain why its benefit vanishes at certain pressure ratios.</p>
+<details><summary>Show the state and heat calculations</summary>
+<p>Here \(x=1.4860\), so \(T_2=482.3\) K and \(T_4=846.8\) K. The compressed stream gains \(0.70(846.8-482.3)=255.2\) K, saving about 256.5 kJ/kg of external heat. Both shaft devices retain the same inlet and exit states. The model predicts no change in their work. When the exhaust arrives colder than the compressed stream it cannot serve as the hot source for this duty. A practical design would also account for exchanger pressure loss.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://web.mit.edu/16.unified/www/FALL/thermodynamics/notes/node28.html">MIT Unified Engineering · the ideal Brayton cycle</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/problem-sheets/6/">Problem sheet 6 · Heat exchangers and radiation shields</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/14-throttling/">Chapter 14 · Why a real gas cools or warms across a throttle</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

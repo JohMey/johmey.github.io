@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What an interface does to phase, field and power · OneSimulation</title>
+<meta name="description" content="Match fields at an optical surface, derive reflection for each polarisation and follow energy when the refracted wave becomes evanescent.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/21-interface-waves/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What an interface does to phase, field and power · OneSimulation">
+<meta property="og:description" content="Match fields at an optical surface, derive reflection for each polarisation and follow energy when the refracted wave becomes evanescent.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/21-interface-waves/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>What an interface does to phase, field and power</h1><p class="lead">Match fields at an optical surface, derive reflection for each polarisation and follow energy when the refracted wave becomes evanescent.</p><p class="byline">Chapter 21 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#phases">Read refraction from the clock shared by two media</a><a href="#admittance">Use one amplitude convention that works for both polarisations</a><a href="#brewster">Find the angle that cancels one reflected component</a><a href="#evanescent">Keep phase matching beyond the critical angle</a><a href="#experiment">Find a polarisation zero and the onset of total reflection</a><a href="#tutorial">Read an amplitude measurement correctly</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="phases">Read refraction from the clock shared by two media</h2>
+<p>A plane wave strikes a flat interface \(z=0\) between transparent isotropic dielectrics. Their permeabilities are \(\mu_0\); the refractive indices \(n_1,n_2\) are real at the chosen frequency. Write every field as the real part of a complex amplitude times \(e^{i(\mathbf k\cdot\mathbf r-\omega t)}\). Tangential electric and magnetic fields must match at every point \(x\) and every time \(t\) on the surface. This is impossible for independent exponential factors except where their temporal frequencies and tangential wave numbers agree. Therefore \(\omega_i=\omega_r=\omega_t\), \(\theta_r=\theta_i\), and</p>
+<div class="math display">\[k_{\parallel}=\frac{\omega}{c}n_1\sin\theta_i=\frac{\omega}{c}n_2\sin\theta_t .\]</div>
+<p>The interface fixes phase matching before it fixes amplitudes. Which amplitudes match depends on polarisation. Choose the \(xz\)-plane of incidence so that s polarisation has electric field along \(y\) and p polarisation has magnetic field along \(y\).</p>
+</section>
+<section><h2 id="admittance">Use one amplitude convention that works for both polarisations</h2>
+<p>Use the tangential electric component for all amplitudes. Let \(Y\) be the ratio of the tangential magnetic magnitude to that electric component for a forward wave, with the corresponding sign reversing for a backward wave. From \(\mathbf H=(n/Z_0)\hat{\mathbf k}\times\mathbf E\), \(Z_0=\sqrt{\mu_0/\epsilon_0}\), the forward admittances are \(Y_s=n\cos\theta/Z_0\) and \(Y_p=n/(Z_0\cos\theta)\). The factors differ because an oblique p field has only a fraction \(\cos\theta\) of its magnitude tangential to the surface.</p>
+<div class="math display equation-chain"><div class="equation-step">\[E_i+E_r=E_t,\]</div><div class="equation-step">\[Y_1(E_i-E_r)=Y_2E_t,\]</div><div class="equation-step">\[r=\frac{Y_1-Y_2}{Y_1+Y_2},\]</div><div class="equation-step">\[t=\frac{2Y_1}{Y_1+Y_2}.\]</div></div>
+<p>For propagating waves the normal component of mean energy flux is \(Y|E_\parallel|^2/2\). Hence \(R=|r|^2\) and \(T=(Y_2/Y_1)|t|^2\). In a lossless interface \(R+T=1\). Some conventions reverse the reflected p-polarisation unit vector and therefore reverse the sign called \(r_p\). Comparing tangential components explicitly removes that ambiguity.</p>
+<h3>Worked oblique reading</h3>
+<p>For air to glass with \(n_1=1.0\), \(n_2=1.5\) at \(45^\circ\), Snell’s law gives \(\theta_t=28.13^\circ\). Dropping the common factor \(1/Z_0\), the s admittances are 0.707 and 1.323. Their reflection amplitude is \(-0.303\), giving 9.20% reflected power. The p admittances are 1.414 and 1.701. Their tangential reflection amplitude is \(-0.0920\), giving 0.847%. Giving only one reflectance for an unpolarised beam would hide this nearly elevenfold difference. At normal incidence the two admittances coincide for each medium, providing a sign and magnitude check.</p>
+</section>
+<section><h2 id="brewster">Find the angle that cancels one reflected component</h2>
+<p>An interface is reflection-free for p polarisation when \(n_1/\cos\theta_i=n_2/\cos\theta_t\). Combine this condition with Snell’s law for distinct indices to get \(\theta_i+\theta_t=\pi/2\) and \(\tan\theta_B=n_2/n_1\). At the air–glass interface this angle is \(56.31^\circ\). A small index change shifts that angular minimum, making a polarised measurement a way to infer index. Absorption introduces a complex admittance and generally turns the exact zero into a finite minimum.</p>
+</section>
+<section><h2 id="evanescent">Keep phase matching beyond the critical angle</h2>
+<p>For incidence from large to small index, \(k_\parallel\) can exceed the magnitude \(n_2\omega/c\) allowed for medium 2. Solve the dispersion relation there for the normal wave number:</p>
+<div class="math display equation-chain"><div class="equation-step">\[k_{z,2}^2=(n_2\omega/c)^2-k_\parallel^2,\]</div><div class="equation-step">\[k_{z,2}=i\kappa,\]</div><div class="equation-step">\[\kappa=\frac{2\pi}{\lambda_0}\sqrt{n_1^2\sin^2\theta_i-n_2^2}.\]</div></div>
+<p>The positive imaginary branch gives decay into \(z&gt;0\). For a single such interface \(Y_2\) is imaginary, so \(|r|=1\); a reactive magnetic-to-electric ratio means zero average normal flux there. A field still extends into the second medium and can carry energy parallel to the surface. Another material brought within a decay length changes the boundary problem and can enable transmission.</p>
+<h3>Worked length-scale distinction</h3>
+<p>For \(n_1=1.5,n_2=1.0,\theta_i=50^\circ,\lambda_0=600\) nm, the critical angle is \(41.81^\circ\). The amplitude length \(1/\kappa\) is 169 nm. Intensity follows squared field and therefore falls by \(e\) over 84.3 nm. A detector using intensity must state which length it reports. Close to the critical angle the penetration length becomes large; finite beams then sample a range of angles around the ideal plane-wave value.</p>
+</section>
+<section><h2 id="experiment">Find a polarisation zero and the onset of total reflection</h2>
+<p>Air into glass of index 1.5 gives a p-polarised reflection zero at 56.3°. Reverse the indices, predict the critical angle, then inspect what happens to each reflected power fraction as incidence becomes more oblique.</p>
+<div id="try-it" class="interactive-study" data-study="em-fresnel"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Read an amplitude measurement correctly</h2>
+<h3>How can a transmitted field exceed the incident amplitude?</h3><p>At normal incidence from index 1.8 to 1.2, calculate the reflected and transmitted tangential electric amplitudes and powers.</p><details><summary>Work through the solution</summary>
+<p>Here \(r=(1.8-1.2)/(1.8+1.2)=0.20\), \(t=1.20\). Reflected power fraction is 0.04. The transmitted power fraction is \((1.2/1.8)(1.20)^2=0.96\). The reduced wave admittance converts the larger electric amplitude to a smaller power than the incident beam.</p>
+</details>
+<h3>Find the angular acceptance of a total-reflection measurement</h3><p>A liquid has unknown index \(n\). Light is incident from known glass of index 1.60, and total internal reflection first appears at \(57.0^\circ\pm0.2^\circ\). Infer \(n\) and a first-order uncertainty.</p><details><summary>Work through the solution</summary>
+<p>The grazing transmitted wave obeys \(n=1.60\sin57.0^\circ=1.342\). Differentiation gives \(dn=1.60\cos57.0^\circ d\theta\), with \(d\theta\) in radians. The quoted angular interval corresponds to about 0.0030 in index. Index uncertainty of the glass would add another contribution.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, §9.3, plane waves crossing dielectric interfaces</a></li><li><a href="https://davidtong.org/pdfs/teaching/electromagnetism/electro6.pdf">Tong, Electromagnetism in Matter, reflection and refraction</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/20-field-momentum-and-angular-momentum/">Chapter 20 · Where momentum waits between source and receiver</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/22-dispersion-loss-and-causality/">Chapter 22 · Why dispersion and absorption belong together</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

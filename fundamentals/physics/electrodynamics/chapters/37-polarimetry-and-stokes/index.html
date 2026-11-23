@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reconstructing a partially polarised electromagnetic wave · OneSimulation</title>
+<meta name="description" content="A detector averages enormous numbers of optical cycles. Its horizontal and vertical readings may be equal for a circularly polarised wave, a diagonal linearly polarised wave, or unpolarised light. Which additional intensities distinguish these preparations?">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/37-polarimetry-and-stokes/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reconstructing a partially polarised electromagnetic wave · OneSimulation">
+<meta property="og:description" content="A detector averages enormous numbers of optical cycles. Its horizontal and vertical readings may be equal for a circularly polarised wave, a diagonal linearly polarised wave, or unpolarised light. Which additional intensities distinguish these preparations?">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/37-polarimetry-and-stokes/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Reconstructing a partially polarised electromagnetic wave</h1><p class="lead">A detector averages enormous numbers of optical cycles. Its horizontal and vertical readings may be equal for a circularly polarised wave, a diagonal linearly polarised wave, or unpolarised light. Which additional intensities distinguish these preparations?</p><p class="byline">Chapter 37 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#start-from-what-a-polarising-analyser-measures">Start from what a polarising analyser measures</a><a href="#derive-the-physically-allowed-domain">Derive the physically allowed domain</a><a href="#predict-a-rotating-analyser-and-identify-its-blind-spot">Predict a rotating analyser and identify its blind spot</a><a href="#tutorial-on-instrument-design">Tutorial on instrument design</a></nav></aside><article class="prose reference"><section><h2 id="start-from-what-a-polarising-analyser-measures">Start from what a polarising analyser measures</h2>
+<p>Take a quasi-monochromatic beam propagating in a fixed direction, resolved in transverse axes \(x,y\). Use complex field amplitudes with time factor \(e^{-i\omega t}\). Absorb common power and impedance factors into their units. The time- or ensemble-averaged coherency matrix \(J=\langle\boldsymbol E\boldsymbol E^\dagger\rangle\) has four real degrees of freedom because it is Hermitian. An analyser selecting the normalised complex state \(\boldsymbol a\) passes amplitude \(\boldsymbol a^\dagger\boldsymbol E\) and measures \(I_a=\boldsymbol a^\dagger J\boldsymbol a\). Thus every analyser projects the same matrix onto a distinct polarisation.</p>
+<p>Choose \(S_0=J_{xx}+J_{yy}\), \(S_1=J_{xx}-J_{yy}\), \(S_2=2\operatorname{Re}J_{xy}\), and \(S_3=-2\operatorname{Im}J_{xy}\). For this convention the state \((1,i)/\sqrt2\) has positive \(S_3\). Naming it by its explicit Jones vector avoids a handedness ambiguity between observer viewing directions. Inverting those definitions gives</p>
+<div class="math display">\[J=\frac12\begin{pmatrix}S_0+S_1&amp;S_2-iS_3\\S_2+iS_3&amp;S_0-S_1\end{pmatrix}.\]</div>
+<p>Horizontal and vertical linear analysers therefore give \((S_0\pm S_1)/2\). The \(+45^\circ,-45^\circ\) pair gives \((S_0\pm S_2)/2\). The circular pair \((1,\pm i)/\sqrt2\) gives \((S_0\pm S_3)/2\). Every pair sum recovers total intensity, providing an internal calibration check. Subtracting the complementary measurements cancels a common additive detector offset in each Stokes difference, though \(S_0\) still needs a dark correction.</p>
+</section>
+<section><h2 id="derive-the-physically-allowed-domain">Derive the physically allowed domain</h2>
+<p>Because \(I_a\ge0\) for every analyser, both eigenvalues of \(J\) are nonnegative. Solve its quadratic characteristic equation using the trace \(S_0\) and determinant \((S_0^2-S_1^2-S_2^2-S_3^2)/4\). The eigenvalues are \((S_0\pm|\boldsymbol S|)/2\), where \(\boldsymbol S=(S_1,S_2,S_3)\). Consequently \(P=|\boldsymbol S|/S_0\) lies between zero and one for a beam with nonzero intensity. A single fully polarised Jones state gives rank one and \(P=1\). An incoherent mixture of two orthogonal states of equal intensity has \(J=(S_0/2)I\) and \(P=0\).</p>
+<p>Suppose a corrected data set gives \(I_x,I_y=70,30\); \(I_{+45},I_{-45}=65,35\); \(I_+,I_-=60,40\) in the same units. The pair sums agree at 100. Reconstructed parameters are \((100,40,30,20)\), giving \(P=\sqrt{2900}/100=0.539\). The eigenvalues are 76.93 and 23.07. Subtracting the smaller times the identity leaves a rank-one contribution of intensity 53.85 and an unpolarised remainder of intensity 46.15. This decomposition describes the observed second moments; several microscopic preparations can produce the same \(J\).</p>
+</section>
+<section><h2 id="predict-a-rotating-analyser-and-identify-its-blind-spot">Predict a rotating analyser and identify its blind spot</h2>
+<p>For \(\boldsymbol a=(\cos\alpha,\sin\alpha)\), expanding the projection and using double-angle identities gives \(I_\alpha=[S_0+S_1\cos2\alpha+S_2\sin2\alpha]/2\). A linear analyser alone is blind to \(S_3\), even when sampled at hundreds of angles. In the example the extrema are \(50\pm25\), with the maximum at \(\alpha=\frac12\operatorname{atan2}(30,40)=18.43^\circ\). The linear fringe visibility 0.50 is slightly below the total degree 0.539. Inserting a quarter-wave plate with Jones matrix \(\operatorname{diag}(1,-i)\) before the same analyser transforms \(S_2\) into \(S_3\) in the intensity formula. One can now obtain the previously hidden signed correlation from readings at \(45^\circ\) and \(135^\circ\).</p>
+<p>The experiment prepares an adjustable polarised fraction with azimuth \(\psi\) and ellipticity angle \(\chi\), mixed with an unpolarised background. Its normalised Stokes vector is \(P(\cos2\chi\cos2\psi,\cos2\chi\sin2\psi,\sin2\chi)\). Make the unassisted intensity scan flat by choosing circular polarisation, then insert the fixed retarder virtually and predict the recovered difference. Setting \(P=0\) makes both scans flat. This comparison shows which measurement discriminates the two cases.</p>
+<div id="try-it" class="interactive-study" data-study="em-stokes-analyser"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-instrument-design">Tutorial on instrument design</h2>
+<p>A linear scan alone has \(I_{\max}=75,I_{\min}=25\). Give the range of total degrees of polarisation allowed and the maximum possible magnitude of \(S_3\).</p>
+<details><summary>Work through the solution</summary><p>The linear magnitude is 50 and \(S_0=100\). Thus \(0.5\le P\le1\), and the positivity bound gives \(|S_3|\le\sqrt{100^2-50^2}=86.60\). A circular analyser measurement fixes the remaining magnitude and sign.</p></details>
+<p>An ideal beam contains 60 units of pure horizontal light and 40 units of unpolarised light. Compare its Stokes vector with a coherent superposition of horizontal and vertical components with intensities 80 and 20 and zero relative phase.</p>
+<details><summary>Work through the solution</summary><p>The incoherent mixture has \((100,60,0,0)\) and \(P=0.6\). The coherent preparation has \((100,60,80,0)\) since \(2\sqrt{80\times20}=80\), and \(P=1\). Their horizontal and vertical readings coincide. A diagonal analyser gives 50 for the mixture and 90 for the coherent preparation.</p></details>
+<p>All three measured component differences equal 70 at measured total 100. Can a physical beam have these parameters?</p>
+<details><summary>Work through the solution</summary><p>They imply \(|\boldsymbol S|=70\sqrt3=121.2&gt;S_0\) and a negative matrix eigenvalue. Check dark subtraction, gain calibration, alignment and whether the source changed between readings. A physical fit with stated uncertainties is required before interpreting the data as an optical state.</p></details>
+<p class="source-note">Further reading · <a href="https://ethz.ch/content/dam/ethz/special-interest/phys/particle-physics/cosmologygroup-dam/People/StenfloPDFs/ch2.pdf">ETH Zürich, Stenflo on coherency and Stokes parameters</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/36-screening-and-collective-motion/">Chapter 36 · Static screening and collective charge oscillations</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/38-helmholtz-decomposition/">Chapter 38 · Recovering a vector field from divergence, curl and boundary data</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

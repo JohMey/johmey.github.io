@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forces and torques from a matrix of flux linkages · OneSimulation</title>
+<meta name="description" content="Two measurements made while holding current fixed and flux fixed can produce different torque curves. They agree on the torque of the same physical state. A derivation from electrical work identifies precisely what must be held fixed when differentiating.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/42-coupled-coils-and-magnetic-coenergy/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Forces and torques from a matrix of flux linkages · OneSimulation">
+<meta property="og:description" content="Two measurements made while holding current fixed and flux fixed can produce different torque curves. They agree on the torque of the same physical state. A derivation from electrical work identifies precisely what must be held fixed when differentiating.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/42-coupled-coils-and-magnetic-coenergy/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Forces and torques from a matrix of flux linkages</h1><p class="lead">Two measurements made while holding current fixed and flux fixed can produce different torque curves. They agree on the torque of the same physical state. A derivation from electrical work identifies precisely what must be held fixed when differentiating.</p><p class="byline">Chapter 42 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#work">Keep track of each electrical and mechanical port</a><a href="#matrix">Derive reciprocity, positivity and torque</a><a href="#examples">Compare a current supply with two flux-conserving loops</a><a href="#experiment">Compare turning a rotor at fixed current and at fixed flux</a><a href="#tutorial">Problem sheet · independent torque measurements</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="work">Keep track of each electrical and mechanical port</h2>
+<p>Let \(\theta\) be the mechanical angle of a pair of coils, \(i_j\) the currents entering their positive terminals and \(\lambda_j\) their linked fluxes, including all turns. Use ideal windings, a reversible magnetic medium and negligible radiation. Faraday's terminal relation is \(v_j=d\lambda_j/dt\). With positive torque \(T\) doing work on the moving rotor, energy balance reads</p>
+<div class="math display">\[dW_m=\sum_j i_j\,d\lambda_j-T\,d\theta .\]</div>
+<p>The natural variables of magnetic energy \(W_m\) are fluxes and position. Consequently \(i_j=(\partial W_m/\partial\lambda_j)_\theta\) and \(T=-(\partial W_m/\partial\theta)_\lambda\). A current-controlled experiment supplies or removes electrical work during motion. Define the coenergy \(W'_m=\sum i_j\lambda_j-W_m\). Its differential is \(\sum_j\lambda_j\,di_j+T\,d\theta\), giving \(T=(\partial W'_m/\partial\theta)_i\). Coenergy is a Legendre transform. Its numerical value equals stored energy for linear zero-bias materials but can differ for nonlinear response.</p>
+</section>
+<section><h2 id="matrix">Derive reciprocity, positivity and torque</h2>
+<p>Take \(\boldsymbol\lambda=L(\theta)\mathbf i\) with a two-port inductance matrix. From the existence of \(W'_m\), mixed derivatives at fixed angle commute, so \(\partial\lambda_1/\partial i_2=\partial\lambda_2/\partial i_1\). This gives \(L_{12}=L_{21}=M\) for the given terminal orientation. With positive self-inductances, positive stored energy requires \(L_1L_2-M^2&gt;0\) for independent currents in a nonsingular model. Integrating coenergy at fixed angle gives \(W'_m=\mathbf i^T L\mathbf i/2\). The energy in its own natural variables is \(W_m=\boldsymbol\lambda^T L^{-1}\boldsymbol\lambda/2\). Differentiate \(L^{-1}L=I\) to obtain \((L^{-1})'=-L^{-1}L'L^{-1}\). Thus both torque formulas at the same state give</p>
+<div class="math display">\[T=\tfrac12\mathbf i^T\frac{\partial L}{\partial\theta}\mathbf i .\]</div>
+<p>For constant self-inductances and \(M=M_0\cos\theta\), \(T=-M_0i_1i_2\sin\theta\). Reversing one winding reverses the coordinate definitions of its current and mutual inductance together, preserving the physical result. Under prescribed fluxes the same formula holds with currents \(\mathbf i=L(\theta)^{-1}\boldsymbol\lambda\) recalculated at every angle.</p>
+</section>
+<section><h2 id="examples">Compare a current supply with two flux-conserving loops</h2>
+<h3>Start at the same state, then turn the coils</h3>
+<p>Use \(L_1=4.0\) mH, \(L_2=9.0\) mH and \(M_0=3.0\) mH. At \(\theta_0=60^\circ\), let currents be \(2.00\) A and \(1.00\) A. The flux linkages are \(9.50\) and \(12.0\) mWb. At this configuration \(T=-5.20\) mN m and the energy is \(15.5\) mJ. The units follow from an inductance times current squared, which is energy, while angle in radians is dimensionless.</p>
+<p>Move to \(90^\circ\). Keeping both currents fixed gives \(T=-6.00\) mN m. Keeping both fluxes fixed instead gives \(i_1=9.50/4.0=2.375\) A and \(i_2=12.0/9.0=1.333\) A because the mutual term has vanished. The new torque is \(-9.50\) mN m. The two paths through state space now represent genuinely different experiments. For the fixed-current path the field energy falls by 3.00 mJ. The sources absorb 6.00 mJ and the external mechanical agent supplies 3.00 mJ, consistent with the first law.</p>
+<h3>A nonlinear constitutive curve</h3>
+<p>For one winding model a reversible flux linkage \(\lambda=L_\ell i+\Lambda\tanh(i/I_s)\), where positive \(L_\ell,\Lambda,I_s\) may depend on geometry. Integration gives \(W'_m=L_\ell i^2/2+\Lambda I_s\ln\cosh(i/I_s)\); \(W_m=i\lambda-W'_m\). Only in the linear weak-current limit do they coincide. A measured hysteresis loop would make this single-valued construction invalid without additional state variables describing material history.</p>
+</section>
+<section><h2 id="experiment">Compare turning a rotor at fixed current and at fixed flux</h2>
+<p>Both protocols start at 60°. With initial currents 2 A and 1 A, the torques there coincide at −5.20 mN m but reach −6.00 and −9.50 mN m at 90°. Reverse one initial current and identify the terms changed by the corresponding constraints.</p>
+<div id="try-it" class="interactive-study" data-study="em-coenergy"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Problem sheet · independent torque measurements</h2>
+<h3>Test a computed torque numerically</h3><p>How would a finite-difference experiment recover torque in the preceding fixed-flux state without differentiating any matrix entries symbolically?</p><details><summary>Work through the solution</summary>
+<p>Take the known \(\boldsymbol\lambda\), invert \(L\) at \(\theta\pm h\) separately and compute \(W_\pm=\boldsymbol\lambda^TL_\pm^{-1}\boldsymbol\lambda/2\). Estimate \(T=-(W_+-W_-)/(2h)\) using \(h\) in radians. At \(90^\circ\) the result converges to \(-9.50\) mN m. Reusing the same currents at both perturbations silently changes what the finite difference measures.</p>
+</details>
+<h3>Infer the size of the conservative part of coupling</h3><p>At fixed angle a small current cycle on the \(i_1,i_2\) plane produces \(\oint(\lambda_1di_1+\lambda_2di_2)\neq0\) after correcting lead resistance. What does this say about a proposed coenergy function?</p><details><summary>Work through the solution</summary>
+<p>An exact differential has zero integral around every closed path. A repeatable nonzero result means that a single-valued coenergy of the two currents alone cannot describe these measurements. Check frequency-dependent losses, hysteresis and whether an unmeasured mechanical coordinate moved. Making the inductance matrix symmetric by averaging two readings alone cannot explain the residual work.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, 5th ed., §§7.2.3–7.2.4 · mutual inductance and magnetic energy</a></li><li><a href="https://davidtong.org/pdfs/teaching/electromagnetism/electro3.pdf">Cambridge Electromagnetism, chapter 3 · induction and magnetic energy</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/41-bessel-modes-in-a-cylindrical-tube/">Chapter 41 · How a circular wall selects Bessel modes</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/43-a-charging-capacitor-in-space-and-time/">Chapter 43 · Where current and energy go in a charging capacitor</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

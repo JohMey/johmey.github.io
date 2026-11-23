@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The period and duty cycle of a thermostat with hysteresis · OneSimulation</title>
+<meta name="description" content="A two-position thermostat can have a stable, repeatable temperature oscillation even though neither operating state has an equilibrium inside the chosen control band. Use event times to calculate the cycle and test its heat balance.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/19-relay-regulation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The period and duty cycle of a thermostat with hysteresis · OneSimulation">
+<meta property="og:description" content="A two-position thermostat can have a stable, repeatable temperature oscillation even though neither operating state has an equilibrium inside the chosen control band. Use event times to calculate the cycle and test its heat balance.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/19-relay-regulation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>The period and duty cycle of a thermostat with hysteresis</h1><p class="lead">A two-position thermostat can have a stable, repeatable temperature oscillation even though neither operating state has an equilibrium inside the chosen control band. Use event times to calculate the cycle and test its heat balance.</p><p class="byline">Chapter 19 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#modes">Couple a thermal balance to a discrete memory state</a><a href="#times">Solve the crossing conditions exactly</a><a href="#examples">Choose band width and estimate switching frequency</a><a href="#tutorial">Tutorial · infer the thermal capacitance from one cycle</a></nav></aside><article class="prose reference"><section><h2 id="modes">Couple a thermal balance to a discrete memory state</h2>
+<p>Let a uniform thermal mass have heat capacity C, conductance G to ambient at \(T_a\), and heater power P when the switch state \(s=1\). With heater off \(s=0\). The continuous state obeys \(C\dot T=-G(T-T_a)+Ps\). The relay turns on when cooling reaches \(T_-\), and turns off when heating reaches \(T_+&gt;T_-\). Between thresholds it retains the most recent switch state. Thus specifying a temperature inside the band without the binary state does not fully specify the future.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\tau=C/G,\]</div><div class="equation-step">\[T_{\rm on}=T_a+P/G,\]</div><div class="equation-step">\[T_{\rm off}=T_a,\]</div><div class="equation-step">\[T(t)=T_{\rm eq}+[T(0)-T_{\rm eq}]e^{-t/\tau}.\]</div></div>
+<p>Both thresholds must be reachable in their respective modes for periodic cycling: \(T_a&lt;T_-&lt;T_+&lt;T_{\rm on}\). If \(T_{\rm on}=T_+\) the threshold is approached only asymptotically in this ideal model. A temperature outside the band initially can lead to a transient before the repeating orbit begins.</p>
+</section>
+<section><h2 id="times">Solve the crossing conditions exactly</h2>
+<p>Start at \(T_-\) with the heater on. Solve the exponential trajectory for the time to \(T_+\). Switch state, set that endpoint as the cooling initial condition and solve for the return time. Each logarithm compares distances from the relevant equilibrium:</p>
+<div class="math display equation-chain"><div class="equation-step">\[t_{\rm on}=\tau\ln{T_{\rm on}-T_-\over T_{\rm on}-T_+},\]</div><div class="equation-step">\[t_{\rm off}=\tau\ln{T_+-T_a\over T_--T_a},\]</div><div class="equation-step">\[D={t_{\rm on}\over t_{\rm on}+t_{\rm off}}.\]</div></div>
+<p>Integrate the energy equation over one complete period. Net stored energy change is zero, so \(PD=G(\bar T-T_a)\). This gives the actual time-average temperature directly from the duty ratio. The arithmetic midpoint of the thresholds need not be the time average, because heating and cooling speeds vary across the swing.</p>
+</section>
+<section><h2 id="examples">Choose band width and estimate switching frequency</h2>
+<p>Let \(C=2000\) J/K, \(G=10\) W/K, \(P=200\) W and \(T_a=15^\circ\)C. The time constant is 200 s and the heating equilibrium is 35 °C. For thresholds 20 and 22 °C the on-time is \(200\ln(15/13)=28.62\) s and the off-time \(200\ln(7/5)=67.29\) s. Period is 95.9 s and duty 29.84%. Mean power is 59.7 W and the implied mean temperature 20.97 °C. The shorter heating interval reflects the larger temperature distance from the heated equilibrium.</p>
+<p>Narrow the band to 20.5 and 21.5 °C at the same midpoint. The on-time falls to 14.29 s and off-time to 33.41 s. Switching frequency roughly doubles while duty remains close to 30%. In a real relay, sensor lag can permit overshoot beyond thresholds. A narrow hysteresis band then ceases to predict the observed extrema. Increasing numerical resolution in a continuous integrator only helps if its logic also detects the threshold crossing at the proper time.</p>
+<p class="calculation-prompt">Narrow the switching band by half while keeping its midpoint fixed. Predict the switching frequency and mean heating power, then read both event times. Raise heater power and identify which branch of the thermal trajectory should remain unchanged.</p>
+<div id="try-it" class="interactive-study" data-study="eng-control-engineering-relay-regulation"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · infer the thermal capacitance from one cycle</h2>
+<p>Suppose the wider band gives a measured cooling time of 80.0 s with ambient at 15 °C and the same conductance. Infer C and predict heating time if heater power remains 200 W. If the observed heating time disagrees but the cooling curve fits, identify one additional independent measurement.</p>
+<details><summary>Infer the time constant then check the energized mode</summary>
+<p>The cooling expression gives \(\tau=80/\ln(7/5)=237.8\) s and \(C=G\tau=2378\) J/K. Predicted heating time is \(237.8\ln(15/13)=34.0\) s. Measuring electrical heating power or the long-time temperature reached under a continuous on command tests \(P/G\). The cooling branch alone identifies the ratio C/G and does not determine that energized equilibrium.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ptolemy.berkeley.edu/ptolemyII/ptII8.1/ptII8.0.1/ptolemy/domains/ct/demo/Thermostat/Thermostat.htm">UC Berkeley Ptolemy Project · thermostat as a continuous plant controlled by a finite-state machine</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/18-phase-lead/">Chapter 18 · Designing a lead network at a specified gain crossover</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/problem-sheets/7/">Problem sheet 7 · A speed regulator with an unknown load and a measured delay</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a finite heat bath changes a fluctuation · OneSimulation</title>
+<meta name="description" content="A tiny sample exchanges heat with its mounting plate inside an insulated chamber. A thermometer samples the same mean temperature whether the plate is large or small. Can the time record of the sample energy reveal the size of the plate?">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/13-finite-reservoirs/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a finite heat bath changes a fluctuation · OneSimulation">
+<meta property="og:description" content="A tiny sample exchanges heat with its mounting plate inside an insulated chamber. A thermometer samples the same mean temperature whether the plate is large or small. Can the time record of the sample energy reveal the size of the plate?">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/thermodynamics-statistical-physics/chapters/13-finite-reservoirs/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/thermodynamics-statistical-physics/">Thermodynamics and statistical physics</a></p><h1>How a finite heat bath changes a fluctuation</h1><p class="lead">A tiny sample exchanges heat with its mounting plate inside an insulated chamber. A thermometer samples the same mean temperature whether the plate is large or small. Can the time record of the sample energy reveal the size of the plate?</p><p class="byline">Chapter 13 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#count-the-states-compatible-with-one-reading">Count the states compatible with one reading</a><a href="#two-calorimeters-at-the-same-temperature">Two calorimeters at the same temperature</a><a href="#compare-two-normalised-histograms">Compare two normalised histograms</a><a href="#tutorial-on-inferring-a-heat-capacity">Tutorial on inferring a heat capacity</a></nav></aside><article class="prose reference"><section><h2 id="count-the-states-compatible-with-one-reading">Count the states compatible with one reading</h2>
+<p>Call the two bodies A and B. Fix total energy \(U\), volume and particle numbers. Assume weak thermal contact so energies add, although exchange occurs over the observation time. Divide energy into small equal bins wide enough to contain many microstates. If the sample has energy \(E\), the plate must have \(U-E\). Under the microcanonical equal-weight hypothesis the probability of this bin is proportional to the product of the two state counts. Introduce \(S=k_B\ln\Omega\). Maximising probability is now equivalent to maximising a sum.</p>
+<div class="math display">\[k_B\ln P(E)=S_A(E)+S_B(U-E)+\text{constant}.\]</div>
+<p>Moving energy from B to A increases the first entropy with slope \(1/T_A\) and decreases the second with slope \(1/T_B\). At an interior maximum their temperatures therefore agree. This argument determines the position of the peak. Its width requires one more derivative. At fixed volume \(dT/dE=1/C\), so differentiating \(1/T\) with respect to energy gives \(-1/(T^2 C)\). Differentiating the plate's entropy twice brings two factors of minus one from its argument. Its curvature consequently enters with the same sign as the sample curvature.</p>
+<div class="math display">\[\ln\frac{P(E_*+\delta E)}{P(E_*)}\simeq-\frac{(\delta E)^2}{2k_BT^2}\left(\frac1{C_A}+\frac1{C_B}\right).\]</div>
+<p>For positive heat capacities the peak is stable. Match this expression to the exponent of a Gaussian to identify \(\sigma_E^2=k_BT^2 C_A C_B/(C_A+C_B)\). The reciprocal capacities add because heating A also cools B. A genuinely macroscopic plate changes temperature so little that its reciprocal capacity disappears. The remaining formula then agrees with the canonical variance.</p>
+</section>
+<section><h2 id="two-calorimeters-at-the-same-temperature">Two calorimeters at the same temperature</h2>
+<p>Measure energies in \(k_BT\) and capacities in \(k_B\). Let A have capacity 60. An effectively infinite reservoir gives a standard deviation \(\sqrt{60}=7.75\). A plate with equal capacity gives \(\sqrt{30}=5.48\). A plate with capacity 20 gives \(\sqrt{15}=3.87\). Doubling the width would quadruple the variance. These distinctions matter if an energy histogram is used to estimate heat capacity. In the equal-capacity case, applying the canonical formula would yield 30 instead of the actual 60.</p>
+<p>A second consequence concerns correlations. Within this isolated system a fluctuation of \(+3k_BT\) in A forces a change of \(-3k_BT\) in B. Their covariance equals \(-\sigma_E^2\). The temperatures consequently fluctuate in opposite directions by amounts inversely proportional to each body's capacity. Repeated measurements must be spaced by the relaxation time if their scatter is to estimate an equilibrium variance with independent samples.</p>
+</section>
+<section><h2 id="compare-two-normalised-histograms">Compare two normalised histograms</h2>
+<p>Keep the sample capacity fixed while reducing the reservoir capacity. A narrower curve must grow taller to retain unit integrated probability. Locate the displacement at which its height is about 61 percent of its maximum. This displacement measures one standard deviation directly in the horizontal units. The quadratic expansion models the central peak. Energy bounds, strong coupling or a heat capacity varying substantially across the peak require the original entropy functions.</p>
+<div id="try-it" class="interactive-study" data-study="ph-reservoir"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-inferring-a-heat-capacity">Tutorial on inferring a heat capacity</h2>
+<p>A sample with heat capacity \(90k_B\) has a measured standard deviation of \(6k_BT\). Infer the plate capacity and predict the scatter when the original plate is replaced with two identical plates in thermal contact.</p>
+<details><summary>Work through the solution</summary><p>The measured variance in thermal units is 36. Write \(1/36=1/90+1/c_B\) to obtain \(c_B=60\). Two plates give 120. The new variance is \(90(120)/210=51.43\), so the standard deviation is \(7.17k_BT\). Increasing the plate capacity moves the result towards the canonical limit \(\sqrt{90}k_BT\).</p></details>
+<p>A calorimeter measures both bodies simultaneously. Its inferred temperature deviations have slope \(\delta T_B/\delta T_A=-3\). Combined with an energy variance \(15(k_BT)^2\), determine both capacities.</p>
+<details><summary>Work through the solution</summary><p>Energy conservation gives \(\delta T_B/\delta T_A=-C_A/C_B\), hence \(C_A=3C_B\). The effective dimensionless capacity is \(3c_B/4=15\). Thus \(C_B=20k_B\) and \(C_A=60k_B\). A covariance measurement and a histogram together identify both parameters where a width alone would give only their harmonic combination.</p></details>
+<p>How would halving both heat capacities change their energy scatter and their temperature scatter at unchanged \(T\)?</p>
+<details><summary>Work through the solution</summary><p>The effective capacity scales by one half, so \(\sigma_E\) decreases by \(1/\sqrt2\). Each temperature scatter is \(\sigma_E/C\) and increases by \(\sqrt2\). Smaller thermal systems can exhibit smaller absolute energy excursions and larger temperature excursions simultaneously.</p></details>
+<p class="source-note">Further reading · <a href="https://davidtong.org/teaching/statistical-physics/">Cambridge statistical physics, fundamentals and ensembles</a> · <a href="https://link.springer.com/book/10.1007/978-3-8274-2528-7">Fließbach, Statistische Physik</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/problem-sheets/6/">Problem sheet 6 · Equilibrium, kinetics and irreversibility</a></span><span>Next<br><a href="/fundamentals/physics/thermodynamics-statistical-physics/chapters/14-adsorption-and-number-fluctuations/">Chapter 14 · Counting occupied sites on a surface</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

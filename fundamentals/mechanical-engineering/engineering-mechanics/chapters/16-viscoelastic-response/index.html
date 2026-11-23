@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creep, relaxation and what a holding test measures · OneSimulation</title>
+<meta name="description" content="Two polymer specimens can show the same initial force and quite different readings ten minutes later. Change the quantity held fixed and the same material reveals a different time scale.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/16-viscoelastic-response/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Creep, relaxation and what a holding test measures · OneSimulation">
+<meta property="og:description" content="Two polymer specimens can show the same initial force and quite different readings ten minutes later. Change the quantity held fixed and the same material reveals a different time scale.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/16-viscoelastic-response/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>Creep, relaxation and what a holding test measures</h1><p class="lead">Two polymer specimens can show the same initial force and quite different readings ten minutes later. Change the quantity held fixed and the same material reveals a different time scale.</p><p class="byline">Chapter 16 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#series">Connect a spring to a dashpot and keep track of the variables</a><a href="#solid">Add an equilibrium load path</a><a href="#relaxation">Worked example · identify parameters from one record</a><a href="#creep">Worked example · make a prediction the fit did not use</a><a href="#tutorial">Tutorial · interrupt a relaxation experiment</a></nav></aside><article class="prose reference"><section><h2 id="series">Connect a spring to a dashpot and keep track of the variables</h2>
+<p>An ideal spring obeys \(\sigma=E\epsilon_s\). A linear dashpot obeys \(\sigma=\eta\dot\epsilon_d\), where the viscosity \(\eta\) has units Pa s. These elements describe recoverable storage and dissipative flow. Start with a Maxwell element by putting them in series. Both carry the same stress and their strains add, so differentiating total strain gives</p>
+<div class="math display">\[\dot\epsilon=\frac{\dot\sigma}{E_1}+\frac{\sigma}{\eta}.\]</div>
+<p>A fixed strain sets the left side to zero. Stored spring deformation slowly transfers to the dashpot while total extension stays fixed, producing a decaying stress. Under a constant nonzero stress the dashpot instead accumulates strain indefinitely. This second prediction makes the fluid-like long-time behaviour of the Maxwell element easy to test.</p>
+</section>
+<section><h2 id="solid">Add an equilibrium load path</h2>
+<p>Place a spring of modulus \(E_0\) parallel to the Maxwell element and call the Maxwell stress \(s\). Both branches now have the same total strain. The measured stress is \(E_0\epsilon+s\). Replace \(s\) by \(\sigma-E_0\epsilon\) in the series equation and gather the derivatives:</p>
+<div class="math display">\[\dot\sigma+\frac{E_1}{\eta}\sigma=(E_0+E_1)\dot\epsilon+\frac{E_0E_1}{\eta}\epsilon .\]</div>
+<p>In a sudden small strain step of magnitude \(\epsilon_*\), a finite dashpot cannot change strain instantaneously, so both springs respond at first. Holding the extension then allows the Maxwell stress to relax to zero. Conversely, a sudden stress step loads both springs at first but ends with the equilibrium spring carrying the complete applied stress. Solving the constant-coefficient equations with these initial and final conditions gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[\sigma(t)=\epsilon_*[E_0+E_1 e^{-t/\tau_r}],\]</div><div class="equation-step">\[\tau_r=\eta/E_1 ,\]</div></div>
+<div class="math display equation-chain"><div class="equation-step">\[\epsilon(t)=\frac{\sigma_*}{E_0}+\left[\frac{\sigma_*}{E_0+E_1}-\frac{\sigma_*}{E_0}\right]e^{-t/\tau_c},\]</div><div class="equation-step">\[\tau_c=\frac{\eta(E_0+E_1)}{E_0E_1}.\]</div></div>
+<p>The two exponential times differ because under load control the equilibrium spring gradually takes a different share of the force. At \(t=0\) the effective modulus is \(E_0+E_1\) in either test.</p>
+</section>
+<section><h2 id="relaxation">Worked example · identify parameters from one record</h2>
+<p>Impose 1% strain. Stress starts at 0.90 MPa and eventually settles at 0.30 MPa. The final value gives \(E_0=30\) MPa and the drop gives \(E_1=60\) MPa. Suppose the excess above the plateau falls to \(1/e\) of its initial value after 40 s. The viscosity is then \(60(40)=2400\) MPa s. After 80 s the stress prediction is \(0.30+0.60e^{-2}=0.3812\) MPa. Subtracting the plateau before fitting a logarithm is essential: the logarithm of the total stress has a changing slope.</p>
+</section>
+<section><h2 id="creep">Worked example · make a prediction the fit did not use</h2>
+<p>In an independent test impose a stress of 0.45 MPa. Strain jumps to \(0.45/90=0.005\) and approaches \(0.45/30=0.015\). The predicted creep time is \(40(90/30)=120\) s. After one minute the prediction is \(0.015-0.010e^{-0.5}=0.00893\). A model that used the 40 s relaxation time for creep would yield 0.01277, readily distinguishable if the load has settled. Both experiments should use the same temperature because molecular mobility, and therefore the viscosity, can be highly temperature dependent.</p>
+<p class="calculation-prompt">Double viscosity while leaving both spring moduli fixed. Predict which curve reaches its original one-minute value after two minutes. Next change the parallel spring alone and use the normalized curves to distinguish the two characteristic times.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-mechanics-viscoelastic-response"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · interrupt a relaxation experiment</h2>
+<p>Release the prescribed 1% strain instantaneously back to zero after 40 s. Calculate the stress immediately before and after release. What should happen over a further 40 s while zero extension is held?</p>
+<details><summary>Track the spring jumps</summary>
+<p>Before release the stress is \(0.30+0.60/e=0.5207\) MPa. At the abrupt negative strain step the dashpot strain cannot jump. Both springs together change stress by \(-0.01(90)=-0.90\) MPa, leaving −0.3793 MPa. At zero total strain the equilibrium spring carries zero and the remaining compressive Maxwell stress relaxes with the original 40 s time. It reaches −0.1395 MPa one relaxation time later.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://solidmechanics.org/Text/Chapter3_6/Chapter3_6.htm">A. F. Bower, Applied Mechanics of Solids, §3.6, small-strain viscoelasticity</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/15-annular-elasticity/">Chapter 15 · Radial displacement and hoop stress in a thick ring</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/17-virtual-work-elements/">Chapter 17 · How a continuum balance becomes a finite-element stiffness matrix</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

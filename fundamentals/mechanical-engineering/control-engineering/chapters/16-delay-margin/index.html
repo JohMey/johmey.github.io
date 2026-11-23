@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How much transport delay a feedback loop can tolerate · OneSimulation</title>
+<meta name="description" content="A communication or transport delay changes phase at every frequency while leaving gain untouched. Use that property to derive the first stability boundary for a specific loop and to interpret the phase margin in units of seconds.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/16-delay-margin/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How much transport delay a feedback loop can tolerate · OneSimulation">
+<meta property="og:description" content="A communication or transport delay changes phase at every frequency while leaving gain untouched. Use that property to derive the first stability boundary for a specific loop and to interpret the phase margin in units of seconds.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/16-delay-margin/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>How much transport delay a feedback loop can tolerate</h1><p class="lead">A communication or transport delay changes phase at every frequency while leaving gain untouched. Use that property to derive the first stability boundary for a specific loop and to interpret the phase margin in units of seconds.</p><p class="byline">Chapter 16 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#plant">Locate the critical imaginary-axis crossing</a><a href="#direction">Check that the first crossing enters instability</a><a href="#examples">Latency budget at two loop gains</a><a href="#onesimulation-comparison">A related OneSimulation calculation</a><a href="#tutorial">Tutorial · allocate a reserve in degrees</a></nav></aside><article class="prose reference"><section><h2 id="plant">Locate the critical imaginary-axis crossing</h2>
+<p>Use negative unity feedback with \(L(s)=K e^{-s\tau}/(1+sT)\), where K is dimensionless, T is a plant time constant and \(\tau\) is a pure delay. With \(\tau=0\) and positive K the single closed-loop pole is \(-(1+K)/T\). At a purely imaginary characteristic root \(s=j\omega\), the condition \(1+L(j\omega)=0\) requires both unit magnitude and an odd multiple of \(-\pi\) phase. Since the delay has magnitude one, the unique positive gain-crossover frequency for \(K&gt;1\) obeys</p>
+<div class="math display equation-chain"><div class="equation-step">\[{K\over\sqrt{1+(\omega_cT)^2}}=1,\]</div><div class="equation-step">\[\omega_c={\sqrt{K^2-1}\over T}.\]</div></div>
+<p>The undelayed plant contributes \(-\arctan(\omega_cT)\). The delay contributes an unwrapped phase \(-\omega_c\tau\) in radians. The first critical delay therefore satisfies</p>
+<div class="math display equation-chain"><div class="equation-step">\[\tau_*={\pi-\arctan(\omega_c T)\over\omega_c},\]</div><div class="equation-step">\[\mathrm{PM}(\tau)=\pi-\arctan(\omega_cT)-\omega_c\tau .\]</div></div>
+<p>Further crossings at the same frequency would require another \(2\pi\) of delay phase. The first one governs the delay margin because the zero-delay system is stable. For \(0&lt;K&lt;1\) no positive frequency reaches unit gain in this particular first-order model. At \(K=1\) the only unit magnitude occurs at zero frequency where the phase is zero.</p>
+</section>
+<section><h2 id="direction">Check that the first crossing enters instability</h2>
+<p>The characteristic equation can be written \(1+sT+K e^{-s\tau}=0\). Implicit differentiation and substitution of \(K e^{-s\tau}=-(1+sT)\) give \(ds/d\tau=-s(1+sT)/[T+\tau(1+sT)]\). To test the direction it is simpler to invert this derivative:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\left({ds\over d\tau}\right)^{-1}=-{T\over s(1+sT)}-{\tau\over s},\]</div><div class="equation-step">\[\Re\left[\left({ds\over d\tau}\right)^{-1}\right]_{s=j\omega_c}={T^2\over1+\omega_c^2T^2}&gt;0.\]</div></div>
+<p>A complex number and its reciprocal have real parts of the same sign. Thus the conjugate pair enters the right half-plane when the delay increases past the first critical value. The oscillation period there is \(2\pi/\omega_c\).</p>
+</section>
+<section><h2 id="examples">Latency budget at two loop gains</h2>
+<p>With \(T=0.50\) s and \(K=2\), \(\omega_c=3.464\) rad/s. The undelayed phase at crossover is −60°, leaving 120° or 2.094 rad. The critical delay is 0.605 s and the crossing period is 1.81 s. An installation with 0.30 s of delay retains about 60.5° of phase margin.</p>
+<p>Raise K to 4 with the same T. Then \(\omega_c=7.746\) rad/s, the undelayed phase is −75.5°, and the delay margin falls to 0.235 s. The same 0.30 s installation would cross the stability boundary. Reading a phase plot wrapped modulo 360° can conceal such a crossing. Use the unwrapped curves and locate the frequency where gain equals one before judging stability.</p>
+<p class="calculation-prompt">At fixed loop gain increase delay until the reported margin vanishes. Use the frequency of that point to estimate the oscillation period. Repeat after increasing gain and check whether the same physical time delay spends the same phase budget.</p>
+<div id="try-it" class="interactive-study" data-study="eng-control-engineering-delay-margin"></div>
+</section>
+<section><h2 id="onesimulation-comparison">A related OneSimulation calculation</h2>
+<p>Measure how a gain change affects the undelayed first-order closed loop in the course laboratory. Then use its increased bandwidth to explain the reduced delay budget calculated here.</p>
+<p><a href="/fundamentals/mechanical-engineering/control-engineering/#experiment">Open the OneSimulation first-order feedback laboratory</a></p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · allocate a reserve in degrees</h2>
+<p>With \(K=2,\ T=0.50\) s require at least 45° phase margin. Calculate the largest total delay and the spare time when fixed transport already takes 0.20 s. Explain the effect of using degrees directly in \(\omega\tau\).</p>
+<details><summary>Show the phase budget</summary>
+<p>Subtract the required 45° from the undelayed 120°, leaving 75° for delay. Converting to radians gives \(1.309/3.464=0.378\) s total. The remaining budget is about 0.178 s. The expression \(\omega\tau\) is in radians for \(\omega\) in rad/s. Dividing the number 75 directly by 3.464 would overestimate the budget by \(180/\pi\).</p>
+</details>
+<p class="source-note">Further reading · <a href="https://www.cds.caltech.edu/~murray/books/AM08/pdf/fbs-loopanal_24Jul2020.pdf">Åström and Murray, Feedback Systems · chapter 10, Nyquist criterion and stability margins</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/15-reference-shaping/">Chapter 15 · Separating reference tracking from disturbance rejection</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/17-inverse-response/">Chapter 17 · Why a stable plant can initially move in the wrong direction</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

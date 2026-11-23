@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A speed regulator with an unknown load and a measured delay · OneSimulation</title>
+<meta name="description" content="A motor must reject sudden torque changes and track a smooth speed request over a delayed feedback connection. Select nominal integral gains from a time-domain requirement, calculate the delay margin for the actual PI loop and separate reference feedforward from feedback stability.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/7/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A speed regulator with an unknown load and a measured delay · OneSimulation">
+<meta property="og:description" content="A motor must reject sudden torque changes and track a smooth speed request over a delayed feedback connection. Select nominal integral gains from a time-domain requirement, calculate the delay margin for the actual PI loop and separate reference feedforward from feedback stability.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/problem-sheets/7/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>A speed regulator with an unknown load and a measured delay</h1><p class="lead">A motor must reject sudden torque changes and track a smooth speed request over a delayed feedback connection. Select nominal integral gains from a time-domain requirement, calculate the delay margin for the actual PI loop and separate reference feedforward from feedback stability.</p><p class="byline">Problem sheet 7 · Integrative project</p></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#specification">1 · Recover from a load with a bounded speed excursion</a><a href="#delay">2 · Calculate the margin of this actual loop</a><a href="#trajectory">3 · Predict feedforward torque during a smooth transition</a><a href="#transfer">4 · Interpret a measured commissioning delay</a></nav></aside><article class="prose reference"><section><h2 id="specification">1 · Recover from a load with a bounded speed excursion</h2>
+<p>The motor obeys \(J\dot y+by=u-d\) with \(J=0.20\) kg m² and \(b=0.50\) N m s/rad. Use \(u=K_p(r-y)+K_i z,\ \dot z=r-y\). A 2 N m step load should cause a nominal peak error below 1.0 rad/s. Place both undelayed closed-loop poles at −4 s⁻¹. Find the gains and peak.</p>
+<details><summary>Check the pole choice against the performance requirement</summary>
+<p>The characteristic polynomial is \(Js^2+(b+K_p)s+K_i=J(s+4)^2\), so \(K_p=1.10,\ K_i=3.20\) in SI units. At constant reference the step load gives \(y=-10te^{-4t}\) in deviation coordinates. Its largest magnitude is \(10/(4e)=0.920\) rad/s at 0.25 s, meeting the undelayed specification. The controller must retain 2 N m extra torque after recovery. Saturation can invalidate this nominal transient.</p>
+</details>
+<p><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/14-integral-load/#try-it">Recover the peak excursion and compare proportional-only regulation</a></p>
+</section>
+<section><h2 id="delay">2 · Calculate the margin of this actual loop</h2>
+<p>The entire feedback command is delayed by \(\tau\). Before adding delay, the loop transfer function is \(L_0(s)=(K_ps+K_i)/[s(Js+b)]\). Obtain its positive gain-crossover frequency by equating squared magnitudes. Calculate the first critical delay and the largest delay retaining at least 45° phase margin.</p>
+<details><summary>Use the PI zero, integrator and motor pole together</summary>
+<p>Write \(z=\omega^2\). Unit gain requires \(J^2z^2+(b^2-K_p^2)z-K_i^2=0\). With the chosen values the positive root is \(z=32\), giving \(\omega_c=5.657\) rad/s. Undelayed phase is \(\arctan(K_p\omega_c/K_i)-\pi/2-\arctan(J\omega_c/b)\), giving margin 86.63°. The first critical delay is therefore \(1.512/5.657=0.267\) s. A 45° reserve permits about 0.128 s. The separate delay experiment uses a first-order proportional loop. Check there that pure delay changes phase by \(-\omega\tau\), then apply that relation here at the PI loop's own crossover.</p>
+</details>
+<p><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/16-delay-margin/#try-it">Test the linear relation between phase loss and delay</a></p>
+</section>
+<section><h2 id="trajectory">3 · Predict feedforward torque during a smooth transition</h2>
+<p>Command 0 to 4 rad/s in 1 s with \(r=4(3s^2-2s^3)\), where \(s=t/(1\ {\rm s})\). Add \(u_{\rm ff}=\widehat J\dot r+\widehat b r\). Determine nominal feedforward torque at midpoint and hold. What mismatch appears at midpoint if the estimate is \(\widehat J=0.15\) while drag is correct?</p>
+<details><summary>Calculate required and modeled input at the same time</summary>
+<p>Midpoint speed is 2 rad/s and acceleration is 6 rad/s². The nominal torque is \(0.20(6)+0.50(2)=2.20\) N m. During the final hold it is 2.00 N m. With the low inertia estimate the midpoint command is 1.90 N m, leaving a 0.30 N m shortfall for the feedback loop. The pure reference path changes tracking forcing while leaving the nominal feedback characteristic equation unchanged when signals sum linearly and actuators stay unsaturated.</p>
+</details>
+<p><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/15-reference-shaping/#try-it">Set the estimated inertia to 0.15 and 0.20 kg m² during the same move</a></p>
+</section>
+<section><h2 id="transfer">4 · Interpret a measured commissioning delay</h2>
+<p>Timing measurements give a repeatable delay of 0.100 s. Calculate the remaining nominal phase margin and the spare latency compatible with the 45° reserve. Can the undelayed 0.920 rad/s load peak now be reported as the delayed result?</p>
+<details><summary>Separate the frequency and transient checks</summary>
+<p>The delay costs \(5.657(0.100)=0.566\) rad or 32.4°, leaving about 54.2°. The spare latency is roughly 0.028 s. The delayed system has a transcendental characteristic equation, so the repeated real poles and analytic load transient of the zero-delay model no longer describe its exact step. A disturbance step experiment or an integration retaining the delay is needed to check the peak requirement at this operating point.</p>
+</details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/19-relay-regulation/">Chapter 19 · The period and duty cycle of a thermostat with hysteresis</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/#case-study">Continue to the applied study</a></span></nav></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

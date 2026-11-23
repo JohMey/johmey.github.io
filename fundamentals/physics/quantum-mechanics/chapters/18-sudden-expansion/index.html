@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A sudden expansion and the distribution of measured energy · OneSimulation</title>
+<meta name="description" content="A particle occupies the lowest state of an infinite square well. One wall is suddenly moved outward. Its position density initially stays where it was, although the list of energies an observer can measure changes immediately. An overlap integral predicts the complete distribution.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/chapters/18-sudden-expansion/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A sudden expansion and the distribution of measured energy · OneSimulation">
+<meta property="og:description" content="A particle occupies the lowest state of an infinite square well. One wall is suddenly moved outward. Its position density initially stays where it was, although the list of energies an observer can measure changes immediately. An overlap integral predicts the complete distribution.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/quantum-mechanics/chapters/18-sudden-expansion/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/quantum-mechanics/">Quantum mechanics</a></p><h1>A sudden expansion and the distribution of measured energy</h1><p class="lead">A particle occupies the lowest state of an infinite square well. One wall is suddenly moved outward. Its position density initially stays where it was, although the list of energies an observer can measure changes immediately. An overlap integral predicts the complete distribution.</p><p class="byline">Chapter 18 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#preserve-the-state-and-change-the-basis">Preserve the state and change the basis</a><a href="#interpret-an-energy-measurement">Interpret an energy measurement</a><a href="#see-which-observable-converges-first">See which observable converges first</a><a href="#tutorial-on-expansion-ratios-and-missing-weight">Tutorial on expansion ratios and missing weight</a></nav></aside><article class="prose reference"><section><h2 id="preserve-the-state-and-change-the-basis">Preserve the state and change the basis</h2>
+<p>Take the old interval \(0&lt;x&lt;L\) and new interval \(0&lt;x&lt;bL\) with \(b&gt;1\). The old state is \(\sqrt{2/L}\sin(\pi x/L)\) inside its well, extended by zero across the newly accessible interval. The sudden approximation means evolution of the state during the control change can be neglected for the modes of interest. Immediately after the change, expand this same function in normalised new modes \(\sqrt{2/(bL)}\sin(n\pi x/(bL))\). The measurement probability for mode \(n\) is the absolute square of its expansion coefficient.</p>
+<p>With \(u=x/L\) the coefficient is \(2b^{-1/2}\int_0^1\sin\pi u\sin(n\pi u/b)\,du\). Product-to-sum reduces it to the difference of two cosine integrals. At their upper endpoints \(\sin[\pi(1-n/b)]=\sin(\pi n/b)\) while \(\sin[\pi(1+n/b)]=-\sin(\pi n/b)\). Collecting the denominators gives</p>
+<div class="math display">\[c_n=\frac{2}{\pi\sqrt b}\frac{\sin(\pi n/b)}{1-(n/b)^2}.\]</div>
+<p>When \(n/b=1\) the expression has a removable singularity. The original integral then contains \(\sin^2\pi u\), giving coefficient \(1/\sqrt b\). When \(n/b\) is an integer other than one, orthogonality on the old interval makes the overlap zero. Completeness of the new sine basis requires \(\sum_n|c_n|^2=1\), which gives a numerical truncation check.</p>
+</section>
+<section><h2 id="interpret-an-energy-measurement">Interpret an energy measurement</h2>
+<p>For \(b=2\), the first two coefficients are \(8/(3\pi\sqrt2)\) and \(1/\sqrt2\). Their probabilities are 0.3603 and 0.5000. Mode three has coefficient \(8/(5\pi\sqrt2)\) and probability 0.1297. A measurement of the new ground energy therefore occurs only about 36 percent of the time. In contrast an adiabatic expansion that remains in the instantaneous nondegenerate ground state produces the new ground energy with probability essentially one.</p>
+<p>The new level energies are \(E_n=E_{\rm old}(n/b)^2\). The initial post-quench energy expectation is most safely evaluated as the kinetic quadratic form \((\hbar^2/2m)\int|\psi'|^2dx\). The wavefunction vanishes at the old boundary and its weak first derivative is square-integrable. The integral extends by zero and keeps its pre-expansion value \(E_{\rm old}\). For an instantaneous outward move the energy distribution broadens although this mean stays the same. The derivative jumps at the former wall, so applying the squared new Hamiltonian requires care. Generically \(|c_n|^2=O(n^{-4})\); the mean-energy sum converges, while the second energy moment diverges in this ideal step model.</p>
+</section>
+<section><h2 id="see-which-observable-converges-first">See which observable converges first</h2>
+<p>Vary the expansion ratio and number of retained modes. The graph shows individual probabilities and accumulated probability. The readout separately sums the energy-weighted probabilities. A small omitted total probability can carry a larger fraction of the mean energy because higher modes have greater energy per observation. Refine the cutoff until the quantity you intend to compare has converged. A real finite-speed wall or finite confining barrier changes the high-energy tail.</p>
+<div id="try-it" class="interactive-study" data-study="ph-quench"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial-on-expansion-ratios-and-missing-weight">Tutorial on expansion ratios and missing weight</h2>
+<p>Triple the box width. What is the probability that the measured post-quench energy equals the old ground energy? Which higher states have precisely zero weight?</p>
+<details><summary>Work through the solution</summary><p>The matching energy requires \(n=3\). Its coefficient is the removable-limit value \(1/\sqrt3\), so probability is one third. States \(n=6,9,12,\ldots\) are orthogonal to the initial mode on the old interval and have zero overlap. Other modes generally have nonzero weight.</p></details>
+<p>Is the original particle certain to be found somewhere in the old interval immediately after a sudden expansion? Is it certain to be there at a later time?</p>
+<details><summary>Work through the solution</summary><p>Initially the state has zero amplitude on the added interval, so the first probability is one. At later times the new energy components acquire unequal phases \(e^{-iE_nt/\hbar}\). Their cancellations outside the old interval need no longer hold. Energy populations stay fixed under the new static Hamiltonian while position probabilities evolve.</p></details>
+<p class="source-note">Further reading · <a href="https://davidtong.org/teaching/topics-in-quantum-mechanics/">Cambridge quantum mechanics, sudden approximation and quantum quenches</a>.</p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/quantum-mechanics/chapters/17-spin-geometric-phase/">Chapter 17 · A phase accumulated by slowly turning a magnetic field</a></span><span>Next<br><a href="/fundamentals/physics/quantum-mechanics/chapters/19-avoided-crossing/">Chapter 19 · Adiabatic following and a finite sweep through an avoided crossing</a></span></nav><script defer src="/assets/practical-physics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

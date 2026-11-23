@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a continuum balance becomes a finite-element stiffness matrix · OneSimulation</title>
+<meta name="description" content="A single bar element can predict an end displacement exactly and still miss the stress field inside. The difference follows directly from the balance it is asked to satisfy.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/17-virtual-work-elements/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How a continuum balance becomes a finite-element stiffness matrix · OneSimulation">
+<meta property="og:description" content="A single bar element can predict an end displacement exactly and still miss the stress field inside. The difference follows directly from the balance it is asked to satisfy.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/17-virtual-work-elements/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>How a continuum balance becomes a finite-element stiffness matrix</h1><p class="lead">A single bar element can predict an end displacement exactly and still miss the stress field inside. The difference follows directly from the balance it is asked to satisfy.</p><p class="byline">Chapter 17 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#weak">Turn a differential balance into work against a test displacement</a><a href="#element">Compute the stiffness rather than memorising it</a><a href="#exact">Worked example · compare a nodal value with the stress in a cell</a><a href="#refine">Worked example · see what doubling resolution changes</a><a href="#onesimulation-comparison">A related OneSimulation calculation</a><a href="#tutorial">Tutorial · find the support reaction from the discarded row</a></nav></aside><article class="prose reference"><section><h2 id="weak">Turn a differential balance into work against a test displacement</h2>
+<p>Let a straight small-strain bar of length \(L\) have area \(A\), Young’s modulus \(E\), displacement \(u(x)\) and distributed axial load \(q(x)\) in N/m. Tensile axial resultant is \(N=EAu'\). Force balance on a slice gives \(N'+q=0\). Clamp the left end and prescribe a right-end force \(P\). Multiply the balance by any smooth virtual displacement \(v\) satisfying \(v(0)=0\), integrate along the bar, and integrate the derivative of \(N\) by parts.</p>
+<div class="math display">\[\int_0^L EA\,u'v'\,dx=P\,v(L)+\int_0^L qv\,dx .\]</div>
+<p>The boundary term at the clamp disappears because that displacement is prescribed. The unknown reaction can later be recovered by equilibrium. This formulation requires only first derivatives of trial displacements. Piecewise linear displacements are therefore admissible even though their slopes may jump at internal nodes.</p>
+</section>
+<section><h2 id="element">Compute the stiffness rather than memorising it</h2>
+<p>On an element from \(x=0\) to \(h\), interpolate the two nodal displacements linearly: \(u=(1-x/h)u_1+(x/h)u_2\). Let the test displacement have the same two basis functions. A virtual change of the first or second node gives the corresponding row of the balance. Both derivatives are constant with opposite signs.</p>
+<div class="math display equation-chain"><div class="equation-step">\[B=\begin{bmatrix}-1/h&amp;1/h\end{bmatrix},\]</div><div class="equation-step">\[K_e=\int_0^h B^T EA B\,dx=\frac{EA}{h}\begin{bmatrix}1&amp;-1\\-1&amp;1\end{bmatrix}.\]</div></div>
+<p>For a constant distributed load, each basis function integrates to \(h/2\), so each node receives equivalent load \(qh/2\). The two rows of stiffness sum to zero. A uniform translation stores no strain energy. At a shared node the neighbouring virtual-work contributions add because both elements refer to the same unknown displacement.</p>
+</section>
+<section><h2 id="exact">Worked example · compare a nodal value with the stress in a cell</h2>
+<p>Take a 1 m bar with \(EA=2.0\) MN, uniform \(q=1200\) N/m and free right end. Exact balance integrated from \(N(L)=0\) gives \(N=q(L-x)\). Integrating strain from the clamp produces \(u=q(Lx-x^2/2)/(EA)\). The free-end displacement is 0.300 mm. With a single element the free row of the discrete system has stiffness \(EA/L\) and load \(qL/2\), giving the same displacement. Yet its piecewise constant axial force is \(EAu(L)/L=600\) N. The exact force ranges from 1200 N at the clamp to zero at the free end. The numerical force represents the mean over the cell.</p>
+</section>
+<section><h2 id="refine">Worked example · see what doubling resolution changes</h2>
+<p>Divide the bar into two equal elements. The middle node receives 600 N from both halves together, while the free node receives 300 N. The right element carries 300 N. Equilibrium of the middle node then puts 900 N in the left element. Their extensions are \(900(0.5)/(2\times10^6)=0.225\) mm and 0.075 mm. Nodal displacements agree with the exact quadratic at both nodes. The largest one-sided stress-resultant error within either element is now 300 N instead of 600 N. Comparing only tip displacements would hide this improvement.</p>
+<p class="calculation-prompt">Double the number of cells until the force error is below 100 N for the baseline load. Inspect the values on both sides of an element boundary and explain why agreement in tip displacement alone could have ended this refinement study too early.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-mechanics-virtual-work-elements"></div>
+</section>
+<section><h2 id="onesimulation-comparison">A related OneSimulation calculation</h2>
+<p>Compare the bar’s nodal displacement with a OneSimulation truss assembled from axial members. Run the area-doubling case and check the predicted inverse-area change in displacement.</p>
+<p><a href="/fundamentals/mechanical-engineering/engineering-mechanics/#experiment">Run the truss stiffness comparison in OneSimulation</a></p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · find the support reaction from the discarded row</h2>
+<p>For the two-element calculation, recover the left reaction using the assembled loads and displacement. Then derive an expression for the maximum axial-force error with \(n\) equal elements. Why can two different mesh studies give two different conclusions?</p>
+<details><summary>Evaluate the clamp row and the local profile</summary>
+<p>The left internal nodal force is \(-900\) N. The left external distributed-load share is \(+300\) N. Equilibrium requires an additional reaction \(-1200\) N. On an element of width \(L/n\) the exact linearly varying force changes by \(qL/n\); its constant midpoint approximation misses an endpoint by \(qL/(2n)\). Tip displacement and maximum local force answer different engineering questions. Mesh convergence must therefore name its measured quantity.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://solidmechanics.org/Text/Chapter8_1/Chapter8_1.htm">A. F. Bower, Applied Mechanics of Solids, §8.1, finite-element equations for elastic solids</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/16-viscoelastic-response/">Chapter 16 · Creep, relaxation and what a holding test measures</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/18-energy-reciprocity/">Chapter 18 · Finding a displacement when no load acts in its direction</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

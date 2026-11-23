@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading a vapour-compression refrigerator from its four enthalpies · OneSimulation</title>
+<meta name="description" content="A cooling machine circulates refrigerant through a compressor, condenser, valve and evaporator. Follow one kilogram around the circuit and see why compressor efficiency and liquid subcooling change the coefficient of performance by different mechanisms.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/18-vapour-refrigeration/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reading a vapour-compression refrigerator from its four enthalpies · OneSimulation">
+<meta property="og:description" content="A cooling machine circulates refrigerant through a compressor, condenser, valve and evaporator. Follow one kilogram around the circuit and see why compressor efficiency and liquid subcooling change the coefficient of performance by different mechanisms.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/18-vapour-refrigeration/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>Reading a vapour-compression refrigerator from its four enthalpies</h1><p class="lead">A cooling machine circulates refrigerant through a compressor, condenser, valve and evaporator. Follow one kilogram around the circuit and see why compressor efficiency and liquid subcooling change the coefficient of performance by different mechanisms.</p><p class="byline">Chapter 18 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#circuit">Write separate steady-flow balances on each component</a><a href="#states">Get the compressor exit and valve exit by different paths</a><a href="#examples">Evaluate a baseline and a subcooled variant</a><a href="#tutorial">Tutorial · diagnose a measured power excess</a></nav></aside><article class="prose reference"><section><h2 id="circuit">Write separate steady-flow balances on each component</h2>
+<p>State 1 is low-pressure vapour at compressor inlet. State 2 is high-pressure vapour at the discharge. At 3 the condenser delivers high-pressure liquid, which throttles to the evaporator pressure at 4. Neglect velocity and height changes and assume insulated compressor and valve. For the valve the flow energy balance gives \(h_4=h_3\). For the other devices write positive magnitudes for useful cooling, input work and rejected heat:</p>
+<div class="math display equation-chain"><div class="equation-step">\[q_L=h_1-h_4,\]</div><div class="equation-step">\[w_c=h_2-h_1,\]</div><div class="equation-step">\[q_H=h_2-h_3,\]</div><div class="equation-step">\[{\rm COP}_R={q_L\over w_c}.\]</div></div>
+<p>Summing the component balances gives \(q_H=q_L+w_c\). The COP may exceed one because a refrigerator transports heat using work. The maximum for two specified external reservoir temperatures is \(T_L/(T_H-T_L)\) in kelvins. No particular refrigerant's enthalpy table is implied in the following illustrative property data. In a design calculation determine the properties at consistent pressure, temperature or quality from one validated refrigerant source.</p>
+</section>
+<section><h2 id="states">Get the compressor exit and valve exit by different paths</h2>
+<p>At specified discharge pressure define \(h_{2s}\) by the same entropy as state 1. The isentropic efficiency of the compressor is \(\eta_c=(h_{2s}-h_1)/(h_2-h_1)\). Rearranging gives \(h_2=h_1+(h_{2s}-h_1)/\eta_c\). At the valve exit, if \(h_f&lt;h_4&lt;h_g\) at evaporator pressure, the vapour mass fraction follows from \(h_4=(1-x_4)h_f+x_4h_g\). Entropy increases through the valve even though enthalpy is constant. Assigning a constant entropy there would alter both flash quality and refrigeration effect.</p>
+<div class="math display equation-chain"><div class="equation-step">\[x_4={h_3-h_f\over h_g-h_f},\]</div><div class="equation-step">\[\dot m={\dot Q_L\over h_1-h_3},\]</div><div class="equation-step">\[\dot W_c=\dot m\,{h_{2s}-h_1\over\eta_c}.\]</div></div>
+<p>Keeping evaporation and condensation pressures fixed isolates the role of each state change. In an installed system the pressures, compressor map, flow and heat exchangers interact. A subcooler with a separate electrical load must also be included when evaluating a whole-system COP.</p>
+</section>
+<section><h2 id="examples">Evaluate a baseline and a subcooled variant</h2>
+<p>Take \(h_f=200,\ h_g=h_1=400,\ h_{2s}=430,\ h_3=250\) kJ/kg with \(\eta_c=0.75\). The actual outlet has \(h_2=440\) kJ/kg, cooling per kilogram is 150 kJ/kg and compressor input is 40 kJ/kg. The evaporator inlet is 25% vapour by mass, and COP is 3.75. At 6.0 kW cooling demand the flow is 0.0400 kg/s, compressor input 1.60 kW and rejected heat 7.60 kW.</p>
+<p>At the same pressure levels and compressor inlet state, lower \(h_3\) by 10 kJ/kg before throttling. Valve-exit quality becomes \(40/200=0.20\), and 160 kJ/kg can be absorbed in the evaporator. COP becomes 4.00. For the specified cooling duty the flow falls to 0.0375 kg/s and compressor power to 1.50 kW. By comparison raising compressor efficiency from 0.75 to 0.85 with the original condenser exit reduces the work per kilogram to 35.29 kJ/kg and gives COP 4.25 at the original mass flow. One change acts on refrigeration effect and the other on compression work.</p>
+<p class="calculation-prompt">At unchanged compressor efficiency reduce the liquid enthalpy by 20 kJ/kg. Predict how much flash vapour is avoided for each kilogram passing the valve. Then reduce compressor efficiency and determine which of the two changes affects inlet quality.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-thermodynamics-vapour-refrigeration"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · diagnose a measured power excess</h2>
+<p>A rig with the original inlet and condenser enthalpies delivers 5.4 kW cooling while the measured refrigerant-side shaft input is 1.8 kW. Infer mass flow, actual outlet enthalpy and compressor isentropic efficiency. An electrical measurement gives 2.0 kW. What additional efficiency does that measurement quantify?</p>
+<details><summary>Close the component boundaries</summary>
+<p>The evaporator gives \(\dot m=5.4/150=0.0360\) kg/s. The shaft input gives \(w_c=1.8/0.0360=50.0\) kJ/kg and \(h_2=450\) kJ/kg. Hence \(\eta_c=30/50=0.60\). With 2.0 kW electrical input, the upstream motor/drive delivers \(1.8/2.0=0.90\) of that power to the shaft. Shaft-based COP is 3.0, electrical COP is 2.7. Comparing measured COP values requires identifying which boundary each power meter encloses.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://www.mhtlab.uwaterloo.ca/courses/me354/lectures/pdffiles/old_weekly_files/w5l1.pdf">University of Waterloo, ME 354 · vapour-compression refrigeration cycles</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/17-stagnant-film/">Chapter 17 · Diffusion with a stationary carrier gas</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/19-flash-equilibrium/">Chapter 19 · Finding the vapour fraction of an equilibrium flash</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

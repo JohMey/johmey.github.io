@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deriving screw-drive torque, efficiency and backdrivability · OneSimulation</title>
+<meta name="description" content="A screw trades angular travel for axial force. Unwrap one turn into an inclined plane and determine why two nominally similar threads can behave differently when the load tries to drive backward.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/15-screw-drives/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deriving screw-drive torque, efficiency and backdrivability · OneSimulation">
+<meta property="og:description" content="A screw trades angular travel for axial force. Unwrap one turn into an inclined plane and determine why two nominally similar threads can behave differently when the load tries to drive backward.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/machine-elements/chapters/15-screw-drives/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/machine-elements/">Machine elements and contact mechanics</a></p><h1>Deriving screw-drive torque, efficiency and backdrivability</h1><p class="lead">A screw trades angular travel for axial force. Unwrap one turn into an inclined plane and determine why two nominally similar threads can behave differently when the load tries to drive backward.</p><p class="byline">Chapter 15 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#helix">Convert one revolution into an inclined-plane problem</a><a href="#equilibrium">Resolve the normal reaction before inserting friction</a><a href="#efficiency">Compare useful lifting work with input work over one turn</a><a href="#tutorial">Tutorial · identify friction from a torque measurement</a></nav></aside><article class="prose reference"><section><h2 id="helix">Convert one revolution into an inclined-plane problem</h2>
+<p>Let d be the mean thread diameter and l the lead, namely the axial advance per complete revolution. For a multiple-start thread the lead equals pitch times the number of starts. One turn around the mean diameter travels horizontally \(\pi d\) in the unwrapped view and rises l. The helix angle satisfies \(\tan\lambda=l/(\pi d)\). Use a square thread, steady motion, Coulomb friction with coefficient \(\mu\) and negligible collar and bearing losses. The circumferential effort P corresponds to applied torque \(T=Pd/2\).</p>
+</section>
+<section><h2 id="equilibrium">Resolve the normal reaction before inserting friction</h2>
+<p>Let the axial load W act downward. For raising the load with a horizontal circumferential force P, the contact normal magnitude is \(N=W\cos\lambda+P\sin\lambda\). Equilibrium along the helix gives \(P\cos\lambda-W\sin\lambda=\mu N\). Separating P terms and dividing by \(\cos\lambda\) yields</p>
+<div class="math display equation-chain"><div class="equation-step">\[T_\uparrow={Wd\over2}{\tan\lambda+\mu\over1-\mu\tan\lambda}={Wd\over2}\tan(\lambda+\phi),\]</div><div class="equation-step">\[\phi=\arctan\mu.\]</div></div>
+<p>For steady lowering the friction reverses. Define positive lowering torque as external effort in the direction of descent. The same balance then gives \(T_\downarrow=(Wd/2)\tan(\phi-\lambda)\). Positive \(T_\downarrow\) means the load needs external assistance to lower. Negative \(T_\downarrow\) means a retaining torque is required to prevent acceleration under the idealized sliding law. The transition is \(\tan\lambda=\mu\). Static and sliding friction may differ in a physical test.</p>
+</section>
+<section><h2 id="efficiency">Compare useful lifting work with input work over one turn</h2>
+<p>For one turn \(Wl\) is useful work and \(2\pi T_\uparrow\) is supplied work. Therefore \(\eta=\tan\lambda/\tan(\lambda+\phi)\). At small lead and fixed friction, torque can be modest but many turns are needed. This distinction matters when specifying useful output speed. An additional constant collar torque simply adds to the torque budget and reduces measured efficiency.</p>
+<p>For \(W=800\) N, \(d=16\) mm, \(l=4\) mm and \(\mu=0.12\), \(\tan\lambda=0.0796\). Raising torque is 1.29 N m and efficiency is 39.5%. Lowering requires 0.256 N m of external effort. At \(l=10\) mm with the other values held fixed, raising torque becomes 2.09 N m and efficiency reaches 60.9%. Lowering torque is now −0.494 N m. The faster lead crossed the backdriving threshold near \(l=\pi d\mu=6.03\) mm. The model assumes a square flank; a V-thread adds normal loading through its flank angle.</p>
+<p class="calculation-prompt">Locate the lead where lowering torque crosses zero. Double the axial load while keeping friction fixed and predict which feature of the plot should remain stationary. Then raise the friction coefficient and repeat the sign test.</p>
+<div id="try-it" class="interactive-study" data-study="eng-machine-elements-screw-drives"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · identify friction from a torque measurement</h2>
+<p>The 4 mm lead screw lifts 800 N at a measured 1.50 N m thread torque after independently subtracting bearing torque. Estimate sliding friction. If the same mechanism has two thread starts of pitch 4 mm, would the inferred friction predict self-locking?</p>
+<details><summary>Show the inverse force balance</summary>
+<p>Write \(y=2T/(Wd)=0.2344\) and \(t=\tan\lambda=0.07958\). From \(y=(t+\mu)/(1-\mu t)\), obtain \(\mu=(y-t)/(1+yt)=0.1520\). Two starts give 8 mm lead and \(t=0.1592\), just above this value. Under the fitted sliding model the torque for lowering changes sign. Temperature, lubrication and static friction affect such a near-threshold result and can be distinguished by separate raising and lowering measurements.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://ocw.mit.edu/courses/2-72-elements-of-mechanical-design-spring-2009/resources/mit2_72s09_lec11/">MIT 2.72 · lecture 11 on screw drives</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/14-parallel-flexures/">Chapter 14 · Sizing the leaves of a compliant translation guide</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/machine-elements/chapters/16-motor-matching/">Chapter 16 · Matching a gear ratio to load inertia and move time</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

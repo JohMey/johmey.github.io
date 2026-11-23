@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A viscous squeeze film as a rate-dependent support · OneSimulation</title>
+<meta name="description" content="Bring two smooth circular disks slowly together with a thin layer of liquid between them. The force needed depends strongly on gap size even when neither surface is elastic.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/17-lubrication-films/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A viscous squeeze film as a rate-dependent support · OneSimulation">
+<meta property="og:description" content="Bring two smooth circular disks slowly together with a thin layer of liquid between them. The force needed depends strongly on gap size even when neither surface is elastic.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/fluid-mechanics/chapters/17-lubrication-films/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/fluid-mechanics/">Fluid mechanics</a></p><h1>A viscous squeeze film as a rate-dependent support</h1><p class="lead">Bring two smooth circular disks slowly together with a thin layer of liquid between them. The force needed depends strongly on gap size even when neither surface is elastic.</p><p class="byline">Chapter 17 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#scales">Decide which motion the gap permits</a><a href="#force">Balance the displaced volume inside every circle</a><a href="#press">Worked example · halve a film thickness</a><a href="#creep">Worked example · integrate the approach at constant load</a><a href="#tutorial">Tutorial · identify a viscosity and test the boundary assumption</a></nav></aside><article class="prose reference"><section><h2 id="scales">Decide which motion the gap permits</h2>
+<p>Take rigid parallel disks of radius \(R\) separated by \(h(t)\ll R\), filled with an incompressible Newtonian liquid of viscosity \(\mu\). The lower disk is fixed and the upper disk approaches at speed \(V=-\dot h&gt;0\). Assume an axisymmetric film discharging to ambient pressure at the edge, no slip on both disks and negligible inertia. The latter requires viscous stress to dominate transient and convective inertia, including the scale \(\rho Vh/\mu\ll1\). Fluid displaced from the centre must travel sideways through the thin film. Across-gap derivatives dominate radial derivatives of velocity, and the leading pressure is uniform through the thickness.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\mu\,\partial_z^2 u_r=\frac{dp}{dr},\]</div><div class="equation-step">\[u_r(0)=u_r(h)=0 .\]</div></div>
+<p>Two integrations give \(u_r=(dp/dr)z(z-h)/(2\mu)\). The pressure gradient must be negative for outward flow. Integrating velocity over the gap gives radial volume flow per circumferential length \(q_r=-h^3(dp/dr)/(12\mu)\). The cubic power comes from a velocity scale proportional to \(h^2\) multiplied by the available gap \(h\).</p>
+</section>
+<section><h2 id="force">Balance the displaced volume inside every circle</h2>
+<p>The film inside radius \(r\) loses volume at rate \(\pi r^2 V\). With no compressibility or leakage through the disks this must equal \(2\pi r q_r\). Hence \(q_r=rV/2\). Match to the viscous flow relation, integrate inward from \(p(R)=p_a\), and sum the excess pressure over the wetted disk:</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{dp}{dr}=-\frac{6\mu Vr}{h^3},\]</div><div class="equation-step">\[p(r)-p_a=\frac{3\mu V}{h^3}(R^2-r^2),\]</div></div>
+<div class="math display">\[F=\int_0^R [p(r)-p_a]\,2\pi r\,dr=\frac{3\pi\mu V R^4}{2h^3}.\]</div>
+<p>The pressure distribution is parabolic; its area average is half its centre value. A fixed-speed actuator sees a rapidly increasing load as the film narrows. Conversely a constant load makes the approach slower. An experiment must state which of speed or force is controlled before two records can be compared.</p>
+</section>
+<section><h2 id="press">Worked example · halve a film thickness</h2>
+<p>Let \(R=20\) mm, \(h=0.20\) mm, \(\mu=0.10\) Pa s and \(V=0.10\) mm/s. The centre excess is \(3(0.10)(10^{-4})(0.020)^2/(0.00020)^3=1500\) Pa. The net force is 0.942 N. Reducing the gap to 0.10 mm at unchanged speed raises pressure and force by eight, giving 12.0 kPa and 7.54 N. Reducing speed by eight at the thinner gap would recover the original force. The model consequently distinguishes a viscous support from a spring by repeating the same gap at different rates.</p>
+</section>
+<section><h2 id="creep">Worked example · integrate the approach at constant load</h2>
+<p>Rearrange the force law to \(-dh/dt=2Fh^3/(3\pi\mu R^4)\). Separation of variables gives \(t=[3\pi\mu R^4/(4F)](h_f^{-2}-h_i^{-2})\). Under a constant 1.00 N load the example disk takes 2.83 s to go from 0.20 to 0.10 mm. The ideal time to reach zero mathematical thickness diverges. Real surfaces eventually develop solid contact at roughness peaks, and departures from parallel alignment can redirect much of the pressure distribution.</p>
+<p class="calculation-prompt">First halve the gap and then independently halve the approach speed. Predict how the centre pressure changes in each trial. Check the area-average line against the radial curve and explain why an unweighted average over radius gives a different value.</p>
+<div id="try-it" class="interactive-study" data-study="eng-fluid-mechanics-lubrication-films"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · identify a viscosity and test the boundary assumption</h2>
+<p>At gap 0.15 mm, disks of radius 15 mm give 2.00 N at 0.25 mm/s. Infer the viscosity. Predict the load if a vented outer annulus reduces the effective wetted radius to 12 mm while the gap and velocity stay fixed.</p>
+<details><summary>Integrate over the wetted radius</summary>
+<p>The inverse is \(\mu=2Fh^3/(3\pi V R^4)=0.113\) Pa s. With the edge now open to ambient at 12 mm, force scales by \((12/15)^4=0.4096\), giving 0.819 N. Simply multiplying the original force by the area ratio would miss the change in peak pressure caused by the shorter flow path.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://web.mit.edu/2.25/www/225_sect_6.html">MIT 2.25, §6.4, locally developed viscous flows and lubrication</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/16-free-surface-control/">Chapter 16 · Critical depth and the hydraulic jump</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/fluid-mechanics/chapters/18-wall-turbulence/">Chapter 18 · How turbulent momentum transport produces a logarithmic velocity profile</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

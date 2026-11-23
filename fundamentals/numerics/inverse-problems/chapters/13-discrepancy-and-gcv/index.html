@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing regularisation when the true answer is hidden · OneSimulation</title>
+<meta name="description" content="Derive two parameter choices from different information, then see how an excellent fit to sensor data can restore the noise in a weakly visible mode.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/13-discrepancy-and-gcv/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Choosing regularisation when the true answer is hidden · OneSimulation">
+<meta property="og:description" content="Derive two parameter choices from different information, then see how an excellent fit to sensor data can restore the noise in a weakly visible mode.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/inverse-problems/chapters/13-discrepancy-and-gcv/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/inverse-problems/">Inverse problems and least squares</a></p><h1>Choosing regularisation when the true answer is hidden</h1><p class="lead">Derive two parameter choices from different information, then see how an excellent fit to sensor data can restore the noise in a weakly visible mode.</p><p class="byline">Chapter 13 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#each-observation-competes-with-a-penalty">Each observation competes with a penalty</a><a href="#a-prediction-criterion-without-a-noise-bound">A prediction criterion without a noise bound</a><a href="#a-sensor-that-barely-sees-a-mode">A sensor that barely sees a mode</a><a href="#inspect-an-entire-regularisation-path">Inspect an entire regularisation path</a><a href="#tutorial-on-choosing-a-criterion">Tutorial on choosing a criterion</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="each-observation-competes-with-a-penalty">Each observation competes with a penalty</h2>
+<p>In orthogonal singular coordinates, let \(d_i=\sigma_i x_i+\eta_i\). For a candidate \(\lambda>0\), minimise \(\sum_i(\sigma_i x_i-d_i)^2+\lambda^2\sum_i x_i^2\). Setting each derivative to zero gives \(\widehat x_i=\sigma_i d_i/(\sigma_i^2+\lambda^2)\). Predicted data are \(H_i d_i\), where \(H_i=\sigma_i^2/(\sigma_i^2+\lambda^2)\). These factors range from zero to one. Their sum is the effective number of fitted data directions.</p>
+<p>If an independently obtained bound for the whitened noise norm is \(\delta\), compare \(\sum_i[(1-H_i)d_i]^2\) with \(\delta^2\). The residual rises as \(\lambda\) increases. A discrepancy choice seeks the largest smoothing consistent with the stated noise level. If there is no crossing, either the search range, model or noise estimate needs examination.</p>
+</section>
+<section>
+<h2 id="a-prediction-criterion-without-a-noise-bound">A prediction criterion without a noise bound</h2>
+<p>For a linear smoother \(\widehat d=Hd\), deleting observation \(i\) gives the leave-one-out residual \(r_i/(1-H_{ii})\) under the usual fixed-design ridge fit. Generalised cross-validation replaces the individual leverages by their mean. This produces the computable quantity</p>
+<div class="math display">\[\mathrm{GCV}(\lambda)=\frac{\|d-\widehat d\|^2/n}{[1-\operatorname{trace}(H)/n]^2}.\]</div>
+<p>The denominator penalises fits that spend nearly one degree of freedom per datum. The criterion estimates predictive performance under assumptions on noise and design. A selected value need not minimise the error in the unknown parameter, and highly unequal leverages can defeat the approximation.</p>
+</section>
+<section>
+<h2 id="a-sensor-that-barely-sees-a-mode">A sensor that barely sees a mode</h2>
+<p>Take sensitivities \(1,0.01\), true parameters \((1,1)\) and data \((1,0.02)\). Unregularised inversion returns \((1,2)\) with zero residual. A perturbation of one hundredth in the second observation doubled the second parameter. With \(\lambda=0.01\) the second gain is \(\sigma/(\sigma^2+\lambda^2)=50\), so the same datum yields 1. This exact agreement with the hidden truth is accidental.</p>
+<p>For \(\lambda=0.1\), the second estimate drops to about 0.0198. A weak direction has been almost removed. Meanwhile the first estimate remains about 0.9901. A single residual norm does not tell you which parameter direction was suppressed.</p>
+</section>
+<section>
+<h2 id="inspect-an-entire-regularisation-path">Inspect an entire regularisation path</h2>
+<p>Three synthetic sensors have sensitivities \(1,0.2,0.02\), true parameters all equal to one, and an adjustable perturbation only in the last sensor. This deliberately uneven noise makes it possible to test when the GCV assumptions are plausible. Inspect parameter error and data residual over a logarithmic range of \(\lambda\). The result reports the best GCV value on the sampled grid and the residual at that choice.</p>
+<div id="try-it" class="interactive-study" data-study="num-discrepancy-and-gcv"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-choosing-a-criterion">Tutorial on choosing a criterion</h2>
+<p>If all \(H_i\) equal a common \(h&lt;1\), can GCV distinguish different values of \(h\) for fixed data?</p>
+<details><summary>Worked solution</summary><p>The numerator contains \((1-h)^2\|d\|^2/n\) and the denominator \((1-h)^2\). They cancel exactly. There is no identifiable minimum from this score.</p></details>
+<p>If residuals remain much larger than a well-calibrated noise norm even at negligible regularisation, should increasing the penalty help?</p>
+<details><summary>Worked solution</summary><p>Increasing the penalty shrinks the fit and usually increases residual. Check the forward model, its range and data preparation, including the uncertainty units used in whitening.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Compare the information each stopping rule needs about measurement noise with the information available in the three-sensor experiment. <a href="https://people.compute.dtu.dk/pcha/HDtomo/SC/Week2AIMnoisy.pdf">Per Christian Hansen · Stopping rules for noisy data</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/inverse-problems/problem-sheets/6/">Problem sheet 6 · Edges, decision thresholds and validation</a></span><span>Next<br><a href="/fundamentals/numerics/inverse-problems/chapters/14-sequential-assimilation/">Chapter 14 · Learning a drifting temperature from a sequence of readings</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why integral action rejects an unknown constant load · OneSimulation</title>
+<meta name="description" content="A motor regulates speed while an unknown torque is applied to its shaft. A proportional controller allows a steady speed offset. Add a state that remembers the offset and derive the complete load transient as well as its eventual rejection.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/14-integral-load/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why integral action rejects an unknown constant load · OneSimulation">
+<meta property="og:description" content="A motor regulates speed while an unknown torque is applied to its shaft. A proportional controller allows a steady speed offset. Add a state that remembers the offset and derive the complete load transient as well as its eventual rejection.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/control-engineering/chapters/14-integral-load/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/control-engineering/">Control engineering</a></p><h1>Why integral action rejects an unknown constant load</h1><p class="lead">A motor regulates speed while an unknown torque is applied to its shaft. A proportional controller allows a steady speed offset. Add a state that remembers the offset and derive the complete load transient as well as its eventual rejection.</p><p class="byline">Chapter 14 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#motor">Find the equilibrium before tuning poles</a><a href="#transfer">Place the poles and solve a disturbance step</a><a href="#examples">Quantify how a speed loop recovers</a><a href="#onesimulation-comparison">A related OneSimulation calculation</a><a href="#tutorial">Tutorial · pick poles from a peak-error specification</a></nav></aside><article class="prose reference"><section><h2 id="motor">Find the equilibrium before tuning poles</h2>
+<p>Use \(J\dot y+by=u-d\), where y is angular speed, u is motor torque, and d is an opposing load. For \(u=K_p(r-y)\) at constant reference r and load d the steady speed is \((K_pr-d)/(b+K_p)\). With r=0 and a positive load the speed settles below zero in these deviation variables. A constant motor torque is needed to cancel the load, yet pure proportional control at zero error produces zero torque.</p>
+<p>Introduce \(z' = r-y\) and \(u=K_p(r-y)+K_i z\). At any equilibrium the condition \(z'=0\) requires \(y=r\); the plant equation then requires \(K_i z=br+d\). The controller state can store the torque needed at zero error. This reasoning assumes available actuator torque and closed-loop stability. If the actuator cannot supply \(br+d\), no such regulated equilibrium exists.</p>
+</section>
+<section><h2 id="transfer">Place the poles and solve a disturbance step</h2>
+<p>Set r=0 and transform from initial equilibrium with zero deviations. Eliminating z gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[{Y(s)\over D(s)}={-s\over Js^2+(b+K_p)s+K_i},\]</div><div class="equation-step">\[K_i=J\omega_n^2,\]</div><div class="equation-step">\[K_p=2J\zeta\omega_n-b .\]</div></div>
+<p>The numerator zero at s=0 removes constant disturbances in steady state. It follows from the integrator pole in the open loop. For a load step \(D=d_0/s\), the initial rate is \(-d_0/J\) regardless of gains because the feedback states have not had time to change. For a repeated real pole at \(-a\), inversion yields</p>
+<div class="math display equation-chain"><div class="equation-step">\[y(t)=-{d_0\over J}\,t e^{-at},\]</div><div class="equation-step">\[t_{\rm peak}=1/a,\]</div><div class="equation-step">\[|y_{\rm peak}|={d_0\over Jea}.\]</div></div>
+<p>A peak and recovery are expected even with exact final rejection. Increasing a improves that peak in the ideal model, at the price of higher control gains and possible sensitivity to sensor noise or actuator limits.</p>
+</section>
+<section><h2 id="examples">Quantify how a speed loop recovers</h2>
+<p>Let \(J=0.20\) kg m², \(b=0.50\) N m s/rad and choose \(a=4\) s⁻¹. The critical gains are \(K_p=1.10\) N m s/rad and \(K_i=3.20\) N m/rad. A step of 2 N m gives a peak deviation of −0.920 rad/s after 0.25 s. At 1 s it has recovered to −0.183 rad/s and ultimately reaches zero. The stored state supplies exactly 2 N m once speed has recovered.</p>
+<p>With the same \(K_p\) but no integral action, the step gives \(y(t)=-2[1-e^{-(1.6/0.2)t}]/1.6\), tending to −1.25 rad/s. Its initial slope is also −10 rad/s². Use the two traces to identify an interval where a short measurement could make the controllers look similar, and compare their final speed offsets. For a disturbance of the opposite sign the curves reverse by linearity.</p>
+<p class="calculation-prompt">Double the pole rate and predict the new peak time and peak magnitude. Compare the very first slopes of PI and proportional-only responses. Which of the measurements could reveal increased bandwidth and which depends only on inertia?</p>
+<div id="try-it" class="interactive-study" data-study="eng-control-engineering-integral-load"></div>
+</section>
+<section><h2 id="onesimulation-comparison">A related OneSimulation calculation</h2>
+<p>Use the course first-order feedback study to measure how proportional gain changes the transient. Compare the trends with the proportional-only curve above before introducing the extra integral state.</p>
+<p><a href="/fundamentals/mechanical-engineering/control-engineering/#experiment">Run the OneSimulation feedback comparison</a></p>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · pick poles from a peak-error specification</h2>
+<p>A 1.5 N m load step must produce at most 0.50 rad/s peak error with \(J=0.20\) kg m² and the same b. Choose the smallest critical pole rate meeting this condition and calculate the gains. What torque must remain available after the transient?</p>
+<details><summary>Show the bound and gains</summary>
+<p>Using the exact peak gives \(a\ge1.5/[0.20e(0.50)]=5.52\) s⁻¹. Thus \(K_i\simeq6.09\) and \(K_p\simeq1.71\) in the units above. The motor needs at least 1.5 N m of extra steady torque to reject the new load at the original speed. Pole placement alone cannot establish the available transient or steady torque margin.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://www.cds.caltech.edu/~murray/FBS/Second_Edition.html">Åström and Murray, Feedback Systems · chapter 7, integral action</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/13-energy-stability/">Chapter 13 · Proving a region of attraction with the energy of a pendulum</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/control-engineering/chapters/15-reference-shaping/">Chapter 15 · Separating reference tracking from disturbance rejection</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

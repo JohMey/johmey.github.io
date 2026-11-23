@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Summing a Chebyshev series by working backwards · OneSimulation</title>
+<meta name="description" content="Derive a stable evaluation scheme directly from a three-term polynomial identity and diagnose the failure that occurs when a fitted law is used outside its calibrated interval.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/16-clenshaw-recurrence/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Summing a Chebyshev series by working backwards · OneSimulation">
+<meta property="og:description" content="Derive a stable evaluation scheme directly from a three-term polynomial identity and diagnose the failure that occurs when a fitted law is used outside its calibrated interval.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/approximation-and-quadrature/chapters/16-clenshaw-recurrence/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/approximation-and-quadrature/">Approximation and quadrature</a></p><h1>Summing a Chebyshev series by working backwards</h1><p class="lead">Derive a stable evaluation scheme directly from a three-term polynomial identity and diagnose the failure that occurs when a fitted law is used outside its calibrated interval.</p><p class="byline">Chapter 16 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#from-cosines-to-a-polynomial-recurrence">From cosines to a polynomial recurrence</a><a href="#two-useful-arithmetic-checks">Two useful arithmetic checks</a><a href="#follow-one-uncertain-coefficient">Follow one uncertain coefficient</a><a href="#tutorial-on-mapping-a-laboratory-interval">Tutorial on mapping a laboratory interval</a><a href="#read-further">Read the university treatment</a></nav></aside><article class="prose reference"><section>
+<h2 id="from-cosines-to-a-polynomial-recurrence">From cosines to a polynomial recurrence</h2>
+<p>Set \(x=\cos\theta\) and \(T_k(x)=\cos(k\theta)\). The angle-addition formula gives \(T_{k+1}=2xT_k-T_{k-1}\), with \(T_0=1,T_1=x\). Consider \(p=\sum_{k=0}^n c_k T_k\) with the constant coefficient included in full. We could generate all the polynomials forward. Clenshaw evaluation instead gathers their weighted coefficients from the high end, without converting to monomials.</p>
+<p>Set \(b_{n+1}=b_{n+2}=0\) and \(b_k=c_k+2xb_{k+1}-b_{k+2}\) for \(k=n,\ldots,1\). Substitute \(c_k=b_k-2xb_{k+1}+b_{k+2}\) into the original sum. Every interior \(b_j\) multiplies \(T_j-2xT_{j-1}+T_{j-2}=0\). Only two boundary terms survive:</p>
+<div class="math display">\[p(x)=c_0+xb_1-b_2.\]</div>
+<p>The derivation also identifies a common convention error. If the source defines its zeroth coefficient with a half-weight then it must be halved once before using this formula.</p>
+</section>
+<section>
+<h2 id="two-useful-arithmetic-checks">Two useful arithmetic checks</h2>
+<p>For coefficients \((1,2,3)\) at \(x=0.5\), \(b_2=3\), \(b_1=2+2(0.5)3=5\). The answer is \(1+0.5(5)-3=0.5\). Independently \(T_2(0.5)=-0.5\), giving \(1+1-1.5=0.5\).</p>
+<p>On the calibration interval each \(|T_k|\le1\), so an isolated coefficient error of 0.001 changes the value by at most 0.001. At \(x=1.2\), \(T_{10}(1.2)=\cosh(10\operatorname{arcosh}(1.2))\) is around 252. The same tiny coefficient error now changes a prediction by roughly a quarter of a unit. Accurate summation does not make extrapolation reliable.</p>
+</section>
+<section>
+<h2 id="follow-one-uncertain-coefficient">Follow one uncertain coefficient</h2>
+<p>A simple calibration \(1+0.4x\) has an uncertain extra coefficient at a selectable order. Find the extreme differences inside the interval, then inspect the growth just beyond the right endpoint. The calculation uses the backward recurrence at every position.</p>
+<div id="try-it" class="interactive-study" data-study="num-clenshaw-recurrence"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-mapping-a-laboratory-interval">Tutorial on mapping a laboratory interval</h2>
+<p>A calibration covers \(10\le T\le50\) °C. Which coordinate should enter the recurrence and what does \(T=54\) correspond to?</p>
+<details><summary>Worked solution</summary><p>Centre at 30 and divide by the half-width 20, so \(x=(T-30)/20\). At 54 °C this gives 1.2, already outside the bounded Chebyshev interval.</p></details>
+<p>Give a computable uniform error bound if three stored coefficients have errors no larger than 0.002 each.</p>
+<details><summary>Worked solution</summary><p>For \(|x|\le1\), the triangle inequality and \(|T_k|\le1\) give 0.006. Exact values may cancel at some positions; this bound does not rely on such cancellation.</p></details>
+</section>
+<section><h2 id="read-further">Read the university treatment</h2><p>Compare coefficient decay inside the approximation interval with sensitivity to extrapolation beyond it. <a href="https://people.maths.ox.ac.uk/trefethen/ATAP/">Lloyd N. Trefethen · Approximation Theory and Approximation Practice</a></p></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/15-richardson-tableau/">Chapter 15 · Deriving Romberg integration and recognising a broken error model</a></span><span>Next<br><a href="/fundamentals/numerics/approximation-and-quadrature/chapters/17-importance-sampling/">Chapter 17 · Where should a random quadrature spend its samples?</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

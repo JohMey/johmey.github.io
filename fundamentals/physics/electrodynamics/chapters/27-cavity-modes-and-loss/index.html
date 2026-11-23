@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cavity eigenmodes, measured linewidth and ring-down · OneSimulation</title>
+<meta name="description" content="A cavity has both a pitch and a decay time. One is set predominantly by the field pattern and the boundaries. The other measures how much stored energy escapes per cycle. A spatial perturbation can reveal where a particular mode stores its electric energy.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/27-cavity-modes-and-loss/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cavity eigenmodes, measured linewidth and ring-down · OneSimulation">
+<meta property="og:description" content="A cavity has both a pitch and a decay time. One is set predominantly by the field pattern and the boundaries. The other measures how much stored energy escapes per cycle. A spatial perturbation can reveal where a particular mode stores its electric energy.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/physics/electrodynamics/chapters/27-cavity-modes-and-loss/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/physics/">Physics</a> / <a href="/fundamentals/physics/electrodynamics/">Electrodynamics</a></p><h1>Cavity eigenmodes, measured linewidth and ring-down</h1><p class="lead">A cavity has both a pitch and a decay time. One is set predominantly by the field pattern and the boundaries. The other measures how much stored energy escapes per cycle. A spatial perturbation can reveal where a particular mode stores its electric energy.</p><p class="byline">Chapter 27 of 46</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#mode">Make a conducting box satisfy every boundary condition</a><a href="#energy">Track energy between electric and magnetic form</a><a href="#linewidth">Connect a time trace to a frequency scan</a><a href="#examples">Measuring geometry and locating an antinode</a><a href="#experiment">Read a cavity decay with an amplitude or power detector</a><a href="#tutorial">Problem sheet · two ways to measure loss</a><a href="#sources">Further reading</a></nav></aside><article class="prose reference"><section><h2 id="mode">Make a conducting box satisfy every boundary condition</h2>
+<p>Let the empty cavity occupy \(0&lt;x&lt;a,\ 0&lt;y&lt;b,\ 0&lt;z&lt;d\). Its ideal conducting walls require zero tangential electric field. Choose an electric field in the \(y\) direction independent of \(y\). This automatically gives \(\nabla\cdot\mathbf E=0\). The field is normal to the two \(y\)-walls and must vanish at the four \(x,z\)-walls. Write \(E_y=X(x)Z(z)e^{-i\omega t}\). The wave equation reduces to \(X''/X+Z''/Z=-\omega^2/c^2\). Sines separately satisfy the vanishing boundary values. Thus a family of normal modes is</p>
+<div class="math display equation-chain"><div class="equation-step">\[E_y=E_0\sin(m\pi x/a)\sin(p\pi z/d)e^{-i\omega t},\]</div><div class="equation-step">\[f_{m0p}=\frac c2\sqrt{(m/a)^2+(p/d)^2},\]</div><div class="equation-step">\[m,p=1,2,\ldots .\]</div></div>
+<p>Faraday's law then gives \(\mathbf B=(\nabla\times\mathbf E)/(i\omega)\). Its components are proportional to \(-\partial_zE_y\) and \(+\partial_xE_y\); its normal component vanishes at the appropriate walls. This family is transverse electric relative to the \(z\) axis. It does not exhaust the transverse magnetic modes or the modes with \(y\)-dependence. Whether a particular solution is excited depends on the overlap of the source with its field pattern.</p>
+</section>
+<section><h2 id="energy">Track energy between electric and magnetic form</h2>
+<p>Choose a real mode proportional to \(\cos\omega t\). The associated magnetic field is proportional to \(\sin\omega t\). At an electric maximum the stored energy is \(U=\epsilon_0\int E_{\rm peak}^2dV/2\). Both squared sines average to \(1/2\), giving \(U=\epsilon_0 E_0^2 abd/8\). A quarter-cycle later the magnetic field stores the same energy. For a weakly leaking resonator, define \(Q=\omega U/P_{\rm lost}\) using cycle-averaged lost power and slowly varying total energy. At fixed \(Q\),</p>
+<div class="math display equation-chain"><div class="equation-step">\[\frac{dU}{dt}=-\frac{\omega}{Q}U,\]</div><div class="equation-step">\[U(t)=U_0e^{-\omega t/Q},\]</div><div class="equation-step">\[E_{\rm env}(t)=E_{\rm env}(0)e^{-\omega t/(2Q)} .\]</div></div>
+<p>A field probe measuring voltage follows the amplitude envelope. A square-law power detector follows the energy envelope. A ring-down fit delivers \(Q=\omega\tau_U=\omega\tau_E/2\), depending on which time constant is reported. Independent weak loss channels have additive powers and therefore additive inverse quality factors.</p>
+</section>
+<section><h2 id="linewidth">Connect a time trace to a frequency scan</h2>
+<p>The Fourier amplitude of a decaying positive-frequency signal is proportional to \(\int_0^\infty e^{-\omega_0t/(2Q)}e^{i(\omega-\omega_0)t}dt=[\omega_0/(2Q)-i(\omega-\omega_0)]^{-1}\). Its squared modulus is a Lorentzian with full width at half power \(\Delta\omega=\omega_0/Q\). This derivation resolves a common experimental ambiguity: the two half-power points have opposite detunings, and the width spans both. The approximation assumes a single mode and damping small on the scale of the carrier frequency.</p>
+</section>
+<section><h2 id="examples">Measuring geometry and locating an antinode</h2>
+<h3>A rectangular resonator</h3>
+<p>Set \(a=60.0\) mm, \(d=80.0\) mm, \(b=25.0\) mm. The \(101\) mode gives \(f=3.123\) GHz. At \(Q=6000\) the energy decay time is \(306\) ns and the field decay time is \(612\) ns. The full power linewidth is \(520\) kHz. Increasing \(b\) changes the stored energy at fixed peak field but leaves this ideal mode frequency unchanged. Other mode families can move as \(b\) changes.</p>
+<h3>A small dielectric probe</h3>
+<p>Write the electric eigenproblem as \(\nabla\times\mu_0^{-1}\nabla\times\mathbf E=\omega^2\epsilon\mathbf E\). Multiply by the complex conjugate field and integrate. The wall term vanishes and the numerator becomes \(\int |\nabla\times\mathbf E|^2/\mu_0\,dV\). First-order perturbation of the stationary quotient gives \(\delta f/f=-\int\delta\epsilon|\mathbf E|^2dV/(2\int\epsilon|\mathbf E|^2dV)\). A weak permittivity increase of 2% in a region containing 3% of the original electric-field integral shifts the mode down by \(3\times10^{-4}\), approximately \(0.94\) MHz here. At an electric node the first-order shift vanishes. Large beads distort the field and require a new eigenproblem.</p>
+</section>
+<section><h2 id="experiment">Read a cavity decay with an amplitude or power detector</h2>
+<p>The cavity width is fixed at 60 mm. With 80 mm length and Q = 6000, the energy falls to 1/e in 0.306 µs. Read the field amplitude there and decide which trace a square-law detector would follow.</p>
+<div id="try-it" class="interactive-study" data-study="em-cavity"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Problem sheet · two ways to measure loss</h2>
+<h3>Extract internal loss</h3><p>A port-coupled resonator has measured \(Q_L=3000\). An independent calibration gives external \(Q_e=12000\). Find internal \(Q_i\) and the fraction of power leaving through the port.</p><details><summary>Work through the solution</summary>
+<p>Since \(1/Q_L=1/Q_i+1/Q_e\), the internal quality factor is 4000. The port power fraction is \((1/Q_e)/(1/Q_L)=1/4\). Closing the port in the idealised model leaves \(Q=4000\).</p>
+</details>
+<h3>Compare scans and ring-downs</h3><p>A single mode near 500 MHz has a half-power width of 100 kHz. After drive removal how long until the field amplitude halves?</p><details><summary>Work through the solution</summary>
+<p>The linewidth gives \(Q=5000\), so \(\tau_E=Q/(\pi f)=3.18\) μs. The field halves after \(\tau_E\ln2=2.21\) μs. At the same instant the energy has fallen to one quarter. This inference requires that frequency jitter has not broadened the measured line.</p>
+</details>
+</section>
+<section><h2 id="sources">Further reading</h2><ul><li><a href="https://assets.cambridge.org/97810093/97759/toc/9781009397759_toc.pdf">Griffiths, 5th ed., §9.5 · guided waves</a></li><li><a href="https://link.springer.com/chapter/10.1007/978-3-662-64889-6_21">Fließbach, chapter 21 · cavity modes</a></li></ul></section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/physics/electrodynamics/chapters/26-the-field-tensor-and-action/">Chapter 26 · From local symmetry to Maxwell’s equations</a></span><span>Next<br><a href="/fundamentals/physics/electrodynamics/chapters/28-scattering-and-radiated-power/">Chapter 28 · Why a small transparent sphere scatters light</a></span></nav><script defer src="/assets/practical-em-core.js"></script><script defer src="/assets/practical-electromagnetism.js"></script><script defer src="/assets/practical-em-fields.js"></script><script defer src="/assets/practical-em-problems.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

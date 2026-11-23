@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A moving boundary in a freezing layer · OneSimulation</title>
+<meta name="description" content="A flat cold surface grows a layer of ice from water initially at its melting temperature. Estimate when it will reach a specified thickness, then discover how a finite heat-transfer resistance changes its early growth.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/16-freezing-front/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A moving boundary in a freezing layer · OneSimulation">
+<meta property="og:description" content="A flat cold surface grows a layer of ice from water initially at its melting temperature. Estimate when it will reach a specified thickness, then discover how a finite heat-transfer resistance changes its early growth.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/16-freezing-front/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/">Engineering thermodynamics and heat transfer</a></p><h1>A moving boundary in a freezing layer</h1><p class="lead">A flat cold surface grows a layer of ice from water initially at its melting temperature. Estimate when it will reach a specified thickness, then discover how a finite heat-transfer resistance changes its early growth.</p><p class="byline">Chapter 16 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#interface">Write a balance at a boundary whose position is unknown</a><a href="#integrate">Derive the square-root law and check the approximation</a><a href="#examples">An ideal wall and a finite film</a><a href="#tutorial">Tutorial · recover the coolant coefficient from one observation</a></nav></aside><article class="prose reference"><section><h2 id="interface">Write a balance at a boundary whose position is unknown</h2>
+<p>Let the solid occupy \(0&lt;x&lt;s(t)\). The boundary at x=0 is held at \(T_w&lt;T_m\), the liquid remains at \(T_m\), and the solid-liquid interface is at its equilibrium melting temperature. Treat density, latent heat of fusion \(L_f\) and solid conductivity k as constants. Ignore volume change and fluid convection. When the front moves by ds, each unit area releases latent energy \(\rho L_f\,ds\). In this one-phase problem conduction into the cold side removes that energy. Taking the magnitude of heat extracted, the interface condition reads</p>
+<div class="math display">\[\rho L_f\,{ds\over dt}=k\,{\partial T\over\partial x}\bigg|_{s^-}.\]</div>
+<p>The derivative is positive because temperature increases towards the liquid. Solving the full problem requires time-dependent conduction in a domain with a moving outer end. A useful approximation emerges when the sensible heat needed to cool the new solid is small beside its latent heat. Measure that ratio with the Stefan number \({\rm Ste}=c_p(T_m-T_w)/L_f\).</p>
+</section>
+<section><h2 id="integrate">Derive the square-root law and check the approximation</h2>
+<p>For small Ste the temperature profile in the solid adjusts quickly compared with front growth. Approximate the gradient by \((T_m-T_w)/s\). Multiplying the interface balance by s separates the variables. Integrating from an initial layer \(s_0\) gives</p>
+<div class="math display equation-chain"><div class="equation-step">\[s\,ds={k(T_m-T_w)\over\rho L_f}\,dt,\]</div><div class="equation-step">\[s^2=s_0^2+{2k(T_m-T_w)\over\rho L_f}t .\]</div></div>
+<p>With zero initial thickness the predicted speed starts unbounded because the model inserts a finite temperature difference across zero resistance. A finite surface heat-transfer coefficient removes this singularity. If coolant at \(T_c\) reaches the wall through a film \(1/h\), the heat flux is \((T_m-T_c)/(1/h+s/k)\). For a layer growing from zero, integration gives</p>
+<div class="math display">\[t={\rho L_f\over T_m-T_c}\left({s\over h}+{s^2\over2k}\right).\]</div>
+<p>The linear term dominates while the film presents the larger resistance. Once the solid is thick, the quadratic term recovers diffusion-controlled growth. These two regimes can be distinguished by recording thickness at equal time intervals.</p>
+</section>
+<section><h2 id="examples">An ideal wall and a finite film</h2>
+<p>For water freezing at 0 °C take \(k=2.2\) W/(m K), \(\rho=917\) kg/m³, \(L_f=334\) kJ/kg and \(c_p=2.1\) kJ/(kg K). With a wall at −5 °C the Stefan number is 0.0314. The ideal-wall time to form 10 mm is \(917(334000)(0.01)^2/[2(2.2)(5)]=1392\) s, about 23 minutes. Reaching 20 mm requires four times that duration. The increasing conduction distance accounts for the slowing front.</p>
+<p>With coolant at −5 °C and \(h=200\) W/(m² K), the added time for 10 mm is 3063 s. The resulting total is about 74.2 minutes. At that point the film resistance is 0.005 m² K/W and the ice contributes 0.00455 m² K/W. Both terms are of the same order. Vary h and find when a second thickness measurement would provide more information about ice conductivity than a first one.</p>
+<p class="calculation-prompt">At a fixed coolant temperature compare the early and late parts of the thickness histories. Increase the film coefficient strongly. Predict where the finite-film curve should approach the fixed-wall result first in relative terms, then read the completion time.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-thermodynamics-freezing-front"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · recover the coolant coefficient from one observation</h2>
+<p>A 15 mm layer is observed after 8000 s with the same properties and coolant temperature. Estimate h from the integrated equation. Would a time below the ideal-wall value be compatible with a positive h in this model?</p>
+<details><summary>Show the resistance fit</summary>
+<p>The ideal-wall contribution is about 3132 s. The remaining 4868 s equals \(\rho L_f s/[h(T_m-T_c)]\), giving \(h\simeq189\) W/(m² K). Both resistances are positive. A shorter time than the ideal-wall prediction would require checking the temperature, initial ice thickness, geometry or material data before assigning a heat-transfer coefficient.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://mbd.pages.rwth-aachen.de/courses/cmm/content/script/chapters/phase_change.html">RWTH Aachen · Computational Modeling of Multiphysics, chapter 12 on the Stefan problem</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/15-fins/">Chapter 15 · When another centimetre of cooling fin stops helping</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-thermodynamics/chapters/17-stagnant-film/">Chapter 17 · Diffusion with a stationary carrier gas</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to rotate two point clouds into agreement · OneSimulation</title>
+<meta name="description" content="Reduce a nonlinear-looking alignment problem to two scalar sums, distinguish reflections from rotations and recognise a geometry that contains no information about angle.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/16-fitting-a-rotation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to rotate two point clouds into agreement · OneSimulation">
+<meta property="og:description" content="Reduce a nonlinear-looking alignment problem to two scalar sums, distinguish reflections from rotations and recognise a geometry that contains no information about angle.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/numerics/linear-algebra/chapters/16-fitting-a-rotation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/numerics/">Numerical mathematics</a> / <a href="/fundamentals/numerics/linear-algebra/">Numerical linear algebra</a></p><h1>How to rotate two point clouds into agreement</h1><p class="lead">Reduce a nonlinear-looking alignment problem to two scalar sums, distinguish reflections from rotations and recognise a geometry that contains no information about angle.</p><p class="byline">Chapter 16 of 17</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#eliminate-translation-before-fitting-orientation">Eliminate translation before fitting orientation</a><a href="#recover-the-angle-and-its-conditioning">Recover the angle and its conditioning</a><a href="#two-fits-with-identical-measurement-precision">Two fits with identical measurement precision</a><a href="#vary-the-calibration-baseline">Vary the calibration baseline</a><a href="#tutorial-on-what-the-fit-measures">Tutorial on what the fit measures</a></nav></aside><article class="prose reference"><section>
+<h2 id="eliminate-translation-before-fitting-orientation">Eliminate translation before fitting orientation</h2>
+<p>A microscope images the same markers twice. Marker \(i\) has coordinates \(p_i\) in the first image and \(q_i\) in the second. Seek a proper planar rotation \(R\) and translation \(t\) minimising \(\sum_i\|q_i-Rp_i-t\|^2\). Differentiating with respect to \(t\) gives \(t=\bar q-R\bar p\). Substituting this expression centres both sets. Write \(P_i=p_i-\bar p\) and \(Q_i=q_i-\bar q\). Orthogonality of \(R\) makes \(\sum\|P_i\|^2+\|Q_i\|^2\) independent of the angle. Minimising distance is therefore equivalent to maximising \(\sum Q_i^TRP_i\).</p>
+</section>
+<section>
+<h2 id="recover-the-angle-and-its-conditioning">Recover the angle and its conditioning</h2>
+<p>Insert the rotation matrix with first column \((\cos\theta,\sin\theta)\). Collect the cosine and sine terms to obtain \(C\cos\theta+S\sin\theta\), with \(C=\sum P_i\cdot Q_i\) and \(S=\sum(P_{ix}Q_{iy}-P_{iy}Q_{ix})\). The maximum occurs at \(\operatorname{atan2}(S,C)\). Unlike an ordinary arctangent, this keeps the quadrant and handles \(C=0\). The objective curvature at the maximum is \(-\sqrt{C^2+S^2}\). Small curvature signals that very different angles fit almost equally well.</p>
+</section>
+<section>
+<h2 id="two-fits-with-identical-measurement-precision">Two fits with identical measurement precision</h2>
+<p>For centred markers \((-1,0),(1,0)\) and observations \((0,-1),(0,1)\), \(C=0,S=2\). The result is 90 degrees. Adding the displacement \((3,2)\) to every observation leaves the fitted angle unchanged and recovers precisely that translation. If both markers coincide then all centred \(P_i\) vanish and no angle can be identified.</p>
+<p>Now separate the original markers by \(2a\) and shift one observed marker by a transverse measurement error \(\epsilon\). At zero true rotation the connecting segment tilts by \(\arctan(\epsilon/(2a))\). The same 0.1 mm error means about 2.86° for \(a=1\) mm but only 0.29° for \(a=10\) mm. A low spatial residual alone is an incomplete calibration certificate.</p>
+</section>
+<section>
+<h2 id="vary-the-calibration-baseline">Vary the calibration baseline</h2>
+<p>The true angle is fixed at 20 degrees. A vertical error is added to the positive marker in the second image. The plotted squared distance is computed after centring. Locate its minimum and examine how broad it is for a short or long baseline.</p>
+<div id="try-it" class="interactive-study" data-study="num-fitting-a-rotation"></div>
+</section>
+<span id="practice"></span><section>
+<h2 id="tutorial-on-what-the-fit-measures">Tutorial on what the fit measures</h2>
+<p>If an unconstrained matrix maps a chiral triangle to its mirror with zero error, can a proper planar rotation do the same?</p>
+<details><summary>Worked solution</summary><p>A rotation has determinant +1 and preserves signed area. A reflection reverses signed area. A non-collinear labelled triangle cannot match its mirror exactly under a proper rotation and translation.</p></details>
+<p>Why can one ignore weights for equally precise markers but not for a blurred outlier?</p>
+<details><summary>Worked solution</summary><p>Independent isotropic errors with equal variance give a common quadratic weight. Different variances require weighted centroids and weighted \(C,S\) sums. A very noisy marker should contribute less to the fitted orientation.</p></details>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/numerics/linear-algebra/chapters/15-rayleigh-stationarity/">Chapter 15 · How a moderately accurate mode can give a precise frequency</a></span><span>Next<br><a href="/fundamentals/numerics/linear-algebra/chapters/17-network-resistance/">Chapter 17 · Reading an effective resistance from a singular graph matrix</a></span></nav><script defer src="/assets/practical-numerics.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From cut forces to local equilibrium · OneSimulation</title>
+<meta name="description" content="A support reaction tells you the total force entering a part. To predict what an inclined internal surface carries, keep track of both the orientation of the cut and the direction of the force across it.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/13-local-equilibrium/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From cut forces to local equilibrium · OneSimulation">
+<meta property="og:description" content="A support reaction tells you the total force entering a part. To predict what an inclined internal surface carries, keep track of both the orientation of the cut and the direction of the force across it.">
+<meta property="og:url" content="https://onesimulation.onrender.com/fundamentals/mechanical-engineering/engineering-mechanics/chapters/13-local-equilibrium/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/methods.png">
+<script defer src="/assets/mathjax-3.2.2/tex-chtml.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/">Tutorial</a><a href="/blog/">Blog</a><a href="/fundamentals/" aria-current="location">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell"><p class="edition"><a href="/fundamentals/">Fundamentals</a> / <a href="/fundamentals/mechanical-engineering/">Mechanical engineering</a> / <a href="/fundamentals/mechanical-engineering/engineering-mechanics/">Engineering mechanics</a></p><h1>From cut forces to local equilibrium</h1><p class="lead">A support reaction tells you the total force entering a part. To predict what an inclined internal surface carries, keep track of both the orientation of the cut and the direction of the force across it.</p><p class="byline">Chapter 13 of 19</p><nav class="study-links" aria-label="Study this chapter"><a href="#try-it">Try the calculation</a><a href="#practice">Work the tutorial</a></nav></header><div class="shell article-layout"><aside class="article-nav"><nav aria-label="On this page"><a href="#traction">A force that depends on the surface you choose</a><a href="#field">Why a gradient of stress carries a body force</a><a href="#inclined">Worked example · the grip on a diagonal bonding plane</a><a href="#hanging">Worked example · a specimen with a known stress gradient</a><a href="#tutorial">Tutorial · test a candidate before using a material law</a></nav></aside><article class="prose reference"><section><h2 id="traction">A force that depends on the surface you choose</h2>
+<p>Imagine a small triangular wedge cut out of a thin, slowly loaded plate. Its sloping face has unit outward normal \(\mathbf n=(n_x,n_y)\) and area \(A\). The two faces normal to the coordinate axes have areas \(A n_x\) and \(A n_y\) when both components are positive. Name the internal force per unit area on a face its traction. Opposite faces of the same cut carry equal and opposite tractions. Gravity and acceleration act on volume, which shrinks faster than area as the wedge shrinks. Dividing its force balance by \(A\) therefore gives a relation that no longer contains its size.</p>
+<div class="math display">\[\mathbf t(\mathbf n)=n_x\mathbf t(\mathbf e_x)+n_y\mathbf t(\mathbf e_y)=\boldsymbol\sigma\mathbf n .\]</div>
+<p>The columns of the stress matrix are the two coordinate-face tractions. Their linear combination supplies the force on any inclined face. A small square additionally needs zero net moment. To leading order, the shear forces on opposite faces form two couples of opposite sign and equal lever arm. Their balance requires \(\sigma_{xy}=\sigma_{yx}\) for an ordinary material without internal body couples.</p>
+</section>
+<section><h2 id="field">Why a gradient of stress carries a body force</h2>
+<p>Now use a tiny rectangular element of side lengths \(dx,dy\) and unit thickness. The right-face contribution to horizontal force is \(\sigma_{xx}(x+dx,y)dy\); the left face contributes its negative evaluated at \(x\). Their difference is \(\partial_x\sigma_{xx}\,dx\,dy\) to leading order. Resolve the upper and lower shear tractions in the same way. Add a prescribed horizontal force per volume \(b_x\) and divide by volume. Repeating in the vertical direction produces two independent equations.</p>
+<div class="math display equation-chain"><div class="equation-step">\[\partial_x\sigma_{xx}+\partial_y\sigma_{xy}+b_x=0,\]</div><div class="equation-step">\[\partial_x\sigma_{xy}+\partial_y\sigma_{yy}+b_y=0 .\]</div></div>
+<p>These equations say nothing yet about how much the material stretches. They can test an assumed stress field before the elastic modulus has even been measured. A candidate must also reproduce the applied boundary tractions. Satisfying the interior equations alone leaves many possible stresses.</p>
+</section>
+<section><h2 id="inclined">Worked example · the grip on a diagonal bonding plane</h2>
+<p>At a measurement point let \(\sigma_{xx}=60,\sigma_{yy}=20,\sigma_{xy}=10\) MPa. The outward normal is \((0.6,0.8)\). Matrix multiplication gives \(\mathbf t=(44,22)\) MPa. Projection along the normal gives \(0.6(44)+0.8(22)=44.0\) MPa tension. Projection on the unit tangent \((-0.8,0.6)\) gives \(-22.0\) MPa. Reversing the tangent changes the sign of reported shear. Reversing the surface normal reverses the traction vector itself. For a uniform 100 mm² patch the force has components 4.40 and 2.20 kN. Using only normal stress would miss the tangential load that the adhesive must transmit.</p>
+</section>
+<section><h2 id="hanging">Worked example · a specimen with a known stress gradient</h2>
+<p>Stand a bar upright, support it at its bottom and leave the top free. Use upward \(y\), length \(L\), constant density \(\rho\), and tension positive. The vertical equation reads \(d\sigma_{yy}/dy-\rho g=0\). Integrating from the free top gives \(\sigma_{yy}=\rho g(y-L)\). For a 3.0 m aluminium bar of density 2700 kg/m³ the base stress is −79.5 kPa. Its upward support traction is positive because the bottom face has downward outward normal. A uniform cross-sectional area of 200 mm² gives a base reaction of 15.9 N, equal to the weight. The local and global checks involve different quantities but must agree.</p>
+<p class="calculation-prompt">Find the angles where the shear traction passes through zero. Compare each with an extremum of the normal traction. Change the sign of the imposed xy shear, sketch the new angles before moving the slider, and check whether the two extreme normal stresses change.</p>
+<div id="try-it" class="interactive-study" data-study="eng-engineering-mechanics-local-equilibrium"></div>
+</section>
+<span id="practice"></span><section><h2 id="tutorial">Tutorial · test a candidate before using a material law</h2>
+<p>In a region with \(x,y\) in metres, propose \(\sigma_{xx}=ax,\ \sigma_{xy}=-ay,\ \sigma_{yy}=0\), where \(a=2.0\) MPa/m. Does the field need a body force? Find the traction at \(x=0.30,\ y=0.20\) m on a face normal to positive \(x\).</p>
+<details><summary>Check the balance and the boundary reading</summary>
+<p>The horizontal divergence is \(a-a=0\). The vertical divergence is zero because the shear has no \(x\) variation. No body force is needed. The face sees the first column of the matrix, \((0.60,-0.40)\) MPa. A traction-free exterior at that location would reject this field even though it satisfies both interior equations.</p>
+</details>
+<p class="source-note">Further reading · <a href="https://solidmechanics.org/Text/Chapter2_3/Chapter2_3.htm">A. F. Bower, Applied Mechanics of Solids, §2.3, internal forces and stress</a></p>
+</section><nav class="chapter-pager" aria-label="Course sequence"><span>Previous<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/problem-sheets/6/">Problem sheet 6 · Plastic deformation and crack driving force</a></span><span>Next<br><a href="/fundamentals/mechanical-engineering/engineering-mechanics/chapters/14-elastic-constraints/">Chapter 14 · How a lateral restraint changes a measured modulus</a></span></nav><script defer src="/assets/practical-engineering.js"></script><script defer src="/assets/practical-studies.js"></script></article></div>
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo">Gumroad</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
