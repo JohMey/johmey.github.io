@@ -113,6 +113,39 @@
       <p class="module-links"><a href="https://johmey.github.io/OneSimulation-Showcase/examples/index.html#modules">All 16 physics modules</a> · <a href="https://johmey.github.io/OneSimulation-Showcase/reference/b-numerical-api-reference/index.html">All numerics modules</a> · <a href="https://johmey.github.io/OneSimulation-Showcase/reference/a-physics-api-reference/index.html">Physics API</a></p>
     </article>
   </div>
+  <section class="feature-spread assistant-demo" aria-labelledby="assistant-demo-title">
+    <div class="feature-text">
+      <p class="edition">Recorded session</p>
+      <h2 id="assistant-demo-title">One request. The assistant builds, runs and reads the study.</h2>
+      <p>Claude Code received this one request and nothing else. Through the OneSimulation MCP server it created the model, started the run and read the temperature field. The centre comes out at 325.0 K, the value of the exact linear profile.</p>
+      <a class="link-text" href="/tutorials/#mcp">Set it up in your assistant</a>
+    </div>
+    <div class="demo-stage" data-demo>
+      <ol class="demo-steps">
+        <li class="demo-step demo-user"><p class="demo-role">You</p>
+          <p>Create and save a steady heat study for a 2 × 1 × 1 m block with two cells per axis. Use conductivity 4 W/(m·K), density 1,000 kg/m³ and heat capacity 500 J/(kg·K). Hold the left end at 350 K and the right end at 300 K. Insulate the other faces. Run the study and return its run ID, the temperature at the centre and the path to the HDF5 result.</p></li>
+        <li class="demo-step demo-call"><p class="demo-role"><code>create_simulation</code></p>
+          <p>Box 2 × 1 × 1 m with 2 × 2 × 2 cells. Heat conduction, 4 W/(m·K). 350 K at <code>x_min</code>, 300 K at <code>x_max</code>.</p>
+          <p class="demo-result">Project and study saved</p></li>
+        <li class="demo-step demo-call"><p class="demo-role"><code>start_project_simulation</code></p>
+          <p class="demo-result">Run <code>b318a543-bafd-4df3-b668-6aa26d0cbd4d</code> queued</p></li>
+        <li class="demo-step demo-call"><p class="demo-role"><code>get_simulation_results</code></p>
+          <p class="demo-result">Completed. Fields: temperature and reaction heat flow on 27 nodes</p></li>
+        <li class="demo-step demo-call"><p class="demo-role"><code>get_simulation_results</code> · temperature</p>
+          <p class="demo-result">Nine nodes each at 350.0 K, 325.0 K and 300.0 K</p></li>
+        <li class="demo-step demo-assistant"><p class="demo-role">Claude Code</p>
+          <p>The study is saved and the run completed, with the solver converged and the result accepted.</p>
+          <ul>
+            <li><strong>Run ID:</strong> <code>b318a543-bafd-4df3-b668-6aa26d0cbd4d</code></li>
+            <li><strong>Centre temperature:</strong> 325.0 K (node 13 at the block centre)</li>
+            <li><strong>HDF5 result:</strong> <code>…/mcp_runs/b318a543-…/result_sets/5b8d7385-….h5</code></li>
+          </ul>
+          <p>The centre value matches the expected linear profile between 350 K and 300 K; every node on the mid-plane reads 325 K.</p></li>
+      </ol>
+      <p class="demo-foot"><button type="button" class="button" data-demo-replay hidden>Replay</button>
+        <span>Recorded with Claude Code on 24 November 2026. Shown are the request, the MCP calls with what they returned and the answer; paths are shortened.</span></p>
+    </div>
+  </section>
   <div class="front-index platform-links">
     <section>
       <h2>Free to explore</h2>
@@ -196,6 +229,27 @@
     </article>
   </div>
 </div>
+<script>
+(() => {
+  const stage = document.querySelector("[data-demo]");
+  if (!stage || matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+  const steps = [...stage.querySelectorAll(".demo-step")];
+  const replay = stage.querySelector("[data-demo-replay]");
+  let timers = [];
+  const play = () => {
+    timers.forEach(clearTimeout);
+    stage.classList.add("is-animated");
+    steps.forEach(step => step.classList.remove("is-shown"));
+    timers = steps.map((step, index) => setTimeout(() => step.classList.add("is-shown"), 500 + index * 1300));
+  };
+  replay.hidden = false;
+  replay.addEventListener("click", play);
+  const watch = new IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) { play(); watch.disconnect(); }
+  }, { threshold: 0.35 });
+  watch.observe(stage);
+})();
+</script>
 
 </main>
 <footer class="site-footer"><div class="shell footer-row">
