@@ -44,7 +44,9 @@ from onesim.numerics import Numerics
 from onesim.numerics.fdm import (
     BoundaryFluxDifference,
     CentralDifference,
+    DissipativeFluxDifference,
     FiniteDifference,
+    JSTDissipation,
     GlobalLaxFriedrichsSplit,
     PolynomialDifference,
     WENO5Flux,
@@ -188,11 +190,9 @@ print(
 # elements with and without graph viscosity, and finite-difference stencils. Each is an object; the
 # matrix is built from them with plain dictionaries.
 #
-# Limited discontinuous Galerkin is the expensive part of the matrix (about five minutes per P1 run
-# on 400 cells, longer for P2 and P3). It runs with all four Riemann solvers for P1 and with HLLC for
-# P2 and P3; the limiter is minmod on the slopes plus the Euler invariant domain (positive density
-# and pressure at every node). A plain minmod limiter gives the same profiles to three digits on
-# this problem.
+# Limited discontinuous Galerkin runs with all four Riemann solvers for degrees 1 to 3; the limiter
+# is minmod on the slopes plus the Euler invariant domain (positive density and pressure at every
+# node).
 
 riemann = {"Rusanov": Rusanov(), "HLL": HLL(), "HLLE": HLLE(), "HLLC": HLLC()}
 limiters = {
@@ -246,14 +246,9 @@ for flux_name, flux in riemann.items():
         spatial[(f"DG P{degree}, unlimited", flux_name)] = FiniteElement(
             element=DiscontinuousLagrange(degree), convection=flux
         )
-        if degree == 1 or flux_name == "HLLC":
-            spatial[(f"DG P{degree} + minmod + invariant domain", flux_name)] = (
-                FiniteElement(
-                    element=DiscontinuousLagrange(degree),
-                    convection=flux,
-                    limiter=dg_limiter,
-                )
-            )
+        spatial[(f"DG P{degree} + minmod + invariant domain", flux_name)] = FiniteElement(
+            element=DiscontinuousLagrange(degree), convection=flux, limiter=dg_limiter
+        )
     for degree in (1, 2):
         spatial[(f"CG P{degree} + graph viscosity", flux_name)] = FiniteElement(
             element=Lagrange(degree), convection=flux, stabilization=graph_viscosity
@@ -269,6 +264,73 @@ for flux_name, flux in riemann.items():
             derivative=PolynomialDifference(accuracy_order=4), boundary_flux=flux
         )
     )
+# ## Schemes that must fail at a shock, and their stabilized counterparts
+#
+# Some declared schemes are linear and of higher than first order: MUSCL and QUICK without a
+# limiter, discontinuous Galerkin without limiting, continuous Galerkin without stabilization and
+# central finite differences. By Godunov's theorem every such scheme oscillates at a discontinuity;
+# on Sod's problem the oscillation drives density or pressure negative. The library reports that
+# honestly instead of clipping the state. For each of these schemes the matrix also runs the
+# stabilized counterpart, which adds exactly one ingredient; its result is shown behind a grey
+# hatching in the same cell.
+
+invariant_dg = DGPolynomialLimiter(invariant_domain=EulerInvariantDomain())
+stabilized_space = {
+    "FVM MUSCL, unlimited": (
+        "MUSCL unlimited + invariant-domain positivity limiter at the faces",
+        lambda flux: FiniteVolume(
+            convection=flux, reconstruction=MUSCL(), positivity=ConvexInvariantDomain()
+        ),
+    ),
+    "FVM QUICK": (
+        "QUICK + invariant-domain positivity limiter at the faces",
+        lambda flux: FiniteVolume(
+            convection=flux, reconstruction=QUICK(), positivity=ConvexInvariantDomain()
+        ),
+    ),
+    **{
+        f"DG P{degree}, unlimited": (
+            f"DG P{degree} + Euler invariant-domain scaling (no slope limiter)",
+            lambda flux, degree=degree: FiniteElement(
+                element=DiscontinuousLagrange(degree), convection=flux, limiter=invariant_dg
+            ),
+        )
+        for degree in (1, 2, 3)
+    },
+    "FDM central, 2nd order": (
+        "central differences + Jameson-Schmidt-Turkel artificial dissipation",
+        lambda flux: FiniteDifference(
+            gradient=DissipativeFluxDifference(
+                flux_difference=BoundaryFluxDifference(
+                    derivative=CentralDifference(), boundary_flux=flux
+                ),
+                dissipation=JSTDissipation(),
+            )
+        ),
+    ),
+    "FDM polynomial, 4th order": (
+        "4th-order differences + Jameson-Schmidt-Turkel artificial dissipation",
+        lambda flux: FiniteDifference(
+            gradient=DissipativeFluxDifference(
+                flux_difference=BoundaryFluxDifference(
+                    derivative=PolynomialDifference(accuracy_order=4), boundary_flux=flux
+                ),
+                dissipation=JSTDissipation(),
+            )
+        ),
+    ),
+    **{
+        f"CG P{degree} Galerkin": (
+            f"CG P{degree} + invariant-domain graph viscosity"
+            + (" (positive Bernstein basis)" if degree > 1 else ""),
+            lambda flux, degree=degree: FiniteElement(
+                element=Lagrange(degree), convection=flux, stabilization=graph_viscosity
+            ),
+        )
+        for degree in (1, 2)
+    },
+}
+
 spatial[("FDM WENO5 flux splitting", "Lax-Friedrichs splitting")] = FiniteDifference(
     gradient=WENOFluxDifference(
         flux_splitting=GlobalLaxFriedrichsSplit(), reconstruction=WENO5Flux()
@@ -303,9 +365,31 @@ integrators = {
     **{f"BDF{k} (Gear)": TimeMethod(f"bdf{k}_gear") for k in (2, 3, 4, 5, 6)},
     "Rosenbrock-Euler": TimeMethod("rosenbrock_euler"),
     "Rosenbrock-Wanner Euler": TimeMethod("rosenbrock_wanner_euler"),
-    "adaptive BDF": AdaptiveBDF(),
+    "adaptive BDF": AdaptiveBDF(relative_tolerance=1e-3, absolute_tolerance=1e-6),
 }
 newton = Newton(linear_solver=SparseDirect(), jacobian="colored_finite_difference")
+# BDF4 to BDF6 and Adams-Moulton 4 are not A-stable, and a fixed-point (Picard) iteration contracts
+# only while the time step stays below the inverse spectral radius of the stage operator. At
+# Δt = 2·10⁻³ they must fail; their stabilized counterpart is the same method at a step it is stable
+# for, shown behind the hatching.
+# Leapfrog has no damping: on the dissipative upwind operator it is unstable at every step. Its
+# stabilized counterpart adds the Robert-Asselin-Williams time filter and runs at a reduced
+# stability safety factor.
+stabilized_time = {
+    "leapfrog": (
+        "leapfrog + Robert-Asselin-Williams filter (ν = 0.2, α = 0.53; first order), safety factor 0.15",
+        TimeMethod("leapfrog_raw"),
+        0.15,
+    ),
+}
+stable_step = {
+    "BDF4 (Gear)": 5e-4,
+    "BDF5 (Gear)": 5e-4,
+    "BDF6 (Gear)": 5e-4,
+    "Adams-Moulton 4": 5e-4,
+    "fixed point": 2.5e-4,
+    "fixed point + Aitken": 2.5e-4,
+}
 linear_solvers = {
     "sparse LU": SparseDirect(),
     "GMRES": GMRES(),
@@ -406,6 +490,47 @@ runs += [
     )
     for (row, column), solver in nonlinear_solvers.items()
 ]
+runs += [
+    dict(
+        matrix="space x Riemann solver",
+        variant="stabilized",
+        row=row,
+        column=flux_name,
+        cells=cells,
+        spatial=make(flux),
+        time=TimeMethod("ssprk2"),
+        nonlinear=None,
+        step=end_time,
+        note_stabilized=description,
+    )
+    for row, (description, make) in stabilized_space.items()
+    for flux_name, flux in riemann.items()
+]
+runs += [
+    {
+        **run,
+        "variant": "stabilized",
+        "time": stabilized_time[run["row"]][1],
+        "safety": stabilized_time[run["row"]][2],
+        "note_stabilized": stabilized_time[run["row"]][0],
+    }
+    for run in list(runs)
+    if run["matrix"] == "time integrator x space"
+    and run["row"] in stabilized_time
+    and run.get("variant") is None
+]
+runs += [
+    {
+        **run,
+        "variant": "stabilized",
+        "step": stable_step[run["row"]],
+        "note_stabilized": f"{run['row']} at Δt = {stable_step[run['row']]:.1e}",
+    }
+    for run in list(runs)
+    if run["matrix"] in ("time integrator x space", "nonlinear x linear solver")
+    and run["row"] in stable_step
+    and run.get("variant") is None
+]
 representative = [
     ("FVM first order", "Rusanov"),
     ("FVM first order", "HLLC"),
@@ -449,7 +574,7 @@ for run in runs:
             ),
             time_integrator=run["time"],
             nonlinear_solver=run["nonlinear"],
-            step_limits=TimeStepLimits(stability_safety_factor=0.5),
+            step_limits=TimeStepLimits(stability_safety_factor=run.get("safety", 0.5)),
         ),
     )
     started = time.perf_counter()
@@ -486,7 +611,9 @@ for run in runs:
             message = str(error).splitlines()[0]
             run["status"] = (
                 "failed"
-                if "non-positive" in message or "finite" in message
+                if "non-positive" in message
+                or "finite" in message
+                or "did not converge" in message
                 else "rejected"
             )
             run["note"] = message.split(": ", 1)[-1] if ": " in message else message
@@ -506,16 +633,43 @@ for run in runs:
 # The density error of every spatial scheme with every Riemann solver. Empty cells name why a
 # combination did not produce a solution.
 
-matrix = [r for r in runs if r["matrix"] == "space x Riemann solver"]
+# Every cell shows the declared combination. Where it failed at the shock and a stabilized
+# counterpart exists, the cell is hatched grey and its colour and number are those of the
+# stabilized run; the legend below each matrix says what was added.
+
+main = {
+    (r["matrix"], r["row"], r["column"]): r
+    for r in runs
+    if r.get("variant") is None and r["matrix"] != "mesh check"
+}
+substitute = {
+    (r["matrix"], r["row"], r["column"]): r for r in runs if r.get("variant") == "stabilized"
+}
+hatch = {
+    key
+    for key, r in main.items()
+    if r["status"] != "ran" and substitute.get(key, {}).get("status") == "ran"
+}
+cell = {key: substitute[key] if key in hatch else r for key, r in main.items()}
+legend_head = (
+    "Hatched: the declared scheme fails at the shock (negative density or pressure, Godunov's "
+    "theorem); colour and value show its stabilized counterpart:"
+)
+
+matrix = [r for r in runs if r["matrix"] == "space x Riemann solver" and r.get("variant") is None]
 rows, columns = list(dict.fromkeys(r["row"] for r in matrix)), [
     *riemann,
     "Lax-Friedrichs splitting",
 ]
 grid = {(r["row"], r["column"]): r for r in matrix}
-fig = plots.figure(1, 1, size=(13, 17))
+space_key = "space x Riemann solver"
+fig = plots.figure(1, 1, size=(13, 19))
 plots.matrix(
     [
-        [grid[(row, c)]["errors"][0] if (row, c) in grid else np.nan for c in columns]
+        [
+            cell[(space_key, row, c)]["errors"][0] if (space_key, row, c) in cell else np.nan
+            for c in columns
+        ]
         for row in rows
     ],
     rows,
@@ -525,13 +679,22 @@ plots.matrix(
     text=[
         [
             (
-                f"{grid[(row, c)]['errors'][0]:.2e}"
-                if (row, c) in grid and grid[(row, c)]["status"] == "ran"
-                else grid[(row, c)]["status"] if (row, c) in grid else "–"
+                f"{cell[(space_key, row, c)]['errors'][0]:.2e}"
+                if cell[(space_key, row, c)]["status"] == "ran"
+                else cell[(space_key, row, c)]["status"]
             )
+            if (space_key, row, c) in cell
+            else "–"
             for c in columns
         ]
         for row in rows
+    ],
+    hatched=[[(space_key, row, c) in hatch for c in columns] for row in rows],
+    notes=[legend_head]
+    + [
+        f"  {row}: {description}."
+        for row, (description, _) in stabilized_space.items()
+        if any((space_key, row, c) in hatch for c in columns)
     ],
     title=f"Space x Riemann solver, {cells} cells, SSP-RK2",
     ax=fig[0],
@@ -591,14 +754,29 @@ plots.show()
 # Explicit integrators at their stable step, implicit integrators at $\Delta t=2\cdot10^{-3}$. A dash
 # marks a combination outside this cut (implicit WENO5).
 
-timing = [r for r in runs if r["matrix"] == "time integrator x space"]
+timing = [r for r in runs if r["matrix"] == "time integrator x space" and r.get("variant") is None]
+time_key = "time integrator x space"
 time_rows, time_columns = list(dict.fromkeys(r["row"] for r in timing)), list(time_spatial)
 time_grid = {(r["row"], r["column"]): r for r in timing}
 fig = plots.figure(1, 2, size=(17, 11))
+time_hatched = [[(time_key, row, c) in hatch for c in time_columns] for row in time_rows]
+time_notes = (
+    [legend_head]
+    + [
+        f"  {row}: same method at Δt = {stable_step[row]:.1e} instead of 2·10⁻³."
+        for row in stable_step
+        if any((time_key, row, c) in hatch for c in time_columns)
+    ]
+    + [
+        f"  {row}: {description}."
+        for row, (description, _, _) in stabilized_time.items()
+        if any((time_key, row, c) in hatch for c in time_columns)
+    ]
+)
 plots.matrix(
     [
         [
-            time_grid[(row, c)]["errors"][0] if (row, c) in time_grid else np.nan
+            cell[(time_key, row, c)]["errors"][0] if (time_key, row, c) in cell else np.nan
             for c in time_columns
         ]
         for row in time_rows
@@ -610,16 +788,18 @@ plots.matrix(
     text=[
         [
             (
-                f"{time_grid[(row, c)]['errors'][0]:.2e}"
-                if time_grid[(row, c)]["status"] == "ran"
-                else time_grid[(row, c)]["status"]
+                f"{cell[(time_key, row, c)]['errors'][0]:.2e}"
+                if cell[(time_key, row, c)]["status"] == "ran"
+                else cell[(time_key, row, c)]["status"]
             )
-            if (row, c) in time_grid
+            if (time_key, row, c) in cell
             else "–"
             for c in time_columns
         ]
         for row in time_rows
     ],
+    hatched=time_hatched,
+    notes=time_notes,
     title="L1 density error",
     ax=fig[0],
 )
@@ -627,8 +807,8 @@ plots.matrix(
     [
         [
             (
-                time_grid[(row, c)]["seconds"]
-                if (row, c) in time_grid and time_grid[(row, c)]["status"] == "ran"
+                cell[(time_key, row, c)]["seconds"]
+                if (time_key, row, c) in cell and cell[(time_key, row, c)]["status"] == "ran"
                 else np.nan
             )
             for c in time_columns
@@ -642,16 +822,17 @@ plots.matrix(
     text=[
         [
             (
-                f"{time_grid[(row, c)]['seconds']:.0f} s, {time_grid[(row, c)]['steps']} steps"
-                if time_grid[(row, c)]["status"] == "ran"
-                else time_grid[(row, c)]["status"]
+                f"{cell[(time_key, row, c)]['seconds']:.0f} s, {cell[(time_key, row, c)]['steps']} steps"
+                if cell[(time_key, row, c)]["status"] == "ran"
+                else cell[(time_key, row, c)]["status"]
             )
-            if (row, c) in time_grid
+            if (time_key, row, c) in cell
             else "–"
             for c in time_columns
         ]
         for row in time_rows
     ],
+    hatched=time_hatched,
     title="Wall time and accepted steps",
     ax=fig[1],
 )
@@ -662,7 +843,10 @@ plots.show()
 # Backward Euler on MUSCL-minmod-HLLC. The discrete solution should not depend on the solver as long
 # as each one converges; the wall time does.
 
-solving = [r for r in runs if r["matrix"] == "nonlinear x linear solver"]
+solving = [
+    r for r in runs if r["matrix"] == "nonlinear x linear solver" and r.get("variant") is None
+]
+solver_key = "nonlinear x linear solver"
 solver_rows = list(dict.fromkeys(r["row"] for r in solving))
 solver_columns = [*linear_solvers, "none"]
 solver_grid = {(r["row"], r["column"]): r for r in solving}
@@ -671,8 +855,8 @@ plots.matrix(
     [
         [
             (
-                solver_grid[(row, c)]["seconds"]
-                if (row, c) in solver_grid and solver_grid[(row, c)]["status"] == "ran"
+                cell[(solver_key, row, c)]["seconds"]
+                if (solver_key, row, c) in cell and cell[(solver_key, row, c)]["status"] == "ran"
                 else np.nan
             )
             for c in solver_columns
@@ -687,17 +871,27 @@ plots.matrix(
         [
             (
                 (
-                    f"{solver_grid[(row, c)]['seconds']:.0f} s\n"
-                    f"{solver_grid[(row, c)]['errors'][0]:.3e}"
+                    f"{cell[(solver_key, row, c)]['seconds']:.0f} s\n"
+                    f"{cell[(solver_key, row, c)]['errors'][0]:.3e}"
                 )
-                if solver_grid[(row, c)]["status"] == "ran"
-                else solver_grid[(row, c)]["status"]
+                if cell[(solver_key, row, c)]["status"] == "ran"
+                else cell[(solver_key, row, c)]["status"]
             )
-            if (row, c) in solver_grid
+            if (solver_key, row, c) in cell
             else ""
             for c in solver_columns
         ]
         for row in solver_rows
+    ],
+    hatched=[[(solver_key, row, c) in hatch for c in solver_columns] for row in solver_rows],
+    notes=[
+        "Hatched: the fixed-point (Picard) iteration cannot contract at Δt = 2·10⁻³; colour and "
+        "value show the same iteration at the step it converges for:"
+    ]
+    + [
+        f"  {row}: Δt = {stable_step[row]:.1e}."
+        for row in stable_step
+        if any((solver_key, row, c) in hatch for c in solver_columns)
     ],
     title="Backward Euler: wall time and L1 density error per solver pair",
     ax=fig[0],

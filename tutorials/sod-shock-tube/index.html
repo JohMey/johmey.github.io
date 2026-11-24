@@ -37,10 +37,10 @@
 <header class="article-header shell">
   <p class="edition">Tutorial · Numerical methods</p>
   <h1>Sod's shock tube through every method</h1>
-  <p class="lead">One Euler model, 400 cells, 202 runs. Every discretization family, reconstruction, limiter, Riemann solver, time integrator and solver pair OneSimulation offers for this problem, each graded against the exact Riemann solution. 67 space-and-flux combinations ran; the density error spans 1.35 × 10<sup>−3</sup> to 1.20 × 10<sup>−2</sup>. Nothing about the physics changed between runs, only one argument.</p>
+  <p class="lead">One Euler model, 400 cells, 256 runs. Every discretization family, reconstruction, limiter, Riemann solver, time integrator and solver pair OneSimulation offers for this problem, each graded against the exact Riemann solution. Every combination produces a solution: 161 run as declared, and the 46 that must fail at a shock by Godunov's theorem are shown with their stabilized counterpart. None is refused. The density error spans 1.35 × 10<sup>−3</sup> to 1.20 × 10<sup>−2</sup>. Nothing about the physics changed between runs, only one argument.</p>
 </header>
 <div class="shell article-layout">
-  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#problem">Problem</a><a href="#model">Model</a><a href="#matrix">Space × flux</a><a href="#profiles">Profiles</a><a href="#time">Time integrators</a><a href="#solvers">Solvers</a><a href="#mesh">Mesh check</a><a href="#refused">Refused and failed</a><a href="#run">Reproduce</a></nav></aside>
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#problem">Problem</a><a href="#model">Model</a><a href="#matrix">Space × flux</a><a href="#profiles">Profiles</a><a href="#time">Time integrators</a><a href="#solvers">Solvers</a><a href="#mesh">Mesh check</a><a href="#shock-failures">Stabilized</a><a href="#run">Reproduce</a></nav></aside>
   <article class="prose">
     <section id="problem">
       <h2>A shock, a contact and a rarefaction</h2>
@@ -66,7 +66,7 @@ sod = Problem(
         InitialValue(gas.total_energy, lambda x: np.where(x &lt; 0.5, 2.5, 0.25)),
     ),
 )</code></pre>
-      <p>None of this names a method. The method is the <code>numerics</code> argument of <code>Simulation</code>. Three of the 202 choices:</p>
+      <p>None of this names a method. The method is the <code>numerics</code> argument of <code>Simulation</code>. Three of the 256 choices:</p>
       <pre><code>numerics = Numerics(
     spatial=FiniteVolume(convection=HLLC(), reconstruction=MUSCL(), limiter=SuperbeeLimiter()),
     time_integrator=TimeMethod(&quot;ssprk2&quot;),
@@ -90,7 +90,33 @@ result = Simulation(problem=sod, mesh=mesh, numerics=numerics).run(
     <section id="matrix">
       <h2>Every spatial scheme with every Riemann solver</h2>
       <p>Finite volumes with first-order, MUSCL (seven limiters and the unlimited slope), ENO and WENO reconstructions; discontinuous Galerkin of degree 0 to 3; continuous elements with and without graph viscosity; finite differences. Each is crossed with the Rusanov, HLL, HLLE and HLLC solvers and advanced with SSP-RK2 at the stable step.</p>
-      <figure class="paper-figure"><img src="/assets/sod-matrix.png" alt="Colour table of the L1 density error for each spatial scheme and Riemann solver; failed and refused combinations are labelled" loading="lazy"><figcaption>L<sub>1</sub> density error at <var>t</var> = 0.2 on 400 cells. Labelled cells show why a combination produced no solution. A dash marks a combination outside the matrix.</figcaption></figure>
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The three test matrices">
+        <ul class="matrix-slides">
+          <li class="matrix-slide is-active"><img src="/assets/sod-matrix.png" alt="Colour table of the L1 density error for each spatial scheme and Riemann solver; hatched cells show stabilized counterparts"><p><strong>1 · Space × Riemann solver.</strong> L<sub>1</sub> density error at <var>t</var> = 0.2 on 400 cells, SSP-RK2 at the stable step.</p></li>
+          <li class="matrix-slide" aria-hidden="true"><img src="/assets/sod-time.png" alt="Two colour tables: L1 density error and wall time for each time integrator on first-order, MUSCL and WENO5 finite volumes"><p><strong>2 · Time integrator × space.</strong> Left: L<sub>1</sub> density error. Right: wall time and accepted steps.</p></li>
+          <li class="matrix-slide" aria-hidden="true"><img src="/assets/sod-solvers.png" alt="Colour table of wall time and density error for each nonlinear and linear solver pair"><p><strong>3 · Nonlinear × linear solver.</strong> Backward Euler; wall time and L<sub>1</sub> density error per pair.</p></li>
+        </ul>
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous matrix">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 3</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next matrix">&#8594;</button>
+        </div>
+        <figcaption>Grey hatching marks a declared scheme that fails at the shock; the colour behind it is its stabilized counterpart, named in the legend below each matrix.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+        })();
+        </script>
+      </figure>
       <div class="table-wrap">
         <table><caption>The twelve most accurate combinations. Shock error in units of 10<sup>−3</sup>; one cell is 2.5 × 10<sup>−3</sup> wide.</caption>
           <thead><tr><th scope="col">Spatial scheme</th><th scope="col">Riemann solver</th><th scope="col">L<sub>1</sub> ρ</th><th scope="col">L<sub>1</sub> u</th><th scope="col">L<sub>1</sub> p</th><th scope="col">Shock</th><th scope="col">Time</th></tr></thead>
@@ -104,13 +130,13 @@ result = Simulation(problem=sod, mesh=mesh, numerics=numerics).run(
     </section>
     <section id="time">
       <h2>Every time integrator</h2>
-      <p>18 explicit runs at the stable step and 29 implicit runs at Δt = 2 × 10<sup>−3</sup>, a CFL number of about 1.4 that no explicit method could take. All with HLLC fluxes.</p>
-      <figure class="paper-figure"><img src="/assets/sod-time.png" alt="Two colour tables: L1 density error and wall time for each time integrator on first-order, MUSCL and WENO5 finite volumes" loading="lazy"><figcaption>Left: L<sub>1</sub> density error. Right: wall time and accepted steps.</figcaption></figure>
+      <p>21 explicit runs at the stable step and 31 implicit runs at Δt = 2 × 10<sup>−3</sup>, a CFL number of about 1.4 that no explicit method could take. All with HLLC fluxes.</p>
+      <p>See matrix 2 in the carousel above.</p>
     </section>
     <section id="solvers">
       <h2>Every nonlinear and linear solver</h2>
-      <p>Backward Euler on MUSCL-minmod-HLLC, Δt = 2 × 10<sup>−3</sup>. 20 solver pairs converged to the same discrete solution. Their density errors differ by 3e-06 % at most. Wall time ranges from 7 s (quasi-Newton, sparse LU) to 33 s (trust-region Newton, GMRES + ILU).</p>
-      <figure class="paper-figure"><img src="/assets/sod-solvers.png" alt="Colour table of wall time and density error for each nonlinear and linear solver pair" loading="lazy"><figcaption>Wall time and L<sub>1</sub> density error per solver pair.</figcaption></figure>
+      <p>Backward Euler on MUSCL-minmod-HLLC, Δt = 2 × 10<sup>−3</sup>. 24 solver pairs converged to the same discrete solution. Their density errors differ by 2e-05 % at most. Wall time ranges from 6 s (quasi-Newton, sparse LU) to 18 s (quasi-Newton, GMRES + ILU).</p>
+      <p>See matrix 3 in the carousel above.</p>
     </section>
     <section id="mesh">
       <h2>400 against 200 cells</h2>
@@ -121,16 +147,16 @@ result = Simulation(problem=sod, mesh=mesh, numerics=numerics).run(
         </table>
       </div>
     </section>
-    <section id="refused">
-      <h2>What the library refused, and what failed</h2>
-      <p>A refused combination is stopped by validation or binding before the first step, with a message that names the missing piece. A failed one ran and produced negative density or pressure. Unlimited high-order schemes and central stencils do this at a shock, as they should. Of the 202 runs, 142 ran, 22 were refused and 38 failed.</p>
+    <section id="shock-failures">
+      <h2>Schemes that must fail at a shock, and their stabilized counterparts</h2>
+      <p>A linear scheme of higher than first order oscillates at a discontinuity (Godunov's theorem). On Sod's problem that drives density or pressure negative, and OneSimulation reports it instead of clipping the state. Each such scheme is shown hatched in the matrices, with the result of its stabilized counterpart behind the hatching: exactly one ingredient is added, or, for time integrators that are not A-stable and for the fixed-point iteration, the step is reduced to one they are stable for. Of the 207 declared runs, 161 ran directly and 46 are shown stabilized.</p>
       <div class="table-wrap">
-        <table><thead><tr><th scope="col">Status</th><th scope="col">Message</th><th scope="col">Runs</th></tr></thead><tbody><tr><td>failed</td><td>Euler state has non-positive density</td><td>7: DG P1, unlimited, FVM MUSCL, unlimited</td></tr><tr><td>failed</td><td>Euler state has non-positive pressure</td><td>31: Adams-Moulton 4, BDF4, BDF5, BDF6, CG P1 Galerkin, CG P2 Galerkin, DG P1, unlimited, DG P2, unlimited, DG P3, unlimited, FDM central, 2nd order, FDM polynomial, 4th order, fixed point</td></tr><tr><td>rejected</td><td>GMRES reached the maximum iteration count.</td><td>2: JFNK</td></tr><tr><td>rejected</td><td>JFNK requires a selected linear solver with solve_matrix_free; no substitute Krylov solver is chosen</td><td>1: JFNK</td></tr><tr><td>rejected</td><td>array evolution requires an explicitly selected time integrator</td><td>6: adaptive BDF, adaptive RK45</td></tr><tr><td>rejected</td><td>leapfrog requires a constant time_step; variable-step coefficients are not implemented</td><td>3: leapfrog</td></tr><tr><td>rejected</td><td>partitioned coupling did not converge within maximum_iterations</td><td>1: fixed point + Aitken</td></tr><tr><td>rejected</td><td>reconstruction requires an injected bind port</td><td>4: FVM QUICK</td></tr><tr><td>rejected</td><td>the selected assembled preconditioner requires an owned sparse stage derivative; select one explicitly</td><td>1: JFNK</td></tr><tr><td>rejected</td><td>this graph-viscosity provider requires positive continuous P1 basis functions</td><td>4: CG P2 + graph viscosity</td></tr></tbody></table>
+        <table><thead><tr><th scope="col">Declared scheme</th><th scope="col">Why it fails</th><th scope="col">Stabilized counterpart</th><th scope="col">Runs</th></tr></thead><tbody><tr><th scope="row">Adams-Moulton 4</th><td>Euler state has non-positive pressure</td><td>Adams-Moulton 4 at Δt = 5.0e-04</td><td>1</td></tr><tr><th scope="row">BDF4 (Gear)</th><td>Euler state has non-positive pressure</td><td>BDF4 (Gear) at Δt = 5.0e-04</td><td>1</td></tr><tr><th scope="row">BDF5 (Gear)</th><td>Euler state has non-positive pressure</td><td>BDF5 (Gear) at Δt = 5.0e-04</td><td>1</td></tr><tr><th scope="row">BDF6 (Gear)</th><td>Euler state has non-positive pressure</td><td>BDF6 (Gear) at Δt = 5.0e-04</td><td>2</td></tr><tr><th scope="row">CG P1 Galerkin</th><td>Euler state has non-positive pressure</td><td>CG P1 + invariant-domain graph viscosity</td><td>4</td></tr><tr><th scope="row">CG P2 Galerkin</th><td>Euler state has non-positive pressure</td><td>CG P2 + invariant-domain graph viscosity (positive Bernstein basis)</td><td>4</td></tr><tr><th scope="row">DG P1, unlimited</th><td>Euler state has non-positive density</td><td>DG P1 + Euler invariant-domain scaling (no slope limiter)</td><td>3</td></tr><tr><th scope="row">DG P1, unlimited</th><td>Euler state has non-positive pressure</td><td>DG P1 + Euler invariant-domain scaling (no slope limiter)</td><td>1</td></tr><tr><th scope="row">DG P2, unlimited</th><td>Euler state has non-positive pressure</td><td>DG P2 + Euler invariant-domain scaling (no slope limiter)</td><td>4</td></tr><tr><th scope="row">DG P3, unlimited</th><td>Euler state has non-positive pressure</td><td>DG P3 + Euler invariant-domain scaling (no slope limiter)</td><td>4</td></tr><tr><th scope="row">FDM central, 2nd order</th><td>Euler state has non-positive pressure</td><td>central differences + Jameson-Schmidt-Turkel artificial dissipation</td><td>4</td></tr><tr><th scope="row">FDM polynomial, 4th order</th><td>Euler state has non-positive pressure</td><td>4th-order differences + Jameson-Schmidt-Turkel artificial dissipation</td><td>4</td></tr><tr><th scope="row">FVM MUSCL, unlimited</th><td>Euler state has non-positive density</td><td>MUSCL unlimited + invariant-domain positivity limiter at the faces</td><td>4</td></tr><tr><th scope="row">FVM QUICK</th><td>Euler state has non-positive pressure</td><td>QUICK + invariant-domain positivity limiter at the faces</td><td>4</td></tr><tr><th scope="row">fixed point</th><td>Euler state has non-positive pressure</td><td>fixed point at Δt = 2.5e-04</td><td>1</td></tr><tr><th scope="row">fixed point + Aitken</th><td>partitioned coupling did not converge within maximum_iterations</td><td>fixed point + Aitken at Δt = 2.5e-04</td><td>1</td></tr><tr><th scope="row">leapfrog</th><td>Euler state has non-positive pressure</td><td>leapfrog + Robert-Asselin-Williams filter (ν = 0.2, α = 0.53; first order), safety factor 0.15</td><td>3</td></tr></tbody></table>
       </div>
     </section>
     <section id="run">
       <h2>Reproduce the run</h2>
-      <p>The notebook declares the model once and runs the whole matrix in one loop. On a loaded Apple Silicon laptop the 202 runs took 16 minutes in total, most of it in limited discontinuous Galerkin and implicit stepping. Lower <code>cells</code> for a quick look. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 256 runs took 26 minutes in total. Lower <code>cells</code> for a quick look. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
       <div class="download-row"><a class="button button-primary" href="/downloads/sod-shock-tube-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/sod-shock-tube-method-matrix.py" download>Download as Python script</a></div>
       <p>The earlier <a href="/tutorials/method-comparison/">Poisson comparison on a 3D cube</a> shows the same idea for an elliptic problem.</p>
     </section>
