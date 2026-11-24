@@ -544,24 +544,19 @@ td { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .course-book .study-aside figure { break-inside: avoid; }
 }
 
-/* Homepage: three selling points and the auto-advancing 3D carousel */
+/* Homepage: three selling points and the notebook carousel */
 .front-index.usp { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2.6rem; }
 @media (max-width: 900px) { .front-index.usp { grid-template-columns: 1fr; } }
-.cover-plate.hero-carousel { border: 0; padding: 0; background: transparent; transform: none; }
-.hero-carousel .hero-slides { position: relative; list-style: none; margin: 0; padding: 0; aspect-ratio: 4 / 3; overflow: hidden; background: var(--paper); }
-.hero-carousel .hero-slide { position: absolute; inset: 0; margin: 0; opacity: 0; animation: hero-cycle 36s infinite; }
-.hero-carousel .hero-slide img { width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: contain; display: block; }
-.hero-carousel .hero-slide p { position: absolute; left: 0; right: 0; top: 0; margin: 0; color: var(--subtle); font: italic .95rem/1.4 var(--serif); }
-.hero-carousel figcaption { color: var(--subtle); font: .9rem/1.45 var(--serif); padding: .5rem 0 0; border-top: 1px solid var(--rule); }
-.hero-carousel .hero-slide:nth-child(1) { animation-delay: 0s; }
-.hero-carousel .hero-slide:nth-child(2) { animation-delay: 6s; }
-.hero-carousel .hero-slide:nth-child(3) { animation-delay: 12s; }
-.hero-carousel .hero-slide:nth-child(4) { animation-delay: 18s; }
-.hero-carousel .hero-slide:nth-child(5) { animation-delay: 24s; }
-.hero-carousel .hero-slide:nth-child(6) { animation-delay: 30s; }
-.hero-carousel:hover .hero-slide { animation-play-state: paused; }
-@keyframes hero-cycle { 0% { opacity: 0; } 2% { opacity: 1; } 16.67% { opacity: 1; } 18.67% { opacity: 0; } 100% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) {
-  .hero-carousel .hero-slide { animation: none; }
-  .hero-carousel .hero-slide:first-child { opacity: 1; }
-}
+.hero-carousel { margin: 0; }
+.hero-carousel .hero-slides { position: relative; list-style: none; margin: 0; padding: 0; aspect-ratio: 4 / 3.45; overflow: hidden; background: var(--paper); }
+.hero-carousel .hero-slide { position: absolute; inset: 0; margin: 0; opacity: 0; visibility: hidden; transition: opacity .7s ease, visibility .7s; }
+.hero-carousel .hero-slide.is-active { opacity: 1; visibility: visible; }
+.hero-carousel .hero-slide img { width: 100%; height: calc(100% - 3em); object-fit: contain; display: block; }
+.hero-carousel .hero-slide p { position: absolute; left: 0; right: 0; bottom: 0; height: 2.8em; margin: 0; overflow: hidden; font: .95rem/1.4 var(--serif); color: var(--ink); }
+.hero-carousel .hero-slide p span { color: var(--stamp); font-family: inherit; }
+.hero-carousel .hero-slide p a { color: var(--ink); }
+.hero-controls { display: flex; align-items: center; justify-content: flex-end; gap: .7rem; border-top: 1px solid var(--rule); padding-top: .5rem; margin-top: .4rem; }
+.hero-arrow { font: 1.15rem/1 var(--serif); color: var(--deep); background: transparent; border: 1px solid var(--rule); border-radius: 999px; width: 2.3rem; height: 2.3rem; cursor: pointer; }
+.hero-arrow:hover, .hero-arrow:focus-visible { background: var(--deep); color: var(--paper); border-color: var(--deep); }
+.hero-count { color: var(--subtle); font: .9rem/1 var(--serif); min-width: 3.4em; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .hero-carousel .hero-slide { transition: none; } }
