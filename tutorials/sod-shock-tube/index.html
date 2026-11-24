@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sod&#x27;s shock tube through every method · OneSimulation</title>
+<meta name="description" content="One Euler model on 400 cells, run through every discretization, limiter, Riemann solver, time integrator and solver pair OneSimulation offers, graded against the exact Riemann solution.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/sod-shock-tube/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sod&#x27;s shock tube through every method · OneSimulation">
+<meta property="og:description" content="One Euler model on 400 cells, run through every discretization, limiter, Riemann solver, time integrator and solver pair OneSimulation offers, graded against the exact Riemann solution.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/sod-shock-tube/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/sod-profiles.png">
+<meta property="og:image:alt" content="Sod&#x27;s shock tube through every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Sod's shock tube through every method", "description": "One Euler model on 400 cells, run through every discretization, limiter, Riemann solver, time integrator and solver pair OneSimulation offers, graded against the exact Riemann solution.", "image": "https://onesimulation.onrender.com/assets/sod-profiles.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr.", "url": "https://onesimulation.onrender.com/about/"}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/sod-shock-tube/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "Sod's shock tube through every method", "item": "https://onesimulation.onrender.com/tutorials/sod-shock-tube/"}]}]}</script>
+
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_sod_shock_tube">Pricing</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Numerical methods</p>
+  <h1>Sod's shock tube through every method</h1>
+  <p class="lead">One Euler model, 400 cells, 202 runs. Every discretization family, reconstruction, limiter, Riemann solver, time integrator and solver pair OneSimulation offers for this problem, each graded against the exact Riemann solution. 67 space-and-flux combinations ran; the density error spans 1.35 × 10<sup>−3</sup> to 1.20 × 10<sup>−2</sup>. Nothing about the physics changed between runs, only one argument.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#problem">Problem</a><a href="#model">Model</a><a href="#matrix">Space × flux</a><a href="#profiles">Profiles</a><a href="#time">Time integrators</a><a href="#solvers">Solvers</a><a href="#mesh">Mesh check</a><a href="#refused">Refused and failed</a><a href="#run">Reproduce</a></nav></aside>
+  <article class="prose">
+    <section id="problem">
+      <h2>A shock, a contact and a rarefaction</h2>
+      <p>A tube of ideal gas (γ = 1.4) is split at <var>x</var> = 0.5. The left half holds (ρ, u, p) = (1, 0, 1), the right half (0.125, 0, 0.1). When the diaphragm goes, a rarefaction runs left and a contact and a shock run right. At <var>t</var> = 0.2 the shock sits at <var>x</var> = 0.8504.</p>
+      <p>The exact solution comes from OneSimulation's own exact Euler sampler. Every run is evaluated at the 400 cell centres. The page reports the L<sub>1</sub> errors of density, velocity and pressure, the shock position error and the wall time.</p>
+    </section>
+    <section id="model">
+      <h2>The model, declared once</h2>
+      <pre><code>tube = Line(start=(0.0, 0.0, 0.0), end=(1.0, 0.0, 0.0))
+gas = CompressibleEuler(
+    domain=tube.line, equation_of_state=IdealGasEquationOfState(gamma=gamma)
+)
+sod = Problem(
+    name=&quot;Sod shock tube&quot;,
+    geometry=tube,
+    physics=(gas,),
+    boundary_conditions=(
+        TransmissiveBoundary(boundary=tube.boundaries.all, physics=gas),
+    ),
+    initial_conditions=(
+        InitialValue(gas.density, lambda x: np.where(x &lt; 0.5, 1.0, 0.125)),
+        InitialValue(gas.momentum, 0.0),
+        InitialValue(gas.total_energy, lambda x: np.where(x &lt; 0.5, 2.5, 0.25)),
+    ),
+)</code></pre>
+      <p>None of this names a method. The method is the <code>numerics</code> argument of <code>Simulation</code>. Three of the 202 choices:</p>
+      <pre><code>numerics = Numerics(
+    spatial=FiniteVolume(convection=HLLC(), reconstruction=MUSCL(), limiter=SuperbeeLimiter()),
+    time_integrator=TimeMethod(&quot;ssprk2&quot;),
+)
+numerics = Numerics(
+    spatial=FiniteElement(element=DiscontinuousLagrange(2), convection=HLLC(),
+                          limiter=DGPolynomialLimiter(slope_limiter=MinmodLimiter(),
+                                                      invariant_domain=EulerInvariantDomain())),
+    linear_solver=SparseDirect(),
+    time_integrator=TimeMethod(&quot;ssprk2&quot;),
+)
+numerics = Numerics(
+    spatial=FiniteVolume(convection=HLLC(), reconstruction=MUSCL(), limiter=MinmodLimiter()),
+    time_integrator=BDF(order=2),
+    nonlinear_solver=Newton(linear_solver=GMRES(preconditioner=ILU()),
+                            jacobian=&quot;colored_finite_difference&quot;),
+)
+result = Simulation(problem=sod, mesh=mesh, numerics=numerics).run(
+    start_time=0.0, end_time=0.2, time_step=2e-3)</code></pre>
+    </section>
+    <section id="matrix">
+      <h2>Every spatial scheme with every Riemann solver</h2>
+      <p>Finite volumes with first-order, MUSCL (seven limiters and the unlimited slope), ENO and WENO reconstructions; discontinuous Galerkin of degree 0 to 3; continuous elements with and without graph viscosity; finite differences. Each is crossed with the Rusanov, HLL, HLLE and HLLC solvers and advanced with SSP-RK2 at the stable step.</p>
+      <figure class="paper-figure"><img src="/assets/sod-matrix.png" alt="Colour table of the L1 density error for each spatial scheme and Riemann solver; failed and refused combinations are labelled" loading="lazy"><figcaption>L<sub>1</sub> density error at <var>t</var> = 0.2 on 400 cells. Labelled cells show why a combination produced no solution. A dash marks a combination outside the matrix.</figcaption></figure>
+      <div class="table-wrap">
+        <table><caption>The twelve most accurate combinations. Shock error in units of 10<sup>−3</sup>; one cell is 2.5 × 10<sup>−3</sup> wide.</caption>
+          <thead><tr><th scope="col">Spatial scheme</th><th scope="col">Riemann solver</th><th scope="col">L<sub>1</sub> ρ</th><th scope="col">L<sub>1</sub> u</th><th scope="col">L<sub>1</sub> p</th><th scope="col">Shock</th><th scope="col">Time</th></tr></thead>
+          <tbody><tr><th scope="row">FVM MUSCL + superbee</th><td>HLLC</td><td>1.35 × 10<sup>−3</sup></td><td>2.73 × 10<sup>−3</sup></td><td>1.05 × 10<sup>−3</sup></td><td>+0.45</td><td>1 s</td></tr><tr><th scope="row">FVM WENO5</th><td>HLLC</td><td>1.40 × 10<sup>−3</sup></td><td>2.74 × 10<sup>−3</sup></td><td>1.06 × 10<sup>−3</sup></td><td>+0.42</td><td>5 s</td></tr><tr><th scope="row">FVM MUSCL + superbee</th><td>HLLE</td><td>1.42 × 10<sup>−3</sup></td><td>2.46 × 10<sup>−3</sup></td><td>9.18 × 10<sup>−4</sup></td><td>+0.45</td><td>1 s</td></tr><tr><th scope="row">FVM MUSCL + superbee</th><td>HLL</td><td>1.42 × 10<sup>−3</sup></td><td>2.46 × 10<sup>−3</sup></td><td>9.18 × 10<sup>−4</sup></td><td>+0.45</td><td>1 s</td></tr><tr><th scope="row">FVM WENO5</th><td>HLLE</td><td>1.43 × 10<sup>−3</sup></td><td>2.75 × 10<sup>−3</sup></td><td>1.05 × 10<sup>−3</sup></td><td>+0.42</td><td>5 s</td></tr><tr><th scope="row">FVM WENO5</th><td>HLL</td><td>1.43 × 10<sup>−3</sup></td><td>2.75 × 10<sup>−3</sup></td><td>1.05 × 10<sup>−3</sup></td><td>+0.42</td><td>5 s</td></tr><tr><th scope="row">FVM WENO5</th><td>Rusanov</td><td>1.69 × 10<sup>−3</sup></td><td>3.09 × 10<sup>−3</sup></td><td>1.26 × 10<sup>−3</sup></td><td>+0.40</td><td>5 s</td></tr><tr><th scope="row">FVM MUSCL + Barth-Jespersen</th><td>HLLC</td><td>1.74 × 10<sup>−3</sup></td><td>2.91 × 10<sup>−3</sup></td><td>1.23 × 10<sup>−3</sup></td><td>+0.50</td><td>2 s</td></tr><tr><th scope="row">FVM MUSCL + MC</th><td>HLLC</td><td>1.74 × 10<sup>−3</sup></td><td>2.91 × 10<sup>−3</sup></td><td>1.23 × 10<sup>−3</sup></td><td>+0.50</td><td>1 s</td></tr><tr><th scope="row">FVM MUSCL + Barth-Jespersen</th><td>HLL</td><td>1.75 × 10<sup>−3</sup></td><td>2.81 × 10<sup>−3</sup></td><td>1.17 × 10<sup>−3</sup></td><td>+0.48</td><td>2 s</td></tr><tr><th scope="row">FVM MUSCL + MC</th><td>HLL</td><td>1.75 × 10<sup>−3</sup></td><td>2.81 × 10<sup>−3</sup></td><td>1.17 × 10<sup>−3</sup></td><td>+0.48</td><td>1 s</td></tr><tr><th scope="row">FVM MUSCL + MC</th><td>HLLE</td><td>1.75 × 10<sup>−3</sup></td><td>2.81 × 10<sup>−3</sup></td><td>1.17 × 10<sup>−3</sup></td><td>+0.48</td><td>1 s</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section id="profiles">
+      <h2>What the profiles look like</h2>
+      <figure class="paper-figure"><img src="/assets/sod-profiles.png" alt="Density, velocity and pressure of eight representative combinations against the exact solution, with a close-up of contact and shock" loading="lazy"><figcaption>Representative combinations against the exact Riemann solution, 400 cells.</figcaption></figure>
+    </section>
+    <section id="time">
+      <h2>Every time integrator</h2>
+      <p>18 explicit runs at the stable step and 29 implicit runs at Δt = 2 × 10<sup>−3</sup>, a CFL number of about 1.4 that no explicit method could take. All with HLLC fluxes.</p>
+      <figure class="paper-figure"><img src="/assets/sod-time.png" alt="Two colour tables: L1 density error and wall time for each time integrator on first-order, MUSCL and WENO5 finite volumes" loading="lazy"><figcaption>Left: L<sub>1</sub> density error. Right: wall time and accepted steps.</figcaption></figure>
+    </section>
+    <section id="solvers">
+      <h2>Every nonlinear and linear solver</h2>
+      <p>Backward Euler on MUSCL-minmod-HLLC, Δt = 2 × 10<sup>−3</sup>. 20 solver pairs converged to the same discrete solution. Their density errors differ by 3e-06 % at most. Wall time ranges from 7 s (quasi-Newton, sparse LU) to 33 s (trust-region Newton, GMRES + ILU).</p>
+      <figure class="paper-figure"><img src="/assets/sod-solvers.png" alt="Colour table of wall time and density error for each nonlinear and linear solver pair" loading="lazy"><figcaption>Wall time and L<sub>1</sub> density error per solver pair.</figcaption></figure>
+    </section>
+    <section id="mesh">
+      <h2>400 against 200 cells</h2>
+      <div class="table-wrap">
+        <table><caption>L<sub>1</sub> density error and shock position error (10<sup>−3</sup>) on both meshes. For a discontinuous solution the L<sub>1</sub> error falls roughly like Δx<sup>1/2</sup> to Δx.</caption>
+          <thead><tr><th scope="col">Combination</th><th scope="col">200 cells</th><th scope="col">400 cells</th><th scope="col">Ratio</th><th scope="col">Shock, 200</th><th scope="col">Shock, 400</th></tr></thead>
+          <tbody><tr><th scope="row">FVM first order, Rusanov</th><td>1.83 × 10<sup>−2</sup></td><td>1.20 × 10<sup>−2</sup></td><td>1.53</td><td>+4.19</td><td>+2.20</td></tr><tr><th scope="row">FVM first order, HLLC</th><td>1.33 × 10<sup>−2</sup></td><td>8.44 × 10<sup>−3</sup></td><td>1.58</td><td>+4.72</td><td>+2.45</td></tr><tr><th scope="row">FVM MUSCL + minmod, HLLC</th><td>4.56 × 10<sup>−3</sup></td><td>2.55 × 10<sup>−3</sup></td><td>1.79</td><td>+1.73</td><td>+0.94</td></tr><tr><th scope="row">FVM MUSCL + superbee, HLLC</th><td>2.52 × 10<sup>−3</sup></td><td>1.35 × 10<sup>−3</sup></td><td>1.87</td><td>+0.51</td><td>+0.45</td></tr><tr><th scope="row">FVM WENO5, HLLC</th><td>2.63 × 10<sup>−3</sup></td><td>1.40 × 10<sup>−3</sup></td><td>1.88</td><td>+0.78</td><td>+0.42</td></tr><tr><th scope="row">DG P2 + minmod + invariant domain, HLLC</th><td>4.54 × 10<sup>−3</sup></td><td>2.54 × 10<sup>−3</sup></td><td>1.79</td><td>+1.66</td><td>+0.90</td></tr><tr><th scope="row">CG P1 + graph viscosity, HLLC</th><td>1.84 × 10<sup>−2</sup></td><td>1.20 × 10<sup>−2</sup></td><td>1.53</td><td>+4.01</td><td>+2.12</td></tr><tr><th scope="row">FDM WENO5 flux splitting, Lax-Friedrichs splitting</th><td>3.46 × 10<sup>−3</sup></td><td>1.80 × 10<sup>−3</sup></td><td>1.92</td><td>+1.05</td><td>+0.57</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section id="refused">
+      <h2>What the library refused, and what failed</h2>
+      <p>A refused combination is stopped by validation or binding before the first step, with a message that names the missing piece. A failed one ran and produced negative density or pressure. Unlimited high-order schemes and central stencils do this at a shock, as they should. Of the 202 runs, 142 ran, 22 were refused and 38 failed.</p>
+      <div class="table-wrap">
+        <table><thead><tr><th scope="col">Status</th><th scope="col">Message</th><th scope="col">Runs</th></tr></thead><tbody><tr><td>failed</td><td>Euler state has non-positive density</td><td>7: DG P1, unlimited, FVM MUSCL, unlimited</td></tr><tr><td>failed</td><td>Euler state has non-positive pressure</td><td>31: Adams-Moulton 4, BDF4, BDF5, BDF6, CG P1 Galerkin, CG P2 Galerkin, DG P1, unlimited, DG P2, unlimited, DG P3, unlimited, FDM central, 2nd order, FDM polynomial, 4th order, fixed point</td></tr><tr><td>rejected</td><td>GMRES reached the maximum iteration count.</td><td>2: JFNK</td></tr><tr><td>rejected</td><td>JFNK requires a selected linear solver with solve_matrix_free; no substitute Krylov solver is chosen</td><td>1: JFNK</td></tr><tr><td>rejected</td><td>array evolution requires an explicitly selected time integrator</td><td>6: adaptive BDF, adaptive RK45</td></tr><tr><td>rejected</td><td>leapfrog requires a constant time_step; variable-step coefficients are not implemented</td><td>3: leapfrog</td></tr><tr><td>rejected</td><td>partitioned coupling did not converge within maximum_iterations</td><td>1: fixed point + Aitken</td></tr><tr><td>rejected</td><td>reconstruction requires an injected bind port</td><td>4: FVM QUICK</td></tr><tr><td>rejected</td><td>the selected assembled preconditioner requires an owned sparse stage derivative; select one explicitly</td><td>1: JFNK</td></tr><tr><td>rejected</td><td>this graph-viscosity provider requires positive continuous P1 basis functions</td><td>4: CG P2 + graph viscosity</td></tr></tbody></table>
+      </div>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. On a loaded Apple Silicon laptop the 202 runs took 16 minutes in total, most of it in limited discontinuous Galerkin and implicit stepping. Lower <code>cells</code> for a quick look. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/sod-shock-tube-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/sod-shock-tube-method-matrix.py" download>Download as Python script</a></div>
+      <p>The earlier <a href="/tutorials/method-comparison/">Poisson comparison on a 3D cube</a> shows the same idea for an elliptic problem.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_sod_shock_tube">Plans &amp; trial</a>
+<a href="/about/">About the Developer</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
