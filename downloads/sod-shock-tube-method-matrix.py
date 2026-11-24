@@ -21,8 +21,8 @@ solution; combinations the library refuses are reported as such.
 # \qquad p=(\gamma-1)\Big(E-\tfrac12\rho u^2\Big)$$
 #
 # are declared once. Everything numerical is an argument of `Numerics`: the discretization family
-# (finite volumes, finite differences, discontinuous and continuous finite elements), the
-# reconstruction and its limiter, the Riemann solver, the time integrator and, for implicit steps,
+# (finite volumes, finite differences, discontinuous and continuous finite elements, and smoothed
+# particle hydrodynamics), the reconstruction and its limiter, the Riemann solver, the time integrator and, for implicit steps,
 # the nonlinear and the linear solver.
 #
 # **Reference.** The exact solution of the Riemann problem (Toro, *Riemann Solvers and Numerical
@@ -41,6 +41,7 @@ import numpy as np
 from onesim.cad.d1 import Line
 from onesim.meshing import StructuredLineMesher
 from onesim.numerics import Numerics
+from onesim.numerics.discretization import NodalInterpolation
 from onesim.numerics.fdm import (
     BoundaryFluxDifference,
     CentralDifference,
@@ -49,10 +50,17 @@ from onesim.numerics.fdm import (
     JSTDissipation,
     GlobalLaxFriedrichsSplit,
     PolynomialDifference,
+    SummationByPartsDifference,
     WENO5Flux,
     WENOFluxDifference,
 )
 from onesim.numerics.fem import (
+    CIP,
+    GLS,
+    SUPG,
+    DGJumpPenalty,
+    InterpolatedFluxDivergence,
+    VolumeCIP,
     DGPolynomialLimiter,
     DiscontinuousLagrange,
     FiniteElement,
@@ -65,6 +73,10 @@ from onesim.numerics.fvm import (
     MUSCL,
     QUICK,
     BarthJespersenLimiter,
+    CentralWeightedENO,
+    JiangShuWeights,
+    SmoothnessDifference,
+    WenoZWeights,
     ConvexInvariantDomain,
     Eno2Reconstructor,
     Eno3Reconstructor,
@@ -78,7 +90,14 @@ from onesim.numerics.fvm import (
     Weno3Reconstructor,
     Weno5Reconstructor,
 )
-from onesim.numerics.linear import GMRES, ILU, FlexibleGMRES, RightGMRES, SparseDirect
+from onesim.numerics.linear import (
+    GMRES,
+    ILU,
+    AutomaticLinearSolver,
+    FlexibleGMRES,
+    RightGMRES,
+    SparseDirect,
+)
 from onesim.numerics.nonlinear import (
     JFNK,
     DampedNewton,
@@ -98,6 +117,7 @@ from onesim.numerics.time import (
     TimeStepLimits,
 )
 from onesim.physics.hydrodynamics import (
+    HydrodynamicPublicApi,
     CompressibleEuler,
     EulerInvariantDomain,
     EulerPressureWave,
@@ -185,12 +205,15 @@ print(
 
 # ## The method catalogue
 #
-# Four Riemann solvers, seven slope limiters plus the unlimited slope, five higher-order
-# reconstructions, discontinuous elements of degree 0 to 3 with and without limiting, continuous
-# elements with and without graph viscosity, and finite-difference stencils. Each is an object; the
-# matrix is built from them with plain dictionaries.
+# Four Riemann solvers; seven slope limiters plus the unlimited slope; higher-order reconstructions
+# including WENO3, WENO5, their WENO-Z variants and central WENO (CWENO3, CWENO3-Z); finite elements
+# (FEM) with discontinuous elements of degree 0 to 4, with and without limiting or a jump penalty,
+# and continuous elements of degree 1 to 3 with graph viscosity, continuous interior penalty, volume
+# interior penalty, SUPG, GLS or no stabilization; and finite-difference stencils including
+# summation-by-parts operators of order 2 and 4. Each is an object; the matrix is built from them
+# with plain dictionaries.
 #
-# Limited discontinuous Galerkin runs with all four Riemann solvers for degrees 1 to 3; the limiter
+# Limited discontinuous Galerkin runs with all four Riemann solvers for degrees 1 to 4; the limiter
 # is minmod on the slopes plus the Euler invariant domain (positive density and pressure at every
 # node).
 
@@ -211,6 +234,16 @@ reconstructions = {
     "ENO3": Eno3Reconstructor(),
     "WENO3": Weno3Reconstructor(),
     "WENO5": Weno5Reconstructor(),
+    "WENO3-Z": Weno3Reconstructor(
+        weights=WenoZWeights(global_indicator=SmoothnessDifference())
+    ),
+    "WENO5-Z": Weno5Reconstructor(
+        weights=WenoZWeights(global_indicator=SmoothnessDifference())
+    ),
+    "CWENO3": CentralWeightedENO(weights=JiangShuWeights()),
+    "CWENO3-Z": CentralWeightedENO(
+        weights=WenoZWeights(global_indicator=SmoothnessDifference(first=1, last=2))
+    ),
     "QUICK": QUICK(),
 }
 dg_limiter = DGPolynomialLimiter(
@@ -239,23 +272,50 @@ for flux_name, flux in riemann.items():
         spatial[(f"FVM {reconstruction_name}", flux_name)] = FiniteVolume(
             convection=flux, reconstruction=reconstruction
         )
-    spatial[("DG P0", flux_name)] = FiniteElement(
+    spatial[("FEM DG P0", flux_name)] = FiniteElement(
         element=DiscontinuousLagrange(0), convection=flux
     )
-    for degree in (1, 2, 3):
-        spatial[(f"DG P{degree}, unlimited", flux_name)] = FiniteElement(
+    for degree in (1, 2, 3, 4):
+        spatial[(f"FEM DG P{degree}, unlimited", flux_name)] = FiniteElement(
             element=DiscontinuousLagrange(degree), convection=flux
         )
-        spatial[(f"DG P{degree} + minmod + invariant domain", flux_name)] = FiniteElement(
+        spatial[(f"FEM DG P{degree} + minmod + invariant domain", flux_name)] = FiniteElement(
             element=DiscontinuousLagrange(degree), convection=flux, limiter=dg_limiter
         )
-    for degree in (1, 2):
-        spatial[(f"CG P{degree} + graph viscosity", flux_name)] = FiniteElement(
+    for degree in (1, 2, 3):
+        spatial[(f"FEM CG P{degree} + graph viscosity", flux_name)] = FiniteElement(
             element=Lagrange(degree), convection=flux, stabilization=graph_viscosity
         )
-        spatial[(f"CG P{degree} Galerkin", flux_name)] = FiniteElement(
+        spatial[(f"FEM CG P{degree} Galerkin", flux_name)] = FiniteElement(
             element=Lagrange(degree), convection=flux
         )
+    for degree, penalty in ((1, 0.1), (2, 0.01)):
+        spatial[(f"FEM CG P{degree} + continuous interior penalty", flux_name)] = (
+            FiniteElement(
+                element=Lagrange(degree),
+                convection=flux,
+                stabilization=CIP(penalty=penalty),
+                initialization=NodalInterpolation(),
+            )
+        )
+    spatial[("FEM CG P1 + volume interior penalty", flux_name)] = FiniteElement(
+        element=Lagrange(1),
+        convection=flux,
+        stabilization=VolumeCIP(diffusivity=2e-3),
+        initialization=NodalInterpolation(),
+    )
+    for name, kind in (("SUPG", SUPG), ("GLS", GLS)):
+        spatial[(f"FEM CG P1 + {name}", flux_name)] = FiniteElement(
+            element=Lagrange(1),
+            convection=flux,
+            stabilization=kind(tau=0.5 / cells, strong_residual=InterpolatedFluxDivergence()),
+            initialization=NodalInterpolation(),
+        )
+    spatial[("FEM DG P1 + jump penalty", flux_name)] = FiniteElement(
+        element=DiscontinuousLagrange(1),
+        convection=flux,
+        stabilization=DGJumpPenalty(coefficient=1.0),
+    )
     spatial[("FDM central, 2nd order", flux_name)] = FiniteDifference(
         gradient=BoundaryFluxDifference(derivative=CentralDifference(), boundary_flux=flux)
     )
@@ -264,11 +324,19 @@ for flux_name, flux in riemann.items():
             derivative=PolynomialDifference(accuracy_order=4), boundary_flux=flux
         )
     )
+    for order in (2, 4):
+        spatial[(f"FDM summation by parts, order {order}", flux_name)] = FiniteDifference(
+            gradient=BoundaryFluxDifference(
+                derivative=SummationByPartsDifference(accuracy_order=order),
+                boundary_flux=flux,
+            )
+        )
 # ## Schemes that must fail at a shock, and their stabilized counterparts
 #
 # Some declared schemes are linear and of higher than first order: MUSCL and QUICK without a
-# limiter, discontinuous Galerkin without limiting, continuous Galerkin without stabilization and
-# central finite differences. By Godunov's theorem every such scheme oscillates at a discontinuity;
+# limiter, discontinuous Galerkin without limiting or with only a jump penalty, continuous Galerkin
+# without stabilization or with a linear SUPG/GLS term, and central or summation-by-parts finite
+# differences. By Godunov's theorem every such scheme oscillates at a discontinuity;
 # on Sod's problem the oscillation drives density or pressure negative. The library reports that
 # honestly instead of clipping the state. For each of these schemes the matrix also runs the
 # stabilized counterpart, which adds exactly one ingredient; its result is shown behind a grey
@@ -289,13 +357,13 @@ stabilized_space = {
         ),
     ),
     **{
-        f"DG P{degree}, unlimited": (
-            f"DG P{degree} + Euler invariant-domain scaling (no slope limiter)",
+        f"FEM DG P{degree}, unlimited": (
+            f"FEM DG P{degree} + Euler invariant-domain scaling (no slope limiter)",
             lambda flux, degree=degree: FiniteElement(
                 element=DiscontinuousLagrange(degree), convection=flux, limiter=invariant_dg
             ),
         )
-        for degree in (1, 2, 3)
+        for degree in (1, 2, 3, 4)
     },
     "FDM central, 2nd order": (
         "central differences + Jameson-Schmidt-Turkel artificial dissipation",
@@ -320,14 +388,44 @@ stabilized_space = {
         ),
     ),
     **{
-        f"CG P{degree} Galerkin": (
-            f"CG P{degree} + invariant-domain graph viscosity"
+        f"FEM CG P1 + {name}": (
+            f"CG P1 + invariant-domain graph viscosity instead of {name}",
+            lambda flux: FiniteElement(
+                element=Lagrange(1), convection=flux, stabilization=graph_viscosity
+            ),
+        )
+        for name in ("SUPG", "GLS")
+    },
+    "FEM DG P1 + jump penalty": (
+        "DG P1 + Euler invariant-domain scaling instead of the jump penalty",
+        lambda flux: FiniteElement(
+            element=DiscontinuousLagrange(1), convection=flux, limiter=invariant_dg
+        ),
+    ),
+    **{
+        f"FDM summation by parts, order {order}": (
+            f"SBP order {order} with SAT boundary flux + Jameson-Schmidt-Turkel artificial dissipation",
+            lambda flux, order=order: FiniteDifference(
+                gradient=DissipativeFluxDifference(
+                    flux_difference=BoundaryFluxDifference(
+                        derivative=SummationByPartsDifference(accuracy_order=order),
+                        boundary_flux=flux,
+                    ),
+                    dissipation=JSTDissipation(),
+                )
+            ),
+        )
+        for order in (2, 4)
+    },
+    **{
+        f"FEM CG P{degree} Galerkin": (
+            f"FEM CG P{degree} + invariant-domain graph viscosity"
             + (" (positive Bernstein basis)" if degree > 1 else ""),
             lambda flux, degree=degree: FiniteElement(
                 element=Lagrange(degree), convection=flux, stabilization=graph_viscosity
             ),
         )
-        for degree in (1, 2)
+        for degree in (1, 2, 3)
     },
 }
 
@@ -337,7 +435,8 @@ spatial[("FDM WENO5 flux splitting", "Lax-Friedrichs splitting")] = FiniteDiffer
     )
 )
 
-# Time integrators: explicit one-step and multistep methods, implicit Runge-Kutta, Adams-Moulton
+# Time integrators: explicit one-step methods (forward Euler, Heun, explicit midpoint, SSP-RK2,
+# SSP-RK3, RK4 and others) and multistep methods, implicit Runge-Kutta, Adams-Moulton
 # and BDF methods, Rosenbrock methods and the adaptive integrators. Implicit stages take a Newton
 # solver with a coloured finite-difference Jacobian and a sparse direct solve; the linearly implicit
 # Rosenbrock stages take the sparse direct solve alone. The nonlinear and linear solvers are then
@@ -346,6 +445,9 @@ spatial[("FDM WENO5 flux splitting", "Lax-Friedrichs splitting")] = FiniteDiffer
 integrators = {
     "forward Euler": ForwardEuler(),
     "SSP-RK2": TimeMethod("ssprk2"),
+    "SSP-RK3": TimeMethod("ssprk3"),
+    "Heun": TimeMethod("heun"),
+    "explicit midpoint": TimeMethod("explicit_midpoint"),
     "classical RK4": ClassicalRungeKutta4(),
     "Adams-Bashforth 2": TimeMethod("adams_bashforth2"),
     "ABM2 predictor-corrector": TimeMethod("predictor_corrector_abam2"),
@@ -396,6 +498,7 @@ linear_solvers = {
     "GMRES + ILU": GMRES(preconditioner=ILU()),
     "right GMRES": RightGMRES(),
     "flexible GMRES": FlexibleGMRES(),
+    "automatic": AutomaticLinearSolver(),
 }
 nonlinear_solvers = {
     **{
@@ -413,7 +516,6 @@ nonlinear_solvers = {
     **{
         ("JFNK", linear_name): JFNK(linear_solver=linear)
         for linear_name, linear in linear_solvers.items()
-        if linear_name != "flexible GMRES"
     },
     ("fixed point", "none"): FixedPoint(),
     ("fixed point + Aitken", "none"): FixedPoint(acceleration="aitken"),
@@ -430,9 +532,9 @@ nonlinear_solvers = {
 #    first-order and the MUSCL-minmod volumes with $\Delta t=2\cdot10^{-3}$, a CFL number of about
 #    1.4 that no explicit method could take.
 # 3. **Nonlinear × linear solver** — backward Euler on MUSCL-minmod-HLLC with
-#    $\Delta t=2\cdot10^{-3}$. One pair is left out for cost: Jacobian-free Newton-Krylov with
-#    flexible GMRES runs, but took 800 s already on 40 cells, about 40 times as long as with GMRES.
+#    $\Delta t=2\cdot10^{-3}$.
 #
+# A fourth cut, **SPH × time integrator**, follows below: the same problem as a particle method.
 # A few representative combinations are repeated on 200 cells for the mesh check.
 
 time_spatial = {
@@ -538,8 +640,8 @@ representative = [
     ("FVM MUSCL + superbee", "HLLC"),
     ("FVM WENO5", "HLLC"),
     ("FDM WENO5 flux splitting", "Lax-Friedrichs splitting"),
-    ("DG P2 + minmod + invariant domain", "HLLC"),
-    ("CG P1 + graph viscosity", "HLLC"),
+    ("FEM DG P2 + minmod + invariant domain", "HLLC"),
+    ("FEM CG P1 + graph viscosity", "HLLC"),
 ]
 runs += [
     {**run, "matrix": "mesh check", "cells": coarse_cells}
@@ -761,7 +863,10 @@ time_grid = {(r["row"], r["column"]): r for r in timing}
 fig = plots.figure(1, 2, size=(17, 11))
 time_hatched = [[(time_key, row, c) in hatch for c in time_columns] for row in time_rows]
 time_notes = (
-    [legend_head]
+    [
+        "Hatched: the declared integrator is unstable at this step (not A-stable, or undamped on "
+        "a dissipative operator); colour and value show its stabilized counterpart:"
+    ]
     + [
         f"  {row}: same method at Δt = {stable_step[row]:.1e} instead of 2·10⁻³."
         for row in stable_step
@@ -898,6 +1003,160 @@ plots.matrix(
 )
 plots.show()
 
+# ## Particles: smoothed-particle hydrodynamics × time integrator × artificial viscosity
+#
+# The same gas as moving particles instead of cells: 800 equally spaced particles in the periodic
+# box $[-0.5, 1.5)$, i.e. 400 particles in the graded window $[0, 1]$, the same resolution as the
+# 400 cells. Each particle carries the mass of its cell; the smoothing length is 2.5 spacings and
+# the shock is captured by Monaghan's artificial viscosity with the coefficients $\alpha, \beta$.
+# Every time integrator of the grid matrix is passed to the particle solver unchanged. The error
+# is the mean absolute density deviation from the exact solution at the particles in $[0, 1]$.
+#
+# Leapfrog has no damping; with any artificial viscosity it is unstable at every step (the
+# library refuses it). Its stabilized counterpart is again the Robert-Asselin-Williams filtered
+# leapfrog.
+
+particles, box = 800, (-0.5, 1.5)
+spacing = (box[1] - box[0]) / particles
+start = box[0] + (np.arange(particles) + 0.5) * spacing
+start_density = np.where(start < 0.5, 1.0, 0.125)
+start_pressure = np.where(start < 0.5, 1.0, 0.1)
+viscosities = {
+    "Monaghan α = 1, β = 2": (1.0, 2.0),
+    "Monaghan α = 0.5, β = 1": (0.5, 1.0),
+    "no artificial viscosity": (0.0, 0.0),
+}
+sph_runs = [
+    dict(matrix="SPH", row=name, column=column, time=integrator, viscosity=coefficients)
+    for name, integrator in integrators.items()
+    for column, coefficients in viscosities.items()
+]
+sph_runs += [
+    {
+        **run,
+        "variant": "stabilized",
+        "time": TimeMethod("leapfrog_raw"),
+        "note_stabilized": "leapfrog + Robert-Asselin-Williams filter (ν = 0.2, α = 0.53)",
+    }
+    for run in list(sph_runs)
+    if run["row"] == "leapfrog" and run["viscosity"] != (0.0, 0.0)
+]
+for run in sph_runs:
+    started = time.perf_counter()
+    run.update(status="rejected", note="", errors=(np.nan,) * 3, steps=0)
+    try:
+        result = HydrodynamicPublicApi.create_provider(
+            "sph_hydrodynamics",
+            positions=start,
+            masses=start_density * spacing,
+            velocities=np.zeros(particles),
+            specific_internal_energy=start_pressure / ((gamma - 1) * start_density),
+            smoothing_length=2.5 * spacing,
+            gamma=gamma,
+            viscosity_alpha=run["viscosity"][0],
+            viscosity_beta=run["viscosity"][1],
+            periodic_bounds=(box,),
+            final_time=end_time,
+            time_step=1.0e-3,
+            cfl=0.25,
+            time_integrator=run["time"],
+        ).run()
+        window = (result.positions[:, 0] >= 0.0) & (result.positions[:, 0] <= 1.0)
+        reference = np.array(
+            [
+                [
+                    getattr(
+                        exact_euler_pressure_trace(
+                            *waves, similarity=(x - 0.5) / end_time
+                        ).state,
+                        name,
+                    )
+                    for x in result.positions[window, 0]
+                ]
+                for name in ("density", "velocity", "pressure")
+            ]
+        )
+        values = np.array(
+            (
+                result.density[window],
+                result.velocities[window, 0],
+                result.pressure[window],
+            )
+        )
+        run["errors"] = tuple(np.abs(values - reference).mean(axis=1))
+        run["status"] = "ran" if np.isfinite(values).all() else "failed"
+    except Exception as error:
+        message = str(error).splitlines()[0]
+        run["status"] = "failed" if "no stable region" in message else "rejected"
+        run["note"] = message.split(": ", 1)[-1] if ": " in message else message
+    run["seconds"] = time.perf_counter() - started
+    print(
+        f"SPH {run['row'][:28]:28s} {run['column'][:26]:26s} {run.get('variant') or '':10s} "
+        f"{run['status']:8s} {run['seconds']:6.1f} s  "
+        + (f"L1 rho {run['errors'][0]:.2e}" if run["status"] == "ran" else run["note"][:90])
+    )
+
+sph_main = {(r["row"], r["column"]): r for r in sph_runs if r.get("variant") is None}
+sph_substitute = {
+    (r["row"], r["column"]): r for r in sph_runs if r.get("variant") == "stabilized"
+}
+sph_hatch = {
+    key
+    for key, r in sph_main.items()
+    if r["status"] != "ran" and sph_substitute.get(key, {}).get("status") == "ran"
+}
+sph_cell = {key: sph_substitute[key] if key in sph_hatch else r for key, r in sph_main.items()}
+sph_rows, sph_columns = list(integrators), list(viscosities)
+fig = plots.figure(1, 2, size=(17, 12))
+for panel, measure, label, title in (
+    (fig[0], "errors", "L1 density error", "SPH: L1 density error, 400 particles in [0, 1]"),
+    (fig[1], "seconds", "wall time [s]", "SPH: wall time"),
+):
+    plots.matrix(
+        [
+            [
+                (
+                    (sph_cell[(row, c)]["errors"][0] if measure == "errors" else sph_cell[(row, c)]["seconds"])
+                    if sph_cell[(row, c)]["status"] == "ran"
+                    else np.nan
+                )
+                for c in sph_columns
+            ]
+            for row in sph_rows
+        ],
+        sph_rows,
+        sph_columns,
+        scale="log",
+        label=label,
+        text=[
+            [
+                (
+                    (
+                        f"{sph_cell[(row, c)]['errors'][0]:.2e}"
+                        if measure == "errors"
+                        else f"{sph_cell[(row, c)]['seconds']:.1f} s"
+                    )
+                    if sph_cell[(row, c)]["status"] == "ran"
+                    else sph_cell[(row, c)]["status"]
+                )
+                for c in sph_columns
+            ]
+            for row in sph_rows
+        ],
+        hatched=[[(row, c) in sph_hatch for c in sph_columns] for row in sph_rows],
+        notes=(
+            [
+                "Hatched: leapfrog is unstable under any artificial viscosity; colour and value show "
+                "leapfrog + Robert-Asselin-Williams filter (ν = 0.2, α = 0.53)."
+            ]
+            if sph_hatch and measure == "errors"
+            else None
+        ),
+        title=title,
+        ax=panel,
+    )
+plots.show()
+
 # ## Mesh check: 400 against 200 cells
 #
 # The representative combinations on half as many cells. For a discontinuous solution the $L_1$
@@ -924,18 +1183,30 @@ for key, r in coarse.items():
 # started and produced a non-physical state.
 
 for status in ("rejected", "failed"):
-    selected = [r for r in runs if r["status"] == status]
+    selected = [r for r in runs + sph_runs if r["status"] == status]
     print(f"\n{len(selected)} {status}:")
     for r in selected:
         print(f"  {r['matrix'][:12]:12s} {r['row'][:34]:34s} {r['column'][:24]:24s} {r['note'][:100]}")
 print(
     "\nsummary: "
     + ", ".join(
-        f"{sum(r['status'] == s for r in runs)} {s}" for s in ("ran", "rejected", "failed")
+        f"{sum(r['status'] == s for r in runs + sph_runs)} {s}"
+        for s in ("ran", "rejected", "failed")
     )
-    + f" of {len(runs)} runs, {sum(r['seconds'] for r in runs) / 60:.0f} min in total"
+    + f" of {len(runs) + len(sph_runs)} runs, "
+    + f"{sum(r['seconds'] for r in runs + sph_runs) / 60:.0f} min in total"
 )
 
+# ## Methods that do not apply to Sod's problem
+#
+# A few methods in the library are not in the matrix because the Euler system lacks what they are
+# built for: conjugate gradients and algebraic multigrid need a symmetric positive definite operator;
+# Runge-Kutta-Chebyshev and -Legendre super-steps are for parabolic operators; staggered Verlet needs
+# a second-order system; IMEX splits need a stiff and a non-stiff part; local time stepping is for
+# steady states; hydrostatic reconstruction is for shallow water and Scharfetter-Gummel fluxes are
+# for drift-diffusion. Scalar convection fluxes (linear or monotone upwind, central) are refused for
+# the Euler system with a message that names a Riemann solver instead.
+#
 # ## Going further
 #
 # Swap the Riemann problem for Lax's or the 123 problem by changing the two initial states; the
