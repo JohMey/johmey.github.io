@@ -40,8 +40,37 @@
   <p class="lead">One Euler model, 400 cells, 256 runs. Every discretization family, reconstruction, limiter, Riemann solver, time integrator and solver pair OneSimulation offers for this problem, each graded against the exact Riemann solution. Every combination produces a solution: 161 run as declared, and the 46 that must fail mathematically (high-order linear spatial schemes at a shock by Godunov's theorem, time integrators and the fixed-point iteration beyond their stability limit) are shown with their stabilized counterpart. None is refused. The density error spans 1.35 × 10<sup>−3</sup> to 1.20 × 10<sup>−2</sup>. Nothing about the physics changed between runs, only one argument.</p>
 </header>
 <div class="shell article-layout">
-  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#problem">Problem</a><a href="#model">Model</a><a href="#matrix">Space × flux</a><a href="#profiles">Profiles</a><a href="#time">Time integrators</a><a href="#solvers">Solvers</a><a href="#mesh">Mesh check</a><a href="#shock-failures">Stabilized</a><a href="#run">Reproduce</a></nav></aside>
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#problem">Problem</a><a href="#model">Model</a><a href="#matrix">Space × flux</a><a href="#profiles">Profiles</a><a href="#time">Time integrators</a><a href="#solvers">Solvers</a><a href="#mesh">Mesh check</a><a href="#shock-failures">Stabilized</a><a href="#run">Reproduce</a></nav></aside>
   <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The three test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous matrix">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 3</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next matrix">&#8594;</button>
+        </div>
+        <ul class="matrix-slides">
+          <li class="matrix-slide is-active"><img src="/assets/sod-matrix.png" alt="Colour table of the L1 density error for each spatial scheme and Riemann solver; hatched cells show stabilized counterparts"><p><strong>1 · Space × Riemann solver.</strong> L<sub>1</sub> density error at <var>t</var> = 0.2 on 400 cells, SSP-RK2 at the stable step.</p></li>
+          <li class="matrix-slide" aria-hidden="true"><img src="/assets/sod-time.png" alt="Two colour tables: L1 density error and wall time for each time integrator on first-order, MUSCL and WENO5 finite volumes"><p><strong>2 · Time integrator × space.</strong> Left: L<sub>1</sub> density error. Right: wall time and accepted steps.</p></li>
+          <li class="matrix-slide" aria-hidden="true"><img src="/assets/sod-solvers.png" alt="Colour table of wall time and density error for each nonlinear and linear solver pair"><p><strong>3 · Nonlinear × linear solver.</strong> Backward Euler; wall time and L<sub>1</sub> density error per pair.</p></li>
+        </ul>
+        <figcaption>Grey hatching marks a declared scheme that fails at the shock; the colour behind it is its stabilized counterpart, named in the legend below each matrix.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
     <section id="problem">
       <h2>A shock, a contact and a rarefaction</h2>
       <p>A tube of ideal gas (γ = 1.4) is split at <var>x</var> = 0.5. The left half holds (ρ, u, p) = (1, 0, 1), the right half (0.125, 0, 0.1). When the diaphragm goes, a rarefaction runs left and a contact and a shock run right. At <var>t</var> = 0.2 the shock sits at <var>x</var> = 0.8504.</p>
@@ -90,33 +119,7 @@ result = Simulation(problem=sod, mesh=mesh, numerics=numerics).run(
     <section id="matrix">
       <h2>Every spatial scheme with every Riemann solver</h2>
       <p>Finite volumes with first-order, MUSCL (seven limiters and the unlimited slope), ENO and WENO reconstructions; discontinuous Galerkin of degree 0 to 3; continuous elements with and without graph viscosity; finite differences. Each is crossed with the Rusanov, HLL, HLLE and HLLC solvers and advanced with SSP-RK2 at the stable step.</p>
-      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The three test matrices">
-        <ul class="matrix-slides">
-          <li class="matrix-slide is-active"><img src="/assets/sod-matrix.png" alt="Colour table of the L1 density error for each spatial scheme and Riemann solver; hatched cells show stabilized counterparts"><p><strong>1 · Space × Riemann solver.</strong> L<sub>1</sub> density error at <var>t</var> = 0.2 on 400 cells, SSP-RK2 at the stable step.</p></li>
-          <li class="matrix-slide" aria-hidden="true"><img src="/assets/sod-time.png" alt="Two colour tables: L1 density error and wall time for each time integrator on first-order, MUSCL and WENO5 finite volumes"><p><strong>2 · Time integrator × space.</strong> Left: L<sub>1</sub> density error. Right: wall time and accepted steps.</p></li>
-          <li class="matrix-slide" aria-hidden="true"><img src="/assets/sod-solvers.png" alt="Colour table of wall time and density error for each nonlinear and linear solver pair"><p><strong>3 · Nonlinear × linear solver.</strong> Backward Euler; wall time and L<sub>1</sub> density error per pair.</p></li>
-        </ul>
-        <div class="hero-controls">
-          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous matrix">&#8592;</button>
-          <span class="hero-count" aria-live="polite">1 / 3</span>
-          <button type="button" class="hero-arrow" data-step="1" aria-label="Next matrix">&#8594;</button>
-        </div>
-        <figcaption>Grey hatching marks a declared scheme that fails at the shock; the colour behind it is its stabilized counterpart, named in the legend below each matrix.</figcaption>
-        <script>
-        (function () {
-          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
-          var count = root.querySelector(".hero-count"), index = 0;
-          root.querySelectorAll(".hero-arrow").forEach(function (button) {
-            button.addEventListener("click", function () {
-              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
-              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
-              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
-              count.textContent = (index + 1) + " / " + slides.length;
-            });
-          });
-        })();
-        </script>
-      </figure>
+
       <div class="table-wrap">
         <table><caption>The twelve most accurate combinations. Shock error in units of 10<sup>−3</sup>; one cell is 2.5 × 10<sup>−3</sup> wide.</caption>
           <thead><tr><th scope="col">Spatial scheme</th><th scope="col">Riemann solver</th><th scope="col">L<sub>1</sub> ρ</th><th scope="col">L<sub>1</sub> u</th><th scope="col">L<sub>1</sub> p</th><th scope="col">Shock</th><th scope="col">Time</th></tr></thead>
@@ -131,12 +134,12 @@ result = Simulation(problem=sod, mesh=mesh, numerics=numerics).run(
     <section id="time">
       <h2>Every time integrator</h2>
       <p>21 explicit runs at the stable step and 31 implicit runs at Δt = 2 × 10<sup>−3</sup>, a CFL number of about 1.4 that no explicit method could take. All with HLLC fluxes.</p>
-      <p>See matrix 2 in the carousel above.</p>
+      <p>See matrix 2 in the carousel at the top.</p>
     </section>
     <section id="solvers">
       <h2>Every nonlinear and linear solver</h2>
       <p>Backward Euler on MUSCL-minmod-HLLC, Δt = 2 × 10<sup>−3</sup>. 24 solver pairs converged to the same discrete solution. Their density errors differ by 2e-05 % at most. Wall time ranges from 6 s (quasi-Newton, sparse LU) to 18 s (quasi-Newton, GMRES + ILU).</p>
-      <p>See matrix 3 in the carousel above.</p>
+      <p>See matrix 3 in the carousel at the top.</p>
     </section>
     <section id="mesh">
       <h2>400 against 200 cells</h2>
