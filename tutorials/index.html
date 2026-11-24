@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Getting Started · OneSimulation</title>
-<meta name="description" content="Install OneSimulation, run and verify your first calculation, then build a spatial simulation.">
+<meta name="description" content="Connect Codex or Claude Code to the included OneSimulation MCP server, reproduce a heat study and check its results. Or start with a Python calculation.">
 <meta name="theme-color" content="#f5f2e8">
 <link rel="canonical" href="https://onesimulation.onrender.com/tutorials/">
 <link rel="stylesheet" href="/assets/site.css">
 <meta property="og:site_name" content="OneSimulation">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Getting Started · OneSimulation">
-<meta property="og:description" content="Install OneSimulation, run and verify your first calculation, then build a spatial simulation.">
+<meta property="og:description" content="Connect Codex or Claude Code to the included OneSimulation MCP server, reproduce a heat study and check its results. Or start with a Python calculation.">
 <meta property="og:url" content="https://onesimulation.onrender.com/tutorials/">
 <meta property="og:image" content="https://onesimulation.onrender.com/assets/step-result.png">
 <meta property="og:image:alt" content="Getting Started">
@@ -36,7 +36,7 @@
 <main id="content">
 <header class="article-header shell"><h1>Getting Started</h1>
 <p class="lead">Install OneSimulation, build a complete physical model, inspect its output and check whether the result is accurate enough for your question.</p></header>
-<div class="shell article-layout"><aside class="article-nav"><nav aria-label="Getting started"><a href="#install">Install and check Python</a><a href="#question">Choose a first physical question</a><a href="#model">Build the model</a><a href="#run">Run the complete example</a><a href="#verify">Verify and change the result</a><a href="#spatial">Move to spatial fields</a><a href="#diagnose">Diagnose a calculation</a><a href="#continue">Continue with your subject</a></nav></aside>
+<div class="shell article-layout"><aside class="article-nav"><nav aria-label="Getting started"><a href="#install">Install and check Python</a><a href="#mcp">Connect Codex or Claude Code</a><a href="#question">Choose a first physical question</a><a href="#model">Build the model</a><a href="#run">Run the complete example</a><a href="#verify">Verify and change the result</a><a href="#spatial">Move to spatial fields</a><a href="#diagnose">Diagnose a calculation</a><a href="#continue">Continue with your subject</a></nav></aside>
 <article class="prose reference">
 <section><h2 id="install">Install and check the environment that will run your code</h2>
 <p>Use the <a href="/tutorials/install/">platform-specific installation guide</a> to download the Runtime wheel, create the supported Python environment, install the wheel and activate your licence. The guide gives the current commands for macOS, Windows and Ubuntu. In a terminal belonging to that environment, verify which Python is running and where it imports the package.</p>
@@ -44,6 +44,16 @@
 <p>The first line should identify the Python executable in your selected environment. The second should identify the installed OneSimulation package. If either path belongs to another environment, select the intended interpreter before continuing. For Jupyter, follow the <a href="/tutorials/notebook/">kernel setup</a> and run the same imports inside a notebook cell.</p>
 <details class="study-aside"><summary>Remember · A notebook kernel is a Python process</summary><p>Installing a package from one terminal does not automatically change the process executing an open notebook. Inspect <code>sys.executable</code> in the notebook. After installation or an update, restart that kernel and run the cells from the beginning. This avoids combining variables created by different versions of the model.</p></details>
 <p>The example below uses NumPy and Matplotlib alongside OneSimulation. Save the supplied Python file in a writable working folder so the resulting figure has a predictable location. The downloadable notebook performs the same calculation in your local environment.</p></section>
+<section><h2 id="mcp">Run a study from Codex or Claude Code</h2>
+<p>The Runtime download includes a local Model Context Protocol (MCP) server. It gives your assistant tools to create, save and run supported studies with OneSimulation. You can build stationary heat-conduction models in rectangular plates and boxes, and linear-elasticity models in 3D boxes. Each study uses the physics modules covered by your licence.</p>
+<ol>
+<li>Follow the <code>README.md</code> in your platform ZIP. Install the wheel in a Python 3.13 environment with the <code>agent</code> extra, then activate it with <code>onesimulation-license activate-gumroad</code>. Enter the key at the terminal prompt.</li>
+<li>Run the Codex or Claude Code registration command in that README. It starts <code>onesimulation-mcp</code> from the installed environment over <code>stdio</code>. Set <code>ONESIMULATION_WORKSPACE</code> to the absolute path of the folder where you want to save your projects. <a href="https://johmey.github.io/OneSimulation-Showcase/quickstart.html#codex">See the setup commands</a>.</li>
+<li>Open a new session in your assistant, ask it to list your OneSimulation projects, then try the following study with heat conduction enabled.</li>
+</ol>
+<blockquote><p>Create and save a steady heat study for a 2 × 1 × 1 m block with two cells per axis. Use conductivity 4 W/(m·K), density 1,000 kg/m³ and heat capacity 500 J/(kg·K). Hold the left end at 350 K and the right end at 300 K. Insulate the other faces. Run the study and return its run ID, the temperature at the centre and the path to the HDF5 result.</p></blockquote>
+<p>A uniform block with insulated sides has a linear temperature profile. The centre should be <strong>325 K</strong>. In the Apple Silicon package test, the saved field contained nine nodes at each of 350, 325 and 300 K. To check your result later, give a new session the same workspace and ask it to retrieve the temperature field using your run ID. <a href="/downloads/mcp-heat-field.csv" download>Download the 27 nodal temperatures (CSV)</a>.</p>
+</section>
 <section><h2 id="question">Start with a physical quantity you can predict</h2>
 <p>A sealed, well-mixed batch contains species A, which converts irreversibly into B. There is no inflow or outflow. A first-order rate coefficient k means each unit of A has the same conversion probability per unit time. With concentrations measured in mol/m³, the model is</p>
 <div class="math display">\[\dot C_A=-kC_A,\qquad \dot C_B=kC_A.\]</div>
