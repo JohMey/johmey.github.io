@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A current-carrying slab: one model, every method · OneSimulation</title>
+<meta name="description" content="One physics declaration, magnetostatics of a conducting slab with a uniform current between two magnetically insulating walls, is solved on its line cross-section with every applicable combination of discretization family (finite differences, finite volumes, continuous Nitsche and discontinuous finite elements) and linear solver. Each run is graded against the closed-form vector potential; combinations the library refuses are reported as such. 140 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/current-slab/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A current-carrying slab: one model, every method · OneSimulation">
+<meta property="og:description" content="One physics declaration, magnetostatics of a conducting slab with a uniform current between two magnetically insulating walls, is solved on its line cross-section with every applicable combination of discretization family (finite differences, finite volumes, continuous Nitsche and discontinuous finite elements) and linear solver. Each run is graded against the closed-form vector potential; combinations the library refuses are reported as such. 140 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/current-slab/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/current-slab-1.png">
+<meta property="og:image:alt" content="A current-carrying slab: one model, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "A current-carrying slab: one model, every method", "description": "One physics declaration, magnetostatics of a conducting slab with a uniform current between two magnetically insulating walls, is solved on its line cross-section with every applicable combination of discretization family (finite differences, finite volumes, continuous Nitsche and discontinuous finite elements) and linear solver. Each run is graded against the closed-form vector potential; combinations the library refuses are reported as such. 140 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/current-slab-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/current-slab/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "A current-carrying slab: one model, every method", "item": "https://onesimulation.onrender.com/tutorials/current-slab/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_current_slab">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>A current-carrying slab: one model, every method</h1>
+  <p class="lead">One physics declaration, magnetostatics of a conducting slab with a uniform current between two magnetically insulating walls, is solved on its line cross-section with every applicable combination of discretization family (finite differences, finite volumes, continuous Nitsche and discontinuous finite elements) and linear solver. Each run is graded against the closed-form vector potential; combinations the library refuses are reported as such. 140 runs on the compiled OneSimulation runtime: 101 ran as declared, 39 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 2</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/current-slab-1.png" alt="Space × linear solver"><p><strong>1 · Space × linear solver</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/current-slab-2.png" alt="Profiles of representative schemes"><p><strong>2 · Profiles of representative schemes</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>A copper busbar of thickness \(2a=20\,\)mm and large height and length carries the current density \(J_z=10^6\,\)A/m² along \(z\). Walls at \(x=\pm b\), \(b=30\,\)mm, are magnetically insulating (\(A_z=0\), so no flux leaves through them). Across the slab the fields depend on \(x\) only, and Ampère's law reduces to one equation for the out-of-plane potential:</p>
+<p>\[-\partial_x\Big(\frac1\mu\,\partial_x A_z\Big)=J_z(x),\qquad A_z(\pm b)=0,\qquad \mathbf B=\nabla\times(A_z\mathbf e_z)=\big(0,\,-\partial_x A_z,\,0\big).\]</p>
+<p><code>Magnetostatics</code> on a line declares exactly this: the line is the cross-section of the slab and the current comes from a <code>RegionCurrent</code> whose region is the conductor. Everything numerical is an argument of <code>Numerics</code>.</p>
+<p><strong>Reference.</strong> Integrating twice with \(\mu=\mu_0\) throughout gives</p>
+<p>\[A_z(x)=\mu_0J_z\begin{cases}\tfrac12(a^2-x^2)+a(b-a), &amp; |x|\le a,\\ a\,(b-|x|), &amp; a&lt;|x|\le b, \end{cases}\qquad B_y(x)=\mu_0J_z\begin{cases}x, &amp; |x|\le a,\\ a\,\operatorname{sgn}x, &amp; |x|&gt;a. \end{cases}\]</p>
+<p>Ampère's law in integral form checks the result: \(B_y(b)-B_y(-b)=\mu_0 J_z\,2a\), the enclosed current per unit height.</p>
+<p><strong>Grading.</strong> Every run is evaluated at the cell centres \(x_i\): the largest error of \(A_z\) relative to its peak, the largest error of \(B_y\), and the Ampère balance \([B_y(b)-B_y(-b)]/(2\mu_0J_za)-1\).</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>Nothing in this cell names a numerical method. The mesh places cell faces on the conductor surfaces \(x=\pm a\).</p>
+<pre><code>half_width, wall, density = 0.01, 0.03, 1e6
+mu0 = float(VacuumPermeability().evaluate())
+cells, coarse_cells = 240, 120
+section = Line(start=(-wall, 0.0, 0.0), end=(wall, 0.0, 0.0))
+conductor = Box(origin=(-half_width, -1.0, -1.0), length=2 * half_width, width=2.0, height=2.0)
+busbar = Magnetostatics(
+    domain=section.line,
+    permeability=regionwise((), default=mu0, unit=&quot;H/m&quot;),
+    current_sources=(RegionCurrent(region=conductor, density=(0.0, 0.0, density)),),
+)
+problem = Problem(
+    name=&quot;Current-carrying slab&quot;,
+    geometry=section,
+    physics=(busbar,),
+    boundary_conditions=(MagneticInsulation(physics=busbar, boundary=section.boundaries.all),),
+)
+meshes = {n: StructuredLineMesher(cells=n).generate(section) for n in (cells, coarse_cells)}
+centres = {n: mesh.cell_centers for n, mesh in meshes.items()}
+walls = np.array([[-wall, 0.0, 0.0], [wall, 0.0, 0.0]])
+print(
+    f&quot;{meshes[cells].cell_count} cells of width {1e3 * 2 * wall / cells:.2f} mm &quot;
+    f&quot;(mesh check: {meshes[coarse_cells].cell_count} cells)&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Finite differences with central, fourth- and sixth-order Laplacians (each with the first derivative of the same order for \(B\)); finite volumes with the two-point flux; continuous Lagrange elements of degree 1 to 3 whose wall values enter through symmetric or nonsymmetric Nitsche terms, also with continuous interior penalty; discontinuous elements of degree 1 to 3 with the SIPG flux at two penalty levels.</p>
+<p>The stationary system is linear. Every scheme is solved with a sparse LU factorization, with Krylov solvers with and without preconditioning, and with the automatic choice. Conjugate gradients and the symmetric algebraic multigrid need a certified symmetric positive definite matrix; the one-sided closures of the higher-order differences and the Nitsche terms do not provide one, and these pairs are marked "n/a".</p>
+</section>
+<section>
+<h2>The test matrix, and a solver that must fail</h2>
+<p><strong>Space × linear solver</strong> on 240 cells; representative schemes again on 120 cells. The condition number grows like \(h^{-2}\) and with the element degree, so unpreconditioned GMRES may stall within its iteration budget. Its stabilized counterpart adds exactly one ingredient, an incomplete LU preconditioner, and is shown behind a grey hatching.</p>
+</section>
+<section>
+<h2>Space × linear solver</h2>
+<p>Left: the relative error of \(A_z\); right: the wall time of each solve.</p>
+<p>Potential error, field error and Ampère balance of every scheme with the sparse LU solve. The potential is piecewise quadratic, so continuous and discontinuous elements of degree 2 and more reproduce it to round-off on a mesh that resolves the conductor surfaces.</p>
+</section>
+<section>
+<h2>Methods that do not apply to this problem</h2>
+<p>The slab problem is stationary and linear: time integrators and nonlinear solvers have nothing to do (a <code>BHCurve</code> material response would make it nonlinear). Conjugate gradients and the symmetric algebraic multigrid need a certified symmetric positive definite matrix, which the one-sided higher-order difference closures and the Nitsche wall terms do not provide. On a line the corrected central cell flux coincides with the two-point flux, so finite volumes appear once. The volume formulations of <code>Magnetostatics</code> (edge elements, finite integration) need a 3D region; the line model is their exact reduction for a slab.</p>
+<h2>Going further</h2>
+<p>Add a second <code>RegionCurrent</code> with the opposite current for a go-and-return busbar pair, or move the walls; the matrix code stays as it is.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 140 runs took 31 seconds in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/current-slab-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/current-slab-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_current_slab">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A stiff RC ladder: one circuit, every time integrator and solver · OneSimulation</title>
+<meta name="description" content="A resistor-capacitor ladder charged through a voltage step is declared once as a circuit and advanced with every time integrator, every implicit integrator with every nonlinear solver, and every pair of nonlinear and linear solvers. The number of stages sets the stiffness; explicit methods that cannot be stable at the common step are shown with their stable-step counterpart. Every run is graded against the exact modal solution of the ladder. 299 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/rc-ladder/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A stiff RC ladder: one circuit, every time integrator and solver · OneSimulation">
+<meta property="og:description" content="A resistor-capacitor ladder charged through a voltage step is declared once as a circuit and advanced with every time integrator, every implicit integrator with every nonlinear solver, and every pair of nonlinear and linear solvers. The number of stages sets the stiffness; explicit methods that cannot be stable at the common step are shown with their stable-step counterpart. Every run is graded against the exact modal solution of the ladder. 299 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/rc-ladder/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/rc-ladder-1.png">
+<meta property="og:image:alt" content="A stiff RC ladder: one circuit, every time integrator and solver">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "A stiff RC ladder: one circuit, every time integrator and solver", "description": "A resistor-capacitor ladder charged through a voltage step is declared once as a circuit and advanced with every time integrator, every implicit integrator with every nonlinear solver, and every pair of nonlinear and linear solvers. The number of stages sets the stiffness; explicit methods that cannot be stable at the common step are shown with their stable-step counterpart. Every run is graded against the exact modal solution of the ladder. 299 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/rc-ladder-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/rc-ladder/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "A stiff RC ladder: one circuit, every time integrator and solver", "item": "https://onesimulation.onrender.com/tutorials/rc-ladder/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_rc_ladder">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>A stiff RC ladder: one circuit, every time integrator and solver</h1>
+  <p class="lead">A resistor-capacitor ladder charged through a voltage step is declared once as a circuit and advanced with every time integrator, every implicit integrator with every nonlinear solver, and every pair of nonlinear and linear solvers. The number of stages sets the stiffness; explicit methods that cannot be stable at the common step are shown with their stable-step counterpart. Every run is graded against the exact modal solution of the ladder. 299 runs on the compiled OneSimulation runtime: 229 ran as declared, 70 failed as the mathematics predicts and are shown hatched (70 with a stabilized counterpart behind the hatching), none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 4</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/rc-ladder-1.png" alt="Time integrator × ladder size"><p><strong>1 · Time integrator × ladder size</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/rc-ladder-2.png" alt="Far-end voltage"><p><strong>2 · Far-end voltage</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/rc-ladder-3.png" alt="Implicit integrator × nonlinear solver"><p><strong>3 · Implicit integrator × nonlinear solver</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/rc-ladder-4.png" alt="Implicit integrator × nonlinear solver"><p><strong>4 · Implicit integrator × nonlinear solver</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>A voltage source of \(U=1\,\mathrm{V}\) is switched onto a ladder of \(N\) equal stages: a series resistor \(R=R_\mathrm{tot}/N\) followed by a capacitor \(C=C_\mathrm{tot}/N\) to ground. The far end is open. With the capacitor voltages \(v_1,\dots,v_N\) and \(v_0=U\), Kirchhoff's current law gives</p>
+<p>\[RC\,\dot v_i=v_{i-1}-2v_i+v_{i+1}\quad(i&lt;N),\qquad RC\,\dot v_N=v_{N-1}-v_N .\]</p>
+<p>For growing \(N\) the ladder approaches a diffusion line (an RC transmission line): the slowest time constant stays near \(4R_\mathrm{tot}C_\mathrm{tot}/\pi^2\) while the fastest shrinks like \(R_\mathrm{tot}C_\mathrm{tot}/(4N^2)\). The ratio of the two is the stiffness that explicit methods must resolve and implicit methods may step over.</p>
+<p><strong>Reference.</strong> The matrix is symmetric and tridiagonal; its eigenpairs are known in closed form. With \(\vartheta_k=(2k-1)\pi/(2N+1)\) the decay rates are \(\lambda_k=(2-2\cos\vartheta_k)/(RC)\) and the modes \(\phi_k(i)=\sin(i\vartheta_k)\), so</p>
+<p>\[v_N(t)=U\Big(1-\sum_{k=1}^{N}c_k\sin(N\vartheta_k)\,e^{-\lambda_k t}\Big),\qquad c_k=\frac{\sum_i\sin(i\vartheta_k)}{\sum_i\sin^2(i\vartheta_k)}\]</p>
+<p>(e.g. G. Strang, <em>Introduction to Applied Mathematics</em>, §1.5 on second-difference matrices).</p>
+<p><strong>Grading.</strong> The far-end voltage \(v_N\) is compared with the exact value at every accepted step; the error is the largest deviation over the run in volts. By the maximum principle every exact voltage stays between 0 and 1 V; a run that leaves \([-0.5, 1.5]\,\mathrm{V}\) has become unstable and is recorded as failed.</p>
+<p><strong>Resolution.</strong> A circuit has no spatial mesh: <code>LumpedMesh</code> carries all unknowns on one global node; the ladders below have 4, 16 and 32 capacitor states. The resolution is the time step; a step check at half the step closes the notebook.</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>\(R_\mathrm{tot}=1\,\mathrm{k\Omega}\) and \(C_\mathrm{tot}=1\,\mathrm{mF}\), so \(R_\mathrm{tot}C_\mathrm{tot}=1\,\mathrm{s}\). The same circuit declaration with 4, 16 and 32 stages forms the columns of the integrator matrix. <code>Circuit.as_model</code> turns each network into a lumped model whose consistent initial state (all capacitors empty, source on) comes from <code>initial_values</code>.</p>
+<pre><code>supply, total_resistance, total_capacitance, end_time, step = 1.0, 1e3, 1e-3, 1.0, 1e-2
+sizes = (4, 16, 32)
+domain = LumpedDomain()
+ladders = {
+    n: Circuit(
+        components=(CircuitVoltageSource(name=&quot;U&quot;, positive=&quot;n0&quot;, negative=&quot;0&quot;, voltage=supply),)
+        + tuple(
+            element
+            for i in range(n)
+            for element in (
+                CircuitResistor(
+                    name=f&quot;R{i}&quot;, positive=f&quot;n{i}&quot;, negative=f&quot;n{i + 1}&quot;, resistance=total_resistance / n
+                ),
+                CircuitCapacitor(
+                    name=f&quot;C{i}&quot;,
+                    positive=f&quot;n{i + 1}&quot;,
+                    negative=&quot;0&quot;,
+                    capacitance=total_capacitance / n,
+                    initial_voltage=0.0,
+                ),
+            )
+        )
+    ).as_model(domain=domain.system)
+    for n in sizes
+}
+problems = {
+    n: Problem(
+        name=f&quot;RC ladder with {n} stages&quot;,
+        geometry=domain,
+        physics=(model,),
+        initial_conditions=model.initial_values(),
+    )
+    for n, model in ladders.items()
+}
+mesh = LumpedMesh(domain)</code></pre>
+</section>
+<section>
+<h2>The exact modal solution</h2>
+<p>Decay rates, mode shapes and modal coefficients of each ladder, straight from the formulas above.</p>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Every time integrator of the library that applies to a first-order network. Implicit stages take Newton's method with a sparse direct solve; Rosenbrock stages take the sparse direct solve alone. The nonlinear and linear solvers are varied on their own further below.</p>
+</section>
+<section>
+<h2>Schemes that must fail, and their stabilized counterparts</h2>
+<p>An explicit method is stable only while \(\lambda_\max\Delta t\) stays inside its stability interval on the negative real axis (2 for forward Euler and the second-order Runge-Kutta methods, about 2.8 for RK4, 1 for Adams-Bashforth 2). At the common step \(\Delta t=10^{-2}\,\mathrm{s}\) that holds for the 4-stage ladder but not for 16 or 32 stages. Adams-Moulton 3 and 4 have bounded stability intervals too, and a fixed-point (Picard) iteration contracts only while \(\lambda_\max\Delta t&lt;1\). Leapfrog is unstable on any decaying mode. A failed cell is hatched; its colour and value are those of the counterpart: the same method at the stable step \(\Delta t_s=0.5/\lambda_\max\); for leapfrog the Robert-Asselin-Williams filtered leapfrog, which is stable only for \(\lambda\Delta t&lt;0.395\), at \(0.3/\lambda_\max\); for the fixed-point iteration a step at which it contracts by a factor of ten per iteration, \(0.1/\lambda_\max\).</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>1. <strong>Time integrator × ladder size</strong> — every integrator on 4, 16 and 32 stages at \(\Delta t=10^{-2}\,\mathrm{s}\). 2. <strong>Implicit integrator × nonlinear solver</strong> — 16 stages, sparse direct linear solves. 3. <strong>Nonlinear × linear solver</strong> — backward Euler on 32 stages, plus the Rosenbrock-Euler step, which needs only a linear solver. 4. <strong>Step check</strong> — representative implicit integrators on 16 stages at half the step.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>One loop, the same problem objects every time. A refused combination is recorded with the library's message; a run that becomes unstable is recorded as failed, and the loop appends its stabilized counterpart, which runs in the same loop.</p>
+<p>Every matrix below shows the declared combination. Where it failed and the counterpart ran, the cell is hatched and shows the counterpart; the legend names it.</p>
+</section>
+<section>
+<h2>Time integrator × ladder size</h2>
+<p>The largest far-end voltage error over one second, and the wall time with the number of steps.</p>
+</section>
+<section>
+<h2>Far-end voltage</h2>
+<p>The 32-stage ladder with implicit integrators at \(\Delta t=10^{-2}\,\mathrm{s}\) against the modal solution. Crank-Nicolson and implicit midpoint are A-stable but not L-stable: their fastest modes are not damped, which shows as a small ripple at the start.</p>
+</section>
+<section>
+<h2>Implicit integrator × nonlinear solver</h2>
+<p>The network is linear, so every converging nonlinear solver gives the same discrete solution; the cost differs. A fixed-point iteration cannot contract at \(\lambda_\max\Delta t\approx 10\).</p>
+</section>
+<section>
+<h2>Step check: Δt against Δt/2</h2>
+<p>Implicit integrators on 16 stages at half the step. The error ratio shows the observed order: about 4 for a second-order method, 2 for a first-order one. Crank-Nicolson and implicit midpoint can show less while the undamped fast modes dominate the error.</p>
+</section>
+<section>
+<h2>Methods that do not apply to an RC network</h2>
+<p>The staggered (velocity) Verlet and symplectic Euler steps need a second-order system, positions whose rate is a velocity; capacitor charges are first-order storage states, and the library refuses both with that reason. Conjugate gradients and algebraic multigrid need a declared symmetric positive definite stage matrix; the reduced nodal storage operator \(-C^{-1}G\) of a general network is only similar to a symmetric one, so the circuit model declares no such property and the library refuses CG with that reason. JFNK never forms the Jacobian, so it has no matrix for a sparse direct (or automatic, which selects the direct) inner solve; it is paired with the Krylov solvers only. A circuit has no spatial discretization, so there is no space axis and no mesh refinement; the step check takes its place. Runge-Kutta-Chebyshev and -Legendre super-steps and IMEX splits are offered for spatial operators that publish a parabolic spectrum or a stiff/non-stiff split, which the circuit model does not.</p>
+<h2>Going further</h2>
+<p>Add an inductor to each stage for an LC transmission line, or a diode at the far end for a nonlinear load; the matrix code stays as it is.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 299 runs took 33 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/rc-ladder-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/rc-ladder-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_rc_ladder">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
