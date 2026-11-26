@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shallow-water dam break: one model, every method · OneSimulation</title>
+<meta name="description" content="One physics declaration, the Saint-Venant equations with a dam-break initial state, is solved on 400 cells with every applicable combination of discretization family, reconstruction, limiter, Riemann solver, time integrator, nonlinear solver and linear solver. The wet-bed case is graded against Stoker&#x27;s exact solution, the dry-bed case against Ritter&#x27;s. 404 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/shallow-water-dam-break/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shallow-water dam break: one model, every method · OneSimulation">
+<meta property="og:description" content="One physics declaration, the Saint-Venant equations with a dam-break initial state, is solved on 400 cells with every applicable combination of discretization family, reconstruction, limiter, Riemann solver, time integrator, nonlinear solver and linear solver. The wet-bed case is graded against Stoker&#x27;s exact solution, the dry-bed case against Ritter&#x27;s. 404 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/shallow-water-dam-break/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/shallow-water-dam-break-1.png">
+<meta property="og:image:alt" content="Shallow-water dam break: one model, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Shallow-water dam break: one model, every method", "description": "One physics declaration, the Saint-Venant equations with a dam-break initial state, is solved on 400 cells with every applicable combination of discretization family, reconstruction, limiter, Riemann solver, time integrator, nonlinear solver and linear solver. The wet-bed case is graded against Stoker's exact solution, the dry-bed case against Ritter's. 404 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/shallow-water-dam-break-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/shallow-water-dam-break/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "Shallow-water dam break: one model, every method", "item": "https://onesimulation.onrender.com/tutorials/shallow-water-dam-break/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_shallow_water_dam_break">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>Shallow-water dam break: one model, every method</h1>
+  <p class="lead">One physics declaration, the Saint-Venant equations with a dam-break initial state, is solved on 400 cells with every applicable combination of discretization family, reconstruction, limiter, Riemann solver, time integrator, nonlinear solver and linear solver. The wet-bed case is graded against Stoker&#x27;s exact solution, the dry-bed case against Ritter&#x27;s. 404 runs on the compiled OneSimulation runtime: 314 ran as declared, 90 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 6</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/shallow-water-dam-break-1.png" alt="The matrices"><p><strong>1 · The matrices</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/shallow-water-dam-break-2.png" alt="Profiles of representative combinations"><p><strong>2 · Profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/shallow-water-dam-break-3.png" alt="Profiles of representative combinations"><p><strong>3 · Profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/shallow-water-dam-break-4.png" alt="Profiles of representative combinations"><p><strong>4 · Profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/shallow-water-dam-break-5.png" alt="Profiles of representative combinations"><p><strong>5 · Profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/shallow-water-dam-break-6.png" alt="Profiles of representative combinations"><p><strong>6 · Profiles of representative combinations</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>A channel of length 10 m holds water 1 m deep behind a gate at \(x_0=5\) m. In front of the gate the water is 0.1 m deep (wet bed) or absent (dry bed). The one-dimensional shallow-water (Saint-Venant) equations for the depth \(h\) and the discharge \(q=hu\),</p>
+<p>\[\partial_t\begin{pmatrix}h\\ q\end{pmatrix} +\partial_x\begin{pmatrix}q\\ q^2/h+\tfrac12 g h^2\end{pmatrix}=0,\qquad g=9.81\ \mathrm{m/s^2},\]</p>
+<p>are declared once. When the gate is removed, a rarefaction runs back into the reservoir and a bore (wet bed) or a thin front (dry bed) runs downstream. The waves do not reach the reflecting walls at \(x=0\) and \(x=10\) m before \(t=0.6\) s.</p>
+<p>The flat-bed model <code>ShallowWater</code> requires a strictly positive depth, so the dry bed is declared with <code>TopographicShallowWater</code> (flat bed, <code>bed_elevation=0</code>), whose hydrostatic providers handle dry cells: the hydrostatic reconstruction for finite volumes, a hydrostatic flux difference for finite differences and a hydrostatic graph viscosity for continuous finite elements.</p>
+<p><strong>Reference.</strong> J. J. Stoker, <em>Water Waves</em>, Interscience 1957, ch. 10 (wet bed): the middle depth \(h_m\) joins the reservoir rarefaction to the bore, \(2(c_0-c_m)=(h_m-h_1)\sqrt{g(h_m+h_1)/(2h_mh_1)}\) with \(c=\sqrt{gh}\); A. Ritter, <em>Z. Vereines Deutscher Ingenieure</em> 36, 947 (1892) (dry bed): \(h=(2c_0-\xi)^2/(9g)\) for \(-c_0&lt;\xi&lt;2c_0\), \(\xi=(x-x_0)/t\). In the rarefaction \(u=\tfrac23(c_0+\xi)\).</p>
+<p><strong>Grading.</strong> At \(t=0.6\) s every run is evaluated at the 400 cell centres: \(L_1(h)=\sum_i|h_h(x_i)-h(x_i)|\,\Delta x\) and the same for the discharge; the wall time covers validation, binding and time stepping.</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>Two problems: the wet bed with the flat-bed model and the dry bed with the topographic model. Nothing in this cell names a numerical method.</p>
+<pre><code>g, gate, deep, shallow, end_time = 9.81, 5.0, 1.0, 0.1, 0.6
+cells, coarse_cells = 400, 200
+channel = Line(start=(0.0, 0.0, 0.0), end=(10.0, 0.0, 0.0))
+wet_water = ShallowWater(domain=channel.line, gravity=g)
+dry_water = TopographicShallowWater(domain=channel.line, gravity=g, bed_elevation=0.0)
+models = {&quot;wet&quot;: wet_water, &quot;dry&quot;: dry_water}
+released = {
+    &quot;wet&quot;: lambda x: np.where(x &lt; gate, deep, shallow),
+    &quot;dry&quot;: lambda x: np.where(x &lt; gate, deep, 0.0),
+}
+problems = {
+    case: Problem(
+        name=f&quot;Dam break, {case} bed&quot;,
+        geometry=channel,
+        physics=(model,),
+        boundary_conditions=(
+            ReflectingWall(physics=model, boundary=channel.boundaries.all),
+        ),
+        initial_conditions=(
+            InitialValue(model.depth, released[case]),
+            InitialValue(model.discharge, 0.0),
+        ),
+    )
+    for case, model in models.items()
+}
+meshes = {n: StructuredLineMesher(cells=n).generate(channel) for n in (cells, coarse_cells)}
+centres = {n: mesh.cell_centers[:, 0] for n, mesh in meshes.items()}
+print(
+    f&quot;{meshes[cells].cell_count} cells of width {10 / cells:.4f} m &quot;
+    f&quot;(coarse check: {meshes[coarse_cells].cell_count} cells)&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The exact solutions</h2>
+<p>Stoker's middle depth is the root of the bore condition; the self-similar depth and discharge follow from \(\xi=(x-x_0)/t\).</p>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Four Riemann solvers: Rusanov, HLL, HLLE and HLLC. HLL takes the shallow-water signal speeds \(u\mp c\) of both sides (and the dry-front speeds \(u\pm2c\) next to a dry cell), HLLE the Einfeldt bounds from the Roe average, and HLLC adds Toro's middle wave with the star depths and the contact speed. Slope limiters, higher-order reconstructions, discontinuous Galerkin of degree 0 to 3 with and without the shallow-water invariant-domain limiter, continuous Galerkin with graph viscosity, interior penalty, SUPG, GLS or no stabilization, and finite-difference stencils.</p>
+</section>
+<section>
+<h2>Schemes that must fail at the bore, and their stabilized counterparts</h2>
+<p>Linear schemes of higher than first order oscillate at a discontinuity (Godunov's theorem). Ahead of the bore the water is only 0.1 m deep; the undershoot drives the depth to zero or below and the library stops instead of clipping. For each such scheme the matrix also runs a counterpart that adds exactly one ingredient; its result is shown behind a grey hatching.</p>
+</section>
+<section>
+<h2>The dry bed: hydrostatic providers</h2>
+<p>On the dry bed every spatial family runs through its hydrostatic provider, again with every Riemann solver: the Audusse hydrostatic reconstruction (first order and MUSCL with three limiters and the positivity limiter, and WENO3 and WENO5 with the positivity limiter), the hydrostatic flux difference with summation-by-parts stencils of order 2 and 4, and continuous P1 and P2 elements with the hydrostatic graph viscosity.</p>
+<p>Time integrators: every explicit one-step and multistep method, implicit Runge-Kutta, Adams-Moulton and BDF methods, Rosenbrock methods and the adaptive integrators. Implicit stages take Newton with a coloured finite-difference Jacobian and a sparse direct solve. On the dry bed the implicit stages use the hydrostatic reconstruction with the wet/dry active set, which gives Newton the generalized Jacobian at dry cells, and the Rusanov flux, which supplies the analytic face derivative that the active set needs.</p>
+<p>BDF4 to BDF6 and Adams-Moulton 4 are not A-stable, and a fixed-point iteration contracts only for small steps: at Δt = 10⁻² they must fail; their counterpart is the same method at a stable step. Leapfrog has no damping; its counterpart adds the Robert-Asselin-Williams filter.</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>1. <strong>Wet bed: space × Riemann solver</strong> — every spatial scheme with every Riemann solver, SSP-RK2 at the stable step (safety factor 0.5). 2. <strong>Wet bed: time integrator × space</strong> — every integrator with HLLC fluxes on first-order, MUSCL-minmod and WENO5 volumes; implicit integrators at \(\Delta t=10^{-2}\) s (CFL about 1.7) on the first two. 3. <strong>Wet bed: nonlinear × linear solver</strong> — backward Euler on MUSCL-minmod-HLLC, \(\Delta t=10^{-2}\) s. 4. <strong>Dry bed: space × Riemann solver</strong> — every hydrostatic provider with every Riemann solver. 5. <strong>Dry bed: time integrator</strong> — every integrator on the first-order hydrostatic reconstruction (HLL for explicit, Rusanov with the wet/dry active set for implicit stages) and on the hydrostatic MUSCL-minmod scheme for the explicit ones.</p>
+<p>A few representative combinations are repeated on 200 cells for the mesh check.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>One loop over the two problem objects. A combination the library refuses is recorded with its validation message; a run that stops because the depth left the physical state space is recorded as failed.</p>
+</section>
+<section>
+<h2>The matrices</h2>
+<p>Every cell shows the declared combination. Where it failed and a stabilized counterpart exists, the cell is hatched grey and its colour and number are those of the counterpart; the legend below each matrix says what was added.</p>
+<p>All measures for the combinations that ran, sorted by the depth error.</p>
+</section>
+<section>
+<h2>Profiles of representative combinations</h2>
+<p>Depth and discharge at \(t=0.6\) s against the exact solutions, wet bed above, dry bed below.</p>
+</section>
+<section>
+<h2>Mesh check: 400 against 200 cells</h2>
+<p>For a discontinuous solution the \(L_1\) error falls roughly like \(\Delta x^{1/2}\) to \(\Delta x\).</p>
+</section>
+<section>
+<h2>Methods that do not apply to the dam break</h2>
+<p>Conjugate gradients and algebraic multigrid need a symmetric positive definite operator; Runge-Kutta-Chebyshev and -Legendre super-steps are for parabolic operators; staggered Verlet needs a partitioned second-order system; IMEX splits need a stiff and a non-stiff part. Scalar convection fluxes (monotone upwind, central) are refused for the coupled system with a message that names a Riemann solver. On the dry bed, discontinuous Galerkin and plain (non-hydrostatic) schemes are not offered: the flat-bed model requires a positive depth, and the topographic model accepts only its hydrostatic providers, which keep the lake at rest and the dry cells exact. Implicit stages on the dry bed use the Rusanov flux because the wet/dry active set needs an analytic face derivative, which the HLL family does not provide.</p>
+<p>One dry-bed integrator fails without a counterpart. The adaptive Dormand-Prince RK45 method is not strong-stability preserving: its intermediate stages leave the set of nonnegative depths at the dry front, whatever the tolerance. The hydrostatic WENO3/WENO5 rows rely on the positivity limiter in the form of Zhang and Shu: it retracts the face depths toward the cell mean until the faces and the interior state of the mean are nonnegative (the explicit step is small enough for that), and the retracted faces keep the reconstructed velocity, so nearly dry faces carry no spurious discharge and every dry cell keeps exactly zero discharge.</p>
+<h2>Going further</h2>
+<p>Raise the downstream depth or give the bed a slope with <code>bed_elevation</code>; the matrix code stays as it is. Add a column by adding one object to a dictionary.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 404 runs took 62 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/shallow-water-dam-break-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/shallow-water-dam-break-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_shallow_water_dam_break">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
