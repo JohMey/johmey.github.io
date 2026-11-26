@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A sound pulse in a tube: one model, every method · OneSimulation</title>
+<meta name="description" content="One physics declaration, linear acoustics in pressure and velocity, is solved in a 1 m tube with rigid ends on 400 cells with every applicable combination of discretization family, reconstruction, interface flux, time integrator, nonlinear solver and linear solver. The staggered pressure-velocity grid and the second-order pressure wave equation run as additional rows. Every run is graded against d&#x27;Alembert&#x27;s solution. 275 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/acoustic-pulse/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A sound pulse in a tube: one model, every method · OneSimulation">
+<meta property="og:description" content="One physics declaration, linear acoustics in pressure and velocity, is solved in a 1 m tube with rigid ends on 400 cells with every applicable combination of discretization family, reconstruction, interface flux, time integrator, nonlinear solver and linear solver. The staggered pressure-velocity grid and the second-order pressure wave equation run as additional rows. Every run is graded against d&#x27;Alembert&#x27;s solution. 275 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/acoustic-pulse/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/acoustic-pulse-1.png">
+<meta property="og:image:alt" content="A sound pulse in a tube: one model, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "A sound pulse in a tube: one model, every method", "description": "One physics declaration, linear acoustics in pressure and velocity, is solved in a 1 m tube with rigid ends on 400 cells with every applicable combination of discretization family, reconstruction, interface flux, time integrator, nonlinear solver and linear solver. The staggered pressure-velocity grid and the second-order pressure wave equation run as additional rows. Every run is graded against d'Alembert's solution. 275 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/acoustic-pulse-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/acoustic-pulse/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "A sound pulse in a tube: one model, every method", "item": "https://onesimulation.onrender.com/tutorials/acoustic-pulse/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_acoustic_pulse">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>A sound pulse in a tube: one model, every method</h1>
+  <p class="lead">One physics declaration, linear acoustics in pressure and velocity, is solved in a 1 m tube with rigid ends on 400 cells with every applicable combination of discretization family, reconstruction, interface flux, time integrator, nonlinear solver and linear solver. The staggered pressure-velocity grid and the second-order pressure wave equation run as additional rows. Every run is graded against d&#x27;Alembert&#x27;s solution. 275 runs on the compiled OneSimulation runtime: 188 ran as declared, 76 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, 11 have no stable explicit step at this resolution and are marked as such, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 4</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/acoustic-pulse-1.png" alt="The matrices"><p><strong>1 · The matrices</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/acoustic-pulse-2.png" alt="Profiles of representative combinations"><p><strong>2 · Profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/acoustic-pulse-3.png" alt="Profiles of representative combinations"><p><strong>3 · Profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/acoustic-pulse-4.png" alt="Profiles of representative combinations"><p><strong>4 · Profiles of representative combinations</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>Air (\(\rho_0=1.21\) kg/m³, \(c=343\) m/s) fills a tube of length 1 m closed by rigid walls. At rest, a Gaussian pressure pulse \(p_0(x)=\exp(-((x-x_0)/\sigma)^2)\) Pa with \(x_0=0.3\) m and \(\sigma=0.03\) m is released. The linear acoustic equations</p>
+<p>\[\partial_t p+\rho_0c^2\,\partial_x u=0,\qquad \partial_t u+\frac1{\rho_0}\partial_x p=0\]</p>
+<p>are declared once. The pulse splits into two halves. The right half travels towards \(x=1\) m; the left half is reflected at the rigid wall \(x=0\) (\(u=0\), pressure unchanged in sign) and follows it. At \(t=1.2\) ms both halves travel to the right, 0.6 m apart.</p>
+<p>The same physics is also declared as the second-order pressure wave equation \(\chi\,\partial_t^2p-\partial_x(\rho_0^{-1}\partial_x p)=0\) with \(\chi=1/(\rho_0c^2)\), whose natural boundary condition is the rigid wall.</p>
+<p><strong>Reference.</strong> d'Alembert's solution with the mirror image of the pulse at \(x=-x_0\):</p>
+<p>\[p(x,t)=\tfrac12\big[p_0(x-ct)+p_0(ct-x)\big],\qquad u=\frac{p}{\rho_0 c}\]</p>
+<p>for \(x\in[0,1]\) m and \(t&lt;(1-x_0-3\sigma)/c\); the left-travelling parts have left the tube.</p>
+<p><strong>Grading.</strong> At \(t=1.2\) ms every run is evaluated at the 400 cell centres: \(L_1(p)=\sum_i|p_h(x_i)-p(x_i)|\,\Delta x\) and the same for \(u\); the wall time covers validation, binding and time stepping.</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>The first-order pressure-velocity model and the second-order pressure wave share the medium, the tube and the pulse. Nothing in this cell names a numerical method.</p>
+<pre><code>density, sound_speed, centre, width, end_time = 1.21, 343.0, 0.3, 0.03, 1.2e-3
+cells, coarse_cells = 400, 200
+tube = Line(start=(0.0, 0.0, 0.0), end=(1.0, 0.0, 0.0))
+air = LinearAcoustics(domain=tube.line, density=density, sound_speed=sound_speed)
+wave = AcousticPressureWave(
+    domain=tube.line, density=density, compressibility=1 / (density * sound_speed**2)
+)
+problems = {
+    &quot;first order&quot;: Problem(
+        name=&quot;Sound pulse, pressure and velocity&quot;,
+        geometry=tube,
+        physics=(air,),
+        boundary_conditions=(ReflectingWall(physics=air, boundary=tube.boundaries.all),),
+        initial_conditions=(InitialValue(air.pressure, lambda x: np.exp(-(((x - centre) / width) ** 2))), InitialValue(air.velocity, 0.0)),
+    ),
+    &quot;second order&quot;: Problem(
+        name=&quot;Sound pulse, pressure wave&quot;,
+        geometry=tube,
+        physics=(wave,),
+        initial_conditions=(
+            InitialValue(wave.pressure, lambda x: np.exp(-(((x - centre) / width) ** 2))),
+            InitialValue(wave.pressure_rate, 0.0),
+        ),
+    ),
+}
+meshes = {
+    **{(&quot;line&quot;, n): StructuredLineMesher(cells=n).generate(tube) for n in (cells, coarse_cells)},
+    **{
+        (&quot;staggered&quot;, n): cartesian(shape=(n,), extents=(1.0,), geometry=tube, periodic=False).build()
+        for n in (cells, coarse_cells)
+    },
+}
+centres = {n: (np.arange(n) + 0.5) / n for n in (cells, coarse_cells)}
+print(
+    f&quot;{meshes[(&#x27;line&#x27;, cells)].cell_count} cells of width {1000 / cells:.2f} mm &quot;
+    f&quot;(coarse check: {coarse_cells} cells); the staggered grid has {cells} pressure cells &quot;
+    f&quot;and {cells + 1} velocity faces&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Three interface fluxes: Rusanov, HLL and HLLE. For linear acoustics the slowest and fastest signal speeds are exactly \(-c\) and \(+c\), so HLL and HLLE are the exact (Godunov) flux of the linear system, and so is Rusanov, whose dissipation speed is also \(c\): the three columns must agree to rounding, which the matrix shows. HLLC is not offered (see the end). Slope limiters and higher-order reconstructions for finite volumes, discontinuous Galerkin of degree 0 to 4, continuous Galerkin of degree 1 to 3 with and without stabilization, and finite-difference stencils. The staggered pressure-velocity grid and the second-order pressure wave in continuous elements need no interface flux and form their own column.</p>
+<p>SUPG and GLS weight the residual with the flux Jacobian \(A\). For the pressure-velocity form \(A=\begin{pmatrix}0&amp;\rho_0c^2\\1/\rho_0&amp;0\end{pmatrix}\) is not symmetric, and in SI units its two fields differ by twelve orders of magnitude, so no single scalar \(\tau\) fits both. Both stabilizations therefore take the characteristic matrix parameter \(\tau=\tfrac{h}{2}\,|A|^{-1}\) (<code>CharacteristicTau</code>), formed from the eigen-decomposition of \(A\): the streamline test matrix becomes \(\tau A=\tfrac{h}{2}\,\mathrm{sign}(A)\), so each sound wave gets the scalar SUPG weighting, and the added streamline diffusion is \(\tfrac{h}{2}|A|=\tfrac{hc}{2}I\) for pressure and velocity alike.</p>
+<p>Time integrators: every explicit one-step and multistep method, staggered Verlet, implicit Runge-Kutta, Adams-Moulton and BDF methods, Rosenbrock methods and the adaptive integrators. Implicit stages take Newton with a coloured finite-difference Jacobian and a sparse direct solve; the rate of the pressure wave contains the inverse of the consistent mass matrix, so its Jacobian is dense and its implicit stages take the matrix-free JFNK with GMRES. Its Rosenbrock stages instead solve the mass-weighted stage matrix [[I, −cT], [cK, M + cD]], which is sparse, with the sparse direct solver. Staggered Verlet is a kick-drift method for a partitioned system: it runs on the staggered grid (kick the face velocities, drift the cell pressures) and on the pressure wave (kick the pressure rate, drift the pressure), where it is the leapfrog scheme of the wave equation.</p>
+<p>Leapfrog is unstable on the dissipative upwind operators at every step; its counterpart adds the Robert-Asselin-Williams filter. Forward Euler and Adams-Bashforth 2 are stable on the upwind operators only far below the step of the higher-order methods; their counterpart is the same method at a reduced safety factor. On the non-dissipative operators (staggered grid, pressure wave) every eigenvalue lies on the imaginary axis, where forward Euler, Heun, SSP-RK2, explicit midpoint, Heun-Euler and Adams-Bashforth 2 are unstable at every step. On the pressure wave the spectral enclosure refuses them with that reason; the staggered grid refuses forward Euler and lets the others run, where the growth per step is of order \((\omega\Delta t)^4\) and stays small over this short run except for Adams-Bashforth 2. Cells that cannot have a stable step read "no stable step". BDF4 to BDF6 and Adams-Moulton 4 are not A-stable and the fixed-point iteration contracts only for small steps; their counterpart is the same method at a step it is stable for. The pressure wave takes its explicit step from the imaginary-axis spectral enclosure (Arnoldi estimate of the highest frequency) and the selected method's stability region; staggered Verlet takes its step from the same enclosure (stable for \(\omega\Delta t\le2\), derived from the Verlet kernel itself).</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>1. <strong>Space × interface flux</strong> — every spatial scheme with every flux, SSP-RK3 at the stable step (safety factor 0.5). 2. <strong>Time integrator × space</strong> — every integrator on four representative schemes: MUSCL-MC volumes and DG P2 with HLL, the staggered grid and the pressure wave in CG P2. Explicit integrators run at their stable step, implicit ones at \(\Delta t=1.5\cdot10^{-5}\) s (CFL about 2). Staggered Verlet runs on the two partitioned schemes. 3. <strong>Nonlinear × linear solver</strong> — backward Euler on MUSCL-MC-HLL volumes, \(\Delta t=1.5\cdot10^{-5}\) s; the Newton variants take the analytic Jacobian (the HLL face derivative is the upwind physical Jacobian on one-sided faces and a difference quotient elsewhere).</p>
+<p>Representative combinations are repeated on 200 cells for the mesh check.</p>
+</section>
+<section>
+<h2>The matrices</h2>
+<p>The pressure error of every combination. Hatched cells failed as declared; colour and number show the stabilized counterpart named in the legend.</p>
+<p>All measures for the combinations that ran, sorted by the pressure error.</p>
+</section>
+<section>
+<h2>Profiles of representative combinations</h2>
+<p>Pressure over the whole tube and a close-up of the reflected half, against d'Alembert's solution.</p>
+</section>
+<section>
+<h2>Mesh check: 400 against 200 cells</h2>
+<p>The pulse is smooth, so the error falls with the design order of each scheme.</p>
+</section>
+<section>
+<h2>Methods that do not apply to the sound pulse</h2>
+<p><strong>HLLC</strong> restores a contact wave between the two outer signals; linear acoustics has only the two sound waves \(\mp c\), which HLL already resolves exactly. The library refuses HLLC for this law with a message naming HLL, HLLE and Rusanov. <strong>Staggered Verlet</strong> needs a partitioned system in which the rate of each partition depends only on the other: the staggered grid and the pressure wave are such systems, the upwind finite-volume, DG and finite-difference operators are not, because their interface dissipation couples pressure to pressure. <strong>Limiters for invariant domains</strong> and <strong>graph viscosity</strong> guard positivity and have nothing to guard in linear acoustics. Conjugate gradients and algebraic multigrid need a symmetric positive definite operator; Runge-Kutta-Chebyshev and -Legendre super-steps are for parabolic operators; IMEX splits need a stiff and a non-stiff part.</p>
+<h2>Going further</h2>
+<p>Make the pulse narrower until the coarse grid no longer resolves it, add <code>velocity_damping</code> to the model, or replace the rigid end at \(x=1\) m with an impedance boundary; the matrix code stays as it is.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 275 runs took 47 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/acoustic-pulse-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/acoustic-pulse-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_acoustic_pulse">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
