@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An elastic bar struck at one end: one model, every method · OneSimulation</title>
+<meta name="description" content="One physics declaration, an axial elastic bar, is solved as a static bar under end traction and body force, as a travelling and reflected stress wave after an impact, and as a vibrating rod. The bar runs through both of its formulations, the second-order displacement equation and the first-order velocity-stress system, with every spatial scheme, Riemann solver, time integrator (including the structural Newmark, HHT-alpha and generalized-alpha methods), nonlinear and linear solver that applies. Each run is graded against the closed-form solution. 471 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/elastic-bar-impact/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="An elastic bar struck at one end: one model, every method · OneSimulation">
+<meta property="og:description" content="One physics declaration, an axial elastic bar, is solved as a static bar under end traction and body force, as a travelling and reflected stress wave after an impact, and as a vibrating rod. The bar runs through both of its formulations, the second-order displacement equation and the first-order velocity-stress system, with every spatial scheme, Riemann solver, time integrator (including the structural Newmark, HHT-alpha and generalized-alpha methods), nonlinear and linear solver that applies. Each run is graded against the closed-form solution. 471 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/elastic-bar-impact/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/elastic-bar-impact-1.png">
+<meta property="og:image:alt" content="An elastic bar struck at one end: one model, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "An elastic bar struck at one end: one model, every method", "description": "One physics declaration, an axial elastic bar, is solved as a static bar under end traction and body force, as a travelling and reflected stress wave after an impact, and as a vibrating rod. The bar runs through both of its formulations, the second-order displacement equation and the first-order velocity-stress system, with every spatial scheme, Riemann solver, time integrator (including the structural Newmark, HHT-alpha and generalized-alpha methods), nonlinear and linear solver that applies. Each run is graded against the closed-form solution. 471 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/elastic-bar-impact-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/elastic-bar-impact/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "An elastic bar struck at one end: one model, every method", "item": "https://onesimulation.onrender.com/tutorials/elastic-bar-impact/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_elastic_bar_impact">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>An elastic bar struck at one end: one model, every method</h1>
+  <p class="lead">One physics declaration, an axial elastic bar, is solved as a static bar under end traction and body force, as a travelling and reflected stress wave after an impact, and as a vibrating rod. The bar runs through both of its formulations, the second-order displacement equation and the first-order velocity-stress system, with every spatial scheme, Riemann solver, time integrator (including the structural Newmark, HHT-alpha and generalized-alpha methods), nonlinear and linear solver that applies. Each run is graded against the closed-form solution. 471 runs on the compiled OneSimulation runtime: 419 ran as declared, 52 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 6</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/elastic-bar-impact-1.png" alt="The static bar: element degree × linear solver"><p><strong>1 · The static bar: element degree × linear solver</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/elastic-bar-impact-2.png" alt="Space × Riemann solver"><p><strong>2 · Space × Riemann solver</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/elastic-bar-impact-3.png" alt="Profiles of representative combinations"><p><strong>3 · Profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/elastic-bar-impact-4.png" alt="Time integrator × space"><p><strong>4 · Time integrator × space</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/elastic-bar-impact-5.png" alt="Nonlinear × linear solver"><p><strong>5 · Nonlinear × linear solver</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/elastic-bar-impact-6.png" alt="The vibrating rod: element degree × structural integrator"><p><strong>6 · The vibrating rod: element degree × structural integrator</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>A straight, homogeneous bar carries axial motion only (uniaxial stress). Its displacement \(u\), velocity \(v=\partial_t u\) and stress \(\sigma=E\,\partial_x u\) obey</p>
+<p>\[\rho\,\partial_t v=\partial_x\sigma+f,\qquad \partial_t\sigma=E\,\partial_x v,\qquad \partial_t u=v,\]</p>
+<p>or, eliminating \(v\) and \(\sigma\), the wave equation \(\rho\,\partial_t^2u=\partial_x(E\,\partial_xu)+f\) with the bar wave speed \(c=\sqrt{E/\rho}\). All quantities are scaled with the bar length \(L\), the density \(\rho\) and the wave speed \(c\): \(E=\rho=c=1\).</p>
+<p>The bar is declared once with <code>ElasticBar</code>. Everything numerical is an argument of <code>Numerics</code>, and that choice also picks the formulation:</p>
+<ul><li>a <strong>continuous Lagrange element without an interface flux</strong> solves the second-order displacement equation: stationary, or in time with the structural Newmark, HHT-α and generalized-α integrators or with any generic time method through the first-order reduction \((u,v)\);</li><li><strong>every scheme with an interface flux</strong> (finite volumes, finite differences, discontinuous Galerkin, continuous Galerkin with a Riemann flux) solves the velocity-stress system \(\partial_t q+\partial_x F(q)=S\) with \(q=(v,\sigma,u)\), \(F=(-\sigma/\rho,\,-Ev,\,0)\) and \(S=(f/\rho,\,0,\,v)\), whose waves travel at \(-c\), \(0\) and \(+c\).</li></ul>
+<p><strong>Three cases.</strong></p>
+<p>1. <em>Static bar</em>, \(L=2\), clamped at \(x=0\), end traction \(\sigma_0=1\) at \(x=2\) and the body force \(f=1/2\): \(\sigma(x)=\sigma_0+f(2-x)\) and \(u(x)=\big(\sigma_0x+f\,x(2-x/2)\big)/E\). 2. <em>Impact</em>, \(L=1\): the bar is at rest; from \(t=0\) the end \(x=0\) moves with \(v_0=1\), the end \(x=1\) is free. The stress front \(\sigma=-\rho c v_0\) runs to the free end, reflects with the opposite sign and doubles the velocity behind it. At \(t=1.5\) (d'Alembert): \(\sigma=-1,\ v=1,\ u=1.5-x\) for \(x&lt;0.5\) and \(\sigma=0,\ v=2,\ u=1\) for \(x&gt;0.5\). 3. <em>Vibrating rod</em>, \(L=1\), both ends clamped, released from \(u_0=\sin\pi x+\tfrac12\sin 5\pi x\): \(u=\sin\pi x\cos\omega_1t+\tfrac12\sin5\pi x\cos\omega_5t\) with \(\omega_n=n\pi c/L\).</p>
+<p><strong>Grading.</strong> The impact runs are evaluated at the 400 cell centres \(x_i\) of the finest mesh: \(L_1(q)=\frac1N\sum_i|q_h(x_i)-q(x_i)|\) for stress, velocity and displacement; the wall time covers validation, binding and time stepping.</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>Nothing in this cell names a numerical method. The material is a generic isotropic solid in scaled units; the bar uses its Young's modulus and density.</p>
+<pre><code>cells, coarse_cells, end_time, static_cells, rod_cells = 400, 200, 1.5, 100, 100
+material = IsotropicSolid(
+    density=1.0,
+    specific_heat_capacity=1.0,
+    thermal_conductivity=1.0,
+    youngs_modulus=1.0,
+    poisson_ratio=0.3,
+    thermal_expansion_coefficient=0.0,
+)
+rod = Line(start=(0.0, 0.0, 0.0), end=(1.0, 0.0, 0.0))
+bar = ElasticBar(domain=rod.line, material=material)
+impact = Problem(
+    name=&quot;bar impact&quot;,
+    geometry=rod,
+    physics=(bar,),
+    boundary_conditions=(
+        BarEndVelocity(boundary=rod.boundaries.start, physics=bar, value=1.0),
+        BarEndTraction(boundary=rod.boundaries.end, physics=bar, value=0.0),
+    ),
+    initial_conditions=tuple(
+        InitialValue(field, 0.0) for field in (bar.velocity, bar.stress, bar.displacement)
+    ),
+)
+long_rod = Line(start=(0.0, 0.0, 0.0), end=(2.0, 0.0, 0.0))
+loaded = ElasticBar(domain=long_rod.line, material=material, body_force=0.5)
+static = Problem(
+    name=&quot;bar under end traction and body force&quot;,
+    geometry=long_rod,
+    physics=(loaded,),
+    boundary_conditions=(
+        BarFixedEnd(boundary=long_rod.boundaries.start, physics=loaded),
+        BarEndTraction(boundary=long_rod.boundaries.end, physics=loaded, value=1.0),
+    ),
+)
+vibrating = ElasticBar(domain=rod.line, material=material)
+vibration = Problem(
+    name=&quot;clamped rod released from two modes&quot;,
+    geometry=rod,
+    physics=(vibrating,),
+    boundary_conditions=(
+        BarFixedEnd(boundary=rod.boundaries.all, physics=vibrating),
+    ),
+    initial_conditions=(
+        InitialValue(
+            vibrating.displacement,
+            lambda x: np.sin(np.pi * x) + 0.5 * np.sin(5 * np.pi * x),
+        ),
+        InitialValue(vibrating.velocity, 0.0),
+        InitialValue(vibrating.stress, lambda x: np.pi * np.cos(np.pi * x) + 2.5 * np.pi * np.cos(5 * np.pi * x)),
+    ),
+)
+meshes = {n: StructuredLineMesher(cells=n).generate(rod) for n in (cells, coarse_cells)}
+static_mesh = StructuredLineMesher(cells=static_cells).generate(long_rod)
+rod_mesh = StructuredLineMesher(cells=rod_cells).generate(rod)
+centres = {n: mesh.cell_centers[:, 0] for n, mesh in meshes.items()}
+print(
+    f&quot;impact: {meshes[cells].cell_count} cells of width {1 / cells:.4f} &quot;
+    f&quot;(mesh check: {meshes[coarse_cells].cell_count} cells); static bar: &quot;
+    f&quot;{static_mesh.cell_count} elements on L = 2; vibrating rod: {rod_mesh.cell_count} elements; &quot;
+    f&quot;wave speed c = {bar.wave_speed:.3f}, impedance rho*c = {bar.impedance:.3f}&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The exact solutions</h2>
+<p>Written out with NumPy: the static parabola, the d'Alembert solution of the impact at \(t=1.5\) (incident front plus its reflection from the free end) and the two standing modes.</p>
+</section>
+<section>
+<h2>The static bar: element degree × linear solver</h2>
+<p>The stationary displacement equation \(K u=F\) with the clamped end eliminated symmetrically, so the stiffness matrix stays symmetric positive definite and conjugate gradients apply. Quadratic and cubic elements contain the exact parabola; linear elements are exact at the nodes.</p>
+<p>Mesh check for the static bar: linear elements converge in the stress at first order (the projected stress of a linear element is piecewise constant before projection); quadratic and cubic elements reproduce the exact solution on both meshes up to round-off.</p>
+</section>
+<section>
+<h2>The method catalogue for the impact</h2>
+<p>The velocity-stress system is linear, so every Riemann solver is exact on it once the signal speeds are \(\pm c\): Rusanov and HLL coincide with the Godunov flux for velocity and stress; HLLC additionally restores the stationary middle wave across which only the displacement jumps, so it carries no numerical diffusion on \(u\). The catalogue is the one of the Sod notebook: slope limiters, ENO/WENO reconstructions, discontinuous elements of degree 0 to 4 with and without limiting or jump penalty, continuous elements with a Riemann flux and graph viscosity, interior penalty, SUPG, GLS or no stabilization, and finite differences including summation-by-parts. The DG jump penalty \(\gamma/h\,[u][v]\) uses \(\gamma=c\,\Delta x/2\), the scale of one upwind flux. The graph viscosity takes <code>ElasticBarInvariantDomain</code>: every finite state of a linear elastic bar is admissible.</p>
+<p>The second-order displacement formulation: continuous elements without an interface flux.</p>
+<p>Time integrators: the generic catalogue of the Sod notebook plus the structural integrators for second-order systems. <code>Newmark()</code> is the average-acceleration (trapezoidal) rule, <code>Newmark(beta=1/6)</code> the linear-acceleration rule (conditionally stable), <code>Newmark(beta=0)</code> the explicit central difference and <code>Newmark(beta=0.3025, gamma=0.6)</code> a numerically damped variant; the kick-drift methods (symplectic Euler, Stoermer-Verlet) advance the displacement with the new velocity and need the same position/velocity pair; HHT-α and generalized-α damp the highest modes with second-order accuracy, controlled by α and by the spectral radius at infinity.</p>
+</section>
+<section>
+<h2>Schemes that must fail, and their stabilized counterparts</h2>
+<p>The undamped displacement formulation has a purely imaginary spectrum \(\pm i\omega_k\). An explicit method whose stability region contains no piece of the imaginary axis (forward Euler, two-stage Runge-Kutta, Adams-Bashforth 2) amplifies every mode at every step, and the library refuses it before stepping; BDF3 to BDF6 and Adams-Moulton 3 lose stability on the part of the imaginary axis reached by the highest element modes at \(\Delta t=5\cdot10^{-3}\). Their stabilized counterpart adds exactly one ingredient: a volume viscosity \(\rho\nu\,\partial_x^2 v\) with \(\nu=c\,\Delta x/2\) (<code>VolumeCIP</code> on the displacement element), which moves the spectrum into the left half-plane. Adams-Moulton 4 has a bounded stability region and runs instead at the step \(\Delta t=0.1\,\Delta x/c\) it is stable for. On the velocity-stress system the Riemann flux already dissipates; there leapfrog (no damping at all) is unstable and takes the Robert-Asselin-Williams filter as in the Sod notebook. Fixed-point stage iterations contract only below the inverse spectral radius and run at a smaller step.</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>1. <strong>Space × Riemann solver</strong>, SSP-RK3 at the stable step (safety factor 0.5) for the velocity-stress schemes; the displacement elements run with classical RK4 at their spectral step in the extra column "second-order form". 2. <strong>Time integrator × space</strong>: every integrator on first-order and MUSCL-minmod volumes with HLLC and on linear and quadratic displacement elements. Explicit methods at their stable step, implicit generic and structural methods at \(\Delta t=5\cdot10^{-3}\) (two cells per step). 3. <strong>Nonlinear × linear solver</strong>: backward Euler on MUSCL-minmod-HLLC, \(\Delta t=5\cdot10^{-3}\). 4. <strong>Structural integrator × linear solver</strong>: the average-acceleration Newmark rule on quadratic displacement elements; its effective matrix \(M+\beta\Delta t^2K\) is symmetric positive definite. 5. <strong>Vibrating rod</strong>: element degree × structural integrator, \(\Delta t=10^{-2}\), two periods of the fundamental mode.</p>
+<p>Representative combinations are repeated on 200 cells for the mesh check.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>One loop, the same problem object every time. A combination the library refuses is recorded with its validation message; a run whose method is unstable for the operator, or whose stage iteration does not converge, is recorded as failed.</p>
+</section>
+<section>
+<h2>Space × Riemann solver</h2>
+<p>The stress error of every spatial scheme with every Riemann solver. Linear schemes of higher than first order (unlimited MUSCL and QUICK, unlimited DG, Galerkin CG, central and SBP finite differences) overshoot at the two fronts, as Godunov's theorem demands, but a linear elastic state has no positivity limit, so they run; the overshoot shows in the error and in the profiles below.</p>
+<p>All three measures for the combinations that ran, sorted by the stress error.</p>
+</section>
+<section>
+<h2>Profiles of representative combinations</h2>
+<p>Stress, velocity and displacement at \(t=1.5\) against the d'Alembert solution, and a close-up of the reflected front.</p>
+</section>
+<section>
+<h2>Time integrator × space</h2>
+<p>A dash marks a combination outside this cut: the structural and kick-drift integrators need a second-order (displacement, velocity) system and do not apply to the first-order velocity-stress volumes.</p>
+</section>
+<section>
+<h2>Nonlinear × linear solver</h2>
+<p>Backward Euler on MUSCL-minmod-HLLC. The discrete solution does not depend on the solver as long as each one converges; the wall time does.</p>
+</section>
+<section>
+<h2>Structural integrator × linear solver</h2>
+<p>The Newmark effective matrix on quadratic displacement elements, solved by direct, Krylov and multigrid solvers. Conjugate gradients apply because the matrix is symmetric positive definite.</p>
+</section>
+<section>
+<h2>The vibrating rod: element degree × structural integrator</h2>
+<p>Two clamped-end modes, \(n=1\) and \(n=5\), released from rest and followed for two periods of the fundamental mode with \(\Delta t=10^{-2}\) (\(\omega_5\Delta t\approx0.16\)). The trapezoidal rule and generalized-α with \(\rho_\infty=1\) conserve the modal energy; HHT-α and generalized-α with \(\rho_\infty&lt;1\) damp the fifth mode slightly; the central difference runs at its stability limit \(\Delta t\le2/\omega_{max}\) of the discrete operator.</p>
+</section>
+<section>
+<h2>Mesh check: 400 against 200 cells</h2>
+<p>The representative combinations on half as many cells. For the discontinuous fronts the \(L_1\) error falls roughly like \(\Delta x^{1/2}\) (first order) to \(\Delta x^{2/3}\) (second order).</p>
+</section>
+<section>
+<h2>What the library refused, and what failed</h2>
+<p>A refused combination is caught by validation or binding before any time step; a failed one started, or was refused as unstable for this operator, and has its stabilized counterpart above.</p>
+</section>
+<section>
+<h2>Methods that do not apply to the elastic bar</h2>
+<ul><li>The <strong>structural and kick-drift integrators</strong> (Newmark, HHT-α, generalized-α, symplectic Euler, Stoermer-Verlet) advance a second-order system \(M\ddot u+C\dot u+Ku=F\); the velocity-stress volumes, differences and DG elements discretize a first-order system and have no mass-stiffness pair, so the library refuses the combination with that reason.</li><li>The <strong>static bar</strong> is posed in the displacement; the velocity-stress system does not contain the displacement as an independent unknown at rest (\(v\) is constant and \(\sigma\) follows from one traction condition), so the stationary cut uses the displacement elements only. The volume viscosity acts on the velocity and is not consumed by a stationary solve.</li><li><strong>Conjugate gradients</strong> need a symmetric positive definite matrix and preconditioner: the stage matrix of a generic implicit method on the first-order system is not symmetric, so CG appears only for the static stiffness and the Newmark effective matrix, and there without the (nonsymmetric) ILU and two-level AMG preconditioners, which run with GMRES instead.</li><li>Positivity limiters and hydrostatic reconstruction protect a positive density or depth that the elastic bar does not have; Scharfetter-Gummel fluxes are for drift-diffusion; Runge-Kutta-Chebyshev and -Legendre super-steps are for parabolic operators; IMEX splits need a stiff and a non-stiff part.</li></ul>
+<h2>Going further</h2>
+<p>Swap the free end for <code>BarFixedEnd</code> to reflect the front with the same sign, give the bar a <code>damping</code> rate, or prescribe a time-dependent end velocity <code>value=lambda t: ...</code>; the matrix code stays as it is.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 471 runs took 768 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/elastic-bar-impact-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/elastic-bar-impact-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_elastic_bar_impact">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terzaghi consolidation: one model, every method · OneSimulation</title>
+<meta name="description" content="One physics declaration, a saturated clay layer under a suddenly applied load, is solved on 200 cells with every applicable combination of discretization family, boundary enforcement, time integrator, nonlinear solver and linear solver. Each run is graded against Terzaghi&#x27;s Fourier series for the excess pore pressure and the degree of consolidation. 233 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/terzaghi-consolidation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Terzaghi consolidation: one model, every method · OneSimulation">
+<meta property="og:description" content="One physics declaration, a saturated clay layer under a suddenly applied load, is solved on 200 cells with every applicable combination of discretization family, boundary enforcement, time integrator, nonlinear solver and linear solver. Each run is graded against Terzaghi&#x27;s Fourier series for the excess pore pressure and the degree of consolidation. 233 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/terzaghi-consolidation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/terzaghi-consolidation-1.png">
+<meta property="og:image:alt" content="Terzaghi consolidation: one model, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Terzaghi consolidation: one model, every method", "description": "One physics declaration, a saturated clay layer under a suddenly applied load, is solved on 200 cells with every applicable combination of discretization family, boundary enforcement, time integrator, nonlinear solver and linear solver. Each run is graded against Terzaghi's Fourier series for the excess pore pressure and the degree of consolidation. 233 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/terzaghi-consolidation-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/terzaghi-consolidation/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "Terzaghi consolidation: one model, every method", "item": "https://onesimulation.onrender.com/tutorials/terzaghi-consolidation/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_terzaghi_consolidation">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>Terzaghi consolidation: one model, every method</h1>
+  <p class="lead">One physics declaration, a saturated clay layer under a suddenly applied load, is solved on 200 cells with every applicable combination of discretization family, boundary enforcement, time integrator, nonlinear solver and linear solver. Each run is graded against Terzaghi&#x27;s Fourier series for the excess pore pressure and the degree of consolidation. 233 runs on the compiled OneSimulation runtime: 180 ran as declared, 15 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 4</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/terzaghi-consolidation-1.png" alt="Space × time integrator"><p><strong>1 · Space × time integrator</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/terzaghi-consolidation-2.png" alt="Isochrones and representative profiles"><p><strong>2 · Isochrones and representative profiles</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/terzaghi-consolidation-3.png" alt="Time integrator × space"><p><strong>3 · Time integrator × space</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/terzaghi-consolidation-4.png" alt="Nonlinear × linear solver"><p><strong>4 · Nonlinear × linear solver</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>A saturated clay layer of thickness \(H=1\) m drains through its top (\(z=0\)) into a sand layer and rests on impermeable rock (\(z=H\)). At \(t=0\) a load \(\sigma=100\) kPa is applied; the pore water first carries it all, \(p(z,0)=\sigma\), and then flows out through the top. OneSimulation's <code>TerzaghiConsolidation</code> model couples three balances:</p>
+<p>\[S\,\partial_t p-\frac{k}{\mu}\,\partial_z^2 p=0,\qquad \partial_t\varepsilon=-m_v\,\partial_t p,\qquad \partial_t e=-(1+e)\,\partial_t\varepsilon,\]</p>
+<p>for the excess pore pressure \(p\), the vertical strain \(\varepsilon\) and the void ratio \(e\), with the constrained storage \(S\), the intrinsic permeability \(k\), the water viscosity \(\mu\) and the constrained compressibility \(m_v\). The pressure obeys a diffusion equation with the coefficient of consolidation \(c_v=k/(\mu S)\). The model is declared once; everything numerical is an argument of <code>Numerics</code>.</p>
+<p><strong>Reference.</strong> Terzaghi's solution (K. Terzaghi, <em>Theoretical Soil Mechanics</em>, 1943) in the time factor \(T_v=c_v t/H^2\) is</p>
+<p>\[p(z,t)=\sum_{m=0}^{\infty}\frac{2\sigma}{M}\sin\Big(\frac{Mz}{H}\Big)e^{-M^2T_v},\qquad M=\frac{\pi}{2}(2m+1),\]</p>
+<p>and the degree of consolidation, the settlement relative to its final value, is \(U(T_v)=1-\sum_m \frac{2}{M^2}e^{-M^2T_v}\). Strain and void ratio follow exactly: \(\varepsilon=m_v(\sigma-p)\) and \(e=(1+e_0)e^{-\varepsilon}-1\).</p>
+<p><strong>Grading.</strong> At \(T_v=0.2\) (about 50 % consolidation) every run is evaluated at the 200 cell centres: the \(L_2\) error of the pore pressure relative to the load, the error of the degree of consolidation from the computed settlement \(\int_0^H\varepsilon\,dz\), and the largest deviation of the void ratio from its exact relation to the computed strain. The wall time covers validation, binding and time stepping.</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>Nothing in this cell names a numerical method.</p>
+<pre><code>thickness, load, void_ratio = 1.0, 1.0e5, 1.0
+permeability, viscosity, storage, compressibility = 1.0e-16, 1.0e-3, 1.0e-7, 1.0e-7
+consolidation_coefficient = permeability / (viscosity * storage)
+time_factor = 0.2
+end_time = time_factor * thickness**2 / consolidation_coefficient
+cells, coarse_cells = 200, 100
+layer = Line(start=(0.0, 0.0, 0.0), end=(thickness, 0.0, 0.0))
+clay = TerzaghiConsolidation(
+    domain=layer.line,
+    permeability=permeability,
+    fluid_viscosity=viscosity,
+    constrained_storage=storage,
+    constrained_compressibility=compressibility,
+    total_stress=load,
+)
+terzaghi = Problem(
+    name=&quot;Terzaghi consolidation&quot;,
+    geometry=layer,
+    physics=(clay,),
+    boundary_conditions=(
+        DrainedBoundary(physics=clay, boundary=layer.boundaries.start),
+        ImpermeableBoundary(physics=clay, boundary=layer.boundaries.end),
+    ),
+    initial_conditions=(
+        InitialValue(clay.pore_pressure, load),
+        InitialValue(clay.vertical_strain, 0.0),
+        InitialValue(clay.void_ratio, void_ratio),
+    ),
+)
+meshes = {n: StructuredLineMesher(cells=n).generate(layer) for n in (cells, coarse_cells)}
+centres = {n: mesh.cell_centers[:, 0] for n, mesh in meshes.items()}
+print(
+    f&quot;{meshes[cells].cell_count} cells of {thickness / cells * 1e3:.1f} mm &quot;
+    f&quot;(coarse check: {meshes[coarse_cells].cell_count} cells); c_v = &quot;
+    f&quot;{consolidation_coefficient:.1e} m²/s, T_v = {time_factor} reached at t = {end_time:.3e} s &quot;
+    f&quot;({end_time / 86400:.2f} days)&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The exact solution</h2>
+<p>Terzaghi's series with 2000 terms at the cell centres and on a fine grid, at the final time factor and at three earlier ones for the isochrone plot.</p>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Finite differences with the central and the 4th- and 6th-order polynomial stencils (a gradient stencil for the Darcy flux, a Laplacian for the balance); finite volumes with the two-point flux; continuous finite elements of degree 1 to 3 with the drained boundary imposed weakly by Nitsche's method (symmetric, incomplete and nonsymmetric variants); discontinuous finite elements of degree 1 to 3 with the symmetric interior penalty.</p>
+<p><strong>Explicit step.</strong> The pressure balance is parabolic; its spectrum lies on the negative real axis. Every spatial scheme is given the same explicit-step rule, <code>SpectralEnclosureStability(enclosure=&quot;negative_real_axis&quot;)</code>: it estimates the spectral radius of the executed coupled operator (Arnoldi iteration on its residual) and returns the largest step for which the selected method's amplification stays below one on that axis. Implicit methods are not limited by it; their step is \(\Delta t=t_{end}/200\).</p>
+<p>Time integrators: explicit one-step and multistep methods, implicit Runge-Kutta, Adams-Moulton and BDF methods, Rosenbrock methods and the adaptive integrators. Implicit stages take a Newton solver with the analytic Jacobian of the coupled three-field system and a sparse direct solve; the linearly implicit Rosenbrock stages take the sparse direct solve alone.</p>
+<p>Crank-Nicolson, the implicit midpoint rule and Adams-Moulton 2 are A-stable but not L-stable: the stiffest modes, excited by the jump between the loaded interior and the drained boundary, are reflected with |R| -&gt; 1 instead of damped. Where they make the coupled void-ratio balance leave its admissible range, the run must fail; the stabilized counterpart is the theta method with theta = 0.75 (one ingredient: more implicit weight), shown behind the hatching. The fixed-step Gear BDF methods of order 3 to 6 start their history with extrapolated backward-Euler steps (<code>TimeMethod(&quot;bdf&lt;k&gt;_gear&quot;, startup_policy=&quot;implicit_extrapolation&quot;)</code>) and run at the implicit step. Adams-Moulton 3 and 4 have bounded stability intervals on the negative real axis; they are repeated at Δt = 1/ρ, with ρ = 4c_v/Δz² the spectral radius of the central-difference operator, inside their stability interval. The fixed-point (Picard) iteration contracts for Δt &lt; 1/ρ and is repeated at Δt = 0.5/ρ. On the finite elements the spectral radius is far larger (boundary penalty modes), so Adams-Moulton 3 and 4 stay failed there.</p>
+<p>Krylov solvers without a preconditioner stall on the coupled three-field stage system; their counterpart adds an ILU preconditioner (one ingredient).</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>Three cuts through the space of combinations:</p>
+<p>1. <strong>Space × time integrator</strong> — every spatial scheme with backward Euler, BDF2, Crank-Nicolson and SDIRK2 at \(\Delta t=t_{end}/200\), and the finite differences and volumes also with explicit classical RK4 at its stable step. 2. <strong>Time integrator × space</strong> — every integrator on the central differences and the finite volumes; the implicit integrators also on continuous and discontinuous P1 elements. 3. <strong>Nonlinear × linear solver</strong> — backward Euler on the central differences (a coupled system of three fields with a pressure-dependent void-ratio mass).</p>
+<p>Explicit finite elements are outside these cuts (a dash in the matrices): the weakly imposed drained boundary (Nitsche) and the interior penalty add boundary modes about 25 times stiffer than the interior diffusion, so an explicit step at 200 cells takes tens of thousands of stages of the coupled three-field element operator. The library runs them with the same stability rule; they are simply not a sensible way to compute this case.</p>
+<p>A few representative combinations are repeated on 100 cells for the mesh check.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>A stabilized counterpart is run only where the declared combination did not run. One loop, the same problem object every time. A combination the library refuses is recorded with its validation message; a run that stops because the void ratio left its admissible range or the state became non-finite is recorded as failed.</p>
+</section>
+<section>
+<h2>Space × time integrator</h2>
+<p>The pore-pressure error of every spatial scheme with an explicit and four implicit integrators.</p>
+<p>All measures for the combinations that ran, sorted by the pressure error.</p>
+</section>
+<section>
+<h2>Isochrones and representative profiles</h2>
+<p>Exact isochrones at \(T_v=0.02,\,0.05,\,0.1,\,0.2\) and the computed pore pressure of the representative combinations at \(T_v=0.2\).</p>
+</section>
+<section>
+<h2>Time integrator × space</h2>
+<p>Explicit integrators at their stable step, implicit integrators at \(\Delta t=t_{end}/200\).</p>
+</section>
+<section>
+<h2>Nonlinear × linear solver</h2>
+<p>Backward Euler on the central differences. The void-ratio mass makes the stage system nonlinear; every converging solver reaches the same discrete solution, the wall time differs.</p>
+</section>
+<section>
+<h2>Mesh check: 200 against 100 cells</h2>
+<p>The representative combinations on half as many cells. Early in the consolidation the pressure has a steep boundary layer at the drained top; at \(T_v=0.2\) it is smooth, and the error of a second-order scheme falls by about four as long as the time error stays below the spatial one.</p>
+</section>
+<section>
+<h2>What the library refused, and what failed</h2>
+<p>A refused combination is caught by validation or binding before any time step; a failed one started and left the admissible state.</p>
+</section>
+<section>
+<h2>Methods that do not apply to consolidation</h2>
+<p>Riemann solvers, reconstructions and limiters are for convective fluxes; the consolidation balance has none. The leapfrog scheme without filter is unstable for every dissipative mode (its stability region is a segment of the imaginary axis), so only its Robert-Asselin-Williams-filtered form is in the matrix. Runge-Kutta-Chebyshev and -Legendre super-steps would suit this parabolic operator but are not yet selectable as a time integrator of <code>Numerics</code>.</p>
+<h2>Going further</h2>
+<p>Make both ends drained (<code>DrainedBoundary</code> on <code>layer.boundaries.all</code>): Terzaghi's series then holds with the drainage length \(H/2\). Or prescribe a water supply (<code>fluid_supply=</code>) for a pumping test; the matrix code stays as it is.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 233 runs took 81 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/terzaghi-consolidation-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/terzaghi-consolidation-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_terzaghi_consolidation">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

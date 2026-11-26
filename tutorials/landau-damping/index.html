@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landau damping: one plasma, every kinetic method · OneSimulation</title>
+<meta name="description" content="One collisionless electron plasma is solved twice: as a distribution function on a phase-space grid (Vlasov-Poisson) and as macro-particles (particle-in-cell). Every phase-space reconstruction and face flux, every particle shape function, every public time integrator and the matrix-free stage solvers are combined; each run is graded against the root of the kinetic dispersion relation. 260 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/landau-damping/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Landau damping: one plasma, every kinetic method · OneSimulation">
+<meta property="og:description" content="One collisionless electron plasma is solved twice: as a distribution function on a phase-space grid (Vlasov-Poisson) and as macro-particles (particle-in-cell). Every phase-space reconstruction and face flux, every particle shape function, every public time integrator and the matrix-free stage solvers are combined; each run is graded against the root of the kinetic dispersion relation. 260 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/landau-damping/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/landau-damping-1.png">
+<meta property="og:image:alt" content="Landau damping: one plasma, every kinetic method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Landau damping: one plasma, every kinetic method", "description": "One collisionless electron plasma is solved twice: as a distribution function on a phase-space grid (Vlasov-Poisson) and as macro-particles (particle-in-cell). Every phase-space reconstruction and face flux, every particle shape function, every public time integrator and the matrix-free stage solvers are combined; each run is graded against the root of the kinetic dispersion relation. 260 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/landau-damping-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/landau-damping/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "Landau damping: one plasma, every kinetic method", "item": "https://onesimulation.onrender.com/tutorials/landau-damping/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_landau_damping">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>Landau damping: one plasma, every kinetic method</h1>
+  <p class="lead">One collisionless electron plasma is solved twice: as a distribution function on a phase-space grid (Vlasov-Poisson) and as macro-particles (particle-in-cell). Every phase-space reconstruction and face flux, every particle shape function, every public time integrator and the matrix-free stage solvers are combined; each run is graded against the root of the kinetic dispersion relation. 260 runs on the compiled OneSimulation runtime: 159 ran as declared, 22 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 7</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/landau-damping-1.png" alt="Phase-space reconstruction × face flux"><p><strong>1 · Phase-space reconstruction × face flux</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/landau-damping-2.png" alt="Field energy of representative runs"><p><strong>2 · Field energy of representative runs</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/landau-damping-3.png" alt="Field energy of representative runs"><p><strong>3 · Field energy of representative runs</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/landau-damping-4.png" alt="Field energy of representative runs"><p><strong>4 · Field energy of representative runs</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/landau-damping-5.png" alt="Field energy of representative runs"><p><strong>5 · Field energy of representative runs</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/landau-damping-6.png" alt="Field energy of representative runs"><p><strong>6 · Field energy of representative runs</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/landau-damping-7.png" alt="Field energy of representative runs"><p><strong>7 · Field energy of representative runs</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>Electrons with a Maxwellian velocity distribution \(f_0(v)=e^{-v^2/2}/\sqrt{2\pi}\) move through a neutralizing ion background in a periodic box of length \(L=2\pi/k\), \(k=0.5\) (units of the Debye length, the plasma frequency and the thermal speed). A small density perturbation</p>
+<p>\[f(x,v,0)=\big(1+\alpha\cos kx\big)\,f_0(v)\]</p>
+<p>launches a Langmuir wave. The Vlasov-Poisson system</p>
+<p>\[\partial_t f+v\,\partial_x f-E\,\partial_v f=0,\qquad \partial_x E=1-\int f\,dv\]</p>
+<p>is declared once. Everything numerical is an argument: the phase-space reconstruction and face flux, the particle shape function and the time integrator with its stage solvers.</p>
+<p><strong>Reference.</strong> For small \(\alpha\) the field oscillates at the complex frequency \(\omega=\omega_r-i\gamma\) that solves \(1+\big(1+\zeta Z(\zeta)\big)/k^2=0\), \(\zeta=\omega/(\sqrt2 k)\), with the plasma dispersion function \(Z(\zeta)=i\sqrt\pi\,w(\zeta)\) (Faddeeva function \(w\); Fried and Conte, 1961). For \(k=0.5\): \(\omega_r\approx1.4156\), \(\gamma\approx0.1533\).</p>
+<p><strong>Grading.</strong> The electric field energy \(W_E(t)\) oscillates at \(2\omega_r\) inside the envelope \(e^{-2\gamma t}\). Its maxima for \(1&lt;t&lt;14\) give the measured damping rate (slope of \(\ln W_E\)) and frequency (spacing of the maxima); the error is \(|\gamma_h-\gamma|/\gamma\).</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>The phase-space grid has \(64\times128\) cells on \([0,L)\times[-6,6]\); the particle model uses 64 cells and \(1024\times128\) macro-particles placed on a regular phase-space lattice and weighted with \(f(x,v,0)\) (a quiet start, so the particle noise stays far below the wave). <code>scale</code> reduces all counts for a quick check.</p>
+<pre><code>scale = 1.0
+k, alpha, end_time = 0.5, 0.01, 15.0
+length = 2 * np.pi / k
+nx, nv = int(64 * scale), int(128 * scale)
+x = length * (np.arange(nx) + 0.5) / nx
+v = -6 + (np.arange(nv) + 0.5) * 12 / nv
+maxwellian = np.exp(-(v**2) / 2)
+maxwellian /= maxwellian.sum() * (12 / nv)  # discrete normalization: exact neutrality
+electrons = SpeciesSet((SpeciesDefinition(&quot;e&quot;, &quot;electron&quot;, charge_number=-1),))
+landau = VlasovPoissonRequest(
+    DistributionFunctionState(
+        electrons, {&quot;e&quot;: (1 + alpha * np.cos(k * x[:, None])) * maxwellian}, (nx,), (v,)
+    ),
+    VlasovPoissonEquationContract(1, 1),
+)
+coarse_landau = VlasovPoissonRequest(
+    DistributionFunctionState(
+        electrons,
+        {
+            &quot;e&quot;: (1 + alpha * np.cos(k * (length * (np.arange(nx // 2) + 0.5) / (nx // 2)))[:, None])
+            * np.exp(-((-6 + (np.arange(nv // 2) + 0.5) * 24 / nv) ** 2) / 2)
+            / (np.exp(-((-6 + (np.arange(nv // 2) + 0.5) * 24 / nv) ** 2) / 2).sum() * 24 / nv)
+        },
+        (nx // 2,),
+        (-6 + (np.arange(nv // 2) + 0.5) * 24 / nv,),
+    ),
+    VlasovPoissonEquationContract(1, 1),
+)
+vlasov, coarse_vlasov = (
+    PeriodicVlasov(
+        mesh=TensorCollocationMesh(
+            axes=(length * (np.arange(n) + 0.5) / n,), coordinate_system=&quot;cartesian&quot;, periodic=(True,)
+        ),
+        background_charge_density=1.0,
+    )
+    for n in (nx, nx // 2)
+)
+cells, lattice_x, lattice_v, pic_alpha = int(64 * scale), int(1024 * scale), int(128 * scale), 0.05
+x0 = length * (np.arange(lattice_x) + 0.5) / lattice_x
+v0 = -6 + (np.arange(lattice_v) + 0.5) * 12 / lattice_v
+particle_velocities = np.zeros((lattice_x * lattice_v, 3))
+particle_velocities[:, 0] = np.tile(v0, lattice_x)
+particles = PICSpecies(
+    positions=np.repeat(x0, lattice_v)[:, None],
+    velocities=particle_velocities,
+    charge=-1.0,
+    mass=1.0,
+    weights=np.outer(1 + pic_alpha * np.cos(k * x0), np.exp(-(v0**2) / 2)).ravel()
+    * length
+    / np.outer(1 + pic_alpha * np.cos(k * x0), np.exp(-(v0**2) / 2)).sum(),
+)
+print(
+    f&quot;Vlasov: {nx} x {nv} = {nx * nv} phase-space cells; PIC: {cells} cells, &quot;
+    f&quot;{particles.positions.shape[0]} macro-particles&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The exact damping rate and the two-stream growth rate</h2>
+<p>The Landau root of \(1+(1+\zeta Z(\zeta))/k^2=0\), and the growth rate of two warm counter-streaming beams (\(\pm u\), thermal spread \(\sigma\)), the real root of \(1+\tfrac12\sum_\pm\big(1+\zeta_\pm Z(\zeta_\pm)\big)/(k\sigma)^2=0\) with \(\zeta_\pm=(i\Gamma/k\mp u)/(\sqrt2\sigma)\).</p>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p><strong>Phase space.</strong> The transport in \(x\) and \(v\) is a conservative finite-volume flux. The face traces are constant (first order) or MUSCL-linear with no limiter (Fromm), with one of four slope limiters, or minmod plus a positivity-preserving trace limiter; the face flux is upwind or the non-dissipative central average. The field comes from a spectral Poisson solve.</p>
+<p><strong>Particles.</strong> Deposition and interpolation share one shape function: nearest grid point (B-spline of degree 0), cloud-in-cell (degree 1), triangular-shaped cloud (degree 2) and the cubic B-spline.</p>
+<p><strong>Time.</strong> Every public integrator. Implicit stages are solved matrix-free: Jacobian-free Newton-Krylov (default) or a fixed-point iteration; Rosenbrock stages by GMRES with finite-difference Jacobian products.</p>
+<p>A linear reconstruction without limiter, and the central flux on any traces, are not monotone: by Godunov's theorem they create undershoots where f is small (the velocity tails), and the library stops when f turns negative instead of clipping it. Their stabilized counterpart adds the positivity-preserving trace limiter to the same reconstruction and flux.</p>
+<p>Leapfrog has no damping; on the dissipative upwind transport its computational mode grows, and it does not preserve positivity, so f turns negative within the first steps. Its stabilized counterpart is the same leapfrog on the non-dissipative central face flux with the same reconstruction, the classical leapfrog pairing. BDF4 to BDF6 and Adams-Moulton 3 and 4 are not A-stable, and a fixed-point iteration contracts only for steps below the inverse spectral radius; at the implicit step \(\Delta t=0.1\) they may fail, and their counterpart is the same method at a step it is stable for.</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>1. <strong>Phase-space reconstruction × face flux</strong> (Vlasov), SSP-RK3 at the transport stability step. 2. <strong>Time integrator × phase space</strong> (Vlasov): every integrator on first-order upwind, MUSCL-minmod and MUSCL-van Leer fluxes; explicit integrators at the transport stability step (\(\Delta t\approx0.015\)), implicit ones at \(\Delta t=0.1\), beyond any explicit limit. 3. <strong>Stage solver</strong> (Vlasov): Crank-Nicolson and SDIRK2 with every nonlinear/linear pair, Rosenbrock-Euler with every linear solver. 4. <strong>Time integrator × shape function</strong> (PIC): every integrator with cloud-in-cell, every shape function with the library's own kick-drift particle-field step and with classical RK4, \(\Delta t=0.1\) (explicit) and \(0.2\) (implicit). 5. <strong>Two-stream instability</strong>: Vlasov and PIC with four integrators. 6. <strong>Mesh check</strong>: representative Vlasov combinations on a \(32\times64\) grid.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>A refused combination is recorded with its message; a run that stops because the distribution turned negative, a stage solve did not converge or the state left the finite range is recorded as failed. The two-stream runs use beams at \(\pm1\) with spread \(0.14\) in the same box, on \(v\in[-2.3,2.3]\). They are seeded with the linear eigenfunction of the growing mode, \(\delta f\propto\mathrm{Re}\big[e^{ikx}\,(-ik f_0&#x27;(v))/(\Gamma+ikv)\big]\), so the field energy grows as \(e^{2\Gamma t}\) from the start; the growth rate is the slope of \(\tfrac12\ln W_E\) for \(1&lt;t&lt;5\).</p>
+</section>
+<section>
+<h2>Phase-space reconstruction × face flux</h2>
+<p>The relative error of the damping rate. Hatched cells failed as declared (the distribution turned negative); colour and value are those of the stabilized counterpart named below the matrix.</p>
+</section>
+<section>
+<h2>Field energy of representative runs</h2>
+<p>\(W_E(t)\) against the exact envelope \(e^{-2\gamma t}\) (scaled to the first maximum).</p>
+</section>
+<section>
+<h2>Methods that do not apply</h2>
+<p>Newton with an assembled Jacobian and sparse direct or preconditioned linear solvers need a stage matrix; the phase-space stage couples every cell through the Poisson solve, so the kinetic stages are solved matrix-free (JFNK, fixed point, GMRES without preconditioner) and the assembled solvers are refused with that reason. Without a preconditioner, right and flexible GMRES generate the same Krylov iterates as GMRES. The electromagnetic particle model advances its fields with a discrete Maxwell step that has no rate form, so generic time methods drive the electrostatic model only.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 260 runs took 67 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/landau-damping-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/landau-damping-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_landau_damping">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
