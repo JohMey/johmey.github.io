@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Joule-heated wire: two coupled models, every method · OneSimulation</title>
+<meta name="description" content="Two physics declarations, current conduction in a stainless-steel wire and Fourier heat conduction in the same wire, are coupled both ways: the Joule power density heats the wire, and the temperature lowers the electrical conductivity. The coupled problem is solved with every applicable combination of discretization family (finite differences, finite volumes, continuous, Nitsche and discontinuous finite elements), coupling strategy (Gauss-Seidel fixed point, monolithic Newton, quasi-stationary and partitioned time coupling), time integrator, nonlinear solver and linear solver. Each run is graded against the exact steady temperature and a fine reference of the transient; combinations the library refuses are reported as such. 218 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/joule-heated-wire/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Joule-heated wire: two coupled models, every method · OneSimulation">
+<meta property="og:description" content="Two physics declarations, current conduction in a stainless-steel wire and Fourier heat conduction in the same wire, are coupled both ways: the Joule power density heats the wire, and the temperature lowers the electrical conductivity. The coupled problem is solved with every applicable combination of discretization family (finite differences, finite volumes, continuous, Nitsche and discontinuous finite elements), coupling strategy (Gauss-Seidel fixed point, monolithic Newton, quasi-stationary and partitioned time coupling), time integrator, nonlinear solver and linear solver. Each run is graded against the exact steady temperature and a fine reference of the transient; combinations the library refuses are reported as such. 218 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/joule-heated-wire/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/joule-heated-wire-1.png">
+<meta property="og:image:alt" content="A Joule-heated wire: two coupled models, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "A Joule-heated wire: two coupled models, every method", "description": "Two physics declarations, current conduction in a stainless-steel wire and Fourier heat conduction in the same wire, are coupled both ways: the Joule power density heats the wire, and the temperature lowers the electrical conductivity. The coupled problem is solved with every applicable combination of discretization family (finite differences, finite volumes, continuous, Nitsche and discontinuous finite elements), coupling strategy (Gauss-Seidel fixed point, monolithic Newton, quasi-stationary and partitioned time coupling), time integrator, nonlinear solver and linear solver. Each run is graded against the exact steady temperature and a fine reference of the transient; combinations the library refuses are reported as such. 218 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/joule-heated-wire-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/joule-heated-wire/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "A Joule-heated wire: two coupled models, every method", "item": "https://onesimulation.onrender.com/tutorials/joule-heated-wire/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_joule_heated_wire">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>A Joule-heated wire: two coupled models, every method</h1>
+  <p class="lead">Two physics declarations, current conduction in a stainless-steel wire and Fourier heat conduction in the same wire, are coupled both ways: the Joule power density heats the wire, and the temperature lowers the electrical conductivity. The coupled problem is solved with every applicable combination of discretization family (finite differences, finite volumes, continuous, Nitsche and discontinuous finite elements), coupling strategy (Gauss-Seidel fixed point, monolithic Newton, quasi-stationary and partitioned time coupling), time integrator, nonlinear solver and linear solver. Each run is graded against the exact steady temperature and a fine reference of the transient; combinations the library refuses are reported as such. 218 runs on the compiled OneSimulation runtime: 208 ran as declared, 10 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 6</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/joule-heated-wire-1.png" alt="Space × coupling strategy"><p><strong>1 · Space × coupling strategy</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/joule-heated-wire-2.png" alt="Steady profiles of representative combinations"><p><strong>2 · Steady profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/joule-heated-wire-3.png" alt="Time integrator × space"><p><strong>3 · Time integrator × space</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/joule-heated-wire-4.png" alt="Time integrator × space"><p><strong>4 · Time integrator × space</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/joule-heated-wire-5.png" alt="Time coupling × integrator"><p><strong>5 · Time coupling × integrator</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/joule-heated-wire-6.png" alt="Nonlinear × linear solver"><p><strong>6 · Nonlinear × linear solver</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>A stainless-steel wire of length \(L=20\,\)mm lies between two massive clamps that hold both ends at \(T_0=300\,\)K. At \(t=0\) a voltage \(U=50\,\)mV is switched on across the clamps. The current heats the wire, the heat flows back into the clamps, and the hot steel conducts worse. Two physics models describe it:</p>
+<p>\[-\partial_x\big(\sigma(T)\,\partial_x\varphi\big)=0,\qquad \varphi(0)=U,\quad \varphi(L)=0,\]</p>
+<p>\[\rho c_p\,\partial_t T=\partial_x\big(k\,\partial_x T\big)+q,\qquad q=\sigma(T)\,|\partial_x\varphi|^2, \qquad T(0,t)=T(L,t)=T_0,\quad T(x,0)=T_0 .\]</p>
+<p>The potential obeys current continuity: <code>CurrentConduction</code> with a conductivity that follows the linear resistivity law of metals, \(\rho_e(T)=\rho_0\,[1+\alpha\,(T-T_0)]\) with \(\rho_0=1/\sigma_0\), \(\sigma_0=1.4\cdot10^6\,\)S/m and \(\alpha=1.0\cdot10^{-3}\,\)1/K (AISI 304). The law is declared as a material law, <code>ReciprocalLaw</code> of a <code>PolynomialLaw</code> in the temperature. Two <code>FieldCoupling</code>s close the loop: the temperature of the heat balance enters the temperature input of the conduction model, and its ohmic loss density \(q=\sigma(T)\,|E|^2\) enters the heat balance. The steel has \(k=16\,\)W/(m K), \(\rho=7900\,\)kg/m³ and \(c_p=500\,\)J/(kg K). The electric field responds within nanoseconds, the temperature within seconds, so the potential is a stationary partner of the transient heat balance.</p>
+<p>Everything numerical is an argument of <code>Numerics</code> (one per model) and of the coupling solver.</p>
+<p><strong>Reference, steady.</strong> The current density \(J\) is uniform. With \(\theta=1+\alpha(T-T_0)\) the heat balance \(kT&#x27;&#x27;+J^2\rho_e(T)=0\) becomes \(\theta&#x27;&#x27;+m^2\theta=0\), \(m^2=\alpha\rho_0J^2/k\), with \(\theta=1\) at both clamps, and \(U=J\int_0^L\rho_e\,dx\) fixes \(m\):</p>
+<p>\[\theta(x)=\frac{\cos m(x-L/2)}{\cos(mL/2)},\qquad \tan\frac{mL}{2}=\frac{U}{2}\sqrt{\frac{\alpha\sigma_0}{k}}, \qquad T_s(x)=T_0+\frac{\theta(x)-1}{\alpha}.\]</p>
+<p>For \(\alpha\to0\) this is the parabola \(T_0+\sigma_0U^2x(L-x)/(2kL^2)\) with the peak rise \(\sigma_0U^2/8k\), Kohlrausch's result that the rise depends on the voltage, not on the length (<em>Ann. Phys.</em> 1 (1900) 132); the feedback lowers it.</p>
+<p><strong>Reference, transient.</strong> The transient has no closed form. It is computed in the notebook on 2000 intervals with second-order differences and the BDF2 method at \(\Delta t=0.5\,\)ms, the Joule density extrapolated linearly in time and the current from the resistance \(\int\rho_e\,dx\) by the trapezoidal rule. Both errors are below \(10^{-5}\,\)K, far below the errors of the graded runs.</p>
+<p><strong>Grading.</strong> Every run is evaluated at the cell centres \(x_i\): the mean absolute error of the temperature and its largest deviation, for the steady state and at \(t=5\,\)s (Fourier number \(\alpha t/L^2\approx0.05\)); the wall time covers validation, binding and solution.</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>Nothing in this cell names a numerical method. Both models live on the same line and share the mesh.</p>
+<pre><code>length, voltage, conductivity, coefficient, ambient, end_time = 0.02, 0.05, 1.4e6, 1.0e-3, 300.0, 5.0
+cells, coarse_cells, time_cells = 200, 100, 50
+steel = IsotropicSolid(
+    density=7900.0,
+    specific_heat_capacity=500.0,
+    thermal_conductivity=16.0,
+    youngs_modulus=1.93e11,
+    poisson_ratio=0.29,
+    thermal_expansion_coefficient=1.6e-5,
+)
+diffusivity = steel.thermal_conductivity / (steel.density * steel.specific_heat_capacity)
+resistivity = PolynomialLaw(
+    (1 / conductivity, coefficient / conductivity), unit=&quot;Ohm*m&quot;, reference=ambient
+)
+wire = Line(start=(0.0, 0.0, 0.0), end=(length, 0.0, 0.0))
+heat = HeatConduction(domain=wire.line, material=steel)
+current = CurrentConduction(
+    domain=wire.line, conductivity=ReciprocalLaw(resistivity, unit=&quot;S/m&quot;)
+)
+clamps = (wire.boundaries.start, wire.boundaries.end)
+problem = Problem(
+    name=&quot;Joule-heated wire&quot;,
+    geometry=wire,
+    physics=(heat, current),
+    boundary_conditions=(
+        *(FixedTemperature(physics=heat, boundary=clamp, value=ambient) for clamp in clamps),
+        FixedPotential(physics=current, boundary=clamps[0], value=voltage),
+        FixedPotential(physics=current, boundary=clamps[1], value=0.0),
+    ),
+    couplings=(
+        FieldCoupling(
+            source=current.loss_density, target=heat.heating, transfer=FieldInterpolation()
+        ),
+        FieldCoupling(
+            source=heat.temperature, target=current.temperature, transfer=FieldInterpolation()
+        ),
+    ),
+    initial_conditions=(InitialValue(heat.temperature, ambient),),
+)
+meshes = {
+    n: StructuredLineMesher(cells=n).generate(wire) for n in (cells, coarse_cells, time_cells)
+}
+centres = {n: mesh.cell_centers for n, mesh in meshes.items()}
+print(
+    f&quot;{meshes[cells].cell_count} cells of width {1e3 * length / cells:.2f} mm, &quot;
+    f&quot;{meshes[cells].cell_count + 1} mesh nodes (mesh check: {meshes[coarse_cells].cell_count} &quot;
+    f&quot;cells; time-integrator cut: {meshes[time_cells].cell_count} cells)&quot;
+)
+print(
+    f&quot;Joule density at T0 {conductivity * (voltage / length) ** 2:.4e} W/m³, &quot;
+    f&quot;diffusivity {diffusivity:.4e} m²/s, &quot;
+    f&quot;Fourier number at t = {end_time} s: {diffusivity * end_time / length**2:.4f}&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The reference solutions</h2>
+<p>The closed form of the steady state at every cell centre, and the transient on the fine grid, interpolated to the cell centres.</p>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Both models take the same spatial scheme. Finite differences with central, fourth- and sixth-order polynomial Laplacians, each with the first derivative of the same order for the electric field and the heat flux; finite volumes with the two-point flux and with the corrected central flux; continuous Lagrange elements of degree 1 to 3 with strong boundary values, symmetric and nonsymmetric Nitsche terms and continuous interior penalty; discontinuous elements of degree 1 to 3 with the symmetric interior-penalty flux at two penalty levels.</p>
+<p>Coupling strategies for the steady state: a Gauss-Seidel fixed point that solves one model after the other and passes the loss density and the temperature on (in both orders: heat first starts without a source), the monolithic Newton method on the stacked residuals of both models, and the same Newton method without the cross blocks (block Jacobi). The monolithic cross blocks hold the derivative of the current balance with respect to the temperature, through \(d\sigma/dT\), and of the heat balance with respect to the potential; the share of the heat block that runs through the loss density, \(\partial q/\partial T=|E|^2\,d\sigma/dT\), is added to the heat block. Both are assembled by colored differences.</p>
+<p>Coupling strategies in time: the potential as a quasi-stationary partner solved at every synchronization of the transient heat balance, and a partitioned step that iterates both models to a fixed point per step.</p>
+<p>Time integrators of the heat balance: the explicit one-step and multistep methods, implicit Runge-Kutta, Adams-Moulton and BDF methods, Rosenbrock methods and the adaptive integrators. Implicit stages take a Newton solver with a sparse direct solve; the linearly implicit Rosenbrock stages take the sparse direct solve alone. Explicit methods advance at their stable step (safety factor 0.5), implicit ones at \(\Delta t=0.05\,\)s.</p>
+</section>
+<section>
+<h2>Schemes that must fail, and their stabilized counterparts</h2>
+<p>The heat operator has a real, negative spectrum reaching \(-\lambda_{\max}\sim-4\alpha/h^2\) (more for higher orders and interior penalty). Adams-Moulton 3 and 4 are not A-stable: their stability intervals on the negative axis end at \(\lambda\Delta t\approx6\) and \(3\). Leapfrog has no damping: every decaying mode is amplified at any step. A fixed-point (Picard) iteration of an implicit step contracts only for \(\lambda_{\max}\Delta t&lt;1\). BDF5 and BDF6 are stable on the negative axis but not monotone at large \(\lambda\Delta t\). Crank-Nicolson is A-stable but not L-stable: the stiffest modes are multiplied by almost \(-1\) in every step. Each of these may fail; its stabilized counterpart, shown behind a grey hatching, is the same method at a step it is stable or damping for, or leapfrog with the Robert-Asselin-Williams filter. A counterpart runs only where the declared scheme actually failed.</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>Five cuts through the space of combinations:</p>
+<p>1. <strong>Space × coupling strategy</strong> — the steady state of every spatial scheme on 200 cells with the four stationary coupling strategies. 2. <strong>Time integrator × space</strong> — the transient with every integrator on three spatial schemes (central differences, two-point volumes and CG P1), the potential as quasi-stationary partner. An explicit method on a diffusion operator must take \(\Delta t\propto h^2\), so this cut uses 50 cells; the spatial accuracy is the subject of the first cut. 3. <strong>Time coupling × integrator</strong> — the three time-coupling strategies with four implicit integrators on CG P2, 50 cells. 4. <strong>Nonlinear × linear solver</strong> — backward Euler on two-point finite volumes with 50 cells, quasi-stationary coupling; the linear solver also solves the potential. Finite volumes, not differences: with \(\sigma(T)\) the difference form \(\sigma\varphi&#x27;&#x27;+\sigma&#x27;\varphi&#x27;\) of the current balance is not symmetric, so conjugate gradients would not apply to its potential, while the two-point flux keeps it symmetric positive definite. 5. <strong>Mesh check</strong> — the steady state of representative schemes with the monolithic Newton method on 100 cells against 200 cells.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>One loop, the same problem object every time. A combination the library refuses is recorded with its validation message. A run whose temperature leaves the interval between \(T_0\) and the steady peak (plus 1 K) violates the maximum principle of the heated wire and is recorded as failed, as is a solver that does not converge. A failed run with a stabilized counterpart appends that counterpart to the list, so the same loop runs it next.</p>
+</section>
+<section>
+<h2>Space × coupling strategy</h2>
+<p>The mean error of the steady temperature for every spatial scheme and every stationary coupling strategy. All four strategies converge to the same discrete solution of a scheme, so the error measures the spatial scheme alone. The steady profile is a cosine arc, no longer the parabola of the uncoupled wire, so higher-order schemes converge fast but do not reproduce it to rounding.</p>
+<p>All measures for the combinations that ran, sorted by the mean error.</p>
+</section>
+<section>
+<h2>Steady profiles of representative combinations</h2>
+<p>Temperature along the wire against the exact cosine arc, and a close-up of the clamp at \(x=0\).</p>
+</section>
+<section>
+<h2>Time integrator × space</h2>
+<p>The transient at \(t=5\,\)s with the potential as quasi-stationary partner. Explicit integrators at their stable step, implicit integrators at \(\Delta t=0.05\,\)s, on 50 cells.</p>
+<p>Transient profiles of three integrators on central differences against the series.</p>
+</section>
+<section>
+<h2>Time coupling × integrator</h2>
+<p>Quasi-stationary and partitioned coupling of the transient with four implicit integrators on CG P2. Both converge the potential and the conductivity at every synchronization; differences would show a coupling error.</p>
+</section>
+<section>
+<h2>Nonlinear × linear solver</h2>
+<p>Backward Euler on two-point finite volumes with 50 cells. The heat step is linear for a given Joule density, so every converging Newton variant reproduces the same discrete solution; the wall time differs. The linear solver of a column solves both the heat step and the potential.</p>
+</section>
+<section>
+<h2>Mesh check: 200 against 100 cells</h2>
+<p>The steady state with the monolithic Newton method on half as many cells. The key value is the temperature rise at the middle of the wire (exact: \((1/\cos(mL/2)-1)/\alpha=26.980\,\)K); its change between the two levels and the error ratio show the order of each scheme: about four for second order and sixteen for quadratic elements. The higher-order differences converge more slowly than their interior order: at the clamps their conductivity reads the temperature interpolated from the nearest point values.</p>
+</section>
+<section>
+<h2>What the library refused, and what failed</h2>
+<p>A refused combination is caught by validation or binding before any step; a failed one started and left the physical range or did not converge.</p>
+</section>
+<section>
+<h2>Methods that do not apply to this problem</h2>
+<p>Riemann solvers, reconstructions and slope limiters act on convective fluxes; neither the current nor the heat balance has one, so finite volumes take only a diffusive face flux. SUPG, GLS and graph viscosity stabilize convection and have nothing to act on. Staggered Verlet needs a second-order system and IMEX splits a stiff from a non-stiff part, which a single diffusion operator does not have. A monolithic time integrator (<code>MonolithicCoupling</code>) advances transient fields only; the potential has no time derivative, so in time it is coupled as a stationary partner. <code>SequentialCoupling</code> visits every model once per step in the order of its one-way dependencies; the two-way coupling makes the dependency graph cyclic, so the strategies in time are the quasi-stationary and the partitioned coupling, which converge the loop at every step.</p>
+<h2>Going further</h2>
+<p>Replace a <code>FixedTemperature</code> by a <code>ConvectiveHeatFlux</code> to cool the wire surface, change the voltage to check that the peak rise grows with \(U^2\) and not with the length, or put a second material into the middle of the wire with <code>regionwise</code>; the matrix code stays as it is.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 218 runs took 85 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/joule-heated-wire-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/joule-heated-wire-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_joule_heated_wire">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A uniformly charged slab: one model, every method · OneSimulation</title>
+<meta name="description" content="One physics declaration, Gauss&#x27;s law for a dielectric slab carrying a uniform space charge between two electrodes, is solved with every applicable combination of discretization family (finite differences, finite volumes, continuous, Nitsche and discontinuous finite elements) and linear solver. Each run is graded against the exact parabolic potential; combinations the library refuses are reported as such. 184 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/charged-slab/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A uniformly charged slab: one model, every method · OneSimulation">
+<meta property="og:description" content="One physics declaration, Gauss&#x27;s law for a dielectric slab carrying a uniform space charge between two electrodes, is solved with every applicable combination of discretization family (finite differences, finite volumes, continuous, Nitsche and discontinuous finite elements) and linear solver. Each run is graded against the exact parabolic potential; combinations the library refuses are reported as such. 184 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/charged-slab/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/charged-slab-1.png">
+<meta property="og:image:alt" content="A uniformly charged slab: one model, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "A uniformly charged slab: one model, every method", "description": "One physics declaration, Gauss's law for a dielectric slab carrying a uniform space charge between two electrodes, is solved with every applicable combination of discretization family (finite differences, finite volumes, continuous, Nitsche and discontinuous finite elements) and linear solver. Each run is graded against the exact parabolic potential; combinations the library refuses are reported as such. 184 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/charged-slab-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/charged-slab/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "A uniformly charged slab: one model, every method", "item": "https://onesimulation.onrender.com/tutorials/charged-slab/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_charged_slab">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>A uniformly charged slab: one model, every method</h1>
+  <p class="lead">One physics declaration, Gauss&#x27;s law for a dielectric slab carrying a uniform space charge between two electrodes, is solved with every applicable combination of discretization family (finite differences, finite volumes, continuous, Nitsche and discontinuous finite elements) and linear solver. Each run is graded against the exact parabolic potential; combinations the library refuses are reported as such. 184 runs on the compiled OneSimulation runtime: 138 ran as declared, 46 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 2</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/charged-slab-1.png" alt="Space × linear solver"><p><strong>1 · Space × linear solver</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/charged-slab-2.png" alt="Profiles of representative schemes"><p><strong>2 · Profiles of representative schemes</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>A dielectric layer of thickness \(d=1\,\)mm and relative permittivity \(\varepsilon_r=4\) carries a uniform space charge \(\rho=2\cdot10^{-3}\,\)C/m³. Its faces are electrodes at \(\varphi(0)=0\) and \(\varphi(d)=V=10\,\)V. Gauss's law in terms of the potential,</p>
+<p>\[-\partial_x\big(\varepsilon\,\partial_x\varphi\big)=\rho,\qquad \varphi(0)=0,\quad \varphi(d)=V,\qquad E=-\partial_x\varphi,\]</p>
+<p>is declared once. Everything numerical is an argument of <code>Numerics</code>: the discretization family with its diffusion operator and boundary treatment, and the linear solver of the stationary system.</p>
+<p><strong>Reference.</strong> Integrating twice gives the parabola and the linear field</p>
+<p>\[\varphi(x)=\frac{\rho}{2\varepsilon}\,x(d-x)+V\,\frac{x}{d},\qquad E(x)=-\frac{\rho}{2\varepsilon}\,(d-2x)-\frac{V}{d}.\]</p>
+<p>The displacement \(D=\varepsilon E\) grows by \(\rho d\) across the layer: the charge balance of the slab.</p>
+<p><strong>Grading.</strong> Every run is evaluated at the cell centres \(x_i\): the largest potential error, the largest field error, and the charge balance \(\varepsilon\,[E(d)-E(0)]/(\rho d)-1\) from the field at the two electrodes.</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>Nothing in this cell names a numerical method.</p>
+<pre><code>depth, voltage, charge = 1e-3, 10.0, 2e-3
+epsilon = 4 * float(VacuumPermittivity().evaluate())
+cells, coarse_cells = 200, 100
+layer = Line(start=(0.0, 0.0, 0.0), end=(depth, 0.0, 0.0))
+gauss = PoissonEquation(
+    domain=layer.line,
+    permittivity=regionwise((), default=epsilon, unit=&quot;F/m&quot;),
+    charge_density=charge,
+)
+problem = Problem(
+    name=&quot;Charged slab&quot;,
+    geometry=layer,
+    physics=(gauss,),
+    boundary_conditions=(
+        FixedPotential(physics=gauss, boundary=layer.boundaries.start, value=0.0),
+        FixedPotential(physics=gauss, boundary=layer.boundaries.end, value=voltage),
+    ),
+)
+meshes = {n: StructuredLineMesher(cells=n).generate(layer) for n in (cells, coarse_cells)}
+centres = {n: mesh.cell_centers for n, mesh in meshes.items()}
+electrodes = np.array([[0.0, 0.0, 0.0], [depth, 0.0, 0.0]])
+print(
+    f&quot;{meshes[cells].cell_count} cells of width {1e6 * depth / cells:.1f} µm &quot;
+    f&quot;(mesh check: {meshes[coarse_cells].cell_count} cells)&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The exact solution</h2>
+<p>The parabola and the field at every cell centre and on a fine plotting grid.</p>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Finite differences with central, fourth- and sixth-order polynomial Laplacians (each with the first derivative of the same order for the field); finite volumes with the two-point flux and the corrected central flux; continuous Lagrange elements of degree 1 to 3 with strong electrode values, symmetric and nonsymmetric Nitsche terms and continuous interior penalty; discontinuous elements of degree 1 to 3 with the SIPG flux at two penalty levels.</p>
+<p>The stationary system is linear. Every scheme is solved with a sparse LU factorization, with Krylov solvers with and without preconditioning, and with the automatic choice. Conjugate gradients and the symmetric algebraic multigrid need a certified symmetric positive definite matrix. The one-sided boundary closures of the higher-order differences and the Nitsche terms do not provide one (the symmetric Nitsche matrix is definite only above a penalty threshold that is not certified); these pairs are marked "n/a" and listed under "Methods that do not apply".</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p><strong>Space × linear solver</strong>: every spatial scheme with every linear solver on 200 cells. The representative schemes are repeated on 100 cells for the mesh check.</p>
+</section>
+<section>
+<h2>A solver that must fail, and its stabilized counterpart</h2>
+<p>The condition number of the stiffness matrix grows like \(h^{-2}\) and with the element degree. Unpreconditioned GMRES then stalls within its iteration budget on the higher-order elements. Its stabilized counterpart adds exactly one ingredient, an incomplete LU preconditioner; it is shown behind a grey hatching. Unpreconditioned conjugate gradients can stall the same way on the cubic discontinuous elements; their counterpart adds the algebraic multigrid preconditioner. A counterpart is shown only where the declared solver failed.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>One loop, the same problem object every time. A combination the library refuses is recorded with its validation message; a Krylov solver that does not converge is recorded as failed.</p>
+</section>
+<section>
+<h2>Space × linear solver</h2>
+<p>Left: the largest potential error, which does not depend on the solver once it converges. Right: the wall time of each solve.</p>
+<p>Potential error, field error and charge balance of every scheme with the sparse LU solve. Continuous elements reproduce the parabola exactly at the nodes from degree 2 on (the field is linear); the cell-centred finite differences and volumes close at the electrodes with a half cell and are second order.</p>
+</section>
+<section>
+<h2>Profiles of representative schemes</h2>
+<p>Potential and field through the layer against the exact solution.</p>
+</section>
+<section>
+<h2>Mesh check: 200 against 100 cells</h2>
+<p>A second-order scheme reduces the potential error about fourfold; schemes that are exact for the parabola stay at round-off.</p>
+</section>
+<section>
+<h2>Methods that do not apply to this problem</h2>
+<p>Gauss's law is stationary and linear: time integrators have nothing to advance and a nonlinear solver nothing to iterate. Conjugate gradients and the symmetric algebraic multigrid need a certified symmetric positive definite matrix: the one-sided closures of the fourth- and sixth-order differences make the matrix nonsymmetric, the nonsymmetric Nitsche term does too, and the symmetric Nitsche matrix is definite only above an uncertified penalty threshold. Conjugate gradients with an incomplete LU preconditioner are excluded because ILU is not symmetric. Convective fluxes, reconstructions, limiters and SUPG/GLS act on transport terms, which an electrostatic field does not have.</p>
+<h2>Going further</h2>
+<p>Make the charge density a function <code>lambda x: ...</code> or the permittivity regionwise and the matrix code stays as it is.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 184 runs took 19 seconds in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/charged-slab-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/charged-slab-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_charged_slab">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

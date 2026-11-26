@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffusive relaxation in a drift-diffusion plasma: one model, every method · OneSimulation</title>
+<meta name="description" content="One declaration of a drift-diffusion plasma (electrons, argon ions, mean electron energy) between two insulating walls is solved with every applicable combination of finite-volume, finite-difference and finite-element discretization, time integrator, nonlinear solver and linear solver. Each run is graded against the exact Fourier-mode solution. 230 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/drift-diffusion-relaxation/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Diffusive relaxation in a drift-diffusion plasma: one model, every method · OneSimulation">
+<meta property="og:description" content="One declaration of a drift-diffusion plasma (electrons, argon ions, mean electron energy) between two insulating walls is solved with every applicable combination of finite-volume, finite-difference and finite-element discretization, time integrator, nonlinear solver and linear solver. Each run is graded against the exact Fourier-mode solution. 230 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/drift-diffusion-relaxation/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/drift-diffusion-relaxation-1.png">
+<meta property="og:image:alt" content="Diffusive relaxation in a drift-diffusion plasma: one model, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Diffusive relaxation in a drift-diffusion plasma: one model, every method", "description": "One declaration of a drift-diffusion plasma (electrons, argon ions, mean electron energy) between two insulating walls is solved with every applicable combination of finite-volume, finite-difference and finite-element discretization, time integrator, nonlinear solver and linear solver. Each run is graded against the exact Fourier-mode solution. 230 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/drift-diffusion-relaxation-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/drift-diffusion-relaxation/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "Diffusive relaxation in a drift-diffusion plasma: one model, every method", "item": "https://onesimulation.onrender.com/tutorials/drift-diffusion-relaxation/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_drift_diffusion_relaxation">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>Diffusive relaxation in a drift-diffusion plasma: one model, every method</h1>
+  <p class="lead">One declaration of a drift-diffusion plasma (electrons, argon ions, mean electron energy) between two insulating walls is solved with every applicable combination of finite-volume, finite-difference and finite-element discretization, time integrator, nonlinear solver and linear solver. Each run is graded against the exact Fourier-mode solution. 230 runs on the compiled OneSimulation runtime: 140 ran as declared, 16 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 4</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/drift-diffusion-relaxation-1.png" alt="Space"><p><strong>1 · Space</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/drift-diffusion-relaxation-2.png" alt="Profiles"><p><strong>2 · Profiles</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/drift-diffusion-relaxation-3.png" alt="Time integrator × space"><p><strong>3 · Time integrator × space</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/drift-diffusion-relaxation-4.png" alt="Nonlinear × linear solver"><p><strong>4 · Nonlinear × linear solver</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>Electrons and \(\mathrm{Ar}^+\) ions fill a gap of width \(L=1\) cm between two insulating walls (no particle and no energy flux). Their densities obey the drift-diffusion balances</p>
+<p>\[\partial_t n_s+\partial_x\Gamma_s=0,\qquad \Gamma_s=\pm\mu_s n_s E-D_s\,\partial_x n_s,\]</p>
+<p>and the electron energy density \(w_e=n_e\bar\varepsilon\) obeys its own balance with the energy flux \(\Gamma_w=-\tfrac{5}{3}\,\cdot\,\)(enthalpy factor)\(\,\cdot\,(\mu_e E w_e+\partial_x(D_e w_e))\). The electrons relax momentum at a constant collision frequency \(\nu=10^{12}\,\mathrm{s^{-1}}\) (so \(D_e=2\bar\varepsilon/(3m_e\nu)\)), the ions have the mobility \(0.2\,\mathrm{m^2/(V\,s)}\) in argon at 300 K (so \(D_i=\mu_i k_BT/e\)), and the electric field is prescribed as zero.</p>
+<p><strong>Exact solution.</strong> With a uniform mean energy \(\bar\varepsilon=1\) eV and the enthalpy factor 1 the energy flux is \(\bar\varepsilon\,\Gamma_e\), so \(\bar\varepsilon\) stays uniform and both diffusivities stay constant. Each density then relaxes mode by mode:</p>
+<p>\[n_s(x,t)=n_0\Big[1+\tfrac12\cos\tfrac{\pi x}{L}\,e^{-D_s\pi^2t/L^2} +\tfrac15\cos\tfrac{3\pi x}{L}\,e^{-9D_s\pi^2t/L^2}\Big].\]</p>
+<p>The electrons diffuse \(D_e/D_i\approx23\) times faster than the ions, a stiff pair of time scales. This is a free-diffusion test of the transport, the walls and the energy coupling; it has no space charge (the field is prescribed), so it is not ambipolar diffusion.</p>
+<p><strong>Grading.</strong> At \(t_\mathrm{end}=0.2\,L^2/(\pi^2D_e)\) the electron and ion densities are evaluated at the 100 cell centres and compared with the exact solution (cell averages for finite volumes, point values otherwise): \(L_1=\frac{1}{N}\sum_i|n_h-n|/n_0\).</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>Nothing in this cell names a numerical method.</p>
+<pre><code>width, density, cells, coarse_cells = 0.01, 1e15, 100, 50
+gap = Line(start=(0.0, 0.0, 0.0), end=(width, 0.0, 0.0))
+argon_plasma = ReactionNetworkIR(
+    &quot;argon drift-diffusion relaxation&quot;,
+    &quot;1&quot;,
+    (
+        SpeciesIR(&quot;electron&quot;, -1, electron_mass, role=&quot;electron&quot;),
+        SpeciesIR(&quot;Ar+&quot;, 1, 6.63e-26, transport={&quot;mobility&quot;: {&quot;value&quot;: 0.2, &quot;unit&quot;: &quot;m^2/V/s&quot;}}),
+        SpeciesIR(&quot;Ar&quot;, 0, 6.63e-26),
+    ),
+    (),
+    metadata={&quot;electron_momentum_transfer&quot;: {&quot;kind&quot;: &quot;constant_frequency&quot;, &quot;value&quot;: 1e12, &quot;unit&quot;: &quot;1/s&quot;}},
+)
+chemistry = Chemistry(network=argon_plasma)
+gas = NeutralGas(species=&quot;Ar&quot;, pressure=1000.0, temperature=300.0)
+plasma = DriftDiffusionPlasma(
+    domain=gap.line,
+    gas=gas,
+    chemistry=chemistry,
+    electron_energy=MeanElectronEnergyEquation(enthalpy_factor=1.0),
+    electron_transport=MagnetizedElectronTransport(
+        collisions=ElectronCollisionModel(gas=gas, chemistry=chemistry, energy_distribution=Maxwellian())
+    ),
+    ion_transport=IonMobilityModel(gas=gas, chemistry=chemistry),
+    prescribed_inputs={&quot;electrostatic_field&quot;: (0.0, 0.0, 0.0)},
+)
+relaxation = Problem(
+    name=&quot;Drift-diffusion relaxation between insulating walls&quot;,
+    geometry=gap,
+    physics=(plasma,),
+    boundary_conditions=(NoParticleFlux(boundary=gap.boundaries.all, physics=plasma),),
+    initial_conditions=(
+        InitialValue(plasma.electron_density, lambda x: density * (1 + 0.5 * np.cos(np.pi * x / width) + 0.2 * np.cos(3 * np.pi * x / width))),
+        InitialValue(plasma.density(&quot;Ar+&quot;), lambda x: density * (1 + 0.5 * np.cos(np.pi * x / width) + 0.2 * np.cos(3 * np.pi * x / width))),
+        InitialValue(plasma.mean_electron_energy, 1.0, unit=&quot;eV&quot;),
+    ),
+)
+meshes = {n: StructuredLineMesher(cells=n).generate(gap) for n in (cells, coarse_cells)}
+centres = {n: mesh.cell_centers[:, 0] for n, mesh in meshes.items()}
+print(f&quot;{meshes[cells].cell_count} cells of width {width / cells * 1e3:.3f} mm (coarse check: {coarse_cells} cells)&quot;)</code></pre>
+</section>
+<section>
+<h2>The exact solution</h2>
+<p>The diffusivities come from the declared transport laws themselves; the solution is the sum of the two decaying modes (their cell averages carry the factor \(\mathrm{sinc}\) of half a cell).</p>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Finite volumes with Scharfetter-Gummel fluxes for particles and energy (exact for a constant drift and diffusivity across each face), with the two-point or the least-squares gradient, with linear cell reconstruction, alone or limited by Barth-Jespersen or Venkatakrishnan. Finite differences: central, fourth- and sixth-order polynomial and summation-by-parts stencils. Continuous finite elements of degree 1 to 3. Every public time integrator, and every nonlinear/linear solver pair for implicit steps.</p>
+</section>
+<section>
+<h2>Time steps</h2>
+<p>The plasma path takes the step it is given; explicit stability is the user's choice of step. The explicit integrators run at \(\Delta t=c\,\Delta x^2/D_e\) with \(c=0.2\) for volumes and differences and \(c=0.03\) for linear elements (the consistent mass matrix has a three times larger spectral radius, and the filtered leapfrog needs the margin); every explicit method in the catalogue is stable there except leapfrog. The implicit integrators run at \(\Delta t=t_\mathrm{end}/40\), about 25 times the explicit limit.</p>
+<p>Leapfrog has no stable region on the negative real axis, so it is unstable for diffusion at every step; its stabilized counterpart is the Robert-Asselin-Williams filtered leapfrog. BDF4 to BDF6 and Adams-Moulton 3 and 4 are not A-stable, and a fixed-point (Picard) iteration contracts only below the inverse spectral radius of the stage; where they fail, the same method runs at a stable step.</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>1. <strong>Space</strong> — every spatial scheme with BDF2 (variable step), Newton and a sparse LU at \(\Delta t=t_\mathrm{end}/160\), small enough that the time error stays below the spatial error of the fourth-order schemes. 2. <strong>Time integrator × space</strong> — every integrator on the Scharfetter-Gummel volumes, the central differences and the linear elements. 3. <strong>Nonlinear × linear solver</strong> — backward Euler on the Scharfetter-Gummel volumes. 4. <strong>Mesh check</strong> — the space matrix on 50 cells.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>A combination the library refuses is recorded with its validation message; a run that stops because the mean energy left its positive domain, a step was rejected or a stage did not converge is recorded as failed. A stabilized variant runs only where its declared run failed.</p>
+</section>
+<section>
+<h2>Space</h2>
+<p>The electron and ion density errors of every spatial scheme. All runs use the same step \(t_\mathrm{end}/160\); the BDF2 time error at this step is about \(3\cdot10^{-7}\), a common floor below which the high-order schemes cannot be told apart. With the field prescribed as zero the face reconstruction and its limiter act on a vanishing drift, so the five finite-volume variants give the same Scharfetter-Gummel diffusion flux and the same error; they differ once a field drives the particles.</p>
+</section>
+<section>
+<h2>Profiles</h2>
+<p>Electron and ion densities at \(t_\mathrm{end}\) for representative schemes against the exact solution.</p>
+</section>
+<section>
+<h2>Time integrator × space</h2>
+<p>Explicit integrators at their stable step, implicit integrators at \(t_\mathrm{end}/40\).</p>
+</section>
+<section>
+<h2>Nonlinear × linear solver</h2>
+<p>Backward Euler on the Scharfetter-Gummel volumes. The discrete solution does not depend on the converged solver; the wall time does.</p>
+</section>
+<section>
+<h2>Methods that do not apply</h2>
+<p>Discontinuous elements are not offered for the plasma balances: the plasma finite-element formulation is a continuous volume formulation and refuses them with that reason. Riemann solvers, Lax-Friedrichs splitting and shock-capturing limiters target hyperbolic systems; the drift-diffusion flux is parabolic and its upwinding is built into the Scharfetter-Gummel flux. IMEX splittings and Runge-Kutta-Chebyshev super-steps are not public time declarations of this path.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 230 runs took 75 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/drift-diffusion-relaxation-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/drift-diffusion-relaxation-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_drift_diffusion_relaxation">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>

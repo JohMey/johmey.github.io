@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magnetic diffusion into a conducting slab: one model, every method · OneSimulation</title>
+<meta name="description" content="One physics declaration, magnetic diffusion into a copper plate whose faces are suddenly exposed to a uniform field, is solved with every applicable combination of discretization family (finite differences, finite volumes, Nitsche-continuous and discontinuous finite elements), time integrator, nonlinear solver and linear solver. Each run is graded against the exact Fourier series; combinations the library refuses are reported as such. 208 runs, none refused.">
+<meta name="theme-color" content="#f5f2e8">
+<link rel="canonical" href="https://onesimulation.onrender.com/tutorials/magnetic-soak/">
+<link rel="stylesheet" href="/assets/site.css">
+<meta property="og:site_name" content="OneSimulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Magnetic diffusion into a conducting slab: one model, every method · OneSimulation">
+<meta property="og:description" content="One physics declaration, magnetic diffusion into a copper plate whose faces are suddenly exposed to a uniform field, is solved with every applicable combination of discretization family (finite differences, finite volumes, Nitsche-continuous and discontinuous finite elements), time integrator, nonlinear solver and linear solver. Each run is graded against the exact Fourier series; combinations the library refuses are reported as such. 208 runs, none refused.">
+<meta property="og:url" content="https://onesimulation.onrender.com/tutorials/magnetic-soak/">
+<meta property="og:image" content="https://onesimulation.onrender.com/assets/magnetic-soak-1.png">
+<meta property="og:image:alt" content="Magnetic diffusion into a conducting slab: one model, every method">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.ico?v=chladni" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg?v=chladni" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=chladni">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Magnetic diffusion into a conducting slab: one model, every method", "description": "One physics declaration, magnetic diffusion into a copper plate whose faces are suddenly exposed to a uniform field, is solved with every applicable combination of discretization family (finite differences, finite volumes, Nitsche-continuous and discontinuous finite elements), time integrator, nonlinear solver and linear solver. Each run is graded against the exact Fourier series; combinations the library refuses are reported as such. 208 runs, none refused.", "image": "https://onesimulation.onrender.com/assets/magnetic-soak-1.png", "inLanguage": "en", "author": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "publisher": {"@type": "Person", "name": "Johannes Meyer", "honorificPrefix": "Dr."}, "mainEntityOfPage": "https://onesimulation.onrender.com/tutorials/magnetic-soak/"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://onesimulation.onrender.com/"}, {"@type": "ListItem", "position": 2, "name": "Tutorials", "item": "https://onesimulation.onrender.com/tutorials/"}, {"@type": "ListItem", "position": 3, "name": "Magnetic diffusion into a conducting slab: one model, every method", "item": "https://onesimulation.onrender.com/tutorials/magnetic-soak/"}]}]}</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header"><div class="shell header-row">
+<a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a>
+<nav class="main-nav" aria-label="Main navigation"><a href="/tutorials/" aria-current="location">Getting Started</a><a href="/blog/">Application Library</a><a href="/fundamentals/">Fundamentals</a><a href="/for/">Who It's For</a></nav>
+<nav class="platform-nav" aria-label="External links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Docs</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?section=subscribe&amp;utm_source=website&amp;utm_medium=nav&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_magnetic_soak">Buy on Gumroad</a>
+</nav>
+</div></header>
+<main id="content">
+<header class="article-header shell">
+  <p class="edition">Tutorial · Method verification</p>
+  <h1>Magnetic diffusion into a conducting slab: one model, every method</h1>
+  <p class="lead">One physics declaration, magnetic diffusion into a copper plate whose faces are suddenly exposed to a uniform field, is solved with every applicable combination of discretization family (finite differences, finite volumes, Nitsche-continuous and discontinuous finite elements), time integrator, nonlinear solver and linear solver. Each run is graded against the exact Fourier series; combinations the library refuses are reported as such. 208 runs on the compiled OneSimulation runtime: 191 ran as declared, 17 failed as the mathematics predicts and are shown hatched with their stabilized counterpart where one exists, none was refused by the library.</p>
+</header>
+<div class="shell article-layout">
+  <aside class="article-nav"><nav aria-label="In this article"><strong>In this article</strong><a href="#matrices">Matrices</a><a href="#text">Problem and method</a><a href="#run">Reproduce</a><a href="/tutorials/method-matrices/">All matrices</a></nav></aside>
+  <article class="prose">
+    <section id="matrices">
+      <figure class="paper-figure matrix-carousel" aria-roledescription="carousel" aria-label="The test matrices">
+        <div class="hero-controls">
+          <button type="button" class="hero-arrow" data-step="-1" aria-label="Previous figure">&#8592;</button>
+          <span class="hero-count" aria-live="polite">1 / 4</span>
+          <button type="button" class="hero-arrow" data-step="1" aria-label="Next figure">&#8594;</button>
+        </div>
+        <ul class="matrix-slides"><li class="matrix-slide is-active"><img src="/assets/magnetic-soak-1.png" alt="Space × time integrator"><p><strong>1 · Space × time integrator</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/magnetic-soak-2.png" alt="Profiles of representative combinations"><p><strong>2 · Profiles of representative combinations</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/magnetic-soak-3.png" alt="Time integrator × space"><p><strong>3 · Time integrator × space</strong></p></li><li class="matrix-slide" aria-hidden="true"><img src="/assets/magnetic-soak-4.png" alt="Nonlinear × linear solver"><p><strong>4 · Nonlinear × linear solver</strong></p></li></ul>
+        <figcaption>Grey hatching marks a declared scheme that must fail; the colour behind it is its stabilized counterpart, named in the legend below each matrix. Click a figure to enlarge it.</figcaption>
+        <script>
+        (function () {
+          var root = document.currentScript.parentNode, slides = root.querySelectorAll(".matrix-slide");
+          var count = root.querySelector(".hero-count"), index = 0;
+          root.querySelectorAll(".hero-arrow").forEach(function (button) {
+            button.addEventListener("click", function () {
+              slides[index].classList.remove("is-active"); slides[index].setAttribute("aria-hidden", "true");
+              index = (index + Number(button.dataset.step) + slides.length) % slides.length;
+              slides[index].classList.add("is-active"); slides[index].removeAttribute("aria-hidden");
+              count.textContent = (index + 1) + " / " + slides.length;
+            });
+          });
+          root.querySelectorAll(".matrix-slide img").forEach(function (image) {
+            image.tabIndex = 0;
+            image.setAttribute("role", "button");
+            image.setAttribute("aria-label", "Enlarge: " + image.alt);
+            function enlarge() {
+              var overlay = document.createElement("div");
+              overlay.className = "figure-lightbox";
+              overlay.setAttribute("role", "dialog");
+              overlay.setAttribute("aria-modal", "true");
+              overlay.setAttribute("aria-label", image.alt);
+              var close = document.createElement("button");
+              close.type = "button";
+              close.className = "figure-lightbox-close";
+              close.setAttribute("aria-label", "Close");
+              close.textContent = "\u00d7";
+              var large = document.createElement("img");
+              large.src = image.currentSrc || image.src;
+              large.alt = image.alt;
+              overlay.appendChild(close);
+              overlay.appendChild(large);
+              function dismiss() {
+                document.removeEventListener("keydown", onKey);
+                overlay.remove();
+                document.body.style.overflow = "";
+                image.focus();
+              }
+              function onKey(event) { if (event.key === "Escape") dismiss(); }
+              overlay.addEventListener("click", function (event) {
+                if (event.target !== large) dismiss();
+              });
+              large.addEventListener("click", function () { large.classList.toggle("is-full"); });
+              document.addEventListener("keydown", onKey);
+              document.body.style.overflow = "hidden";
+              document.body.appendChild(overlay);
+              close.focus();
+            }
+            image.addEventListener("click", enlarge);
+            image.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); enlarge(); }
+            });
+          });
+        })();
+        </script>
+      </figure>
+    </section>
+    <section id="text">
+<p>A copper plate of thickness \(L=10\,\)mm (conductivity \(\sigma=5.96\cdot10^7\,\)S/m, permeability \(\mu_0\)) is field-free at \(t=0\). Then a uniform tangential field \(B_0=0.1\,\)T is switched on outside both faces. Eddy currents delay its entry: in the magnetoquasistatic limit the induction obeys a diffusion equation with the magnetic diffusivity \(\eta=1/(\mu_0\sigma)\),</p>
+<p>\[\partial_t B_z=\eta\,\partial_x^2 B_z,\qquad B_z(0,t)=B_z(L,t)=B_0,\qquad B_z(x,0)=0,\]</p>
+<p>with \(\eta\approx0.0134\,\)m²/s. <code>MagneticDiffusion</code> declares this balance once. Everything numerical is an argument of <code>Numerics</code>.</p>
+<p><strong>Reference.</strong> The odd sine modes of the initial deficit decay independently (Knoepfel, <em>Magnetic Fields</em>, §4.2; the same series as for heat conduction):</p>
+<p>\[B_z(x,t)=B_0\Big[1-\sum_{k\ \text{odd}}\frac{4}{k\pi}\,\sin\frac{k\pi x}{L}\, \exp\!\Big(-\frac{k^2\pi^2\eta t}{L^2}\Big)\Big].\]</p>
+<p>Early on each face sees a half-space and \(B_z\approx B_0\,\mathrm{erfc}\big(x/(2\sqrt{\eta t})\big)\); the series contains that limit.</p>
+<p><strong>Grading.</strong> At \(t=0.4\,\)ms (diffusion number \(\eta t/L^2\approx0.053\)) every run is evaluated at the cell centres \(x_i\): the mean absolute error \(\sum_i|B_h(x_i)-B(x_i)|\,\Delta x/L\) and the largest deviation; the wall time covers validation, binding and time stepping.</p>
+</section>
+<section>
+<h2>The physics, declared once</h2>
+<p>Nothing in this cell names a numerical method.</p>
+<pre><code>thickness, field, end_time = 0.01, 0.1, 4e-4
+cells, coarse_cells, time_cells = 200, 100, 50
+conductivity, mu0 = 5.96e7, float(VacuumPermeability().evaluate())
+diffusivity = 1 / (mu0 * conductivity)
+plate = Line(start=(0.0, 0.0, 0.0), end=(thickness, 0.0, 0.0))
+copper = MagneticDiffusion(domain=plate.line, permeability=mu0, conductivity=conductivity)
+problem = Problem(
+    name=&quot;Field soaking into a copper plate&quot;,
+    geometry=plate,
+    physics=(copper,),
+    boundary_conditions=(
+        PrescribedValueBoundary(
+            physics=copper, boundary=plate.boundaries.all, value={&quot;magnetic_induction&quot;: field}
+        ),
+    ),
+    initial_conditions=(InitialValue(copper.magnetic_induction, 0.0),),
+)
+meshes = {
+    n: StructuredLineMesher(cells=n).generate(plate) for n in (cells, coarse_cells, time_cells)
+}
+centres = {n: mesh.cell_centers for n, mesh in meshes.items()}
+print(
+    f&quot;{meshes[cells].cell_count} cells of width {1e3 * thickness / cells:.3f} mm &quot;
+    f&quot;(mesh check: {meshes[coarse_cells].cell_count} cells; time-integrator cut: &quot;
+    f&quot;{meshes[time_cells].cell_count} cells), magnetic diffusivity {diffusivity:.4e} m²/s, &quot;
+    f&quot;diffusion number {diffusivity * end_time / thickness**2:.4f}&quot;
+)</code></pre>
+</section>
+<section>
+<h2>The exact solution</h2>
+<p>The series is summed with 2000 terms at every cell centre and on a fine plotting grid.</p>
+</section>
+<section>
+<h2>The method catalogue</h2>
+<p>Finite differences with central, fourth- and sixth-order Laplacians; finite volumes with the two-point flux; continuous Lagrange elements of degree 1 to 3 whose face values enter through symmetric or nonsymmetric Nitsche terms, also with continuous interior penalty; discontinuous elements of degree 1 to 3 with the SIPG flux at two penalty levels. The induction balance has no gradient-derived output, so the difference schemes take no first derivative.</p>
+<p>Time integrators: the explicit one-step and multistep methods, implicit Runge-Kutta, Adams-Moulton and BDF methods, Rosenbrock methods and the adaptive integrators. Implicit stages take a Newton solver with a sparse direct solve; the linearly implicit Rosenbrock stages take the sparse direct solve alone. Explicit methods advance at their stable step (safety factor 0.5), implicit ones at \(\Delta t=5\,\)µs.</p>
+</section>
+<section>
+<h2>Schemes that must fail, and their stabilized counterparts</h2>
+<p>The diffusion operator has a real, negative spectrum reaching \(-\lambda_{\max}\sim-12\alpha/h^2\). Adams-Moulton 3 and 4 are not A-stable: their stability interval on the negative axis ends at \(\lambda\Delta t\approx6\) and \(3\), while \(\lambda_{\max}\Delta t\) is several hundred at \(\Delta t=5\,\)µs. Leapfrog has no damping: every decaying mode is amplified at any step. A fixed-point (Picard) iteration of an implicit step contracts only for \(\lambda_{\max}\Delta t&lt;1\). BDF5 and BDF6 are stable on the negative axis but not monotone: at large \(\lambda\Delta t\) their first steps after the jump overshoot. Crank-Nicolson is A-stable but not L-stable: the stiffest modes of the initial jump at the faces are multiplied by almost \(-1\) in every step, and on the high-order and Nitsche elements the resulting overshoot leaves \([0,B_0]\). Each of these must fail; its stabilized counterpart, shown behind a grey hatching, is the same method at a step it is stable or damping for, or leapfrog with the Robert-Asselin-Williams filter. A counterpart runs only where the declared scheme actually failed.</p>
+</section>
+<section>
+<h2>The test matrix</h2>
+<p>Three cuts through the space of combinations:</p>
+<p>1. <strong>Space × time integrator</strong> — every spatial scheme on 200 cells with four implicit integrators (backward Euler, Crank-Nicolson, BDF2, SDIRK2) at \(\Delta t=5\,\)µs. 2. <strong>Time integrator × space</strong> — every integrator on three spatial schemes (central differences, two-point volumes and CG P1 with Nitsche faces). An explicit method on a diffusion operator must take \(\Delta t\propto h^2\), so this cut uses 50 cells; the spatial accuracy is the subject of the first cut. Higher-degree and discontinuous elements are left out of this cut: degree and interior penalty raise \(\lambda_{\max}\), and an explicit step would have to be five to twenty times smaller; they run with the four implicit integrators of the first cut. 3. <strong>Nonlinear × linear solver</strong> — backward Euler on central differences with 50 cells (the fixed-point counterpart needs \(\lambda_{\max}\Delta t&lt;1\), which is affordable on this grid).</p>
+<p>The representative schemes are repeated on 100 cells for the mesh check.</p>
+</section>
+<section>
+<h2>Run everything</h2>
+<p>One loop, the same problem object every time. A combination the library refuses is recorded with its validation message. A run whose induction leaves the interval \([0, B_0]\) violates the maximum principle of the diffusion equation and is recorded as failed, as is a solver that does not converge. A failed run with a stabilized counterpart appends that counterpart to the list, so the same loop runs it next.</p>
+</section>
+<section>
+<h2>Space × time integrator</h2>
+<p>The mean induction error of every spatial scheme with four implicit integrators. Backward Euler is first order in time; at \(\Delta t=5\,\)µs its time error dominates every spatial error, while Crank-Nicolson, BDF2 and SDIRK2 reveal the spatial ranking.</p>
+<p>All measures for the combinations that ran, sorted by the mean error.</p>
+</section>
+<section>
+<h2>Profiles of representative combinations</h2>
+<p>Induction through the plate against the series, and a close-up of one face where the initial jump between \(0\) and \(B_0\) is smoothed out.</p>
+</section>
+<section>
+<h2>Time integrator × space</h2>
+<p>Explicit integrators at their stable step, implicit integrators at \(\Delta t=5\,\)µs, on 50 cells.</p>
+</section>
+<section>
+<h2>Nonlinear × linear solver</h2>
+<p>Backward Euler on central differences with 50 cells. The induction equation is linear, so every converging Newton variant reproduces the same discrete solution in one iteration per step; the wall time differs. The step matrix \(I+\Delta t\,K\) of the symmetric central stencil is symmetric positive definite, but this owner does not declare it so: conjugate gradients and the symmetric algebraic multigrid are refused. That is a gap of the library, shown as "rejected".</p>
+</section>
+<section>
+<h2>Mesh check: 200 against 100 cells</h2>
+<p>BDF2 at \(\Delta t=5\,\)µs on half as many cells. Second-order schemes should reduce the spatial error about fourfold; once it falls below the time error of the step, the ratio levels off.</p>
+</section>
+<section>
+<h2>What the library refused, and what failed</h2>
+<p>A refused combination is caught by validation or binding before any time step; a failed one started and left the physical range or did not converge.</p>
+</section>
+<section>
+<h2>Methods that do not apply to this problem</h2>
+<p>Riemann solvers, reconstructions and slope limiters act on convective fluxes; magnetic diffusion in a plate at rest has none, so finite volumes take only a diffusive face flux. SUPG, GLS and graph viscosity stabilize convection and have nothing to act on here. Staggered Verlet needs a second-order system and IMEX splits a stiff from a non-stiff part, which a single diffusion operator does not have. Continuous elements on this balance take their face values through Nitsche terms; strongly imposed values are not available for the line balance owner.</p>
+<h2>Going further</h2>
+<p>Replace a <code>PrescribedValueBoundary</code> by an <code>OutwardFluxBoundary</code> (a prescribed tangential electric field) and the matrix code stays as it is; add a column by adding one object to a dictionary.</p>
+    </section>
+    <section id="run">
+      <h2>Reproduce the run</h2>
+      <p>The notebook declares the model once and runs the whole matrix in one loop. All wall times on this page were measured with the compiled OneSimulation runtime (machine code, the package customers install) on an Apple Silicon laptop; the 208 runs took 22 minutes in total. Activate the Python environment described in the <a href="/tutorials/step/#setup">STEP tutorial</a> first.</p>
+      <div class="download-row"><a class="button button-primary" href="/downloads/magnetic-soak-method-matrix.ipynb" download>Download the notebook</a><a class="button" href="/downloads/magnetic-soak-method-matrix.py" download>Download as Python script</a></div>
+      <p>The same test for other physics: <a href="/tutorials/method-matrices/">all method matrices</a>, starting with <a href="/tutorials/sod-shock-tube/">Sod's shock tube</a>.</p>
+    </section>
+  </article>
+</div>
+
+</main>
+<footer class="site-footer"><div class="shell footer-row">
+<div><a class="brand" href="/" aria-label="OneSimulation home">OneSimulation<span class="brand-dot" aria-hidden="true">.</span></a><p>Dr. Johannes Meyer · Numerical simulation in Python</p></div>
+<nav aria-label="Related links">
+<a href="https://johmey.github.io/OneSimulation-Showcase/">Documentation</a>
+<a href="https://johmey.github.io/OneSimulation-Showcase/plans.html">Licence &amp; terms</a>
+<a href="/compare/">Comparison</a>
+<a href="/changelog/">Release notes</a>
+<a href="https://github.com/JohMey/OneSimulation-Showcase">GitHub</a>
+<a href="https://johmey.gumroad.com/l/onesimulation-runtime-abo?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=runtime_trial&amp;utm_content=tutorials_magnetic_soak">Plans &amp; trial</a>
+<a href="https://onesimulation-contact.yummy-bee-0467.chatgpt.site/">Contact form</a>
+</nav>
+</div></footer>
+</body>
+</html>
