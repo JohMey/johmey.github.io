@@ -52,7 +52,13 @@ from onesim.numerics.discretization.spatial.fields.particles.periodic_particle_t
     CardinalBSplineWeights,
     cloud_in_cell_weights,
 )
+from onesim.numerics.discretization.spatial.equations.periodic_spectral_fields import (
+    PeriodicSpectralFields,
+)
 from onesim.numerics.linear import GMRES, FlexibleGMRES, RightGMRES
+from onesim.numerics.time.selection.declared_time_provider import declared_time_descriptor
+from onesim.physics.plasma.kinetic.numerics.backends.periodic_vlasov import CourantStepLimit
+from onesim.physics.plasma.particles.numerics.particle_pushers import boris_velocity
 from onesim.numerics.nonlinear import JFNK, FixedPoint
 from onesim.numerics.time import (
     BDF,
@@ -205,7 +211,7 @@ print(
 # of degree 0), cloud-in-cell (degree 1), triangular-shaped cloud (degree 2) and the cubic B-spline.
 #
 # **Time.** Every public integrator. Implicit stages are solved matrix-free: Jacobian-free
-# Newton-Krylov (default) or a fixed-point iteration; Rosenbrock stages by GMRES with
+# Newton-Krylov or a fixed-point iteration, passed explicitly; Rosenbrock stages by GMRES with
 # finite-difference Jacobian products.
 
 reconstructions = {
@@ -218,17 +224,24 @@ reconstructions = {
     "MUSCL + minmod + positivity": "positivity",
 }
 face_fluxes = {"upwind": scalar_upwind_flux, "central": central_phase_flux}
-phase_space = {
-    (row, column): VlasovDiscretization(
-        phase_flux=partial(
-            upwind_phase_flux,
-            reconstruction=minmod_face_traces if traces == "positivity" else traces,
-            numerical_flux=flux,
-            trace_limiter=nonnegative_face_traces if traces == "positivity" else None,
-        )
+phase_fluxes = {
+    (row, column): partial(
+        upwind_phase_flux,
+        reconstruction=minmod_face_traces if traces == "positivity" else traces,
+        numerical_flux=flux,
+        trace_limiter=nonnegative_face_traces if traces == "positivity" else None,
     )
     for row, traces in reconstructions.items()
     for column, flux in face_fluxes.items()
+}
+phase_space = {
+    key: VlasovDiscretization(
+        field_factory=PeriodicSpectralFields,
+        phase_flux=flux,
+        velocity_flux=flux,
+        transport_step_limit=CourantStepLimit(0.45),
+    )
+    for key, flux in phase_fluxes.items()
 }
 # A linear reconstruction without limiter, and the central flux on any traces, are not monotone:
 # by Godunov's theorem they create undershoots where f is small (the velocity tails), and the
@@ -238,12 +251,17 @@ stabilized_space = {
     key: (
         f"{key[0]}, {key[1]} flux + positivity-preserving trace limiter",
         VlasovDiscretization(
-            phase_flux=partial(
-                upwind_phase_flux,
-                reconstruction=minmod_face_traces if traces == "positivity" else traces,
-                numerical_flux=face_fluxes[key[1]],
-                trace_limiter=nonnegative_face_traces,
-            )
+            field_factory=PeriodicSpectralFields,
+            phase_flux=(
+                stabilized_flux := partial(
+                    upwind_phase_flux,
+                    reconstruction=minmod_face_traces if traces == "positivity" else traces,
+                    numerical_flux=face_fluxes[key[1]],
+                    trace_limiter=nonnegative_face_traces,
+                )
+            ),
+            velocity_flux=stabilized_flux,
+            transport_step_limit=CourantStepLimit(0.45),
         ),
     )
     for key, traces in (
@@ -377,7 +395,9 @@ runs += [
     and run["matrix"] != "phase space"
 ]
 runs += [
-    dict(model=model, matrix="two-stream", row=name, column=model_name, spatial=VlasovDiscretization(),
+    dict(model=model, matrix="two-stream", row=name, column=model_name, spatial=VlasovDiscretization(
+                 field_factory=PeriodicSpectralFields, phase_flux=upwind_phase_flux,
+                 velocity_flux=upwind_phase_flux, transport_step_limit=CourantStepLimit(0.45)),
          shape=cloud_in_cell_weights, time=integrator, step=0.2 if getattr(integrator, "implicit", False) else 0.05)
     for name, integrator in (("SSP-RK3", TimeMethod("ssprk3")), ("classical RK4", ClassicalRungeKutta4()),
                              ("Crank-Nicolson", TimeMethod("crank_nicolson")), ("BDF2", BDF(order=2)))
@@ -442,10 +462,21 @@ two_stream_particles = PICSpecies(
     mass=1.0,
     weights=two_stream_lattice.ravel() * length / two_stream_lattice.sum(),
 )
+pic_model = PeriodicParticleInCell(
+    mesh=CartesianMesh(shape=(cells,), extents=(length,), periodic=True),
+    background_charge_density=1.0,
+    permittivity=1.0, light_speed=1.0,
+)
 declared = {(r["matrix"], r["row"], r["column"]): r for r in runs if r.get("variant") is None}
 for run in runs:
     started = time.perf_counter()
     run.update(status="rejected", note="", rate=np.nan, frequency=np.nan, error=np.nan, steps=0)
+    # Stage solvers are explicit objects: the matrix' own choice, or Newton-Krylov with GMRES.
+    needs = declared_time_descriptor(run["time"]) if run["time"] is not None else None
+    nonlinear = run.get("nonlinear") or (
+        stage_solvers[("JFNK", "GMRES")] if needs and needs.requires_nonlinear_solver else None
+    )
+    linear = run.get("linear") or (GMRES() if needs and needs.requires_linearized_solver else None)
     if run.get("variant") and declared[(run["matrix"], run["row"], run["column"])]["status"] == "ran":
         run.update(status="not needed", seconds=0.0)
         continue
@@ -456,23 +487,25 @@ for run in runs:
                 two_stream if stream else run.get("request", landau),
                 spatial=run["spatial"],
                 time_integrator=run["time"],
-                nonlinear_solver=run.get("nonlinear"),
-                linear_solver=run.get("linear"),
+                nonlinear_solver=nonlinear,
+                linear_solver=linear,
                 time_step=run["step"],
                 final_time=6.0 if stream else end_time,
             )
             if run["model"] == "vlasov"
-            else PeriodicParticleInCell(
-                mesh=CartesianMesh(shape=(cells,), extents=(length,), periodic=True),
-                background_charge_density=1.0,
-                permittivity=1.0, light_speed=1.0,
-            ).solve(
+            else pic_model.solve(
                 species=(two_stream_particles if stream else particles,),
                 time_step=run["step"],
                 steps=int(round((6.0 if stream else end_time) / run["step"])),
-                shape_function=run["shape"],
-                time_integrator=run["time"],
-                nonlinear_solver=run.get("nonlinear"),
+                spatial=pic_model.discretization(
+                    shape_function=run["shape"],
+                    field_factory=PeriodicSpectralFields,
+                    particle_pusher=boris_velocity,
+                ),
+                time_integrator=(
+                    pic_model.midpoint_time_integrator() if run["time"] is None else run["time"]
+                ),
+                nonlinear_solver=nonlinear,
             )
         )
         energy = result.electric_energy if run["model"] == "vlasov" else result.field_energy

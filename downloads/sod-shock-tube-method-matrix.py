@@ -106,6 +106,12 @@ from onesim.numerics.nonlinear import (
     QuasiNewton,
     TrustRegionNewton,
 )
+from onesim.numerics.discretization.spatial.execution.backends.boundaries.boundary_particle import (
+    SPHParticleCloud,
+)
+from onesim.physics.hydrodynamics.incompressible.binding.runtime.particle_components import (
+    SPHDiscretization,
+)
 from onesim.numerics.time import (
     BDF,
     AdaptiveBDF,
@@ -1056,6 +1062,7 @@ for run in sph_runs:
             viscosity_alpha=run["viscosity"][0],
             viscosity_beta=run["viscosity"][1],
             periodic_bounds=(box,),
+            spatial=SPHDiscretization(SPHParticleCloud),
             final_time=end_time,
             time_step=1.0e-3,
             cfl=0.25,
